@@ -4,7 +4,7 @@ set -ex
 
 # Login
 yarn nx generate @nrwl/angular:component login --project=app-login-feature --export --flat --standalone --type=page # use --type=page if the component is a page else use --type=component if it is a small component on a page e.g. card component
-yarn nx generate @nrwl/angular:module login --project=app-login-feature
+yarn nx generate @nrwl/angular:module login --project=app-login-feature --routing
 
 # ============================================================================================================================
 
