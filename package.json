@@ -2,7 +2,9 @@
   "name": "event-participation-trends",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:dev": "yarn concurrently 'yarn nx serve app' 'yarn nx serve api'"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~16.0.0",
@@ -16,9 +18,11 @@
     "@ionic/angular": "^7.0.7",
     "@nestjs/common": "^9.1.1",
     "@nestjs/core": "^9.1.1",
+    "@nestjs/microservices": "^9.4.1",
     "@nestjs/platform-express": "^9.1.1",
     "@nx/angular": "16.1.0",
     "axios": "^1.0.0",
+    "mqtt": "^4.3.7",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -52,6 +56,7 @@
     "@types/node": "~18.7.1",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
+    "concurrently": "^8.0.1",
     "cypress": "^12.11.0",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
@@ -67,4 +72,3 @@
     "typescript": "~5.0.2"
   }
 }
-
