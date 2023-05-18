@@ -1,4 +1,5 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -9,9 +10,9 @@ export class JwtHandlerMiddleware implements NestMiddleware {
     this.jwtService = new JwtService({});
   }
 
-  async use(req: any, res: any, next: () => void) {
+  async use(req: Request, res: Response, next: () => void) {
     // get jwt from cookie
-    const jwt = req.cookies["jwt"];
+    const jwt = ((req as unknown) as Request).cookies["jwt"];
 
     // verify jwt
     try {
@@ -28,7 +29,7 @@ export class JwtHandlerMiddleware implements NestMiddleware {
     } catch {
 
       // if jwt is invalid, res.send(401)
-      res.send(401).body("Unauthorized");
+      throw new UnauthorizedException('Unauthorized');
 
     }
   }
