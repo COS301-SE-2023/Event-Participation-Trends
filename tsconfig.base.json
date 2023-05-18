@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@event-participation-trends/app/core/feature": [
+        "libs/app/core/feature/src/index.ts"
+      ],
       "@event-participation-trends/app/login/feature": [
         "libs/app/login/feature/src/index.ts"
       ]
