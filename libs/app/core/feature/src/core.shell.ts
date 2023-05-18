@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'event-participation-trends-core',
+  selector: 'ept-core-shell',
   templateUrl: './core.shell.html',
   styleUrls: ['./core.shell.css'],
 })
