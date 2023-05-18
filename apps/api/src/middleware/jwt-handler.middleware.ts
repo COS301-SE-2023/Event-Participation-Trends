@@ -12,7 +12,7 @@ export class JwtHandlerMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: () => void) {
     // get jwt from cookie
-    const jwt = ((req as unknown) as Request).cookies["jwt"];
+    const jwt = req.cookies["jwt"];
 
     // verify jwt
     try {
