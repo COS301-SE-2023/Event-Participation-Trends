@@ -1,0 +1,66 @@
+:root {
+    --ion-color-primary: #20265f;
+    --ion-color-primary-rgb: 32, 38, 95;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #1c2154;
+    --ion-color-primary-tint: #363c6f;
+  
+    --ion-color-secondary: #45c3fd;
+    --ion-color-secondary-rgb: 69, 195, 253;
+    --ion-color-secondary-contrast: #000000;
+    --ion-color-secondary-contrast-rgb: 0, 0, 0;
+    --ion-color-secondary-shade: #3dacdf;
+    --ion-color-secondary-tint: #58c9fd;
+  
+    --ion-color-tertiary: #449dd8;
+    --ion-color-tertiary-rgb: 68, 157, 216;
+    --ion-color-tertiary-contrast: #000000;
+    --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+    --ion-color-tertiary-shade: #3c8abe;
+    --ion-color-tertiary-tint: #57a7dc;
+  
+    --ion-color-success: #2dd36f;
+    --ion-color-success-rgb: 45, 211, 111;
+    --ion-color-success-contrast: #000000;
+    --ion-color-success-contrast-rgb: 0, 0, 0;
+    --ion-color-success-shade: #28ba62;
+    --ion-color-success-tint: #42d77d;
+  
+    --ion-color-warning: #ffc409;
+    --ion-color-warning-rgb: 255, 196, 9;
+    --ion-color-warning-contrast: #000000;
+    --ion-color-warning-contrast-rgb: 0, 0, 0;
+    --ion-color-warning-shade: #e0ac08;
+    --ion-color-warning-tint: #ffca22;
+  
+    --ion-color-danger: #e7000a;
+    --ion-color-danger-rgb: 231, 0, 10;
+    --ion-color-danger-contrast: #ffffff;
+    --ion-color-danger-contrast-rgb: 255, 255, 255;
+    --ion-color-danger-shade: #cb0009;
+    --ion-color-danger-tint: #e91a23;
+  
+    --ion-color-medium: #92949c;
+    --ion-color-medium-rgb: 146, 148, 156;
+    --ion-color-medium-contrast: #000000;
+    --ion-color-medium-contrast-rgb: 0, 0, 0;
+    --ion-color-medium-shade: #808289;
+    --ion-color-medium-tint: #9d9fa6;
+  
+    --ion-color-light: #f4f5f8;
+    --ion-color-light-rgb: 244, 245, 248;
+    --ion-color-light-contrast: #000000;
+    --ion-color-light-contrast-rgb: 0, 0, 0;
+    --ion-color-light-shade: #d7d8da;
+    --ion-color-light-tint: #f5f6f9;
+}
+
+ion-content {
+    --background: transparent;
+}
+ion-button {
+    --background: transparent;
+    --border-radius: 0px;
+    --box-shadow: none;
+}
