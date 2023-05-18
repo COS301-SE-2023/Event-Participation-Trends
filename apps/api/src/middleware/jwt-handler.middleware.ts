@@ -3,9 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtHandlerMiddleware implements NestMiddleware {
-  constructor(
-    private readonly jwtService: JwtService
-  ){}
+  jwtService: JwtService;
+
+  constructor(){
+    this.jwtService = new JwtService({});
+  }
 
   async use(req: any, res: any, next: () => void) {
     // get jwt from cookie
