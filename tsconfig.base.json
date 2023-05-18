@@ -23,6 +23,9 @@
       ],
       "@event-participation-trends/app/login/feature": [
         "libs/app/login/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/login/util": [
+        "libs/app/login/util/src/index.ts"
       ]
     }
   },
