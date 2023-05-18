@@ -59,3 +59,8 @@
 ion-content {
     --background: transparent;
 }
+ion-button {
+    --background: transparent;
+    --border-radius: 0px;
+    --box-shadow: none;
+}

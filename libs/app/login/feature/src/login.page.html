@@ -1,9 +1,9 @@
 <ion-content [fullscreen]="true" ngClass="login-page" color="none">
     <div class="login-page">
         <div class="about-us-section">
-            <h1 class="about-us-title">
+            <ion-text class="about-us-title">
                 Event Participation Trends
-            </h1>
+            </ion-text>
             <ion-card ngClass="about-us-card">
                 <ion-card-header color="none" ngClass="about-us-card-header">About Us</ion-card-header>
                 <ion-card-content ngClass="about-us-card-content">
@@ -21,12 +21,21 @@
                 </ion-card-content>
             </ion-card>
             <div class="footer-images">
-                <img ngClass="footer-image1" src="https://thumbs.dreamstime.com/b/blur-festival-events-market-outdoor-people-street-61059104.jpg" />
-                <img ngClass="footer-image2" src="https://thumbs.dreamstime.com/b/blur-festival-events-market-outdoor-people-street-61059104.jpg" />
+                <img ngClass="footer-image1" src="https://media.licdn.com/dms/image/D4D05AQH6LdAV_TVoaQ/videocover-low/0/1683877137702?e=2147483647&v=beta&t=8BzSpBVaKg4mgsLVwl-cYZsu_80tBsL1Ov8P-W1K000" />
             </div>
         </div>
         <div class="login-section">
-            Welcome
+            <img class="logo" src="https://www.up.ac.za/media/shared/119/ZP_Images/IndustryPartners/gendac.zp99790.png" />
+            <div class="login-content">
+                <ion-title ngClass="login-title">Welcome!</ion-title>
+                <ion-text color="none" ngClass="login-text">Log in/Sign up using a Google account</ion-text>
+                <ion-icon  ngClass="button-logo" name="logo-google" slot="start"></ion-icon>
+                <ion-button ngClass="login-button" color="none">
+                    <ion-label ngClass="button-text">Log in with Google</ion-label>
+                </ion-button>
+                <ion-text color="none" ngClass="login-text-tip">Once logged in/Signed up you will be able to view events.</ion-text>
+                <img class="login-footer-image" src="https://www.gendac.co.za/wp-content/uploads/2022/05/WebLineMap.png" />
+            </div>
         </div>
     </div>
 </ion-content>
