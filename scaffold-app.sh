@@ -8,12 +8,15 @@ set -ex
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # CORE
+yarn nx generate @nrwl/angular:component core --project=app-core-feature --export --flat --type=shell
 yarn nx generate @nrwl/angular:module core --project=app-core-feature --routing
-yarn nx generate @nrwl/angular:component core --project=app-core-feature --export --flat --standalone --type=shell
 
 # LOGIN
-yarn nx generate @nrwl/angular:component login --project=app-login-feature --export --flat --standalone --type=page
+yarn nx generate @nrwl/angular:component login --project=app-login-feature --export --flat --type=page
 yarn nx generate @nrwl/angular:module login --project=app-login-feature --routing
+
+# AUTH
+yarn nx generate @nrwl/angular:module auth --project=app-auth-feature
 
 # ============================================================================================================================
 
@@ -26,3 +29,8 @@ yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/login --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/login --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/login --no-interactive        # --> util
+
+# Auth
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/auth --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/auth --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/auth --no-interactive        # --> util
