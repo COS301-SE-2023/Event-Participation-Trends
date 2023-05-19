@@ -1,26 +1,28 @@
 import { Injectable } from '@angular/core';
-// import {
-//     Auth,
-//     authState,
-//     GoogleAuthProvider,
-//     signInWithPopup,
-// } from '@angular/fire/auth';
-// import { signOut } from 'firebase/auth';
+import {
+    SocialAuthService,
+    SocialUser,
+    GoogleLoginProvider
+} from 'angularx-social-login';
+import { tap } from 'rxjs';
 
 @Injectable()
 export class AuthApi {
-    // constructor(private auth : Auth) {}
+    constructor(private authService : SocialAuthService) {}
 
-    // auth$() {
-    //     return authState(this.auth);
-    // }
+    auth$() {
+        return this.authService.authState.pipe(
+            tap((user: SocialUser | null) => {
+                return user;
+            })
+        );
+    }
 
-    // async continueWithGoogle() {
-    //     const provider = new GoogleAuthProvider();
-    //     return signInWithPopup(this.auth, provider);
-    // }
+    async continueWithGoogle() : Promise<void>{
+        this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+    }
 
-    // async logout() {
-    //     return await signOut(this.auth);
-    // }
+    async logout() : Promise<void> {
+        await this.authService.signOut();
+    }
 }
