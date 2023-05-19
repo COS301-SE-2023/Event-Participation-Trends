@@ -8,9 +8,9 @@ import { Store } from '@ngxs/store';
   styleUrls: ['./login.page.css'],
 })
 export class LoginPage {
-  constructor(private readonly store: Store) {}
+  // constructor(private readonly store: Store) {}
 
-  continueWithGoogle() {
-    this.store.dispatch(new ContinueWithGoogle());
-  }
+  // continueWithGoogle() {
+  //   this.store.dispatch(new ContinueWithGoogle());
+  // }
 }
