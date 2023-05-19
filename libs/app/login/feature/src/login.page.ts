@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ContinueWithGoogle } from '@event-participation-trends/app/login/util';
+import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'event-participation-trends-login',
@@ -7,9 +8,9 @@ import { ContinueWithGoogle } from '@event-participation-trends/app/login/util';
   styleUrls: ['./login.page.css'],
 })
 export class LoginPage {
-  // constructor(private readonly store: Store) {}
+  constructor(private readonly store: Store) {}
 
-  // continueWithGoogle() {
-  //   this.store.dispatch(new ContinueWithGoogle());
-  // }
+  continueWithGoogle() {
+    this.store.dispatch(new ContinueWithGoogle());
+  }
 }
