@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { NgxsModule } from '@ngxs/store';
+import { ErrorsState } from './error.state';
 
 @NgModule({
-  declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
+    NgxsModule.forFeature([ErrorsState]),
   ]
 })
 export class ErrorModule { }

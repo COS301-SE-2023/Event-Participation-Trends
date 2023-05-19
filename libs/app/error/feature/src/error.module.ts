@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { ErrorModule as ErrorDataAccessModule } from '@event-participation-trends/app/error/data-access';
 
 @NgModule({
-  declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
+    ErrorDataAccessModule
   ]
 })
 export class ErrorModule { }

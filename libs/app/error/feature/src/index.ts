@@ -1,1 +1,1 @@
-export * from './lib/app-error-feature';
+export * from './error.module';

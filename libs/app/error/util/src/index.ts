@@ -1,1 +1,1 @@
-export * from './lib/app-error-util';
+export * from './error.actions';

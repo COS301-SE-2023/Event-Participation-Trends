@@ -1,1 +1,2 @@
-export * from './lib/app-error-data-access';
+export * from './error.module';
+export * from './error.state';
