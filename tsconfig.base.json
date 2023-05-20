@@ -15,13 +15,15 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@event-participation-trends/api/passport": [
+        "libs/api/passport/src/index.ts"
+      ],
       "@event-participation-trends/app/core/feature": [
         "libs/app/core/feature/src/index.ts"
       ],
       "@event-participation-trends/app/login/feature": [
         "libs/app/login/feature/src/index.ts"
-      ],
-      "@event-participation-trends/passport": ["libs/passport/src/index.ts"]
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
