@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MqttController } from './mqtt.controller';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtGenerateService } from '../services/jwt.generate/jwt.generate.service';
 
 @Module({
   imports: [
@@ -24,6 +25,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AppController, MqttController],
-  providers: [AppService],
+  providers: [AppService, JwtGenerateService],
 })
 export class AppModule {}
