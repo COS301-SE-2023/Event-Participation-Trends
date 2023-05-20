@@ -5,8 +5,9 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { Transport, MicroserviceOptions } from '@nestjs/microservices'
+import { Transport } from '@nestjs/microservices'
 import { AppModule } from './app/app.module';
+import cookieParser = require('cookie-parser');
 import * as dotenv from 'dotenv';
 
 async function bootstrap() {
@@ -14,6 +15,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+  app.use(cookieParser());
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
