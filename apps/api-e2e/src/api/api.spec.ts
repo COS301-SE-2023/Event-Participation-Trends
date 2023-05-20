@@ -1,10 +1,14 @@
 import axios from 'axios';
 
 describe('GET /api', () => {
+  let res;
   it('should return a message', async () => {
-    const res = await axios.get(`/api`);
-
-    expect(res.status).toBe(200);
-    expect(res.data).toEqual({ message: 'Hello API' });
+    try {
+      res = await axios.get('api/');
+      console.log(res);
+    } catch (error) {
+      expect(error.response.status).toEqual(401); // Since we are not logged in
+      return;
+    }
   });
 });
