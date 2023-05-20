@@ -5,9 +5,12 @@ import { AppService } from './app.service';
 import { MqttController } from './mqtt.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtGenerateService } from '../services/jwt.generate/jwt.generate.service';
+import { PassportController, PassportService, PassportModule as Wow } from '@event-participation-trends/passport';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
+    Wow,
     ClientsModule.register([
       {
         name: "MQTT_SERVICE",
@@ -24,7 +27,7 @@ import { JwtGenerateService } from '../services/jwt.generate/jwt.generate.servic
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  controllers: [AppController, MqttController],
-  providers: [AppService, JwtGenerateService],
+  controllers: [AppController, MqttController, PassportController],
+  providers: [AppService, JwtGenerateService, PassportService],
 })
 export class AppModule {}

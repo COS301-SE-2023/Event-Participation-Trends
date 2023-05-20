@@ -20,7 +20,8 @@
       ],
       "@event-participation-trends/app/login/feature": [
         "libs/app/login/feature/src/index.ts"
-      ]
+      ],
+      "@event-participation-trends/passport": ["libs/passport/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
