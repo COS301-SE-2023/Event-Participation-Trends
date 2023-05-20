@@ -1,10 +1,9 @@
-import { Controller, Get, UseGuards, RequestMapping, Req, Res } from '@nestjs/common';
+import { Controller, Get, UseGuards, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { JwtGuard } from '../guards/jwt.guard';
 import { AppService } from './app.service';
 import { JwtGenerateService } from '../services/jwt.generate/jwt.generate.service';
-import cookieParser from 'cookie-parser';
-import { randomInt, randomUUID } from 'crypto';
+import { randomUUID } from 'crypto';
 
 @Controller()
 export class AppController {
@@ -21,7 +20,7 @@ export class AppController {
 
   @Get('/login')
   async login(@Res() response: Response) {
-    const responseCookie = await this.JwtGenerateService.generateJwt({ id: randomUUID(), username: 'test' }).then((jwt) => {
+    this.JwtGenerateService.generateJwt({ id: randomUUID(), username: 'test' }).then((jwt) => {
       response.cookie('jwt', jwt, { httpOnly: true });
       response.redirect('/api/');
     });

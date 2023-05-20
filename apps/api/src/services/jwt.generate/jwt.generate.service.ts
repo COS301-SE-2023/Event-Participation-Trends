@@ -7,7 +7,7 @@ export class JwtGenerateService {
         private jwtService: JwtService,
     ) {}
 
-    async generateJwt(payload: any) {
+    async generateJwt(payload: object) {
         const access_token_g = await this.jwtService.signAsync(payload);
         return access_token_g;
     }
