@@ -1,0 +1,17 @@
+name: Build and Lint
+'on':
+  pull_request:
+    branches:
+      - '*_dev'
+  push:
+    branches:
+      - '*_dev'
+jobs:
+  all_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "${{ secrets.DOTENVFILE }}" > .env
+      - run: 'yarn install'
+      - run: 'yarn nx run-many --target=lint --all --parallel --skip-nx-cache'
+      - run: 'yarn nx run-many --target=build --all --parallel --skip-nx-cache'
