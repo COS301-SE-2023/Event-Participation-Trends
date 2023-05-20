@@ -1,6 +1,7 @@
-import { Controller, UseGuards, Req, Get, Request } from '@nestjs/common';
+import { Controller, UseGuards, Req, Get, Request, Res } from '@nestjs/common';
+import { Response as express_response } from 'express';
 import { PassportService } from './passport.service';
-import { GoogleOAuthGuard } from '../google-oauth-guard.guard';
+import { GoogleOAuthGuard } from '../google-oauth-guard.guard'
 
 @Controller('auth/')
 export class PassportController {
@@ -14,7 +15,10 @@ export class PassportController {
 
   @Get('google/callback')
   @UseGuards(GoogleOAuthGuard)
-  async googleAuthRedirect(@Req() req: any) {
-    return this.passportService.googleLogin(req);
+  async googleAuthRedirect(@Req() req: Request, @Res() res: express_response) {
+    this.passportService.generateJWT(req).then((token) => {
+      res.cookie('jwt', token, { httpOnly: true });
+      res.redirect('/api');
+    });
   }
 }

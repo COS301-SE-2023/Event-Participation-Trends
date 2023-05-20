@@ -4,9 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MqttController } from './mqtt.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtGenerateService } from '../services/jwt.generate/jwt.generate.service';
 import { PassportController, PassportService, PassportModule as Wow } from '@event-participation-trends/passport';
-import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -28,6 +26,6 @@ import { PassportModule } from '@nestjs/passport';
     }),
   ],
   controllers: [AppController, MqttController, PassportController],
-  providers: [AppService, JwtGenerateService, PassportService],
+  providers: [AppService, PassportService],
 })
 export class AppModule {}
