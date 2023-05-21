@@ -22,7 +22,6 @@
     "@nestjs/microservices": "^9.4.1",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.1.1",
-    "@nestjs/jwt": "^9.1.1",
     "@nx/angular": "16.1.0",
     "@types/passport-google-oauth20": "^2.0.11",
     "@types/passport-local": "^1.0.35",
@@ -35,10 +34,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.13.0",
-    "passport-google-oauth20": "^2.0.0",
-    "cookie-parser": "^1.4.6",
-    "@types/cookie-parser": "^1.4.3"
+    "zone.js": "~0.13.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~16.0.0",
@@ -64,6 +60,7 @@
     "@nx/webpack": "16.1.0",
     "@nx/workspace": "16.1.0",
     "@schematics/angular": "~16.0.0",
+    "@types/cookie-parser": "^1.4.3",
     "@types/jest": "^29.4.0",
     "@types/node": "~18.7.1",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
