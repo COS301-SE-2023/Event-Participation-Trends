@@ -8,6 +8,18 @@ The wireless sensors connect in a mesh-like topology to feed RSSI data to a wire
 
 The system uses Google Authentication to ensure security and privacy of the data and enforces role-based access control to ensure that only authorised users can access the data.
 
+## About Us
+
+| Name | Student Number | GitHub Username | Description | LinkedIn Profile |
+| ---- | -------------- | --------------- | ----------- | --- |
+| Lukas Anthonissen | u21434345 | [DieSeeKat](https://github.com/DieSeeKat) | Project manager and AI engineer | [Link](https://www.linkedin.com/in/lukas-anthonissen-854980244/) |
+| Stefan van der Merwe | u21429121 | [Stefan-vdm](https://github.com/Stefan-vdm) | Hardware and DevOps engineer |
+| Reuben Jooste | u21457060 | [JsteReubsSoftware](https://github.com/JsteReubsSoftware) | Ux/UI designer and frontend engineer |
+| Arno Jooste | u21457451 | [08Arno30](https://github.com/08Arno30) | Ux/UI designer and frontend engineer |
+| Luca Loubser | u20439963 | [LucaLoubser](https://github.com/LucaLoubser) | Backend and Database engineer |
+
+
+
 ## Links
 
 | Description | Link |
