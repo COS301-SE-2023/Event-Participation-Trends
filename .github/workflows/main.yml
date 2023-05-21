@@ -1,0 +1,15 @@
+name: Deploys, everything has already been tested
+on:
+    pull_request:
+      types: [closed]
+      branches:
+        - main
+
+jobs:
+  main_deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: 'yarn install'
+    # This will still be added, we need to add steps for deployment here
