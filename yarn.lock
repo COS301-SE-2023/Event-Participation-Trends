@@ -1992,6 +1992,20 @@
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-16.0.0.tgz#10ac32881ca8fbd66354a693d03326e048a56f5f"
   integrity sha512-I5zjGtJu2wwIdM+OFUHXezmwTJ0wpParVJgCxR0cLd0CIbpRYSjOSZQN/nR9ZnTKAI5uFZ3MM2p/VRQGUUHUcw==
 
+"@ngxs/router-plugin@^3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@ngxs/router-plugin/-/router-plugin-3.8.1.tgz#7abb0d108640c4d89dfcdbe63ac372cb2e33a928"
+  integrity sha512-nxzcScDsZEgAjI1jD6kO/pAdG3rji8AwZK2DWZKCEE87Y7vUnY2q1Ar+AtaUQasqMwtw4ShRMzt1eBf98vEDUg==
+  dependencies:
+    tslib "^2.2.0"
+
+"@ngxs/store@^3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@ngxs/store/-/store-3.8.1.tgz#dc4b823fc179149c32ac6158149877dda615abd2"
+  integrity sha512-nbapLdMx+mtnb57BUWXbD6qYfVICv6Rp2NdoGx1++qDbc44ALC49KbF7rSjyPltlExxharAzoNpzO3JuueCP+A==
+  dependencies:
+    tslib "^2.2.0"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -2165,13 +2179,6 @@
   integrity sha512-Yg2UAmV3i35h6rIGDSoYYXp2AFMBzH23pZWlzLfEMH2QzNki7N4EtpclaLgdMLMCZYfCPWp5kRYyZHArnFI4Kg==
   dependencies:
     "@nx/nest" "16.2.1"
-
-"@nrwl/node@16.1.0":
-  version "16.1.0"
-  resolved "https://registry.yarnpkg.com/@nrwl/node/-/node-16.1.0.tgz#34632a74d1dc446c7ae436e9319c200c34e2da05"
-  integrity sha512-mlwImbs4nFamL+kINd7q8BKVO82ClDJGvO6XtHMRAkIT4+eN6GjF1SZiGQnGuC9u3+MODljRx8uddXDRCaCVpw==
-  dependencies:
-    "@nx/node" "16.1.0"
 
 "@nrwl/node@16.2.1":
   version "16.2.1"
@@ -2433,7 +2440,7 @@
     tmp "~0.2.1"
     tslib "^2.3.0"
 
-"@nx/nest@16.2.1":
+"@nx/nest@16.2.1", "@nx/nest@^16.1.0":
   version "16.2.1"
   resolved "https://registry.yarnpkg.com/@nx/nest/-/nest-16.2.1.tgz#8262fbbf3fd971974557e8029c7d417318909c92"
   integrity sha512-+i0yfF4V5BdboV75JVP3a7XLZD5DBzAHjLKviO6vMCXiMfVryuwjkgHWHPHahHaqt8Cn00S3nWcZwooTVtDK9A==
@@ -2445,19 +2452,6 @@
     "@nx/linter" "16.2.1"
     "@nx/node" "16.2.1"
     enquirer "~2.3.6"
-
-"@nx/node@16.1.0":
-  version "16.1.0"
-  resolved "https://registry.yarnpkg.com/@nx/node/-/node-16.1.0.tgz#370268c9aee6f760f8478dad088b12f71437b880"
-  integrity sha512-xyYiRbVsfjCiAOK9ozn9cgNkKPbkz6L7UOtmuRqrIA4X9POI8eDDn0m996TYMbRJPJl1NAJCKfPV3tV9CPbY8A==
-  dependencies:
-    "@nrwl/node" "16.1.0"
-    "@nx/devkit" "16.1.0"
-    "@nx/jest" "16.1.0"
-    "@nx/js" "16.1.0"
-    "@nx/linter" "16.1.0"
-    "@nx/workspace" "16.1.0"
-    tslib "^2.3.0"
 
 "@nx/node@16.2.1":
   version "16.2.1"
@@ -3495,6 +3489,13 @@ ajv@^6.10.0, ajv@^6.12.4, ajv@^6.12.5:
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
+
+angularx-social-login@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/angularx-social-login/-/angularx-social-login-4.1.0.tgz#e32333605bd5b36a05148b82aa329cebbd747d98"
+  integrity sha512-nSYLvGhI7MZtN/RxRie5GEl/rytIJPRPeSQSgiXbDESJC9zjuik629kqMCPnLCRk5SfTBrXSNcpZ8X/5kgsDKg==
+  dependencies:
+    tslib "^2.0.0"
 
 ansi-colors@4.1.3, ansi-colors@^4.1.1:
   version "4.1.3"
@@ -6373,6 +6374,11 @@ image-size@~0.5.0:
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.5.5.tgz#09dfd4ab9d20e29eb1c3e80b8990378df9e3cb9c"
   integrity sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==
 
+immer@^10.0.2:
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-10.0.2.tgz#11636c5b77acf529e059582d76faf338beb56141"
+  integrity sha512-Rx3CqeqQ19sxUtYV9CU911Vhy8/721wRFnJv3REVGWUmoAcIwzifTsdmJte/MV+0/XpM35LZdQMBGkRIoLPwQA==
+
 immutable@^4.0.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.3.0.tgz#eb1738f14ffb39fd068b1dbe1296117484dd34be"
@@ -8304,11 +8310,6 @@ nx@16.2.1:
     "@nx/nx-linux-x64-musl" "16.2.1"
     "@nx/nx-win32-arm64-msvc" "16.2.1"
     "@nx/nx-win32-x64-msvc" "16.2.1"
-
-oauth@0.9.x:
-  version "0.9.15"
-  resolved "https://registry.yarnpkg.com/oauth/-/oauth-0.9.15.tgz#bd1fefaf686c96b75475aed5196412ff60cfb9c1"
-  integrity sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==
 
 object-assign@^4, object-assign@^4.1.1:
   version "4.1.1"
@@ -10330,6 +10331,11 @@ tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
+
+tslib@^2.0.0, tslib@^2.2.0:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.2.tgz#1b6f07185c881557b0ffa84b111a0106989e8338"
+  integrity sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==
 
 tsutils@^3.21.0:
   version "3.21.0"
