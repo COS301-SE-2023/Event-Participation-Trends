@@ -26,11 +26,11 @@
     "@ngxs/store": "^3.8.1",
     "@nx/angular": "16.1.0",
     "@types/passport-google-oauth20": "^2.0.10",
-    "angularx-social-login": "^4.1.0",
-    "immer": "^10.0.2",
     "@types/passport-local": "^1.0.35",
+    "angularx-social-login": "^4.1.0",
     "axios": "^1.0.0",
     "cookie-parser": "^1.4.6",
+    "immer": "^10.0.2",
     "mqtt": "^4.3.7",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
@@ -38,6 +38,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "wait-on": "^7.0.1",
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
