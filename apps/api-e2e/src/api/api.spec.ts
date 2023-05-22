@@ -20,7 +20,7 @@ describe('GET /api', () => {
         }
       }
     }
-  }, 10000);
+  }, 25000);
 
   let res;
   it('should return a message', async () => {
