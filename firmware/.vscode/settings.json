@@ -1,8 +1,4 @@
 {
-  "cSpell.words": [
-    "flowmaps",
-    "heatmaps"
-  ],
   "C_Cpp.intelliSenseEngine": "Tag Parser",
   "idf.adapterTargetName": "esp32s2",
   "idf.openOcdConfigs": [
