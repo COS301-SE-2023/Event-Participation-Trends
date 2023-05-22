@@ -23,6 +23,9 @@ yarn nx generate @nrwl/angular:module login --project=app-login-feature --routin
 yarn nx generate @nrwl/angular:module auth --project=app-auth-feature
 yarn nx generate @nrwl/angular:module auth --project=app-auth-data-access
 
+# HOME
+yarn nx generate @nrwl/angular:module home --project=app-home-feature --routing
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -44,3 +47,6 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/log
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/auth --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/auth --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/auth --no-interactive        # --> util
+
+# HOME
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/home --no-interactive     # --> feature
