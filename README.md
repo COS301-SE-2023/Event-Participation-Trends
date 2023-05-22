@@ -47,7 +47,7 @@ The system uses Google Authentication to ensure security and privacy of the data
 | Name                 | Student Number | GitHub Username                                           | Description                          | LinkedIn Profile                                                 |
 | -------------------- | -------------- | --------------------------------------------------------- | ------------------------------------ | ---------------------------------------------------------------- |
 | Lukas Anthonissen    | u21434345      | [DieSeeKat](https://github.com/DieSeeKat)                 | Project manager and AI engineer      | [Link](https://www.linkedin.com/in/lukas-anthonissen-854980244/) |
-| Stefan van der Merwe | u21429121      | [Stefan-vdm](https://github.com/Stefan-vdm)               | Hardware and DevOps engineer         |
+| Stefan van der Merwe | u21429121      | [Stefan-vdm](https://github.com/Stefan-vdm)               | Hardware and DevOps engineer         | [Link](https://www.linkedin.com/in/stefan-van-der-merwe-23a9a3244/)|
 | Reuben Jooste        | u21457060      | [JsteReubsSoftware](https://github.com/JsteReubsSoftware) | Ux/UI designer and frontend engineer |
 | Arno Jooste          | u21457451      | [08Arno30](https://github.com/08Arno30)                   | Ux/UI designer and frontend engineer |
 | Luca Loubser         | u20439963      | [LucaLoubser](https://github.com/LucaLoubser)             | Backend and Database engineer        |
