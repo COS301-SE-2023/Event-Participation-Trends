@@ -26,7 +26,6 @@ describe('GET /api', () => {
   it('should return a message', async () => {
     try {
       res = await axios.get('api/');
-      console.log(res);
     } catch (error) {
       expect(error.response.status).toEqual(401);
       return;
