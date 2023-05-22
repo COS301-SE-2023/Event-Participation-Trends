@@ -1,41 +1,49 @@
-<ion-content [fullscreen]="true" ngClass="login-page" color="none">
-    <div class="login-page">
-        <div class="about-us-section">
-            <ion-text class="about-us-title">
-                Event Participation Trends
-            </ion-text>
-            <ion-card ngClass="about-us-card">
-                <ion-card-header color="none" ngClass="about-us-card-header">About Us</ion-card-header>
-                <ion-card-content ngClass="about-us-card-content">
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                        , sed do eiusmod tempor incididunt ut labore et dolore 
-                        magna aliqua. Ut enim ad minim veniam, quis nostrud 
-                        exercitation ullamco laboris nisi ut aliquip ex ea 
-                        commodo consequat. Duis aute irure dolor in 
-                        reprehenderit in voluptate velit esse cillum dolore eu 
-                        fugiat nulla pariatur. Excepteur sint occaecat 
-                        cupidatat non proident, sunt in culpa qui officia 
-                        deserunt mollit anim id est laborum.
-                    </p>
-                </ion-card-content>
-            </ion-card>
-            <div class="footer-images">
-                <img ngClass="footer-image1" src="https://media.licdn.com/dms/image/D4D05AQH6LdAV_TVoaQ/videocover-low/0/1683877137702?e=2147483647&v=beta&t=8BzSpBVaKg4mgsLVwl-cYZsu_80tBsL1Ov8P-W1K000" />
-            </div>
-        </div>
-        <div class="login-section">
-            <img class="logo" src="https://www.up.ac.za/media/shared/119/ZP_Images/IndustryPartners/gendac.zp99790.png" />
-            <div class="login-content">
-                <ion-title ngClass="login-title">Welcome!</ion-title>
-                <ion-text color="none" ngClass="login-text">Log in/Sign up using a Google account</ion-text>
-                <ion-icon  ngClass="button-logo" name="logo-google" slot="start"></ion-icon>
-                <ion-button ngClass="login-button" color="none">
-                    <ion-label ngClass="button-text">Log in with Google</ion-label>
-                </ion-button>
-                <ion-text color="none" ngClass="login-text-tip">Once logged in/Signed up you will be able to view events.</ion-text>
-                <img class="login-footer-image" src="https://www.gendac.co.za/wp-content/uploads/2022/05/WebLineMap.png" />
-            </div>
-        </div>
+<ion-content
+  [fullscreen]="true"
+  ngClass="login-page"
+  color="none"
+  scrollY="false"
+>
+  <ion-title ngClass="login-title">Event Participation Trends</ion-title>
+  <!-- <img src="./assets/logo.png" width="50px"> -->
+  <div class="login-page">
+    <div class="about-us-section">
+      <ion-card ngClass="about-us-card">
+        <ion-card-header color="none" ngClass="about-us-card-header"
+          >About Us</ion-card-header
+        >
+        <ion-card-content ngClass="about-us-card-content">
+          <p>
+            Our system leverages Bluetooth devices to provide accurate and real-time tracking of participants within event spaces. With our solution, event managers can effortlessly create and configure events, while viewers gain access to valuable insights through visualizations like heatmaps and flowmaps. We are committed to delivering a seamless user experience and empowering event organizers with the tools they need to optimize participant engagement and enhance overall event experiences.
+          </p>
+        </ion-card-content>
+      </ion-card>
     </div>
+    <div class="login-section">
+      <div class="login-content">
+        <ion-text color="none" ngClass="login-text"
+          >Log in/Sign up using a Google account</ion-text
+        >
+        <ion-button
+          href="/api/auth/google"
+          ngClass="login-button"
+          color="none"
+          (click)="continueWithGoogle()"
+        >
+          <ion-icon
+            ngClass="button-logo"
+            name="logo-google"
+            slot="start"
+          ></ion-icon>
+          <ion-label ngClass="button-text">Log in with Google</ion-label>
+        </ion-button>
+        <ion-text color="none" ngClass="login-text-tip"
+          >Once logged in/Signed up you will be able to view events.</ion-text
+        >
+      </div>
+    </div>
+    <div class="footer-images">
+      <img ngClass="footer-image1" src="assets/EPT.svg" />
+    </div>
+  </div>
 </ion-content>

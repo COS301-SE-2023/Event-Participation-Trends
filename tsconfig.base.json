@@ -15,11 +15,38 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@event-participation-trends/api/passport": [
+        "libs/api/passport/src/index.ts"
+      ],
+      "@event-participation-trends/app/auth/data-access": [
+        "libs/app/auth/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/auth/feature": [
+        "libs/app/auth/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/auth/util": [
+        "libs/app/auth/util/src/index.ts"
+      ],
       "@event-participation-trends/app/core/feature": [
         "libs/app/core/feature/src/index.ts"
       ],
+      "@event-participation-trends/app/error/data-access": [
+        "libs/app/error/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/error/feature": [
+        "libs/app/error/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/error/util": [
+        "libs/app/error/util/src/index.ts"
+      ],
+      "@event-participation-trends/app/login/data-access": [
+        "libs/app/login/data-access/src/index.ts"
+      ],
       "@event-participation-trends/app/login/feature": [
         "libs/app/login/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/login/util": [
+        "libs/app/login/util/src/index.ts"
       ]
     }
   },
