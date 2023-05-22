@@ -18,8 +18,14 @@ implementations to reduce the amount of
 code that has to be rewritten over and over...
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 void easy_wifi_connect(wifi_config_t wifi_config, int max_retry, bool wait_for_ip, bool wait_for_connect);
 void easy_wifi_disconnect();
 bool wifi_is_connected();
+#ifdef __cplusplus
+}
+#endif
 
 #endif

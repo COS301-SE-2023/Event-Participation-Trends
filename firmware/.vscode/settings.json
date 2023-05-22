@@ -20,6 +20,8 @@
     "initializer_list": "c",
     "regex": "c",
     "utility": "c",
-    "netfwd": "c"
+    "netfwd": "c",
+    "unordered_map": "cpp",
+    "system_error": "cpp"
   }
 }
