@@ -39,3 +39,9 @@ testem.log
 Thumbs.db
 
 .angular
+.env
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json
+firmware/.vscode/tasks.json
+.vscode/extensions.json

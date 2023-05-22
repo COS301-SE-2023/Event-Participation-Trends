@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@event-participation-trends/api/passport": [
+        "libs/api/passport/src/index.ts"
+      ],
       "@event-participation-trends/app/auth/data-access": [
         "libs/app/auth/data-access/src/index.ts"
       ],
