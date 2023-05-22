@@ -44,3 +44,4 @@ Thumbs.db
 .vscode/settings.json
 .vscode/tasks.json
 firmware/.vscode/tasks.json
+.vscode/extensions.json
