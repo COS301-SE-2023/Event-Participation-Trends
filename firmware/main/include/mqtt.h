@@ -9,9 +9,17 @@
 #include "mqtt_client.h"
 #include "esp_mac.h"
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 esp_mqtt_client_handle_t INITIALIZE_MQTT(bool wait_for_connection);
 esp_err_t mqtt_publish_debug(const char* data);
 esp_err_t mqtt_publish_sensor(const char* data);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

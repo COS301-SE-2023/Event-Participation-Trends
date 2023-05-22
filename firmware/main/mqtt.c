@@ -17,6 +17,7 @@ esp_err_t mqtt_publish_debug(const char *data)
     return ESP_FAIL;
 }
 
+
 esp_err_t mqtt_publish_sensor(const char *data)
 {
     if (mqtt_client != NULL && mqtt_client_connected)

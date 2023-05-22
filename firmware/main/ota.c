@@ -1,51 +1,38 @@
 #include "ota.h"
 static const char *TAG = "OTA_H";
 esp_http_client_handle_t client;
-esp_netif_t *net;
-int retry = 0;
-bool retry_exceeded = false;
-bool got_ip = false;
-
-bool wifi_is_connected()
-{
-    wifi_ap_record_t ap_info;
-    if (esp_wifi_sta_get_ap_info(&ap_info) == ESP_OK)
-    {
-        if (ap_info.rssi > -127 && ap_info.ssid[0] != '\0')
-        {
-            return true;
-        }
-    }
-    return false;
-}
+esp_netif_t *net_ota;
+int retry_ota = 0;
+bool retry_exceeded_ota = false;
+bool got_ip_ota = false;
 
 static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     #ifdef CONFIG_OTA_ENABLE
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
     {
-        if (retry < CONFIG_OTA_MAX_RETRY)
+        if (retry_ota < CONFIG_OTA_MAX_RETRY)
         {
             esp_wifi_connect();
-            retry++;
-            ESP_LOGI(TAG, "AP disconnected, attempting to reconnect (attempt %d/%d)", retry, CONFIG_OTA_MAX_RETRY);
+            retry_ota++;
+            ESP_LOGI(TAG, "AP disconnected, attempting to reconnect (attempt %d/%d)", retry_ota, CONFIG_OTA_MAX_RETRY);
         }
         else
         {
             ESP_LOGI(TAG, "Failed to connect to AP, terminating OTA update process");
-            retry_exceeded = true;
+            retry_exceeded_ota = true;
         }
     }
     else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_CONNECTED)
     {
-        retry = 0;
+        retry_ota = 0;
     }
     #endif
 }
 
 static void ip_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    got_ip = true;
+    got_ip_ota = true;
 }
 
 void startWifi()
@@ -60,7 +47,7 @@ void startWifi()
     ESP_ERROR_CHECK(ret);
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
-    net = esp_netif_create_default_wifi_sta();
+    net_ota = esp_netif_create_default_wifi_sta();
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     esp_event_handler_instance_t instance_any_id;
@@ -85,7 +72,7 @@ void stopWifi()
     esp_wifi_disconnect();
     esp_wifi_stop();
     esp_wifi_deinit();
-    esp_netif_destroy_default_wifi(net);
+    esp_netif_destroy_default_wifi(net_ota);
     esp_event_loop_delete_default();
     esp_netif_deinit();
     nvs_flash_deinit();
@@ -97,13 +84,13 @@ void perform_ota_advanced()
     startWifi();
     while (!wifi_is_connected())
     {
-        if (retry_exceeded)
+        if (retry_exceeded_ota)
             return;
         ESP_LOGW(TAG, "Waiting for WiFi connection...");
         vTaskDelay(500 / portTICK_PERIOD_MS);
     }
     int ip_wait = 5;
-    while(!got_ip){
+    while(!got_ip_ota){
         vTaskDelay(1000);
         ip_wait--;
         if(ip_wait == 0)

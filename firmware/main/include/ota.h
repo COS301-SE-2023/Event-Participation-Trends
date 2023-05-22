@@ -11,7 +11,13 @@
 #include "nvs_flash.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
+#include "utils.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 void perform_ota_advanced();
-
+#ifdef __cplusplus
+}
+#endif
 #endif
