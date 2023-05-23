@@ -57,3 +57,4 @@ The system uses Google Authentication to ensure security and privacy of the data
 | Description                       | Link                                                                                                     |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | System Requirements Specification | [Link](https://docs.google.com/document/d/1Doeb5QJNxG2spNTYSLdacT7NHsnLVPAS4rcuX1nRqrY/edit?usp=sharing) |
+| Notion | [Link](https://lukasanthonissen.notion.site/Indlovu-Event-Participant-Trends-ffbc614bd9444ad2a031b2d77ae02324) |
