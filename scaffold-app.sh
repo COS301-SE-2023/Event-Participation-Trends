@@ -36,6 +36,11 @@ yarn nx generate @nrwl/angular:component view-events --project=app-view-events-f
 yarn nx generate @nrwl/angular:module view-events --project=app-view-events-feature --routing
 yarn nx generate @nrwl/angular:module view-events --project=app-view-events-data-access
 
+# COMPARE EVENTS
+yarn nx generate @nrwl/angular:component compare-events --project=app-compare-events-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module compare-events --project=app-compare-events-feature --routing
+yarn nx generate @nrwl/angular:module compare-events --project=app-compare-events-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -70,3 +75,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/use
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/view-events --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/view-events --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/view-events --no-interactive        # --> util
+
+# COMPARE EVENTS
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/compare-events --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/compare-events --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/compare-events --no-interactive        # --> util
