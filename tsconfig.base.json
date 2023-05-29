@@ -50,6 +50,15 @@
       ],
       "@event-participation-trends/app/login/util": [
         "libs/app/login/util/src/index.ts"
+      ],
+      "@event-participation-trends/app/user-management/data-access": [
+        "libs/app/user-management/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/user-management/feature": [
+        "libs/app/user-management/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/user-management/util": [
+        "libs/app/user-management/util/src/index.ts"
       ]
     }
   },
