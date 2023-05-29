@@ -6,6 +6,12 @@ const routes: Routes = [
   {    
     path: '',
     component: HomePage,
+    children: [
+      {
+        path: 'user-management',
+        loadChildren: () => import('@event-participation-trends/app/user-management/feature').then(m => m.UserManagementModule)
+      },
+    ],
   },
   {
     path: '',

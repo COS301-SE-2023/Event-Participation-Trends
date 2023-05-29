@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { 
+  AuthGuard,
+} from '@nestjs/passport';
 
 const routes: Routes = [
   {
@@ -9,7 +12,14 @@ const routes: Routes = [
     data: {},
     loadChildren: () =>
       import('@event-participation-trends/app/login/feature').then((m) => m.LoginModule),
-  }
+  },
+  {
+    path: 'home',
+    canActivate: [AuthGuard],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/home/feature').then((m) => m.HomeModule),
+  },
 ];
 
 @NgModule({
