@@ -1,1 +1,3 @@
-export * from './lib/app-dashboard-data-access';
+export * from './dashboard.module';
+export * from './dashboard.state';
+// export * from './dashboard.api';
