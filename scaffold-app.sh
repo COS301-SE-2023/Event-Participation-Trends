@@ -41,6 +41,11 @@ yarn nx generate @nrwl/angular:component compare-events --project=app-compare-ev
 yarn nx generate @nrwl/angular:module compare-events --project=app-compare-events-feature --routing
 yarn nx generate @nrwl/angular:module compare-events --project=app-compare-events-data-access
 
+# DASHBOARD
+yarn nx generate @nrwl/angular:component dashboard --project=app-dashboard-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module dashboard --project=app-dashboard-feature --routing
+yarn nx generate @nrwl/angular:module dashboard --project=app-dashboard-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -80,3 +85,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/vie
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/compare-events --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/compare-events --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/compare-events --no-interactive        # --> util
+
+# DASHBOARD
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/dashboard --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/dashboard --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/dashboard --no-interactive        # --> util

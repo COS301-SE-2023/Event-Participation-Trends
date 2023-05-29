@@ -39,6 +39,15 @@
       "@event-participation-trends/app/core/feature": [
         "libs/app/core/feature/src/index.ts"
       ],
+      "@event-participation-trends/app/dashboard/data-access": [
+        "libs/app/dashboard/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/dashboard/feature": [
+        "libs/app/dashboard/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/dashboard/util": [
+        "libs/app/dashboard/util/src/index.ts"
+      ],
       "@event-participation-trends/app/error/data-access": [
         "libs/app/error/data-access/src/index.ts"
       ],
