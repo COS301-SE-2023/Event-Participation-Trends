@@ -20,6 +20,13 @@ const routes: Routes = [
     loadChildren: () =>
       import('@event-participation-trends/app/home/feature').then((m) => m.HomeModule),
   },
+  {
+    path: 'dashboard',
+    canActivate: [AuthGuard],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/dashboard/feature').then((m) => m.DashboardModule),
+  },
 ];
 
 @NgModule({
