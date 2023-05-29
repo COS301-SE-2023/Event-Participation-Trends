@@ -26,6 +26,10 @@ yarn nx generate @nrwl/angular:module auth --project=app-auth-data-access
 # HOME
 yarn nx generate @nrwl/angular:module home --project=app-home-feature --routing
 
+# USER MANAGEMENT (Tab visible for Admins only)
+yarn nx generate @nrwl/angular:component userManagement --project=app-userManagement-feature --export --flat --type=page
+yarn nx generate @nrwl/angular:module userManagement --project=app-userManagement-feature --routing
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -50,3 +54,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/aut
 
 # HOME
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/home --no-interactive     # --> feature
+
+# USER MANAGEMENT (Used by Admins only)
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/userManagement --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/userManagement --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/userManagement --no-interactive        # --> util
