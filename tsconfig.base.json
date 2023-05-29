@@ -15,8 +15,38 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@event-participation-trends/api/admin/data-access": [
+        "libs/api/admin/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/api/admin/feature": [
+        "libs/api/admin/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/admin/util": [
+        "libs/api/admin/util/src/index.ts"
+      ],
+      "@event-participation-trends/api/core/feature": [
+        "libs/api/core/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/manager/data-access": [
+        "libs/api/manager/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/api/manager/feature": [
+        "libs/api/manager/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/manager/util": [
+        "libs/api/manager/util/src/index.ts"
+      ],
       "@event-participation-trends/api/passport": [
         "libs/api/passport/src/index.ts"
+      ],
+      "@event-participation-trends/api/viewer/data-access": [
+        "libs/api/viewer/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/api/viewer/feature": [
+        "libs/api/viewer/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/viewer/util": [
+        "libs/api/viewer/util/src/index.ts"
       ],
       "@event-participation-trends/app/auth/data-access": [
         "libs/app/auth/data-access/src/index.ts"
