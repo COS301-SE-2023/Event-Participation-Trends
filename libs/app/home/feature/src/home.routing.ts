@@ -11,6 +11,10 @@ const routes: Routes = [
         path: 'user-management',
         loadChildren: () => import('@event-participation-trends/app/user-management/feature').then(m => m.UserManagementModule)
       },
+      {
+        path: 'view-events',
+        loadChildren: () => import('@event-participation-trends/app/view-events/feature').then(m => m.ViewEventsModule)
+      }
     ],
   },
   {

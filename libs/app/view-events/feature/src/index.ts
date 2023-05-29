@@ -1,3 +1,4 @@
-export * from './lib/app-view-events-feature';
-
-export * from './lib/view-events.page';
+export * from './view-events.module';
+export * from './view-events.page';
+export * from './view-events.page.spec';
+export * from './view-events.routing';
