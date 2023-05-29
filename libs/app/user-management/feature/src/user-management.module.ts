@@ -6,7 +6,7 @@ import { UserManagementPage } from './user-management.page';
 import { UserManagementModule as UserManagementDataAccessModule } from '@event-participation-trends/app/user-management/data-access';
 
 @NgModule({
-  declarations: [],
+  declarations: [UserManagementPage],
   imports: [
     CommonModule,
     UserManagementRoutingModule,

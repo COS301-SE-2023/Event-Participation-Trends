@@ -7,7 +7,7 @@ import { ViewEventsModule as ViewEventsDataAccessModule } from '@event-participa
 
 
 @NgModule({
-  declarations: [],
+  declarations: [ViewEventsPage],
   imports: [
     CommonModule,
     ViewEventsRoutingModule,
