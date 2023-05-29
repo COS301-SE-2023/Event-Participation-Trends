@@ -1,1 +1,3 @@
-export * from './lib/app-compare-events-data-access';
+export * from './compare-events.module';
+export * from './compare-events.state';
+// export * from './compare-events.api';

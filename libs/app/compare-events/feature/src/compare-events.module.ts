@@ -2,13 +2,15 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CompareEventsRoutingModule } from './compare-events.routing';
-
+import { CompareEventsPage } from './compare-events.page';
+import { CompareEventsModule as CompareEventsDataAccessModule } from '@event-participation-trends/app/compare-events/data-access';
 
 @NgModule({
-  declarations: [],
+  declarations: [CompareEventsPage],
   imports: [
     CommonModule,
-    CompareEventsRoutingModule
+    CompareEventsRoutingModule,
+    CompareEventsDataAccessModule
   ]
 })
 export class CompareEventsModule { }
