@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MqttController } from './mqtt.controller';
 import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
 import {
   PassportController,
   PassportService,
@@ -28,6 +29,7 @@ import {
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
+    MongooseModule.forRoot(process.env.MONGO_ALTALS_CONNECTION_URL),
   ],
   controllers: [AppController, MqttController, PassportController],
   providers: [AppService, PassportService],
