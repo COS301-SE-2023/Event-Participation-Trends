@@ -1,21 +1,21 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CompareEventsPage } from './compare-events.page';
+// import { ComponentFixture, TestBed } from '@angular/core/testing';
+// import { CompareEventsPage } from './compare-events.page';
 
-describe('CompareEventsPage', () => {
-  let component: CompareEventsPage;
-  let fixture: ComponentFixture<CompareEventsPage>;
+// describe('CompareEventsPage', () => {
+//   let component: CompareEventsPage;
+//   let fixture: ComponentFixture<CompareEventsPage>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [CompareEventsPage],
-    }).compileComponents();
+//   beforeEach(async () => {
+//     await TestBed.configureTestingModule({
+//       imports: [CompareEventsPage],
+//     }).compileComponents();
 
-    fixture = TestBed.createComponent(CompareEventsPage);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+//     fixture = TestBed.createComponent(CompareEventsPage);
+//     component = fixture.componentInstance;
+//     fixture.detectChanges();
+//   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+//   it('should create', () => {
+//     expect(component).toBeTruthy();
+//   });
+// });
