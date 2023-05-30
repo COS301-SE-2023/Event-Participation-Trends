@@ -105,3 +105,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/das
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/manager-events --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/manager-events --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/manager-events --no-interactive        # --> util
+
+# Floor editor
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/floor-editor --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/floor-editor --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/floor-editor --no-interactive        # --> util
