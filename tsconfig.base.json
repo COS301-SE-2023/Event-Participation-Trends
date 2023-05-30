@@ -66,6 +66,15 @@
       "@event-participation-trends/app/event-details/util": [
         "libs/app/event-details/util/src/index.ts"
       ],
+      "@event-participation-trends/app/event-full-view/data-access": [
+        "libs/app/event-full-view/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/event-full-view/feature": [
+        "libs/app/event-full-view/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/event-full-view/util": [
+        "libs/app/event-full-view/util/src/index.ts"
+      ],
       "@event-participation-trends/app/floor-editor/data-access": [
         "libs/app/floor-editor/data-access/src/index.ts"
       ],
