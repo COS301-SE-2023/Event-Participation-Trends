@@ -95,3 +95,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/com
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/dashboard --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/dashboard --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/dashboard --no-interactive        # --> util
+
+# My Events (for Event Manager)
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/manager-events --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/manager-events --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/manager-events --no-interactive        # --> util
