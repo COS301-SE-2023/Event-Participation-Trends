@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { FloorEditorRoutingModule } from './floor-editor-routing.module';
+import { FloorEditorRoutingModule } from './floor-editor.routing';
 
 
 @NgModule({
