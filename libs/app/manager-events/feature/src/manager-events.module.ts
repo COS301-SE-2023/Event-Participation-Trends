@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ManagerEventsRoutingModule } from './manager-events-routing.module';
+import { ManagerEventsRoutingModule } from './manager-events.routing';
 
 
 @NgModule({
