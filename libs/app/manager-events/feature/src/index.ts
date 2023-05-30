@@ -4,4 +4,4 @@ export * from './manager-events.page'
 
 export * from './manager-events.routing'
 
-export * from './manager-events.page.spec'
+// export * from './manager-events.page.spec'
