@@ -46,6 +46,11 @@ yarn nx generate @nrwl/angular:component dashboard --project=app-dashboard-featu
 yarn nx generate @nrwl/angular:module dashboard --project=app-dashboard-feature --routing
 yarn nx generate @nrwl/angular:module dashboard --project=app-dashboard-data-access
 
+# My Events (for Event Manager)
+yarn nx generate @nrwl/angular:component manager-events --project=app-manager-events-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module manager-events --project=app-manager-events-feature --routing
+yarn nx generate @nrwl/angular:module manager-events --project=app-manager-events-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
