@@ -69,6 +69,15 @@
       "@event-participation-trends/app/login/util": [
         "libs/app/login/util/src/index.ts"
       ],
+      "@event-participation-trends/app/manager-events/data-access": [
+        "libs/app/manager-events/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/manager-events/feature": [
+        "libs/app/manager-events/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/manager-events/util": [
+        "libs/app/manager-events/util/src/index.ts"
+      ],
       "@event-participation-trends/app/user-management/data-access": [
         "libs/app/user-management/data-access/src/index.ts"
       ],
