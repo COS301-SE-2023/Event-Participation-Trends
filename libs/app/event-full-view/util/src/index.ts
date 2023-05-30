@@ -1,1 +1,1 @@
-export * from './event-full-view.api';
+// export * from './event-full-view.api';
