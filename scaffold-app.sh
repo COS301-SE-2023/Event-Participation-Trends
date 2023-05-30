@@ -56,6 +56,11 @@ yarn nx generate @nrwl/angular:component floor-editor --project=app-floor-editor
 yarn nx generate @nrwl/angular:module floor-editor --project=app-floor-editor-feature --routing
 yarn nx generate @nrwl/angular:module floor-editor --project=app-floor-editor-data-access
 
+# Event Details
+yarn nx generate @nrwl/angular:component event-details --project=app-event-details-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module event-details --project=app-event-details-feature --routing
+yarn nx generate @nrwl/angular:module event-details --project=app-event-details-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -106,7 +111,12 @@ yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/manager-events --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/manager-events --no-interactive        # --> util
 
-# Floor editor
+# Floor Editor
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/floor-editor --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/floor-editor --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/floor-editor --no-interactive        # --> util
+
+# Event Details
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/event-details --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/event-details --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/event-details --no-interactive        # --> util
