@@ -61,6 +61,11 @@ yarn nx generate @nrwl/angular:component event-details --project=app-event-detai
 yarn nx generate @nrwl/angular:module event-details --project=app-event-details-feature --routing
 yarn nx generate @nrwl/angular:module event-details --project=app-event-details-data-access
 
+# Event Full View
+yarn nx generate @nrwl/angular:component event-full-view --project=app-event-full-view-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module event-full-view --project=app-event-full-view-feature --routing
+yarn nx generate @nrwl/angular:module event-full-view --project=app-event-full-view-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -120,3 +125,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/flo
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/event-details --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/event-details --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/event-details --no-interactive        # --> util
+
+# Event Full View
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/event-full-view --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/event-full-view --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/event-full-view --no-interactive        # --> util
