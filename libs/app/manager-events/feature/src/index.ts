@@ -1,3 +1,7 @@
-export * from './lib/app-manager-events-feature';
+export * from './manager-events.module'
 
-export * from './lib/manager-events.page';
+export * from './manager-events.page'
+
+export * from './manager-events.routing'
+
+export * from './manager-events.page.spec'
