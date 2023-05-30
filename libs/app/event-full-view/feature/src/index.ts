@@ -1,3 +1,7 @@
-export * from './lib/app-event-full-view-feature';
+export * from './event-full-view.module';
 
-export * from './lib/event-full-view.page';
+export * from './event-full-view.page';
+
+export * from './event-full-view.routing';
+
+export * from './event-full-view.page.spec';

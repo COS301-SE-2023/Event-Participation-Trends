@@ -1,1 +1,1 @@
-export * from './lib/app-event-full-view-util';
+export * from './event-full-view.api';
