@@ -1,3 +1,7 @@
-export * from './lib/app-floor-editor-feature';
+export * from './floor-editor.module';
 
-export * from './lib/floor-editor.page';
+export * from './floor-editor.page';
+
+export * from './floor-editor.page.spec';
+
+export * from './floor-editor.routing';
