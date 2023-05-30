@@ -51,6 +51,11 @@ yarn nx generate @nrwl/angular:component manager-events --project=app-manager-ev
 yarn nx generate @nrwl/angular:module manager-events --project=app-manager-events-feature --routing
 yarn nx generate @nrwl/angular:module manager-events --project=app-manager-events-data-access
 
+# Floor Editor
+yarn nx generate @nrwl/angular:component floor-editor --project=app-floor-editor-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module floor-editor --project=app-floor-editor-feature --routing
+yarn nx generate @nrwl/angular:module floor-editor --project=app-floor-editor-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
