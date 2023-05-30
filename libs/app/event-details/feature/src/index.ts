@@ -1,3 +1,7 @@
-export * from './lib/app-event-details-feature';
+export * from './event-details.module';
 
-export * from './lib/event-details.page';
+export * from './event-details.page';
+
+export * from './event-details.page.spec';
+
+export * from './event-details.routing';
