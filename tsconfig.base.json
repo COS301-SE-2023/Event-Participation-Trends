@@ -57,6 +57,15 @@
       "@event-participation-trends/app/error/util": [
         "libs/app/error/util/src/index.ts"
       ],
+      "@event-participation-trends/app/floor-editor/data-access": [
+        "libs/app/floor-editor/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/floor-editor/feature": [
+        "libs/app/floor-editor/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/floor-editor/util": [
+        "libs/app/floor-editor/util/src/index.ts"
+      ],
       "@event-participation-trends/app/home/feature": [
         "libs/app/home/feature/src/index.ts"
       ],
