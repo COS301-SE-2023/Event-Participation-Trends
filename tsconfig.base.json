@@ -57,33 +57,6 @@
       "@event-participation-trends/app/error/util": [
         "libs/app/error/util/src/index.ts"
       ],
-      "@event-participation-trends/app/event-details/data-access": [
-        "libs/app/event-details/data-access/src/index.ts"
-      ],
-      "@event-participation-trends/app/event-details/feature": [
-        "libs/app/event-details/feature/src/index.ts"
-      ],
-      "@event-participation-trends/app/event-details/util": [
-        "libs/app/event-details/util/src/index.ts"
-      ],
-      "@event-participation-trends/app/event-full-view/data-access": [
-        "libs/app/event-full-view/data-access/src/index.ts"
-      ],
-      "@event-participation-trends/app/event-full-view/feature": [
-        "libs/app/event-full-view/feature/src/index.ts"
-      ],
-      "@event-participation-trends/app/event-full-view/util": [
-        "libs/app/event-full-view/util/src/index.ts"
-      ],
-      "@event-participation-trends/app/floor-editor/data-access": [
-        "libs/app/floor-editor/data-access/src/index.ts"
-      ],
-      "@event-participation-trends/app/floor-editor/feature": [
-        "libs/app/floor-editor/feature/src/index.ts"
-      ],
-      "@event-participation-trends/app/floor-editor/util": [
-        "libs/app/floor-editor/util/src/index.ts"
-      ],
       "@event-participation-trends/app/home/feature": [
         "libs/app/home/feature/src/index.ts"
       ],
@@ -95,15 +68,6 @@
       ],
       "@event-participation-trends/app/login/util": [
         "libs/app/login/util/src/index.ts"
-      ],
-      "@event-participation-trends/app/manager-events/data-access": [
-        "libs/app/manager-events/data-access/src/index.ts"
-      ],
-      "@event-participation-trends/app/manager-events/feature": [
-        "libs/app/manager-events/feature/src/index.ts"
-      ],
-      "@event-participation-trends/app/manager-events/util": [
-        "libs/app/manager-events/util/src/index.ts"
       ],
       "@event-participation-trends/app/user-management/data-access": [
         "libs/app/user-management/data-access/src/index.ts"
