@@ -1,1 +1,5 @@
-export * from './lib/app-managerevents-data-access';
+export * from './managerevents.module';
+
+// export * from './managerevents.state';
+
+// export * from './managerevents.api';
