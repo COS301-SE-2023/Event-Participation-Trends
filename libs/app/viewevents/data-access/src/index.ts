@@ -1,1 +1,3 @@
-export * from './lib/app-viewevents-data-access';
+export * from './viewevents.module';
+export * from './viewevents.state';
+// export * from './viewevents.api';
