@@ -32,9 +32,9 @@ yarn nx generate @nrwl/angular:module usermanagement --project=app-usermanagemen
 yarn nx generate @nrwl/angular:module usermanagement --project=app-usermanagement-data-access
 
 # VIEW EVENTS
-yarn nx generate @nrwl/angular:component view-events --project=app-view-events-feature --export --flat --type=page --standalone
-yarn nx generate @nrwl/angular:module view-events --project=app-view-events-feature --routing
-yarn nx generate @nrwl/angular:module view-events --project=app-view-events-data-access
+yarn nx generate @nrwl/angular:component viewevents --project=app-viewevents-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module viewevents --project=app-viewevents-feature --routing
+yarn nx generate @nrwl/angular:module viewevents --project=app-viewevents-data-access
 
 # COMPARE EVENTS
 yarn nx generate @nrwl/angular:component compare-events --project=app-compare-events-feature --export --flat --type=page --standalone
@@ -97,9 +97,9 @@ yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/usermanagement --no-interactive        # --> util
 
 # VIEW EVENTS
-yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/view-events --no-interactive     # --> feature
-yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/view-events --no-interactive # --> data-access
-yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/view-events --no-interactive        # --> util
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/viewevents --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/viewevents --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/viewevents --no-interactive        # --> util
 
 # COMPARE EVENTS
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/compare-events --no-interactive     # --> feature
