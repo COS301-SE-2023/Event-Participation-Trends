@@ -16,8 +16,8 @@ const routes: Routes = [
         loadChildren: () => import('@event-participation-trends/app/viewevents/feature').then(m => m.VieweventsModule)
       },
       {
-        path: 'compare-events',
-        loadChildren: () => import('@event-participation-trends/app/compare-events/feature').then(m => m.CompareEventsModule)
+        path: 'comparingevents',
+        loadChildren: () => import('@event-participation-trends/app/comparingevents/feature').then(m => m.ComparingeventsModule)
       },
       {
         path: 'manager-events',
