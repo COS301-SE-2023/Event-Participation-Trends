@@ -1,10 +1,10 @@
 /* eslint-disable */
 export default {
-  displayName: 'app-user-management-util',
+  displayName: 'app-usermanagement-data-access',
   preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../../coverage/libs/app/user-management/util',
+  coverageDirectory: '../../../../coverage/libs/app/usermanagement/data-access',
 };
