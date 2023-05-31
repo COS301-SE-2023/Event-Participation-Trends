@@ -27,14 +27,14 @@
       "@event-participation-trends/app/auth/util": [
         "libs/app/auth/util/src/index.ts"
       ],
-      "@event-participation-trends/app/compare-events/data-access": [
-        "libs/app/compare-events/data-access/src/index.ts"
+      "@event-participation-trends/app/comparingevents/data-access": [
+        "libs/app/comparingevents/data-access/src/index.ts"
       ],
-      "@event-participation-trends/app/compare-events/feature": [
-        "libs/app/compare-events/feature/src/index.ts"
+      "@event-participation-trends/app/comparingevents/feature": [
+        "libs/app/comparingevents/feature/src/index.ts"
       ],
-      "@event-participation-trends/app/compare-events/util": [
-        "libs/app/compare-events/util/src/index.ts"
+      "@event-participation-trends/app/comparingevents/util": [
+        "libs/app/comparingevents/util/src/index.ts"
       ],
       "@event-participation-trends/app/core/feature": [
         "libs/app/core/feature/src/index.ts"
@@ -105,23 +105,23 @@
       "@event-participation-trends/app/managerevents/util": [
         "libs/app/managerevents/util/src/index.ts"
       ],
-      "@event-participation-trends/app/user-management/data-access": [
-        "libs/app/user-management/data-access/src/index.ts"
+      "@event-participation-trends/app/usermanagement/data-access": [
+        "libs/app/usermanagement/data-access/src/index.ts"
       ],
-      "@event-participation-trends/app/user-management/feature": [
-        "libs/app/user-management/feature/src/index.ts"
+      "@event-participation-trends/app/usermanagement/feature": [
+        "libs/app/usermanagement/feature/src/index.ts"
       ],
-      "@event-participation-trends/app/user-management/util": [
-        "libs/app/user-management/util/src/index.ts"
+      "@event-participation-trends/app/usermanagement/util": [
+        "libs/app/usermanagement/util/src/index.ts"
       ],
-      "@event-participation-trends/app/view-events/data-access": [
-        "libs/app/view-events/data-access/src/index.ts"
+      "@event-participation-trends/app/viewevents/data-access": [
+        "libs/app/viewevents/data-access/src/index.ts"
       ],
-      "@event-participation-trends/app/view-events/feature": [
-        "libs/app/view-events/feature/src/index.ts"
+      "@event-participation-trends/app/viewevents/feature": [
+        "libs/app/viewevents/feature/src/index.ts"
       ],
-      "@event-participation-trends/app/view-events/util": [
-        "libs/app/view-events/util/src/index.ts"
+      "@event-participation-trends/app/viewevents/util": [
+        "libs/app/viewevents/util/src/index.ts"
       ]
     }
   },
