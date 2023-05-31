@@ -1,1 +1,5 @@
-export * from './lib/app-eventdetails-data-access';
+export * from './eventdetails.module';
+
+// export * from './eventdetails.state';
+
+// export * from './eventdetails.api';
