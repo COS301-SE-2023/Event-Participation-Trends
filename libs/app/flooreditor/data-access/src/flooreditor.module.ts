@@ -11,4 +11,4 @@ import { FloorEditorState } from './flooreditor.state';
     CommonModule, NgxsModule.forFeature([FloorEditorState])
   ]
 })
-export class FlooreditorModule { }
+export class FloorEditorModule { }

@@ -24,6 +24,27 @@ const routes: Routes = [
     loadChildren: () =>
       import('@event-participation-trends/app/dashboard/feature').then((m) => m.DashboardModule),
   },
+  {
+    path: 'eventdetails',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/eventdetails/feature').then((m) => m.EventDetailsModule),
+  },
+  {
+    path: 'flooreditor',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/flooreditor/feature').then((m) => m.FloorEditorModule),
+  },
+  {
+    path: 'eventscreenview',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/eventscreenview/feature').then((m) => m.EventScreenViewModule),
+  }
 ];
 
 @NgModule({
