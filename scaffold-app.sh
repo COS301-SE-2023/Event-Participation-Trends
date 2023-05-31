@@ -37,9 +37,9 @@ yarn nx generate @nrwl/angular:module viewevents --project=app-viewevents-featur
 yarn nx generate @nrwl/angular:module viewevents --project=app-viewevents-data-access
 
 # COMPARE EVENTS
-yarn nx generate @nrwl/angular:component compare-events --project=app-compare-events-feature --export --flat --type=page --standalone
-yarn nx generate @nrwl/angular:module compare-events --project=app-compare-events-feature --routing
-yarn nx generate @nrwl/angular:module compare-events --project=app-compare-events-data-access
+yarn nx generate @nrwl/angular:component comparingevents --project=app-comparingevents-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module comparingevents --project=app-comparingevents-feature --routing
+yarn nx generate @nrwl/angular:module comparingevents --project=app-comparingevents-data-access
 
 # DASHBOARD
 yarn nx generate @nrwl/angular:component dashboard --project=app-dashboard-feature --export --flat --type=page --standalone
@@ -102,9 +102,9 @@ yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/viewevents --no-interactive        # --> util
 
 # COMPARE EVENTS
-yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/compare-events --no-interactive     # --> feature
-yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/compare-events --no-interactive # --> data-access
-yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/compare-events --no-interactive        # --> util
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/comparingevents --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/comparingevents --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/comparingevents --no-interactive        # --> util
 
 # DASHBOARD
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/dashboard --no-interactive     # --> feature
