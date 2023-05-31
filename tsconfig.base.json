@@ -66,6 +66,15 @@
       "@event-participation-trends/app/eventdetails/util": [
         "libs/app/eventdetails/util/src/index.ts"
       ],
+      "@event-participation-trends/app/eventscreenview/data-access": [
+        "libs/app/eventscreenview/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/eventscreenview/feature": [
+        "libs/app/eventscreenview/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/eventscreenview/util": [
+        "libs/app/eventscreenview/util/src/index.ts"
+      ],
       "@event-participation-trends/app/flooreditor/data-access": [
         "libs/app/flooreditor/data-access/src/index.ts"
       ],
