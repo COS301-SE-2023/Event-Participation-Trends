@@ -47,24 +47,24 @@ yarn nx generate @nrwl/angular:module dashboard --project=app-dashboard-feature 
 yarn nx generate @nrwl/angular:module dashboard --project=app-dashboard-data-access
 
 # My Events (for Event Manager)
-yarn nx generate @nrwl/angular:component manager-events --project=app-manager-events-feature --export --flat --type=page --standalone
-yarn nx generate @nrwl/angular:module manager-events --project=app-manager-events-feature --routing
-yarn nx generate @nrwl/angular:module manager-events --project=app-manager-events-data-access
+yarn nx generate @nrwl/angular:component managerevents --project=app-managerevents-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module managerevents --project=app-managerevents-feature --routing
+yarn nx generate @nrwl/angular:module managerevents --project=app-managerevents-data-access
 
 # Floor Editor
-yarn nx generate @nrwl/angular:component floor-editor --project=app-floor-editor-feature --export --flat --type=page --standalone
-yarn nx generate @nrwl/angular:module floor-editor --project=app-floor-editor-feature --routing
-yarn nx generate @nrwl/angular:module floor-editor --project=app-floor-editor-data-access
+yarn nx generate @nrwl/angular:component flooreditor --project=app-flooreditor-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module flooreditor --project=app-flooreditor-feature --routing
+yarn nx generate @nrwl/angular:module flooreditor --project=app-flooreditor-data-access
 
 # Event Details
-yarn nx generate @nrwl/angular:component event-details --project=app-event-details-feature --export --flat --type=page --standalone
-yarn nx generate @nrwl/angular:module event-details --project=app-event-details-feature --routing
-yarn nx generate @nrwl/angular:module event-details --project=app-event-details-data-access
+yarn nx generate @nrwl/angular:component eventdetails --project=app-eventdetails-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module eventdetails --project=app-eventdetails-feature --routing
+yarn nx generate @nrwl/angular:module eventdetails --project=app-eventdetails-data-access
 
 # Event Full View
-yarn nx generate @nrwl/angular:component event-full-view --project=app-event-full-view-feature --export --flat --type=page --standalone
-yarn nx generate @nrwl/angular:module event-full-view --project=app-event-full-view-feature --routing
-yarn nx generate @nrwl/angular:module event-full-view --project=app-event-full-view-data-access
+yarn nx generate @nrwl/angular:component eventscreenview --project=app-eventscreenview-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module eventscreenview --project=app-eventscreenview-feature --routing
+yarn nx generate @nrwl/angular:module eventscreenview --project=app-eventscreenview-data-access
 
 # ============================================================================================================================
 
@@ -112,21 +112,21 @@ yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/dashboard --no-interactive        # --> util
 
 # My Events (for Event Manager)
-yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/manager-events --no-interactive     # --> feature
-yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/manager-events --no-interactive # --> data-access
-yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/manager-events --no-interactive        # --> util
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/managerevents --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/managerevents --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/managerevents --no-interactive        # --> util
 
 # Floor Editor
-yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/floor-editor --no-interactive     # --> feature
-yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/floor-editor --no-interactive # --> data-access
-yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/floor-editor --no-interactive        # --> util
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/flooreditor --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/flooreditor --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/flooreditor --no-interactive        # --> util
 
 # Event Details
-yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/event-details --no-interactive     # --> feature
-yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/event-details --no-interactive # --> data-access
-yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/event-details --no-interactive        # --> util
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/eventdetails --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/eventdetails --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/eventdetails --no-interactive        # --> util
 
 # Event Full View
-yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/event-full-view --no-interactive     # --> feature
-yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/event-full-view --no-interactive # --> data-access
-yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/event-full-view --no-interactive        # --> util
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/eventscreenview --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/eventscreenview --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/eventscreenview --no-interactive        # --> util
