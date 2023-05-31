@@ -1,1 +1,3 @@
-export * from './lib/app-usermanagement-data-access';
+export * from './usermanagement.module';
+export * from './usermanagement.state';
+// export * from './usermanagement.api';
