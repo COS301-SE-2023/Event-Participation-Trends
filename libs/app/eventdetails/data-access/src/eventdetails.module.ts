@@ -11,4 +11,4 @@ import { EventDetailsState } from './eventdetails.state';
     CommonModule, NgxsModule.forFeature([EventDetailsState])
   ]
 })
-export class EventdetailsModule { }
+export class EventDetailsModule { }
