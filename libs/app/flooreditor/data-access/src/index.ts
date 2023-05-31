@@ -1,1 +1,5 @@
-export * from './lib/app-flooreditor-data-access';
+export * from './flooreditor.module';
+
+// export * from './flooreditor.state';
+
+// export * from './flooreditor.api';
