@@ -114,14 +114,14 @@
       "@event-participation-trends/app/usermanagement/util": [
         "libs/app/usermanagement/util/src/index.ts"
       ],
-      "@event-participation-trends/app/view-events/data-access": [
-        "libs/app/view-events/data-access/src/index.ts"
+      "@event-participation-trends/app/viewevents/data-access": [
+        "libs/app/viewevents/data-access/src/index.ts"
       ],
-      "@event-participation-trends/app/view-events/feature": [
-        "libs/app/view-events/feature/src/index.ts"
+      "@event-participation-trends/app/viewevents/feature": [
+        "libs/app/viewevents/feature/src/index.ts"
       ],
-      "@event-participation-trends/app/view-events/util": [
-        "libs/app/view-events/util/src/index.ts"
+      "@event-participation-trends/app/viewevents/util": [
+        "libs/app/viewevents/util/src/index.ts"
       ]
     }
   },
