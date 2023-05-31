@@ -22,13 +22,18 @@ const routes: Routes = [
       {
         path: 'manager-events',
         loadChildren: () => import('@event-participation-trends/app/manager-events/feature').then(m => m.ManagerEventsModule)
-      }
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: '/home/usermanagement', //this is only temporary
+      },
     ],
   },
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '/home', //this is only temporary
+    redirectTo: '/home/usermanagement', //this is only temporary
   },
 ];
 
