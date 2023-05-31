@@ -27,6 +27,15 @@
       "@event-participation-trends/app/auth/util": [
         "libs/app/auth/util/src/index.ts"
       ],
+      "@event-participation-trends/app/comparingevents/data-access": [
+        "libs/app/comparingevents/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/comparingevents/feature": [
+        "libs/app/comparingevents/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/comparingevents/util": [
+        "libs/app/comparingevents/util/src/index.ts"
+      ],
       "@event-participation-trends/app/core/feature": [
         "libs/app/core/feature/src/index.ts"
       ],
