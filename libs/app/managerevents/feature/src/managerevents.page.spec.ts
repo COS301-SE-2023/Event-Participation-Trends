@@ -2,15 +2,15 @@
 // import { ManagerEventsPage } from './managerevents.page';
 
 // describe('ManagerEventsPage', () => {
-//   let component: ManagereventsPage;
-//   let fixture: ComponentFixture<ManagereventsPage>;
+//   let component: ManagerEventsPage;
+//   let fixture: ComponentFixture<ManagerEventsPage>;
 
 //   beforeEach(async () => {
 //     await TestBed.configureTestingModule({
-//       imports: [ManagereventsPage],
+//       imports: [ManagerEventsPage],
 //     }).compileComponents();
 
-//     fixture = TestBed.createComponent(ManagereventsPage);
+//     fixture = TestBed.createComponent(ManagerEventsPage);
 //     component = fixture.componentInstance;
 //     fixture.detectChanges();
 //   });
