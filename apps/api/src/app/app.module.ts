@@ -10,6 +10,7 @@ import {
   PassportService,
   PassportModule as Wow,
 } from '@event-participation-trends/api/passport';
+import { MqttService } from './mqtt.service';
 
 @Module({
   imports: [
@@ -32,6 +33,6 @@ import {
     MongooseModule.forRoot(process.env.MONGO_ALTALS_CONNECTION_URL),
   ],
   controllers: [AppController, MqttController, PassportController],
-  providers: [AppService, PassportService],
+  providers: [AppService, MqttService, PassportService],
 })
 export class AppModule {}
