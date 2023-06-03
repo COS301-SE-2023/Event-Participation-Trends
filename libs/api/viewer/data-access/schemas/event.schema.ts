@@ -6,11 +6,13 @@ import { Sensor } from './sensor.schema';
 import { Device } from './device.schema';
 import { TEMP_DEVICE_TO_DT } from './TEMP_DEVICE_TO_DT.schema';
 import { TEMP_DEVICE_BUFFER } from './TEMP_DEVICE_BUFFER.schema';
+import { User } from './user.schema';
 
 export type EventDocument = HydratedDocument<Event>;
 
 @Schema({timestamps: true, collection: 'Event' })
 export class Event{
+
     @Prop({ required: true })
     EventId: string | undefined | null;
 
@@ -47,6 +49,8 @@ export class Event{
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_BUFFER' })
     TEMPBuffer: TEMP_DEVICE_BUFFER[] | undefined | null;
     
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    Managers: Device[] | undefined | null;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
