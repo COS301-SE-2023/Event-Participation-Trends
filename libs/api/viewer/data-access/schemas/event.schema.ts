@@ -50,7 +50,7 @@ export class Event{
     TEMPBuffer: TEMP_DEVICE_BUFFER[] | undefined | null;
     
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    Managers: Device[] | undefined | null;
+    Managers: User[] | undefined | null;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
