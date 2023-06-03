@@ -6,4 +6,4 @@ export type FloorLayoutDocument = HydratedDocument<FloorLayout>;
 @Schema({timestamps: true, collection: 'FloorLayout' })
 export class FloorLayout{}
 
-export const UserSchema = SchemaFactory.createForClass(FloorLayout);
+export const FloorLayoutSchema = SchemaFactory.createForClass(FloorLayout);
