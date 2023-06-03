@@ -5,6 +5,7 @@ import { Stall } from './stall.schema';
 import { Sensor } from './sensor.schema';
 import { Device } from './device.schema';
 import { TEMP_DEVICE_TO_DT } from './TEMP_DEVICE_TO_DT.schema';
+import { TEMP_DEVICE_BUFFER } from './TEMP_DEVICE_BUFFER.schema';
 
 export type EventDocument = HydratedDocument<Event>;
 
@@ -41,7 +42,10 @@ export class Event{
     Devices: Device[] | undefined | null;
 
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_TO_DT' })
-    buffer: TEMP_DEVICE_TO_DT[] | undefined | null;
+    BTIDtoDeviceBuffer: TEMP_DEVICE_TO_DT[] | undefined | null;
+
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_BUFFER' })
+    TEMPBuffer: TEMP_DEVICE_BUFFER[] | undefined | null;
     
 }
 
