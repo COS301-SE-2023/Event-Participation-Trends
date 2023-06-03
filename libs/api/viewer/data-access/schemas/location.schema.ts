@@ -20,5 +20,3 @@ export class Location{
     
 
 export const LocationSchema = SchemaFactory.createForClass(Location);
-
-//continue here then continue with event
