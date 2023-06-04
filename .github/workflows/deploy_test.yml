@@ -1,0 +1,25 @@
+# This is a workflow that will ssh to a machine and run a command
+name: Test deployment
+on:
+    push:
+        branches:
+            - test_workflows_main
+    pull_request:
+        branches:
+            - test_workflows_main
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v2
+
+            - name: Connect to server and trigger update
+              uses: appleboy/ssh-action@master
+              with:
+                host:   ${{ secrets.HOST}}
+                username: ${{ secrets.USERNAME }}
+                key: ${{ secrets.KEY }}
+                script: |
+                    cd /root/
+                    ./deploy.sh
