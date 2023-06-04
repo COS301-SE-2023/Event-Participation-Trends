@@ -9,9 +9,11 @@ import {
   PassportService,
   PassportModule as Wow,
 } from '@event-participation-trends/api/passport';
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     Wow,
     ClientsModule.register([
       {
