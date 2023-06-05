@@ -1,3 +1,7 @@
+ion-content {
+    background-color: #e7e7e7;
+}
+
 .nav-bar {
     background-color: #212121;
     height: 49px;
@@ -104,4 +108,8 @@ ion-button {
     width: 30px;
     height: 30px;
     color: #fff;
+}
+
+.stats-card {
+    background-color: #e1e1e1;
 }
