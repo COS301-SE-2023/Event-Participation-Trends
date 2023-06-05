@@ -16,7 +16,7 @@
               </select>
           </ion-col>
         </ion-row>
-        <div style="overflow-y: scroll">
+        <div ngClass="content-body" [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}">
           <ion-row ngClass="content-body-row-1">
             <ion-col ngClass="content-body-row-1-col-1">
               <img
