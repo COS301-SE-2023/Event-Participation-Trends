@@ -16,7 +16,7 @@
               </select>
           </ion-col>
         </ion-row>
-        <div style="overflow-y: scroll">
+        <div ngClass="content-body" [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}">
           <ion-row ngClass="content-body-row-1">
             <ion-col ngClass="content-body-row-1-col-1">
               <img
@@ -76,6 +76,64 @@
         ></ion-searchbar>
         <ion-icon ngClass="search-filter" name="options-outline"></ion-icon>
       </span>
+      <ion-list ngClass="compare-list" [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}">
+        <ion-item ngClass="compare-list-item">
+          <ion-label ngClass="compare-list-item-label">
+            <h1>Event 1</h1>
+            <p>Event 1 description</p>
+          </ion-label>
+          <ion-checkbox ngClass="compare-list-item-checkbox"></ion-checkbox>
+        </ion-item>
+        <ion-item ngClass="compare-list-item">
+          <ion-label ngClass="compare-list-item-label">
+            <h1>Event 2</h1>
+            <p>Event 2 description</p>
+          </ion-label>
+          <ion-checkbox ngClass="compare-list-item-checkbox"></ion-checkbox>
+        </ion-item>
+        <ion-item ngClass="compare-list-item">
+          <ion-label ngClass="compare-list-item-label">
+            <h1>Event 3</h1>
+            <p>Event 3 description</p>
+          </ion-label>
+          <ion-checkbox ngClass="compare-list-item-checkbox"></ion-checkbox>
+        </ion-item>
+        <ion-item ngClass="compare-list-item">
+          <ion-label ngClass="compare-list-item-label">
+            <h1>Event 4</h1>
+            <p>Event 4 description</p>
+          </ion-label>
+          <ion-checkbox ngClass="compare-list-item-checkbox"></ion-checkbox>
+        </ion-item>
+        <ion-item ngClass="compare-list-item">
+          <ion-label ngClass="compare-list-item-label">
+            <h1>Event 5</h1>
+            <p>Event 5 description</p>
+          </ion-label>
+          <ion-checkbox ngClass="compare-list-item-checkbox"></ion-checkbox>
+        </ion-item>
+        <ion-item ngClass="compare-list-item">
+          <ion-label ngClass="compare-list-item-label">
+            <h1>Event 6</h1>
+            <p>Event 6 description</p>
+          </ion-label>
+          <ion-checkbox ngClass="compare-list-item-checkbox"></ion-checkbox>
+        </ion-item>
+        <ion-item ngClass="compare-list-item">
+          <ion-label ngClass="compare-list-item-label">
+            <h1>Event 7</h1>
+            <p>Event 7 description</p>
+          </ion-label>
+          <ion-checkbox ngClass="compare-list-item-checkbox"></ion-checkbox>
+        </ion-item>
+        <ion-item ngClass="compare-list-item">
+          <ion-label ngClass="compare-list-item-label">
+            <h1>Event 8</h1>
+            <p>Event 8 description</p>
+          </ion-label>
+          <ion-checkbox ngClass="compare-list-item-checkbox"></ion-checkbox>
+        </ion-item>
+      </ion-list>
     </ion-col>
   </ion-grid>
 </ion-content>
