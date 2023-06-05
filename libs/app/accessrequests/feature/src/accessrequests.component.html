@@ -1,18 +1,18 @@
-<ion-content>
-    <ion-title>Manage Access Requests</ion-title>
+<ion-content color="none">
+    <ion-title ngClass="main-title">Manage Access Requests</ion-title>
     <ion-button ngClass="close-button">
-        <ion-icon name="close-outline"></ion-icon>
+        <ion-icon name="close-outline" ngClass="close-btn-icon"></ion-icon>
     </ion-button>
-    <ng-container>
-        <ion-card>
-            <ion-card-content>
-                <div>
-                    <ion-label>User ID:</ion-label>
-                    <ion-text>example username</ion-text><br>
-                    <ion-label>Email:</ion-label>
-                    <ion-text>example@gmail.com</ion-text><br>
-                    <ion-label>Role:</ion-label>
-                    <ion-text>Event Manager</ion-text><br>
+    <ng-container ngClass="requests-container">
+        <ion-card ngClass="access-request-card">
+            <ion-card-content ngClass="card-content">
+                <div ngClass="card-details">
+                    <ion-label ngClass="card-label">User ID:</ion-label>
+                    <ion-text ngClass="card-username">example username</ion-text><br>
+                    <ion-label ngClass="card-label">Email:</ion-label>
+                    <ion-text ngClass="card-email">example@gmail.com</ion-text><br>
+                    <ion-label ngClass="card-label">Role:</ion-label>
+                    <ion-text ngClass="card-role">Event Manager</ion-text><br>
                 </div>
             </ion-card-content>
         </ion-card>
