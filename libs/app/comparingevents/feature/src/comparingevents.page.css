@@ -26,6 +26,8 @@ ion-grid.main-grid {
 .content-body {
   height: 100%;
   max-height: 558px;
+  padding-top: 0;
+  border-radius: 5px;
 }
 
 .content-body-grid {
@@ -39,7 +41,6 @@ ion-grid.main-grid {
 .content-body-row-2 {
   background-color: #f9f9f9;
   padding: 10px;
-  margin-top: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
