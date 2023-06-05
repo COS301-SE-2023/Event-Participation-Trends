@@ -1,15 +1,15 @@
 <ion-tabs color="none">
     <ion-tab-bar ngClass="nav-bar" slot="top">
       <ion-tab-button tab="usermanagement" color="none" ngClass="tab-button" (click)="selectTab('Users')" (selected)="usersSelected">
-        <ion-label ngClass="tab-text">Users</ion-label>
+        <ion-label ngClass="tab-text">Users<span></span></ion-label>
       </ion-tab-button>
   
       <ion-tab-button tab="viewevents" color="none" ngClass="tab-button"  (click)="selectTab('View')">
-        <ion-label ngClass="tab-text">View</ion-label>
+        <ion-label ngClass="tab-text">View<span></span></ion-label>
       </ion-tab-button>
 
       <ion-tab-button tab="comparingevents" color="none" ngClass="tab-button"  (click)="selectTab('Compare Events')">
-        <ion-label ngClass="tab-text">Compare Events</ion-label>
+        <ion-label ngClass="tab-text-no-border">Compare Events</ion-label>
       </ion-tab-button>
     </ion-tab-bar>
   </ion-tabs>
