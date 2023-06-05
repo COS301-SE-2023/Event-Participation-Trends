@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// import { DashboardRoutingModule } from './dashboard.routing';
-import { DashboardModule as DashboardDataAccessModule } from '@event-participation-trends/app/dashboard/data-access';
 import { IonicModule } from '@ionic/angular';
 import { AccessrequestsComponent } from './accessrequests.component';
 import { AccessrequestsRoutingModule } from './accessrequests.routing';
+import { AccessRequestsModule as AccessRequestsDataAccessModule } from '@event-participation-trends/app/accessrequests/data-access';
 
 @NgModule({
   declarations: [AccessrequestsComponent],
@@ -13,7 +12,7 @@ import { AccessrequestsRoutingModule } from './accessrequests.routing';
     CommonModule,
     IonicModule,
     AccessrequestsRoutingModule,
-    DashboardDataAccessModule
+    AccessRequestsDataAccessModule
   ]
 })
-export class DashboardModule { }
+export class AccessRequestsModule { }
