@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AccessrequestsComponent } from './accessrequests.component';
+import { AccessRequestsComponent } from './accessrequests.component';
 
 const routes: Routes = [
   {
     path: '',
     pathMatch:'full',
-    component: AccessrequestsComponent
+    component: AccessRequestsComponent
   }
 ];
 
