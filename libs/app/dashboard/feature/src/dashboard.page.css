@@ -82,6 +82,7 @@ ion-button {
 
 .floor-map-card-content {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     position: relative;
     padding: 8px;
@@ -101,9 +102,6 @@ ion-button {
 }
 
 .floor-map-settings-icon {
-    position: absolute;
-    top: 10px;
-    right: 20px;
     width: 30px;
     height: 30px;
     color: #fff;
@@ -115,7 +113,19 @@ ion-button {
 .floor-map-settings-icon:hover {
     rotate: 90deg;
     transition: 0.5s;
-}   
+} 
+
+@media(max-width: 768px) {
+    .floor-map-card {
+        height: 300px;
+    }
+    .floor-map-snapshot-area {
+        height: 285px;
+    }
+    .stats-card {
+        height: 150px;
+    }
+}
 .stats-card {
     background-color: #e1e1e1;
     height: 200px;
@@ -127,4 +137,8 @@ ion-button {
     box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
     transition: 0.5s;
     cursor: pointer;
+}
+.statistics {
+    display: flex;
+    justify-content: space-evenly;
 }
