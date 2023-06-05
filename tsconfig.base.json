@@ -114,6 +114,15 @@
       "@event-participation-trends/app/managerevents/util": [
         "libs/app/managerevents/util/src/index.ts"
       ],
+      "@event-participation-trends/app/modals/data-access": [
+        "libs/app/modals/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/modals/feature": [
+        "libs/app/modals/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/modals/util": [
+        "libs/app/modals/util/src/index.ts"
+      ],
       "@event-participation-trends/app/usermanagement/data-access": [
         "libs/app/usermanagement/data-access/src/index.ts"
       ],
