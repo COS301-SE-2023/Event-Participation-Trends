@@ -23,8 +23,6 @@ ion-grid.main-grid {
   margin-bottom: 10px;
 }
 
-
-
 .content-body {
   height: 100%;
   max-height: 558px;
@@ -145,3 +143,39 @@ hr {
 .sidebar-header-title {
   text-align: center;
 }
+
+.compare-list {
+  max-height: 530;
+  height: 530px;
+  padding: 0;
+  border-radius: 5px;
+}
+
+ion-list ion-item:last-child {
+  --inner-border-width: 0; /* Remove the inner border for the last item */
+}
+
+ion-list ion-item:last-child::after {
+  content: none; /* Remove the pseudo-element (bottom border) for the last item */
+}
+
+/* For Webkit based browsers (e.g., Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
