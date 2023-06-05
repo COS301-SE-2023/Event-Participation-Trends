@@ -81,14 +81,30 @@ ion-grid.main-grid {
 }
 
 .sidebar {
-  background-color: #e6e6e6;
+  background-color: #212121;
+}
+
+hr {
+  height: 3px;
+  background-color: #d2d2d2;
+  width: 90%
 }
 
 .sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
   margin-bottom: 10px;
+  color: #ffcc00;
+}
+
+.sidebar-content > span {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.sidebar-searchbar {
+  --border-radius: 15px;
+  width:auto;
 }
 
 .content-header-title h1,

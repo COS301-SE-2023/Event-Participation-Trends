@@ -5,16 +5,15 @@
         <ion-row ngClass="content-header">
           <ion-col ngClass="content-header-title">
             <h1>Comparing Events</h1>
+            <i class="fa-solid fa-arrow-down-arrow-up fa-rotate-90" style="color: #ff0000;"></i>
           </ion-col>
           <ion-col ngClass="content-header-actions">
-            <!-- <ion-button ngClass="btn-primary filter-button"> -->
               <select id="filter-select" ngClass="filter-button">
                 <option value="">Select Filter</option>
                 <option value="option1">Last Week</option>
                 <option value="option2">Last Month</option>
                 <option value="option3">Last Year</option>
               </select>
-            <!-- </ion-button> -->
           </ion-col>
         </ion-row>
         <div style="overflow-y: scroll">
@@ -68,14 +67,14 @@
       </ion-grid>
     </ion-col>
     <ion-col size="auto" ngClass="sidebar">
-      <ion-grid>
-        <ion-row ngClass="sidebar-header">
-          <ion-col ngClass="sidebar-header-title">
-            <h1>Select event to compare</h1>
-          </ion-col>
-        </ion-row>
-        <ion-row>Bottom grid</ion-row>
-      </ion-grid>
+      <h1 ngClass="sidebar-header sidebar-title">Select event to compare</h1>
+      <hr/>
+      <span ngClass="sidebar-content">
+        <ion-searchbar
+          ngClass="sidebar-searchbar"
+          placeholder="Search"
+        ></ion-searchbar>
+      </span>
     </ion-col>
   </ion-grid>
 </ion-content>
