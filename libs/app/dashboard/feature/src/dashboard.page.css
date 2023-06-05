@@ -52,6 +52,17 @@ ion-button {
    margin-right: 5px;
 }
 
+.access-requests-badge {
+    background-color: #ff0000;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+}
+
 .floor-map-card{
     background-color: #212121;
     height: 400px;
