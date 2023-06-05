@@ -1,12 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { NgModule } from '@angular/core';
+import { NgxsModule } from '@ngxs/store';
+// import { DashboardState } from './dashboard.state';
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
+  imports: [CommonModule, NgxsModule.forFeature([])],
 })
-export class AccessrequestsModule { }
+export class DashboardModule {}
