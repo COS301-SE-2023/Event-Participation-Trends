@@ -4,8 +4,8 @@
       <ion-grid ngClass="content-grid">
         <ion-row ngClass="content-header">
           <ion-col ngClass="content-header-title">
-            <h1>Comparing Events</h1>
-            <i class="fa-solid fa-arrow-down-arrow-up fa-rotate-90" style="color: #ff0000;"></i>
+              <h1>Comparing Events</h1>
+              <ion-icon ngClass="compare-icon" name="swap-horizontal-outline"></ion-icon>
           </ion-col>
           <ion-col ngClass="content-header-actions">
               <select id="filter-select" ngClass="filter-button">
@@ -23,7 +23,7 @@
                 src="assets/icon/arrow-up.svg"
                 alt=""
                 height="235px"
-                width="750px"
+                width="740px"
               />
             </ion-col>
             <ion-col ngClass="content-body-row-1-col-2">
@@ -41,7 +41,7 @@
                 src="assets/icon/arrow-up.svg"
                 alt=""
                 height="235px"
-                width="750px"
+                width="740px"
               />
             </ion-col>
             <ion-col ngClass="content-body-row-2-col-2">
@@ -74,6 +74,7 @@
           ngClass="sidebar-searchbar"
           placeholder="Search"
         ></ion-searchbar>
+        <ion-icon ngClass="search-filter" name="options-outline"></ion-icon>
       </span>
     </ion-col>
   </ion-grid>
