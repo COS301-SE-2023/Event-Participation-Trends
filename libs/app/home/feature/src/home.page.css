@@ -1,15 +1,19 @@
+ion-tab-button {
+    --color: var(#fff);
+    --color-selected: var(--ion-color-warning);
+}
 .nav-bar {
     background-color: #212121;
 }
+
 .tab-button {
     background-color: #212121;
     color: #fff;
     font-size: 18px;
     --ripple-color: transparent;
 }
-.tab-button:hover {
+
+.tab-button.tab-selected {
+    color: #ffcc00;
     background-color: #303030;
-    --color: #ffcc00;
-    --color-selected: #ffcc00;
-    font-size: 18px;
 }
