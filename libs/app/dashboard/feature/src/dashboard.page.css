@@ -19,3 +19,11 @@ ion-button {
     width: 30px;
     height: 30px;
 }
+
+.dashboard-title-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    height: 49px;
+}
