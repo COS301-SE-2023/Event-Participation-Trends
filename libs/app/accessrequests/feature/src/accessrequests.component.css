@@ -37,6 +37,7 @@ ion-content {
     font-size: 18px;
     display: flex;
     color: rgba(255, 255, 255, 0.8);
+    justify-content: space-between;
 }
 
 .card-label {
@@ -56,5 +57,26 @@ ion-content {
 }
 .card-role {
     padding-left: 23px;
+}
+
+.accept-reject-btns {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.accept-btn,
+.reject-btn {
+    font-size: 15px;
+    border-radius: 5px;
+    width: 100px;
+}
+
+.accept-btn {
+    background-color: #4caf50;
+}
+.reject-btn {
+    background-color: #f44336;
 }
 
