@@ -1,6 +1,6 @@
-<ion-content fullscreen="true" y-scroll="false">
+<ion-header>
     <div class="nav-bar">
-        <ion-button color="none" fill="clear" ngClass="back-button">
+        <ion-button color="none" fill="clear" ngClass="back-button" routerLink="/" routerDirection="back">
             <ion-icon name="arrow-back-outline"></ion-icon>
             <ion-label>Back</ion-label>
         </ion-button>
@@ -10,4 +10,7 @@
             <ion-label ngClass="profile-name">Username</ion-label>
         </ion-button>
     </div>
+</ion-header>
+
+<ion-content fullscreen="true" y-scroll="false">
 </ion-content>
