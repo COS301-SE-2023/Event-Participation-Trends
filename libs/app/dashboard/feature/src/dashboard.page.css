@@ -24,6 +24,30 @@ ion-button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
+    padding: 5 10px;
     height: 49px;
+}
+
+.dashboard-title {
+    font-size: 35px;
+    font-weight: bold;
+}
+.dashboard-title-icon {
+    display: flex;
+    padding-top: 10px;
+}
+
+.dashboard-icon {
+    width: 30px;
+    height: 30px;
+    color: #5900ff;
+}
+.access-requests-btn {
+    padding-top: 10px;
+    padding-right: 30px;
+}
+
+.access-requests-text {
+   font-size: 20px;
+   margin-right: 5px;
 }
