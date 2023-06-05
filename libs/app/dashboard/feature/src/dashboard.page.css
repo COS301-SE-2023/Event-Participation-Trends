@@ -7,9 +7,16 @@ ion-content {
     height: 49px;
 }
 
-.back-button {
+.title-text {
     color: #fff;
     font-size: 20px;
+    position: absolute;
+    top: 10px;
+}
+
+.back-button {
+    color: #fff;
+    font-size: 15px;
 }
 
 ion-button {
@@ -58,9 +65,9 @@ ion-button {
 }
 
 .access-requests-text {
-   font-size: 20px;
-   margin-right: 5px;
-   color: #212121;
+    font-size: 20px;
+    margin-right: 5px;
+    color: #212121;
 }
 
 .access-requests-badge {
