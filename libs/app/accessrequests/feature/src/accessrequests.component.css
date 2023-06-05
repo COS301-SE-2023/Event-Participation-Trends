@@ -18,6 +18,10 @@ ion-content {
     font-size: 2.5rem;
     margin: 5px 10px 0 0;
 }
+.close-btn-icon:hover {
+    cursor: pointer;
+    color: #ff0000;
+}
 
 .title-close-btn {
     display: flex;
