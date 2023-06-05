@@ -67,6 +67,19 @@ ion-grid.main-grid {
 
 .content-header-title {
   text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.content-header-title h1 {
+  font-weight: bold;
+}
+
+.compare-icon {
+  font-size: 30px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  color: #ff0000;
 }
 
 .content-header-actions {
@@ -82,6 +95,7 @@ ion-grid.main-grid {
 
 .sidebar {
   background-color: #212121;
+  border-radius: 5px;
 }
 
 hr {
@@ -96,6 +110,12 @@ hr {
   color: #ffcc00;
 }
 
+.sidebar-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .sidebar-content > span {
   display: flex;
   flex-direction: row;
@@ -104,7 +124,15 @@ hr {
 
 .sidebar-searchbar {
   --border-radius: 15px;
-  width:auto;
+  width: 84%;
+  margin-left: 10px
+}
+
+.search-filter {
+  font-size: 30px;
+  background-color: #fff;
+  border-radius: 5px;
+  margin-bottom: 3px;
 }
 
 .content-header-title h1,
