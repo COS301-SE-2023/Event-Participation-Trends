@@ -1,0 +1,7 @@
+.nav-bar {
+    background-color: #212121;
+}
+
+ion-tab-button {
+    --background: #212121;
+}
