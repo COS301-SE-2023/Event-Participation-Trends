@@ -133,3 +133,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/eve
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/eventscreenview --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/eventscreenview --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/eventscreenview --no-interactive        # --> util
+
+# Access Requests
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/accessrequests --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/accessrequests --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/accessrequests --no-interactive        # --> util
