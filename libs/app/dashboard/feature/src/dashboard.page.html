@@ -21,7 +21,7 @@
             <ion-icon ngClass="dashboard-icon" name="stats-chart"></ion-icon>
             <ion-label ngClass="dashboard-event-name">/ [event name]</ion-label>
         </div>
-        <ion-button ngClass="access-requests-btn">
+        <ion-button ngClass="access-requests-btn" (click)="openAccessRequests()">
             <ion-text ngClass="access-requests-text" color="none">Access Requests</ion-text>
             <ion-badge color="danger" ngClass="access-requests-badge">1</ion-badge>
         </ion-button>
