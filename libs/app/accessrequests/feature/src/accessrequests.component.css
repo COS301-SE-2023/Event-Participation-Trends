@@ -9,12 +9,17 @@ ion-content {
 .main-title {
     font-size: 1.5rem;
     font-weight: 500;
-    margin: 20px 10px;
     text-decoration: underline;
-    
+    padding: 10px 0 0 20px;
 }
 
-.close-button {
-    margin-top: 1rem;
+.close-btn-icon {
     float: right;
+    font-size: 2.5rem;
+    margin: 5px 10px 0 0;
+}
+
+.title-close-btn {
+    display: flex;
+    justify-content: space-between;
 }
