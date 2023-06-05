@@ -6,11 +6,24 @@ ion-content {
     --background: #e1e1e1;
 }
 
+.title-event-name {
+    font-size: 1.5rem;
+    font-weight: 500;
+    padding: 10px 0 0 20px;
+}
+
 .main-title {
     font-size: 1.5rem;
     font-weight: 500;
     text-decoration: underline;
     padding: 10px 0 0 20px;
+}
+
+.main-title-event-name {
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 10px 0 0 20px;
+    opacity: 0.7;
 }
 
 .close-btn-icon {
