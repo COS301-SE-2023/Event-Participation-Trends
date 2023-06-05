@@ -59,9 +59,21 @@ ion-button {
 .floor-map-card-content {
     display: flex;
     justify-content: space-between;
+    position: relative;
 }
 
 .floor-map-snapshot {
     width: 95%;
     height: 100%;
+}
+
+.floor-map-settings {
+    position: absolute;
+    top: 1px;
+    right: 5px;
+}
+.floor-map-settings-icon {
+    width: 30px;
+    height: 30px;
+    color: #fff;
 }
