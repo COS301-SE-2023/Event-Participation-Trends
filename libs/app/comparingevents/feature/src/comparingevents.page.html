@@ -1,1 +1,80 @@
-<p>comparingevents works!</p>
+<ion-content>
+  <ion-grid ngClass="main-grid">
+    <ion-col ngClass="content">
+      <ion-grid ngClass="content-grid">
+        <ion-row ngClass="content-header">
+          <ion-col ngClass="content-header-title">
+            <h1>Comparing Events</h1>
+            <i class="fa-solid fa-arrow-down-arrow-up fa-rotate-90" style="color: #ff0000;"></i>
+          </ion-col>
+          <ion-col ngClass="content-header-actions">
+              <select id="filter-select" ngClass="filter-button">
+                <option value="">Select Filter</option>
+                <option value="option1">Last Week</option>
+                <option value="option2">Last Month</option>
+                <option value="option3">Last Year</option>
+              </select>
+          </ion-col>
+        </ion-row>
+        <div style="overflow-y: scroll">
+          <ion-row ngClass="content-body-row-1">
+            <ion-col ngClass="content-body-row-1-col-1">
+              <img
+                src="assets/icon/arrow-up.svg"
+                alt=""
+                height="235px"
+                width="750px"
+              />
+            </ion-col>
+            <ion-col ngClass="content-body-row-1-col-2">
+              <img
+                src="assets/icon/arrow-up.svg"
+                alt=""
+                height="235px"
+                width="300"
+              />
+            </ion-col>
+          </ion-row>
+          <ion-row ngClass="content-body-row-2">
+            <ion-col ngClass="content-body-row-2-col-1">
+              <img
+                src="assets/icon/arrow-up.svg"
+                alt=""
+                height="235px"
+                width="750px"
+              />
+            </ion-col>
+            <ion-col ngClass="content-body-row-2-col-2">
+              <ion-row ngClass="content-body-row-2-col-2-row-1">
+                <img
+                  src="assets/icon/arrow-up.svg"
+                  alt=""
+                  height="112px"
+                  width="300px"
+                />
+              </ion-row>
+              <ion-row ngClass="content-body-row-2-col-2-row-2">
+                <img
+                  src="assets/icon/arrow-up.svg"
+                  alt=""
+                  height="112px"
+                  width="300px"
+                />
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-grid>
+    </ion-col>
+    <ion-col size="auto" ngClass="sidebar">
+      <h1 ngClass="sidebar-header sidebar-title">Select event to compare</h1>
+      <hr/>
+      <span ngClass="sidebar-content">
+        <ion-searchbar
+          ngClass="sidebar-searchbar"
+          placeholder="Search"
+        ></ion-searchbar>
+      </span>
+    </ion-col>
+  </ion-grid>
+</ion-content>
