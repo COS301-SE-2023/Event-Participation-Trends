@@ -12,11 +12,12 @@
     </div>
 </ion-header>
 
-<ion-content fullscreen="true" y-scroll="false">
+<ion-content fullscreen="true">
     <div class="dashboard-title-area">
         <div ngClass="dashboard-title-icon">
             <ion-title ngClass="dashboard-title">Dashboard</ion-title>
             <ion-icon ngClass="dashboard-icon" name="stats-chart"></ion-icon>
+            <ion-label ngClass="dashboard-event-name">/ [event name]</ion-label>
         </div>
         <ion-button ngClass="access-requests-btn">
             <ion-text ngClass="access-requests-text" color="dark">Access Requests</ion-text>
@@ -35,5 +36,7 @@
                 </ion-button>
             </ion-card-content>
         </ion-card>
+
+        <ion-title>Event Activity</ion-title>
     </ng-container>
 </ion-content>
