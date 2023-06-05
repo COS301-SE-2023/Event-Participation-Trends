@@ -5,6 +5,8 @@
             <ion-label>Back</ion-label>
         </ion-button>
 
+        <ion-text ngClass="title-text">Event Participation Trends <sub><ion-text color="medium">/ role</ion-text></sub></ion-text>
+
         <ion-button ngClass="profile-section">
             <ion-icon ngClass="profile-icon" slot="end" name="person-outline"></ion-icon>
             <ion-label ngClass="profile-name">Username</ion-label>
@@ -20,7 +22,7 @@
             <ion-label ngClass="dashboard-event-name">/ [event name]</ion-label>
         </div>
         <ion-button ngClass="access-requests-btn">
-            <ion-text ngClass="access-requests-text" color="dark">Access Requests</ion-text>
+            <ion-text ngClass="access-requests-text" color="none">Access Requests</ion-text>
             <ion-badge color="danger" ngClass="access-requests-badge">1</ion-badge>
         </ion-button>
     </div>
@@ -31,29 +33,59 @@
                 <div class="floor-map-snapshot-area">
                     <ion-img ngClass="floor-map-snapshot" src=""></ion-img>
                 </div>
-                <ion-button ngClass="floor-map-settings">
-                    <ion-icon ngClass="floor-map-settings-icon" name="settings-outline"></ion-icon>
-                </ion-button>
+                <ion-icon ngClass="floor-map-settings-icon" name="settings-outline" routerLink="/eventdetails"></ion-icon>
             </ion-card-content>
         </ion-card>
 
         <ion-title>Event Activity</ion-title>
 
         <div class="statistics">
-            <ion-grid ngClass="large-statistics">
+            <ion-grid>
                 <ion-row>
-                    <ion-col></ion-col>
-                    <ion-col></ion-col>
-                    <ion-col></ion-col>
-                    <ion-col></ion-col>
+                    <ion-col size="12" size-md="6" size-lg="4">
+                        <ion-card color="none" ngClass="stats-card">
+                            <ion-card-content></ion-card-content>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col size="12" size-md="6" size-lg="4">
+                        <ion-card color="none" ngClass="stats-card">
+                            <ion-card-content></ion-card-content>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col size="6" size-md="4" size-lg="2">
+                        <ion-card color="none" ngClass="stats-card">
+                            <ion-card-content></ion-card-content>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col size="6" size-md="4" size-lg="2">
+                        <ion-card color="none" ngClass="stats-card">
+                            <ion-card-content></ion-card-content>
+                        </ion-card>
+                    </ion-col>
                 </ion-row>
                 <ion-row>
-                    <ion-col></ion-col>
-                    <ion-col></ion-col>
-                    <ion-col></ion-col>
-                    <ion-col></ion-col>
+                    <ion-col size="12" size-md="6" size-lg="4">
+                        <ion-card color="none" ngClass="stats-card">
+                            <ion-card-content></ion-card-content>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col size="12" size-md="6" size-lg="4">
+                        <ion-card color="none" ngClass="stats-card">
+                            <ion-card-content></ion-card-content>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col size="6" size-md="4" size-lg="2">
+                        <ion-card color="none" ngClass="stats-card">
+                            <ion-card-content></ion-card-content>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col size="6" size-md="4" size-lg="2">
+                        <ion-card color="none" ngClass="stats-card">
+                            <ion-card-content></ion-card-content>
+                        </ion-card>
+                    </ion-col>
                 </ion-row>
-            </ion-grid>
+            </ion-grid>        
         </div>
     </ng-container>
 </ion-content>

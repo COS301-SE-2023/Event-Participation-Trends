@@ -1,11 +1,22 @@
+ion-content {
+    background-color: #e7e7e7;
+}
+
 .nav-bar {
     background-color: #212121;
     height: 49px;
 }
 
-.back-button {
+.title-text {
     color: #fff;
     font-size: 20px;
+    position: absolute;
+    top: 10px;
+}
+
+.back-button {
+    color: #fff;
+    font-size: 15px;
 }
 
 ion-button {
@@ -54,8 +65,9 @@ ion-button {
 }
 
 .access-requests-text {
-   font-size: 20px;
-   margin-right: 5px;
+    font-size: 20px;
+    margin-right: 5px;
+    color: #212121;
 }
 
 .access-requests-badge {
@@ -77,6 +89,7 @@ ion-button {
 
 .floor-map-card-content {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     position: relative;
     padding: 8px;
@@ -95,13 +108,44 @@ ion-button {
     padding: 5px;
 }
 
-.floor-map-settings {
-    position: absolute;
-    top: 1px;
-    right: 5px;
-}
 .floor-map-settings-icon {
     width: 30px;
     height: 30px;
     color: #fff;
+    rotate: 0deg;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.floor-map-settings-icon:hover {
+    rotate: 90deg;
+    transition: 0.5s;
+} 
+
+@media(max-width: 768px) {
+    .floor-map-card {
+        height: 300px;
+    }
+    .floor-map-snapshot-area {
+        height: 285px;
+    }
+    .stats-card {
+        height: 150px;
+    }
+}
+.stats-card {
+    background-color: #e1e1e1;
+    height: 200px;
+    box-shadow: none;
+    transition: 0.5s;
+}
+
+.stats-card:hover {
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
+    transition: 0.5s;
+    cursor: pointer;
+}
+.statistics {
+    display: flex;
+    justify-content: space-evenly;
 }
