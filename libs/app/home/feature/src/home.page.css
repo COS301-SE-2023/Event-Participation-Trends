@@ -1,35 +1,106 @@
-ion-tab-button {
-    --color: var(#fff);
-    --color-selected: var(--ion-color-warning);
+@media (max-width: 900px) {
+    ion-tab-button {
+        --color: var(#fff);
+        --color-selected: var(--ion-color-warning);
+    }
+    .nav-bar {
+        background-color: #212121;
+        position: relative;
+    }
+    
+    .tab-button {
+        background-color: #212121;
+        color: #fff;
+        font-size: 18px;
+        --ripple-color: transparent;
+        width: 200rem;
+    }
+    
+    .tab-text {
+        width: 100%;
+        border-right: 2px solid #fff;
+    }
+    
+    .tab-text-no-border {
+        width: 100%;
+    }
+    
+    .tab-button.tab-selected {
+        color: #ffcc00;
+    }
+    
+    .title-text {
+        display: none;
+    }
+    
+    .profile-section {
+        position: absolute;
+        right: 10px;
+        font-size: 15px;
+        color: #797979;
+        height: 100%;
+    }
+    
+    ion-icon {
+        width: 30px;
+        height: 30px;
+    }
+    
+    ion-button {
+        text-transform: none;
+    }
 }
-.nav-bar {
-    background-color: #212121;
-    position: relative;
-}
-
-.tab-button {
-    background-color: #212121;
-    color: #fff;
-    font-size: 18px;
-    --ripple-color: transparent;
-}
-
-.tab-text {
-    width: 100%;
-    border-right: 2px solid #fff;
-}
-
-.tab-text-no-border {
-    width: 100%;
-}
-
-.tab-button.tab-selected {
-    color: #ffcc00;
-}
-
-.main-title {
-    color: #fff;
-    font-size: 22px;
-    position: absolute;
-    left: 100px;
+@media (min-width: 900px) {
+    ion-tab-button {
+        --color: var(#fff);
+        --color-selected: var(--ion-color-warning);
+    }
+    .nav-bar {
+        background-color: #212121;
+        position: relative;
+    }
+    
+    .tab-button {
+        background-color: #212121;
+        color: #fff;
+        font-size: 18px;
+        --ripple-color: transparent;
+    }
+    
+    .tab-text {
+        width: 100%;
+        border-right: 2px solid #fff;
+    }
+    
+    .tab-text-no-border {
+        width: 100%;
+    }
+    
+    .tab-button.tab-selected {
+        color: #ffcc00;
+    }
+    
+    .main-title {
+        color: #fff;
+        font-size: 22px;
+        position: absolute;
+        left: 100px;
+    }
+    
+    .profile-section {
+        position: absolute;
+        right: 10px;
+        font-size: 15px;
+        color: #797979;
+        height: 100%;
+    }
+    
+    ion-icon {
+        width: 30px;
+        height: 30px;
+    }
+    
+    ion-button {
+        text-transform: none;
+    }
 }

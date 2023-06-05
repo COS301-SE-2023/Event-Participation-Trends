@@ -1,7 +1,7 @@
 <ion-tabs color="none">
     <ion-tab-bar ngClass="nav-bar" slot="top">
       <div class="main-title">
-        <ion-label>Event Participation Trends <sub><ion-text color="medium">/ role</ion-text></sub></ion-label>
+        <ion-label ngClass="title-text">Event Participation Trends <sub><ion-text color="medium">/ role</ion-text></sub></ion-label>
       </div>
 
       <ion-tab-button tab="usermanagement" color="none" ngClass="tab-button" (click)="selectTab('Users')" (selected)="usersSelected">
@@ -16,12 +16,10 @@
         <ion-label ngClass="tab-text-no-border">Compare Events</ion-label>
       </ion-tab-button>
 
-      <div class="profile-section">
-        <ion-text>username</ion-text>
-        <ion-avatar>
-          <img src="assets/images/profile.png">
-        </ion-avatar>
-      </div>
+      <ion-button ngClass="profile-section">
+        <ion-icon slot="end" name="person-circle-outline"></ion-icon>
+        <ion-label ngClass="profile-name">Username</ion-label>
+      </ion-button>
 
 
     </ion-tab-bar>
