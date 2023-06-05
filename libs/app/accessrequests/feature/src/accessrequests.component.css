@@ -39,3 +39,22 @@ ion-content {
     color: rgba(255, 255, 255, 0.8);
 }
 
+.card-label {
+    color:rgba(255, 255, 255, 0.95);
+    font-size: 1.2rem;
+    margin-right: 20px;
+}
+
+.card-username,
+.card-email,
+.card-role {
+    font-style: italic;
+}
+
+.card-email {
+    padding-left: 16px;
+}
+.card-role {
+    padding-left: 23px;
+}
+
