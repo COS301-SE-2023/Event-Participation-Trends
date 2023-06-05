@@ -1,15 +1,26 @@
-<ion-tabs>
-    <ion-tab-bar ngClass="nav-bar">
-      <ion-tab-button tab="usermanagement">
-        <ion-label>Users</ion-label>
+<ion-tabs color="none">
+    <ion-tab-bar ngClass="nav-bar" slot="top">
+      <div class="main-title">
+        <ion-label ngClass="title-text">Event Participation Trends <sub><ion-text color="medium">/ role</ion-text></sub></ion-label>
+      </div>
+
+      <ion-tab-button tab="usermanagement" color="none" ngClass="tab-button" (click)="selectTab('Users')" (selected)="usersSelected">
+        <ion-label ngClass="tab-text">Users</ion-label>
       </ion-tab-button>
   
-      <ion-tab-button tab="viewevents">
-        <ion-label>View</ion-label>
+      <ion-tab-button tab="viewevents" color="none" ngClass="tab-button"  (click)="selectTab('View')">
+        <ion-label ngClass="tab-text">View</ion-label>
       </ion-tab-button>
 
-      <ion-tab-button tab="comparingevents">
-        <ion-label>Compare Events</ion-label>
+      <ion-tab-button tab="comparingevents" color="none" ngClass="tab-button"  (click)="selectTab('Compare Events')">
+        <ion-label ngClass="tab-text-no-border">Compare Events</ion-label>
       </ion-tab-button>
+
+      <ion-button ngClass="profile-section">
+        <ion-icon slot="end" name="person-circle"></ion-icon>
+        <ion-label ngClass="profile-name">Username</ion-label>
+      </ion-button>
+
+
     </ion-tab-bar>
   </ion-tabs>
