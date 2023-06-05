@@ -7,9 +7,14 @@
             <h1>Comparing Events</h1>
           </ion-col>
           <ion-col ngClass="content-header-actions">
-            <ion-button ngClass="btn-primary filter-button"
-              >Last week</ion-button
-            >
+            <!-- <ion-button ngClass="btn-primary filter-button"> -->
+              <select id="filter-select" ngClass="filter-button">
+                <option value="">Select Filter</option>
+                <option value="option1">Last Week</option>
+                <option value="option2">Last Month</option>
+                <option value="option3">Last Year</option>
+              </select>
+            <!-- </ion-button> -->
           </ion-col>
         </ion-row>
         <div style="overflow-y: scroll">

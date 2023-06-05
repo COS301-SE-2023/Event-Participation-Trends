@@ -23,6 +23,8 @@ ion-grid.main-grid {
   margin-bottom: 10px;
 }
 
+
+
 .content-body {
   padding: 10px;
   height: 100%;
@@ -75,6 +77,7 @@ ion-grid.main-grid {
   background-color: #d2d2d2;
   border-radius: 10px;
   padding: 5px;
+  cursor: pointer;
 }
 
 .sidebar {
