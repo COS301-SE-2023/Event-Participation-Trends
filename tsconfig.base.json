@@ -18,6 +18,15 @@
       "@event-participation-trends/api/passport": [
         "libs/api/passport/src/index.ts"
       ],
+      "@event-participation-trends/app/accessrequests/data-access": [
+        "libs/app/accessrequests/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/accessrequests/feature": [
+        "libs/app/accessrequests/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/accessrequests/util": [
+        "libs/app/accessrequests/util/src/index.ts"
+      ],
       "@event-participation-trends/app/auth/data-access": [
         "libs/app/auth/data-access/src/index.ts"
       ],

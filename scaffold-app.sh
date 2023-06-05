@@ -26,6 +26,11 @@ yarn nx generate @nrwl/angular:module auth --project=app-auth-data-access
 # HOME
 yarn nx generate @nrwl/angular:module home --project=app-home-feature --routing
 
+# ACCESS REQUESTS
+yarn nx generate @nrwl/angular:component accessrequests --project=app-accessrequests-feature --export --flat --type=component --standalone
+yarn nx generate @nrwl/angular:module accessrequests --project=app-accessrequests-feature --routing
+yarn nx generate @nrwl/angular:module accessrequests --project=app-accessrequests-data-access
+
 # USER MANAGEMENT (Tab visible for Admins only)
 yarn nx generate @nrwl/angular:component usermanagement --project=app-usermanagement-feature --export --flat --type=page --standalone
 yarn nx generate @nrwl/angular:module usermanagement --project=app-usermanagement-feature --routing
@@ -130,3 +135,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/eve
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/eventscreenview --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/eventscreenview --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/eventscreenview --no-interactive        # --> util
+
+# Access Requests
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/accessrequests --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/accessrequests --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/accessrequests --no-interactive        # --> util
