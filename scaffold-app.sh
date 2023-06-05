@@ -27,7 +27,9 @@ yarn nx generate @nrwl/angular:module auth --project=app-auth-data-access
 yarn nx generate @nrwl/angular:module home --project=app-home-feature --routing
 
 # ACCESS REQUESTS
-yarn nx generate @nrwl/angular:component accessrequests --project=app-accessrequests-feature --export --flat --type=component
+yarn nx generate @nrwl/angular:component accessrequests --project=app-accessrequests-feature --export --flat --type=component --standalone
+yarn nx generate @nrwl/angular:module accessrequests --project=app-accessrequests-feature --routing
+yarn nx generate @nrwl/angular:module accessrequests --project=app-accessrequests-data-access
 
 # USER MANAGEMENT (Tab visible for Admins only)
 yarn nx generate @nrwl/angular:component usermanagement --project=app-usermanagement-feature --export --flat --type=page --standalone

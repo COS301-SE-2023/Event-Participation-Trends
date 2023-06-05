@@ -1,1 +1,1 @@
-// export * from './lib/app-accessrequests-feature';
+export * from './accessrequests.routing';
