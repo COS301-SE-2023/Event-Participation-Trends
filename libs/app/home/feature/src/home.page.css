@@ -4,6 +4,7 @@ ion-tab-button {
 }
 .nav-bar {
     background-color: #212121;
+    position: relative;
 }
 
 .tab-button {
@@ -24,4 +25,11 @@ ion-tab-button {
 
 .tab-button.tab-selected {
     color: #ffcc00;
+}
+
+.main-title {
+    color: #fff;
+    font-size: 22px;
+    position: absolute;
+    left: 100px;
 }
