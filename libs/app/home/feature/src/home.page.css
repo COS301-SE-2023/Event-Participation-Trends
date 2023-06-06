@@ -35,7 +35,8 @@
         white-space: nowrap;
     }
     
-    .tab-button.tab-selected {
+    .tab-button.tab-selected,
+    .tab-button-no-border.tab-selected {
         color: #ffcc00;
     }
     
@@ -99,7 +100,8 @@
         white-space: nowrap;
     }
     
-    .tab-button.tab-selected {
+    .tab-button.tab-selected,
+    .tab-button-no-border.tab-selected {
         color: #ffcc00;
     }
     

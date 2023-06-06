@@ -100,7 +100,7 @@ ion-grid.main-grid {
 hr {
   height: 3px;
   background-color: #d2d2d2;
-  width: 90%
+  width: 90%;
 }
 
 .sidebar-header {
@@ -136,6 +136,21 @@ hr {
   width: 38px;
 }
 
+.hint {
+  font-size: 12px;
+  color: #ff0000;
+  padding: 2px;
+  text-align: center;
+  margin-top: 0;
+}
+
+.no-events {
+  color:#fff;
+  opacity: 0.5;
+  text-align: center;
+  margin-top: 50%;
+}
+
 .content-header-title h1,
 .sidebar-header-title h1 {
   margin-top: 0;
@@ -152,15 +167,32 @@ hr {
   border-radius: 5px;
 }
 
+.compare-list-item {
+  cursor: pointer;
+}
+
+.compare-list-item.disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.compare-list-item.disabled ion-checkbox {
+  pointer-events: initial;
+  cursor: not-allowed;
+}
+
+.checkbox-wrapper.disabled {
+  pointer-events: none;
+}
+
 ion-list ion-item:last-child {
-  --inner-border-width: 0; /* Remove the inner border for the last item */
+  --inner-border-width: 0;
 }
 
 ion-list ion-item:last-child::after {
-  content: none; /* Remove the pseudo-element (bottom border) for the last item */
+  content: none;
 }
 
-/* For Webkit based browsers (e.g., Chrome, Safari) */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -178,5 +210,3 @@ ion-list ion-item:last-child::after {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-
-
