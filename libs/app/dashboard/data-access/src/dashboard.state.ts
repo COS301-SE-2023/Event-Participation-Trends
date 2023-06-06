@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Select, Selector, State, StateContext } from '@ngxs/store';
-import { GetAccessRequests, GetDashboardStatistics, SetDashboardState } from '@event-participation-trends/app/dashboard/util';
+import { GetDashboardStatistics, SetDashboardState } from '@event-participation-trends/app/dashboard/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { DashboardApi } from './dashboard.api';
 
@@ -14,23 +14,7 @@ export interface DashboardStateModel {
 @State<DashboardStateModel>({
     name: 'dashboard',
     defaults: {
-        accessRequests: [
-            {
-                userId: 1,
-                email: 'example@gmail.com',
-                role: 'Manager',
-            },
-            {
-                userId: 2,
-                email: 'example@gmail.com',
-                role: 'Manager',
-            },
-            {
-                userId: 2,
-                email: 'example@gmail.com',
-                role: 'Manager',
-            },
-        ],
+        accessRequests: [],
         dashboardStatistics: []
     }
 })
@@ -38,26 +22,10 @@ export interface DashboardStateModel {
 @Injectable()
 export class DashboardState {
     constructor(private readonly dashboardApi: DashboardApi) { }
-    
-    @Selector()
-    static accessRequests(state: DashboardStateModel) {
-        return state.accessRequests;
-    }
 
     @Selector()
     static dashboardStatistics(state: DashboardStateModel) {
         return state.dashboardStatistics;
-    }
-
-    @Action(GetAccessRequests)
-    async getAccessRequests(ctx: StateContext<DashboardStateModel>, { eventName }: GetAccessRequests) {
-        try {
-            const accessRequests = await this.dashboardApi.getAccessRequests(eventName);
-            return ctx.patchState({ accessRequests });
-        }
-        catch (error) {
-            return ctx.dispatch(new SetError('Unable to get access requests'));
-        }
     }
 
     @Action(GetDashboardStatistics)
