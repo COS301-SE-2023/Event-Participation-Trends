@@ -4,19 +4,25 @@
       <ion-grid ngClass="content-grid">
         <ion-row ngClass="content-header">
           <ion-col ngClass="content-header-title">
-              <h1>Comparing Events</h1>
-              <ion-icon ngClass="compare-icon" name="swap-horizontal-outline"></ion-icon>
+            <h1>Comparing Events</h1>
+            <ion-icon
+              ngClass="compare-icon"
+              name="swap-horizontal-outline"
+            ></ion-icon>
           </ion-col>
           <ion-col ngClass="content-header-actions">
-              <select id="filter-select" ngClass="filter-button">
-                <option value="">Select Filter</option>
-                <option value="option1">Last Week</option>
-                <option value="option2">Last Month</option>
-                <option value="option3">Last Year</option>
-              </select>
+            <select id="filter-select" ngClass="filter-button">
+              <option value="">Select Filter</option>
+              <option value="option1">Last Week</option>
+              <option value="option2">Last Month</option>
+              <option value="option3">Last Year</option>
+            </select>
           </ion-col>
         </ion-row>
-        <div ngClass="content-body" [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}">
+        <div
+          ngClass="content-body"
+          [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+        >
           <ion-row ngClass="content-body-row-1">
             <ion-col ngClass="content-body-row-1-col-1">
               <img
@@ -68,7 +74,7 @@
     </ion-col>
     <ion-col size="auto" ngClass="sidebar">
       <h1 ngClass="sidebar-header sidebar-title">Select event to compare</h1>
-      <hr/>
+      <hr />
       <span ngClass="sidebar-content">
         <ion-searchbar
           ngClass="sidebar-searchbar"
@@ -76,13 +82,25 @@
         ></ion-searchbar>
         <ion-icon ngClass="search-filter" name="options-outline"></ion-icon>
       </span>
-      <ion-list ngClass="compare-list" [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}">
-        <ion-item *ngFor="let event of events"  ngClass="compare-list-item" [ngClass]="{'compare-list-item': true, 'disabled': isItemDisabled(event)}"  >
-          <ion-checkbox ngClass="compare-list-item-checkbox compare-list-item-label" (ionChange)="toggleItemSelection(event)" [checked]="event.selected" [disabled]="isItemDisabled(event)">
+      <ion-list
+        ngClass="compare-list"
+        [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+      >
+        <ion-item
+          *ngFor="let event of events"
+          ngClass="compare-list-item"
+          [ngClass]="{'compare-list-item': true, 'disabled': isItemDisabled(event)}"
+        >
+          <ion-checkbox
+            ngClass="compare-list-item-checkbox compare-list-item-label"
+            (ionChange)="toggleItemSelection(event)"
+            [checked]="event.selected"
+            [disabled]="isItemDisabled(event)"
+          >
             <h1>{{event.name}}</h1>
             <p>{{event.description}}</p>
           </ion-checkbox>
-        </ion-item>        
+        </ion-item>
       </ion-list>
     </ion-col>
   </ion-grid>

@@ -100,7 +100,7 @@ ion-grid.main-grid {
 hr {
   height: 3px;
   background-color: #d2d2d2;
-  width: 90%
+  width: 90%;
 }
 
 .sidebar-header {
@@ -170,7 +170,6 @@ hr {
   pointer-events: none;
 }
 
-
 ion-list ion-item:last-child {
   --inner-border-width: 0;
 }
@@ -178,7 +177,6 @@ ion-list ion-item:last-child {
 ion-list ion-item:last-child::after {
   content: none;
 }
-
 
 ::-webkit-scrollbar {
   width: 8px;
@@ -197,5 +195,3 @@ ion-list ion-item:last-child::after {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-
-
