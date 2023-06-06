@@ -136,6 +136,14 @@ hr {
   width: 38px;
 }
 
+.hint {
+  font-size: 12px;
+  color: #ff0000;
+  padding: 2px;
+  text-align: center;
+  margin-top: 0;
+}
+
 .content-header-title h1,
 .sidebar-header-title h1 {
   margin-top: 0;
