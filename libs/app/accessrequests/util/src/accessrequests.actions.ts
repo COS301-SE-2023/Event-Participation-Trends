@@ -7,3 +7,8 @@ export class RejectAccessRequest {
     static readonly type = '[AccessRequests] Reject Access Request';
     constructor(public readonly userId: string) { }
 }
+
+export class ApproveAccessRequest {
+    static readonly type = '[AccessRequests] Approve Access Request';
+    constructor(public readonly userId: string) { }
+}
