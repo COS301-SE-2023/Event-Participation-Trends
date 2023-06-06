@@ -1,9 +1,8 @@
 <ion-header>
-    <div class="nav-bar">
-        <ion-button color="none" fill="clear" ngClass="back-button" routerLink="/" routerDirection="back">
+    <ion-toolbar ngClass="nav-bar" color="none">
+        <ion-back-button slot="start" text="Back" color="none" fill="clear" ngClass="back-button" defaultHref="/home/viewevents" routerDirection="back">
             <ion-icon name="arrow-back-outline"></ion-icon>
-            <ion-label>Back</ion-label>
-        </ion-button>
+        </ion-back-button>
 
         <ion-text ngClass="title-text">Event Participation Trends <sub><ion-text color="medium">/ role</ion-text></sub></ion-text>
 
@@ -11,7 +10,7 @@
             <ion-icon ngClass="profile-icon" slot="end" name="person-outline"></ion-icon>
             <ion-label ngClass="profile-name">Username</ion-label>
         </ion-button>
-    </div>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen="true">
