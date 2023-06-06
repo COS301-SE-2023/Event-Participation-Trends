@@ -83,7 +83,8 @@
         <ion-icon ngClass="search-filter" name="options-outline"></ion-icon>
       </span>
       <p ngClass="hint" *ngIf="isMaxSelectionReached()">Note: you can only compare two events at once</p>
-      <ion-list
+      <p *ngIf="isEmpty()" ngClass="no-events">No events to compare.<br/>Try selecting a different time period.</p>
+      <ion-list *ngIf="!isEmpty()"
         ngClass="compare-list"
         [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
       >
