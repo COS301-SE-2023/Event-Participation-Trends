@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GetAccessRequests, RejectAccessRequest, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
+import { ApproveAccessRequest, GetAccessRequests, RejectAccessRequest, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { Action, State, StateContext } from '@ngxs/store';
 import { AccessRequestsApi } from './accessrequests.api';
@@ -40,6 +40,27 @@ export class AccessRequestsState {
 
     @Action(RejectAccessRequest)
     async rejectAccessRequest(ctx: StateContext<AccessRequestsStateModel>, { userId }: RejectAccessRequest) {
+        try{
+            // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
+
+            ctx.setState(prevState => ({
+                ...prevState,
+                accessRequests: prevState.accessRequests?.filter((accessRequest) => {
+                  return accessRequest.userId !== userId;
+                })
+            }));
+            
+            const state = ctx.getState();
+
+            return ctx.dispatch(new SetAccessRequests(state.accessRequests));
+        }
+        catch (error) {
+            return ctx.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(ApproveAccessRequest)
+    async approveAccessRequest(ctx: StateContext<AccessRequestsStateModel>, { userId }: ApproveAccessRequest) {
         try{
             // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
 

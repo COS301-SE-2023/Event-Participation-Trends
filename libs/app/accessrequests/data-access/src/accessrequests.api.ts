@@ -9,4 +9,8 @@ export class AccessRequestsApi {
     async rejectAccessRequest(userId: string): Promise<any[]> {
         return Promise.resolve([]);
     }
+
+    async approveAccessRequest(userId: string): Promise<any[]> {
+        return Promise.resolve([]);
+    }
 }
