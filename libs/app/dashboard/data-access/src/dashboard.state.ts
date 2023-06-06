@@ -14,7 +14,23 @@ export interface DashboardStateModel {
 @State<DashboardStateModel>({
     name: 'dashboard',
     defaults: {
-        accessRequests: [],
+        accessRequests: [
+            {
+                userId: 1,
+                email: 'example@gmail.com',
+                role: 'Manager',
+            },
+            {
+                userId: 2,
+                email: 'example@gmail.com',
+                role: 'Manager',
+            },
+            {
+                userId: 2,
+                email: 'example@gmail.com',
+                role: 'Manager',
+            },
+        ],
         dashboardStatistics: []
     }
 })
