@@ -1,5 +1,14 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
+interface Event {
+  id: number;
+  name: string;
+  date: string;
+  location: string;
+  description: string;
+  selected: boolean;
+}
+
 @Component({
   selector: 'event-participation-trends-comparingevents',
   templateUrl: './comparingevents.page.html',
@@ -9,6 +18,7 @@ export class ComparingeventsPage {
   @ViewChild('content-body', { static: true }) contentBody!: ElementRef;
 
   selectedEvents: any[] = [];
+  maxSelectionAllowed = 2;
 
   constructor(private containerElement: ElementRef) {}
   overflow = false;
@@ -21,9 +31,9 @@ export class ComparingeventsPage {
     const container = this.containerElement.nativeElement;
     this.overflow = container.scrollHeight > container.clientHeight;
   }
-
+  
   // define events array
-  events = [
+  events:Event[] = [
     {
       id: 1,
       name: 'Event 1',
@@ -90,7 +100,13 @@ export class ComparingeventsPage {
     },
   ];
 
+  // events: Event[] = [];
+
   maxSelectionReached = false;
+
+  isEmpty(): boolean {
+    return this.events.length === 0;
+  }
 
   toggleItemSelection(event: any) {
     if (this.selectedEvents.includes(event)) {
@@ -99,13 +115,13 @@ export class ComparingeventsPage {
         (selectedEvent) => selectedEvent !== event
       );
       event.selected = false;
-    } else if (this.selectedEvents.length < 2) {
+    } else if (this.selectedEvents.length < this.maxSelectionAllowed) {
       // Add to selectedEvents
       event.selected = true;
       this.selectedEvents.push(event);
     }
 
-    if (this.selectedEvents.length < 2) {
+    if (this.selectedEvents.length < this.maxSelectionAllowed) {
       this.maxSelectionReached = false;
     } else {
       this.maxSelectionReached = true;
@@ -117,7 +133,7 @@ export class ComparingeventsPage {
   }
 
   isMaxSelectionReached(): boolean {
-    return this.maxSelectionReached && this.selectedEvents.length >= 2;
+    return this.maxSelectionReached && this.selectedEvents.length >= this.maxSelectionAllowed;
   }
 
   isSelected(event: any): boolean {
