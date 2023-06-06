@@ -152,6 +152,25 @@ hr {
   border-radius: 5px;
 }
 
+.compare-list-item {
+  cursor: pointer;
+}
+
+.compare-list-item.disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.compare-list-item.disabled ion-checkbox {
+  pointer-events: initial;
+  cursor: not-allowed;
+}
+
+.checkbox-wrapper.disabled {
+  pointer-events: none;
+}
+
+
 ion-list ion-item:last-child {
   --inner-border-width: 0; /* Remove the inner border for the last item */
 }
