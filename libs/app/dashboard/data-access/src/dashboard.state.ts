@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Select, Selector, State, StateContext } from '@ngxs/store';
-import { GetAccessRequests } from '@event-participation-trends/app/dashboard/util';
+import { GetAccessRequests, GetDashboardStatistics } from '@event-participation-trends/app/dashboard/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { DashboardApi } from './dashboard.api';
 
@@ -41,6 +41,17 @@ export class DashboardState {
         }
         catch (error) {
             return ctx.dispatch(new SetError('Unable to get access requests'));
+        }
+    }
+
+    @Action(GetDashboardStatistics)
+    async getDashboardStatistics(ctx: StateContext<DashboardStateModel>, { eventName }: GetDashboardStatistics) {
+        try {
+            const dashboardStatistics = await this.dashboardApi.getDashboardStatistics(eventName);
+            ctx.patchState({ dashboardStatistics });
+        }
+        catch (error) {
+            return ctx.dispatch(new SetError('Unable to get dashboard statistics'));
         }
     }
 }
