@@ -1,8 +1,15 @@
 import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { AccessRequestsState } from '@event-participation-trends/app/accessrequests/data-access';
+import { AccessRequestsState, AccessRequestsStateModel } from '@event-participation-trends/app/accessrequests/data-access';
 import { Select, Store } from '@ngxs/store';
 import { ApproveAccessRequest, RejectAccessRequest } from '@event-participation-trends/app/accessrequests/util';
+import { Observable } from 'rxjs';
+
+interface IAccessRequest {
+  userId: string;
+  email: string;
+  role: string;
+}
 
 @Component({
   selector: 'event-participation-trends-accessrequests',
@@ -10,7 +17,7 @@ import { ApproveAccessRequest, RejectAccessRequest } from '@event-participation-
   styleUrls: ['./accessrequests.component.css'],
 })
 export class AccessRequestsComponent {
-  @Select(AccessRequestsState.accessRequests) accessRequests$!: any[];
+  @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
 
   constructor(private modalController : ModalController, private store: Store) { }
 

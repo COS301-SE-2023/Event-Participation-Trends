@@ -4,10 +4,14 @@ import { SetError } from '@event-participation-trends/app/error/util';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { AccessRequestsApi } from './accessrequests.api';
 
-// Once we know the interface for the AccessRequests page we can remove the comment from the line below
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface IAccessRequest {
+    userId: string;
+    email: string;
+    role: string;
+}
+
 export interface AccessRequestsStateModel {
-    accessRequests: any[];
+    accessRequests: IAccessRequest[];
 }
 
 @State<AccessRequestsStateModel>({
@@ -20,12 +24,13 @@ export interface AccessRequestsStateModel {
 @Injectable()
 export class AccessRequestsState {
 
+    
+    constructor(private readonly accessRequestsApi: AccessRequestsApi) { }
+    
     @Selector()
     static accessRequests(state: AccessRequestsStateModel) {
         return state.accessRequests;
     }
-
-    constructor(private readonly accessRequestsApi: AccessRequestsApi) { }
 
     @Action(SetAccessRequests)
     setAccessRequests(ctx: StateContext<AccessRequestsStateModel>, { accessRequests }: SetAccessRequests) {
