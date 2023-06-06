@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
+import { GetAccessRequests, RejectAccessRequest } from '@event-participation-trends/app/accessrequests/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { Action, State, StateContext } from '@ngxs/store';
 import { AccessRequestsApi } from './accessrequests.api';
@@ -30,6 +30,27 @@ export class AccessRequestsState {
         }
         catch (error) {
             return ctx.dispatch(new SetError('Unable to get access requests'));
+        }
+    }
+
+    @Action(RejectAccessRequest)
+    async rejectAccessRequest(ctx: StateContext<AccessRequestsStateModel>, { userId }: RejectAccessRequest) {
+        try{
+            // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
+
+            return ctx.setState(prevState => ({
+                ...prevState,
+                accessRequests: prevState.accessRequests?.filter((accessRequest) => {
+                  return accessRequest.userId !== userId;
+                })
+            }));
+            
+            // const state = ctx.getState();
+
+            // return ctx.dispatch(new SetAccessRequests(state.accessRequests));
+        }
+        catch (error) {
+            return ctx.dispatch(new SetError((error as Error).message));
         }
     }
 }
