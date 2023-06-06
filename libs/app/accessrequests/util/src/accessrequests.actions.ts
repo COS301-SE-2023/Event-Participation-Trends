@@ -12,3 +12,8 @@ export class ApproveAccessRequest {
     static readonly type = '[AccessRequests] Approve Access Request';
     constructor(public readonly userId: string) { }
 }
+
+export class SetAccessRequests {
+    static readonly type = '[AccessRequests] Set Access Requests';
+    constructor(public readonly accessRequests: any[]) { }
+}

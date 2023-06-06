@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GetAccessRequests, RejectAccessRequest } from '@event-participation-trends/app/accessrequests/util';
+import { GetAccessRequests, RejectAccessRequest, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { Action, State, StateContext } from '@ngxs/store';
 import { AccessRequestsApi } from './accessrequests.api';
@@ -22,6 +22,11 @@ export class AccessRequestsState {
 
     constructor(private readonly accessRequestsApi: AccessRequestsApi) { }
 
+    @Action(SetAccessRequests)
+    setAccessRequests(ctx: StateContext<AccessRequestsStateModel>, { accessRequests }: SetAccessRequests) {
+        return ctx.patchState({ accessRequests });
+    }
+
     @Action(GetAccessRequests)
     async getAccessRequests(ctx: StateContext<AccessRequestsStateModel>, { eventName }: GetAccessRequests) {
         try {
@@ -38,16 +43,16 @@ export class AccessRequestsState {
         try{
             // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
 
-            return ctx.setState(prevState => ({
+            ctx.setState(prevState => ({
                 ...prevState,
                 accessRequests: prevState.accessRequests?.filter((accessRequest) => {
                   return accessRequest.userId !== userId;
                 })
             }));
             
-            // const state = ctx.getState();
+            const state = ctx.getState();
 
-            // return ctx.dispatch(new SetAccessRequests(state.accessRequests));
+            return ctx.dispatch(new SetAccessRequests(state.accessRequests));
         }
         catch (error) {
             return ctx.dispatch(new SetError((error as Error).message));
