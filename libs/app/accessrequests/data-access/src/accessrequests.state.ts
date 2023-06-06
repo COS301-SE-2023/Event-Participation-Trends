@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApproveAccessRequest, GetAccessRequests, RejectAccessRequest, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
 import { SetError } from '@event-participation-trends/app/error/util';
-import { Action, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { AccessRequestsApi } from './accessrequests.api';
 
 // Once we know the interface for the AccessRequests page we can remove the comment from the line below
@@ -19,6 +19,11 @@ export interface AccessRequestsStateModel {
 
 @Injectable()
 export class AccessRequestsState {
+
+    @Selector()
+    static accessRequests(state: AccessRequestsStateModel) {
+        return state.accessRequests;
+    }
 
     constructor(private readonly accessRequestsApi: AccessRequestsApi) { }
 
