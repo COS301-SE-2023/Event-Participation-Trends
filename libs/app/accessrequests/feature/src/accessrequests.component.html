@@ -4,7 +4,7 @@
             <ion-text ngClass="main-title">Manage Access Requests</ion-text>
             <ion-text ngClass="main-title-event-name">/ event name</ion-text>
         </div>
-        <ion-icon name="close-outline" ngClass="close-btn-icon"></ion-icon>
+        <ion-icon name="close-outline" ngClass="close-btn-icon" (click)="closeAccessRequests()"></ion-icon>
     </div>
     <ng-container class="requests-container">
         <ion-card ngClass="access-request-card">
