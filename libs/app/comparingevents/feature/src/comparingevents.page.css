@@ -172,14 +172,14 @@ hr {
 
 
 ion-list ion-item:last-child {
-  --inner-border-width: 0; /* Remove the inner border for the last item */
+  --inner-border-width: 0;
 }
 
 ion-list ion-item:last-child::after {
-  content: none; /* Remove the pseudo-element (bottom border) for the last item */
+  content: none;
 }
 
-/* For Webkit based browsers (e.g., Chrome, Safari) */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
