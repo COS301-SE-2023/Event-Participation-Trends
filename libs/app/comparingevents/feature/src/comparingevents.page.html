@@ -82,6 +82,7 @@
         ></ion-searchbar>
         <ion-icon ngClass="search-filter" name="options-outline"></ion-icon>
       </span>
+      <p ngClass="hint" *ngIf="isMaxSelectionReached()">Note: you can only compare two events at once</p>
       <ion-list
         ngClass="compare-list"
         [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
