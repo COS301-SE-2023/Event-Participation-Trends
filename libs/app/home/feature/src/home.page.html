@@ -4,17 +4,19 @@
         <ion-label ngClass="title-text">Event Participation Trends <sub><ion-text color="medium">/ role</ion-text></sub></ion-label>
       </div>
 
-      <ion-tab-button tab="usermanagement" color="none" ngClass="tab-button" (click)="selectTab('Users')" (selected)="usersSelected">
-        <ion-label ngClass="tab-text">Users</ion-label>
-      </ion-tab-button>
+      <div class="custom-tab-button-container">
+        <ion-tab-button tab="usermanagement" color="none" ngClass="tab-button" (click)="selectTab('Users')" (selected)="usersSelected">
+          <ion-label ngClass="tab-text">Users</ion-label>
+        </ion-tab-button>
+    
+        <ion-tab-button tab="viewevents" color="none" ngClass="tab-button"  (click)="selectTab('View')">
+          <ion-label ngClass="tab-text">View</ion-label>
+        </ion-tab-button>
   
-      <ion-tab-button tab="viewevents" color="none" ngClass="tab-button"  (click)="selectTab('View')">
-        <ion-label ngClass="tab-text">View</ion-label>
-      </ion-tab-button>
-
-      <ion-tab-button tab="comparingevents" color="none" ngClass="tab-button"  (click)="selectTab('Compare Events')">
-        <ion-label ngClass="tab-text-no-border">Compare Events</ion-label>
-      </ion-tab-button>
+        <ion-tab-button tab="comparingevents" color="none" ngClass="tab-button-no-border"  (click)="selectTab('Compare Events')">
+          <ion-label ngClass="tab-text">Compare Events</ion-label>
+        </ion-tab-button>
+      </div>
 
       <ion-button ngClass="profile-section">
         <ion-icon slot="end" name="person-circle"></ion-icon>
