@@ -53,13 +53,18 @@ export class AccessRequestsState {
         try{
             // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
 
-            ctx.setState(prevState => ({
-                ...prevState,
-                accessRequests: prevState.requests?.filter((accessRequest) => {
-                  return accessRequest.userId !== userId;
-                })
-            }));
-            
+            // filter out the rejected access request
+            ctx.setState((prevState) => {
+                const filteredRequests = prevState.requests?.filter(
+                  (accessRequest) => accessRequest.userId !== userId
+                );
+                return {
+                  ...prevState,
+                  requests: filteredRequests,
+                };
+            });
+              
+
             const state = ctx.getState();
 
             return ctx.dispatch(new SetAccessRequests(state.requests));
@@ -74,12 +79,15 @@ export class AccessRequestsState {
         try{
             // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
 
-            ctx.setState(prevState => ({
-                ...prevState,
-                accessRequests: prevState.requests?.filter((accessRequest) => {
-                  return accessRequest.userId !== userId;
-                })
-            }));
+            ctx.setState((prevState) => {
+                const filteredRequests = prevState.requests?.filter(
+                  (accessRequest) => accessRequest.userId !== userId
+                );
+                return {
+                  ...prevState,
+                  requests: filteredRequests,
+                };
+            });
             
             const state = ctx.getState();
 
