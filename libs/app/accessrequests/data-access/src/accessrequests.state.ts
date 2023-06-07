@@ -11,13 +11,13 @@ interface IAccessRequest {
 }
 
 export interface AccessRequestsStateModel {
-    accessRequests: IAccessRequest[];
+    requests: IAccessRequest[];
 }
 
 @State<AccessRequestsStateModel>({
     name: 'accessrequests',
     defaults: {
-        accessRequests: []
+        requests: []
     }
 })
 
@@ -25,68 +25,68 @@ export interface AccessRequestsStateModel {
 export class AccessRequestsState {
 
     
-    constructor(private readonly accessRequestsApi: AccessRequestsApi) { }
+    // constructor(private readonly accessRequestsApi: AccessRequestsApi) { }
     
-    @Selector()
-    static accessRequests(state: AccessRequestsStateModel) {
-        return state.accessRequests;
-    }
+    // @Selector()
+    // static accessRequests(state: AccessRequestsStateModel) {
+    //     return state.accessRequests;
+    // }
 
-    @Action(SetAccessRequests)
-    setAccessRequests(ctx: StateContext<AccessRequestsStateModel>, { accessRequests }: SetAccessRequests) {
-        return ctx.patchState({ accessRequests });
-    }
+    // @Action(SetAccessRequests)
+    // setAccessRequests(ctx: StateContext<AccessRequestsStateModel>, { accessRequests }: SetAccessRequests) {
+    //     return ctx.patchState({ accessRequests });
+    // }
 
-    @Action(GetAccessRequests)
-    async getAccessRequests(ctx: StateContext<AccessRequestsStateModel>, { eventName }: GetAccessRequests) {
-        try {
-            const accessRequests = await this.accessRequestsApi.getAccessRequests(eventName);
-            return ctx.patchState({ accessRequests });
-        }
-        catch (error) {
-            return ctx.dispatch(new SetError('Unable to get access requests'));
-        }
-    }
+    // @Action(GetAccessRequests)
+    // async getAccessRequests(ctx: StateContext<AccessRequestsStateModel>, { eventName }: GetAccessRequests) {
+    //     try {
+    //         const accessRequests = await this.accessRequestsApi.getAccessRequests(eventName);
+    //         return ctx.patchState({ accessRequests });
+    //     }
+    //     catch (error) {
+    //         return ctx.dispatch(new SetError('Unable to get access requests'));
+    //     }
+    // }
 
-    @Action(RejectAccessRequest)
-    async rejectAccessRequest(ctx: StateContext<AccessRequestsStateModel>, { userId }: RejectAccessRequest) {
-        try{
-            // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
+    // @Action(RejectAccessRequest)
+    // async rejectAccessRequest(ctx: StateContext<AccessRequestsStateModel>, { userId }: RejectAccessRequest) {
+    //     try{
+    //         // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
 
-            ctx.setState(prevState => ({
-                ...prevState,
-                accessRequests: prevState.accessRequests?.filter((accessRequest) => {
-                  return accessRequest.userId !== userId;
-                })
-            }));
+    //         ctx.setState(prevState => ({
+    //             ...prevState,
+    //             accessRequests: prevState.accessRequests?.filter((accessRequest) => {
+    //               return accessRequest.userId !== userId;
+    //             })
+    //         }));
             
-            const state = ctx.getState();
+    //         const state = ctx.getState();
 
-            return ctx.dispatch(new SetAccessRequests(state.accessRequests));
-        }
-        catch (error) {
-            return ctx.dispatch(new SetError((error as Error).message));
-        }
-    }
+    //         return ctx.dispatch(new SetAccessRequests(state.accessRequests));
+    //     }
+    //     catch (error) {
+    //         return ctx.dispatch(new SetError((error as Error).message));
+    //     }
+    // }
 
-    @Action(ApproveAccessRequest)
-    async approveAccessRequest(ctx: StateContext<AccessRequestsStateModel>, { userId }: ApproveAccessRequest) {
-        try{
-            // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
+    // @Action(ApproveAccessRequest)
+    // async approveAccessRequest(ctx: StateContext<AccessRequestsStateModel>, { userId }: ApproveAccessRequest) {
+    //     try{
+    //         // const responseRef = this.accessRequestsApi.rejectAccessRequest(userId);
 
-            ctx.setState(prevState => ({
-                ...prevState,
-                accessRequests: prevState.accessRequests?.filter((accessRequest) => {
-                  return accessRequest.userId !== userId;
-                })
-            }));
+    //         ctx.setState(prevState => ({
+    //             ...prevState,
+    //             accessRequests: prevState.accessRequests?.filter((accessRequest) => {
+    //               return accessRequest.userId !== userId;
+    //             })
+    //         }));
             
-            const state = ctx.getState();
+    //         const state = ctx.getState();
 
-            return ctx.dispatch(new SetAccessRequests(state.accessRequests));
-        }
-        catch (error) {
-            return ctx.dispatch(new SetError((error as Error).message));
-        }
-    }
+    //         return ctx.dispatch(new SetAccessRequests(state.accessRequests));
+    //     }
+    //     catch (error) {
+    //         return ctx.dispatch(new SetError((error as Error).message));
+    //     }
+    // }
 }

@@ -10,7 +10,7 @@ import { DashboardState } from '../../data-access/src/dashboard.state';
   styleUrls: ['./dashboard.page.css'],
 })
 export class DashboardPage {
-  @Select(DashboardState.dashboardStatistics) dashboardStatistics$!: any[];
+  // @Select(DashboardState.dashboardStatistics) dashboardStatistics$!: any[];
 
   constructor(private modalController : ModalController) { }
 

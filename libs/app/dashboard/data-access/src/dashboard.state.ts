@@ -21,21 +21,21 @@ export interface DashboardStateModel {
 
 @Injectable()
 export class DashboardState {
-    constructor(private readonly dashboardApi: DashboardApi) { }
+    // constructor(private readonly dashboardApi: DashboardApi) { }
 
-    @Selector()
-    static dashboardStatistics(state: DashboardStateModel) {
-        return state.dashboardStatistics;
-    }
+    // @Selector()
+    // static dashboardStatistics(state: DashboardStateModel) {
+    //     return state.dashboardStatistics;
+    // }
 
-    @Action(GetDashboardStatistics)
-    async getDashboardStatistics(ctx: StateContext<DashboardStateModel>, { eventName }: GetDashboardStatistics) {
-        try {
-            const dashboardStatistics = await this.dashboardApi.getDashboardStatistics(eventName);
-            return ctx.patchState({ dashboardStatistics });
-        }
-        catch (error) {
-            return ctx.dispatch(new SetError('Unable to get dashboard statistics'));
-        }
-    }
+    // @Action(GetDashboardStatistics)
+    // async getDashboardStatistics(ctx: StateContext<DashboardStateModel>, { eventName }: GetDashboardStatistics) {
+    //     try {
+    //         const dashboardStatistics = await this.dashboardApi.getDashboardStatistics(eventName);
+    //         return ctx.patchState({ dashboardStatistics });
+    //     }
+    //     catch (error) {
+    //         return ctx.dispatch(new SetError('Unable to get dashboard statistics'));
+    //     }
+    // }
 }

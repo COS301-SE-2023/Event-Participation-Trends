@@ -17,7 +17,7 @@ interface IAccessRequest {
   styleUrls: ['./accessrequests.component.css'],
 })
 export class AccessRequestsComponent {
-  @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
+  // @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
 
   constructor(private modalController : ModalController, private store: Store) { }
 
@@ -25,12 +25,12 @@ export class AccessRequestsComponent {
     await this.modalController.dismiss();
   }
 
-  approveAccessRequest(userId: string) {
-    this.store.dispatch(new ApproveAccessRequest(userId));
-  }
+  // approveAccessRequest(userId: string) {
+  //   this.store.dispatch(new ApproveAccessRequest(userId));
+  // }
 
-  rejectAccessRequest(userId: string) {
-    this.store.dispatch(new RejectAccessRequest(userId));
-  }
+  // rejectAccessRequest(userId: string) {
+  //   this.store.dispatch(new RejectAccessRequest(userId));
+  // }
 
 }

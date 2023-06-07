@@ -7,22 +7,22 @@
         <ion-icon name="close-outline" ngClass="close-btn-icon" (click)="closeAccessRequests()"></ion-icon>
     </div>
     <ng-container class="requests-container">
-        <ion-card *ngFor="let request of accessRequests$ | async" ngClass="access-request-card">
+        <ion-card ngClass="access-request-card">
             <ion-card-content ngClass="card-content">
                 <div>
                     <ion-label ngClass="card-label">User ID:</ion-label>
-                    <ion-text ngClass="card-username">{{ request.userId }}</ion-text><br>
+                    <ion-text ngClass="card-username">hi</ion-text><br>
                     <ion-label ngClass="card-label">Email:</ion-label>
-                    <ion-text ngClass="card-email">{{ request.email }}</ion-text><br>
+                    <ion-text ngClass="card-email">hi</ion-text><br>
                     <ion-label ngClass="card-label">Role:</ion-label>
-                    <ion-text ngClass="card-role">{{ request.role }}</ion-text><br>
+                    <ion-text ngClass="card-role">hi</ion-text><br>
                 </div>
                 <ion-buttons ngClass="accept-reject-btns">
-                    <ion-button ngClass="accept-btn" (click)="approveAccessRequest(request.userId)">
+                    <ion-button ngClass="accept-btn">
                         <ion-icon name="checkmark-outline" ngClass="accept-icon"></ion-icon>
                         <ion-text>Accept</ion-text>
                     </ion-button>
-                    <ion-button ngClass="reject-btn" (click)="rejectAccessRequest(request.userId)">
+                    <ion-button ngClass="reject-btn">
                         <ion-icon name="close-outline" ngClass="reject-icon"></ion-icon>
                         <ion-text>Reject</ion-text>
                     </ion-button>
