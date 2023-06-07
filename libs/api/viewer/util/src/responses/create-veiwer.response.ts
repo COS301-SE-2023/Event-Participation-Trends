@@ -1,5 +1,5 @@
 import { Status } from '../enums';
 
-export interface IReviveDeadMemoryResponse {
+export interface ICreateViewerResponse {
   status: Status;
 }
