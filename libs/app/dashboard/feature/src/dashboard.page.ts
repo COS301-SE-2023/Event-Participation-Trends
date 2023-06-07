@@ -5,6 +5,13 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { DashboardState, DashboardStateModel } from '../../data-access/src/dashboard.state';
 import { GetAccessRequests, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
+import { AccessRequestsState } from '@event-participation-trends/app/accessrequests/data-access';
+
+interface IAccessRequest {
+  userId: string;
+  email: string;
+  role: string;
+}
 
 @Component({
   selector: 'event-participation-trends-dashboard',
@@ -13,6 +20,7 @@ import { GetAccessRequests, SetAccessRequests } from '@event-participation-trend
 })
 export class DashboardPage implements OnInit {
   @Select(DashboardState.dashboardStatistics) dashboardStatistics$!: Observable<DashboardStateModel | null>;
+  @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
 
   constructor(private modalController : ModalController, private readonly store: Store) { }
 
@@ -56,4 +64,14 @@ export class DashboardPage implements OnInit {
     const { data } = await modal.onDidDismiss();
   }
 
+  get AccessRequestsLength() {
+    this.accessRequests$.subscribe((accessRequests) => {
+      if (accessRequests) {
+        return accessRequests.length;
+      }
+      return 0;
+    });
+    
+    return 0;
+  }
 }
