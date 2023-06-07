@@ -23,6 +23,7 @@
     "@nestjs/mongoose": "^9.2.2",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.1.1",
+    "@nestjs/cqrs": "^9.0.3",
     "@ngxs/router-plugin": "^3.8.1",
     "@ngxs/store": "^3.8.1",
     "@nx/angular": "16.1.0",
