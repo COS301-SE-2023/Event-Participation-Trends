@@ -11,6 +11,8 @@ import {
   PassportModule as Wow,
 } from '@event-participation-trends/api/passport';
 import { MqttService } from './mqtt.service';
+import { ViewerService, ViewerModule } from '@event-participation-trends/api/viewer/feature';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -31,8 +33,10 @@ import { MqttService } from './mqtt.service';
       signOptions: { expiresIn: '1d' },
     }),
     MongooseModule.forRoot(process.env.MONGO_ALTALS_CONNECTION_URL),
+    ViewerModule,
+    CqrsModule
   ],
   controllers: [AppController, MqttController, PassportController],
-  providers: [AppService, MqttService, PassportService],
+  providers: [AppService, MqttService, PassportService, ViewerService],
 })
 export class AppModule {}
