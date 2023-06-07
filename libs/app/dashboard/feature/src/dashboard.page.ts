@@ -65,13 +65,14 @@ export class DashboardPage implements OnInit {
   }
 
   get AccessRequestsLength() {
+    let numRequests = 0;
+
     this.accessRequests$.subscribe((accessRequests) => {
       if (accessRequests) {
-        return accessRequests.length;
+        numRequests = accessRequests.length;
       }
-      return 0;
     });
     
-    return 0;
+    return numRequests;
   }
 }
