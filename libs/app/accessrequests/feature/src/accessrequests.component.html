@@ -1,28 +1,28 @@
-<ion-content color="none">
+<ion-content color="none" ngClass="content">
     <div class="title-close-btn">
         <div class="title-event-name">
             <ion-text ngClass="main-title">Manage Access Requests</ion-text>
             <ion-text ngClass="main-title-event-name">/ event name</ion-text>
         </div>
-        <ion-icon name="close-outline" ngClass="close-btn-icon"></ion-icon>
+        <ion-icon name="close-outline" ngClass="close-btn-icon" (click)="closeAccessRequests()"></ion-icon>
     </div>
     <ng-container class="requests-container">
-        <ion-card ngClass="access-request-card">
+        <ion-card *ngFor="let request of accessRequests$ | async" ngClass="access-request-card">
             <ion-card-content ngClass="card-content">
                 <div>
                     <ion-label ngClass="card-label">User ID:</ion-label>
-                    <ion-text ngClass="card-username">example username</ion-text><br>
+                    <ion-text ngClass="card-username">{{ request.userId }}</ion-text><br>
                     <ion-label ngClass="card-label">Email:</ion-label>
-                    <ion-text ngClass="card-email">example@gmail.com</ion-text><br>
+                    <ion-text ngClass="card-email">{{ request.email }}</ion-text><br>
                     <ion-label ngClass="card-label">Role:</ion-label>
-                    <ion-text ngClass="card-role">Event Manager</ion-text><br>
+                    <ion-text ngClass="card-role">{{ request.role }}</ion-text><br>
                 </div>
                 <ion-buttons ngClass="accept-reject-btns">
-                    <ion-button ngClass="accept-btn">
+                    <ion-button ngClass="accept-btn" (click)="approveAccessRequest(request.userId, request.email)">
                         <ion-icon name="checkmark-outline" ngClass="accept-icon"></ion-icon>
                         <ion-text>Accept</ion-text>
                     </ion-button>
-                    <ion-button ngClass="reject-btn">
+                    <ion-button ngClass="reject-btn" (click)="rejectAccessRequest(request.userId, request.email)">
                         <ion-icon name="close-outline" ngClass="reject-icon"></ion-icon>
                         <ion-text>Reject</ion-text>
                     </ion-button>

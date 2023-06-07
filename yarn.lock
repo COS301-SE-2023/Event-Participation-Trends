@@ -2115,6 +2115,13 @@
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-16.0.2.tgz#185c6dcb4cdf5851b3c050dc166b0baa2a1df9d0"
   integrity sha512-8nPAOs2JLdMrAUf3sMkySzh66sPIkukO6HT8KVj726Dqm0Jtabjnxh0EI15Gkykj7HqH0Zw7/VyxpNQRfTA2UQ==
 
+"@ngxs/devtools-plugin@^3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@ngxs/devtools-plugin/-/devtools-plugin-3.8.1.tgz#43f0bcc83ece59baa6d141e41fd026f91de831fb"
+  integrity sha512-IRHoHdV/lxNXaisKGdcGvSNbrgjCpM06eiqC93K+tOfwgmDY/hNsDNmKlXn9xmdYxF9U6v/1CXtAr0Q0Ux7dVQ==
+  dependencies:
+    tslib "^2.2.0"
+
 "@ngxs/router-plugin@^3.8.1":
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/@ngxs/router-plugin/-/router-plugin-3.8.1.tgz#7abb0d108640c4d89dfcdbe63ac372cb2e33a928"
