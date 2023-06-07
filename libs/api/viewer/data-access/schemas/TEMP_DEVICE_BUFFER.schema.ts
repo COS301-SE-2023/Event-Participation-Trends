@@ -7,7 +7,7 @@ export type TEMP_DEVICE_BUFFERocument = HydratedDocument<TEMP_DEVICE_BUFFER>;
 @Schema({timestamps: true, collection: 'TEMP_DEVICE_BUFFER' })
 export class TEMP_DEVICE_BUFFER{
     @Prop({ required: true })
-    BTID: string | undefined | null;
+    DeviceId: string | undefined | null;
 
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Sensor' })
     SensorId: Sensor | undefined | null;
