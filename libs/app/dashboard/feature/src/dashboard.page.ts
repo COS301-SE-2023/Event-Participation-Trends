@@ -3,7 +3,7 @@ import { AccessRequestsComponent } from '@event-participation-trends/app/accessr
 import { ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { DashboardState, DashboardStateModel } from '../../data-access/src/dashboard.state';
+import { DashboardState, DashboardStateModel } from '@event-participation-trends/app/dashboard/data-access';
 import { GetAccessRequests, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
 import { AccessRequestsState } from '@event-participation-trends/app/accessrequests/data-access';
 

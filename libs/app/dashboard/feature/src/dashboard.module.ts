@@ -5,17 +5,18 @@ import { DashboardRoutingModule } from './dashboard.routing';
 import { DashboardPage } from './dashboard.page';
 import { DashboardModule as DashboardDataAccessModule } from '@event-participation-trends/app/dashboard/data-access';
 import { IonicModule } from '@ionic/angular';
-import { SubPageNavPage } from '@event-participation-trends/app/subpagenav/feature';
 import { AccessRequestsModule } from '@event-participation-trends/app/accessrequests/feature';
+import { SharedModule } from '@event-participation-trends/app/shared/feature';
 
 @NgModule({
-  declarations: [DashboardPage, SubPageNavPage],
+  declarations: [DashboardPage],
   imports: [
     CommonModule,
     IonicModule,
     DashboardRoutingModule,
     DashboardDataAccessModule,
-    AccessRequestsModule
+    AccessRequestsModule,
+    SharedModule
   ]
 })
 export class DashboardModule { }

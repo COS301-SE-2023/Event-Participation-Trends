@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { EventDetailsRoutingModule } from './eventdetails.routing';
 import { EventDetailsPage } from './eventdetails.page';
 import { EventDetailsModule as EventDetailsDataAccessModule } from '@event-participation-trends/app/eventdetails/data-access';
+import { SharedModule } from '@event-participation-trends/app/shared/feature';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { EventDetailsModule as EventDetailsDataAccessModule } from '@event-parti
   imports: [
     CommonModule,
     EventDetailsRoutingModule,
-    EventDetailsDataAccessModule
+    EventDetailsDataAccessModule,
+    SharedModule
   ]
 })
 export class EventDetailsModule { }
