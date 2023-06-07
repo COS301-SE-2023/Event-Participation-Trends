@@ -6,17 +6,17 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({timestamps: true, collection: 'User' })
 export class User{
-    @Prop({ required: true })
-    UserId: string | undefined | null;
+    //@Prop({ required: true })
+    //UserId: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ required: true, type: String })
     Role: Role | undefined | null;
 
     @Prop({ required: true })
-    Firstname: string | undefined | null;
+    FirstName: string | undefined | null;
 
     @Prop()
-    Lastname: string | undefined | null;
+    LastName: string | undefined | null;
 
     @Prop()
     Phonenumber: string | undefined | null;
