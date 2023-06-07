@@ -1,18 +1,25 @@
 <ion-header>
-    <ion-toolbar ngClass="nav-bar" color="none">
-        <ion-back-button slot="start" text="Back" color="none" fill="clear" ngClass="back-button" defaultHref="{{currentPage}}" routerDirection="back">
-            <ion-icon name="arrow-back-outline"></ion-icon>
-        </ion-back-button>
+  <ion-toolbar ngClass="nav-bar" color="none">
+    <ion-back-button
+      slot="start"
+      text="Back"
+      color="none"
+      fill="clear"
+      ngClass="back-button"
+      defaultHref="{{currentPage}}"
+      routerDirection="back"
+    >
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-back-button>
 
-        <ion-text ngClass="title-text">Event Participation Trends <sub><ion-text color="medium">/ role</ion-text></sub></ion-text>
+    <ion-text ngClass="title-text"
+      >Event Participation Trends
+      <sub><ion-text color="medium">/ role</ion-text></sub></ion-text
+    >
 
-        <!-- <ion-button ngClass="profile-section">
-            <ion-icon ngClass="profile-icon" slot="end" name="person-outline"></ion-icon>
-            <ion-label ngClass="profile-name">Username</ion-label>
-        </ion-button> -->
-        <ion-button ngClass="profile-section">
-            <ion-icon slot="end" name="person-circle"></ion-icon>
-            <ion-label ngClass="profile-name">Username</ion-label>
-          </ion-button>
-    </ion-toolbar>
+    <ion-button ngClass="profile-section">
+      <ion-icon slot="end" name="person-circle"></ion-icon>
+      <ion-label ngClass="profile-name">Username</ion-label>
+    </ion-button>
+  </ion-toolbar>
 </ion-header>
