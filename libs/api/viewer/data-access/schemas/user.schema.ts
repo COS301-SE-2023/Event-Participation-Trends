@@ -1,12 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-
-export enum Role{
-    ADMIN = "admin",
-    MANAGER = "manager",
-    VIEWER = "viewer",
-    UNASSIGNED = "unassigned",
-}
+import { Role } from '@event-participation-trends/api/viewer/util';
 
 export type UserDocument = HydratedDocument<User>;
 
