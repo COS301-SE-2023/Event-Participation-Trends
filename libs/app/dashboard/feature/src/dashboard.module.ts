@@ -5,9 +5,10 @@ import { DashboardRoutingModule } from './dashboard.routing';
 import { DashboardPage } from './dashboard.page';
 import { DashboardModule as DashboardDataAccessModule } from '@event-participation-trends/app/dashboard/data-access';
 import { IonicModule } from '@ionic/angular';
+import { SubPageNavPage } from '@event-participation-trends/app/subpagenav/feature';
 
 @NgModule({
-  declarations: [DashboardPage],
+  declarations: [DashboardPage, SubPageNavPage],
   imports: [
     CommonModule,
     IonicModule,

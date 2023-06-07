@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
     <ion-toolbar ngClass="nav-bar" color="none">
         <ion-back-button slot="start" text="Back" color="none" fill="clear" ngClass="back-button" defaultHref="/home/viewevents" routerDirection="back">
             <ion-icon name="arrow-back-outline"></ion-icon>
@@ -11,7 +11,8 @@
             <ion-label ngClass="profile-name">Username</ion-label>
         </ion-button>
     </ion-toolbar>
-</ion-header>
+</ion-header> -->
+<subpagenav [currentPage]="'/home/viewevents'"></subpagenav>
 
 <ion-content fullscreen="true">
     <div class="dashboard-title-area">

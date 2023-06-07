@@ -123,6 +123,9 @@
       "@event-participation-trends/app/modals/util": [
         "libs/app/modals/util/src/index.ts"
       ],
+      "@event-participation-trends/app/subpagenav/feature": [
+        "libs/app/subpagenav/feature/src/index.ts"
+      ],
       "@event-participation-trends/app/usermanagement/data-access": [
         "libs/app/usermanagement/data-access/src/index.ts"
       ],

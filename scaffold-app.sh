@@ -71,10 +71,10 @@ yarn nx generate @nrwl/angular:component eventscreenview --project=app-eventscre
 yarn nx generate @nrwl/angular:module eventscreenview --project=app-eventscreenview-feature --routing
 yarn nx generate @nrwl/angular:module eventscreenview --project=app-eventscreenview-data-access
 
-# Max Events Selected for comparison
-yarn nx generate @nrwl/angular:component maxcompared --project=app-modals-feature --export --flat --type=page --standalone
-yarn nx generate @nrwl/angular:module maxcompared --project=app-modals-feature --routing
-yarn nx generate @nrwl/angular:module maxcompared --project=app-modals-data-access
+# Sub-pages' nav-bar (includes back button)
+yarn nx generate @nrwl/angular:component subpagenav --project=app-subpagenav-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module subpagenav --project=app-subpagenav-feature --routing
+yarn nx generate @nrwl/angular:module subpagenav --project=app-subpagenav-data-access
 
 # ============================================================================================================================
 
@@ -146,7 +146,7 @@ yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/accessrequests --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/accessrequests --no-interactive        # --> util
 
-# Modals
-yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/modals --no-interactive     # --> feature
-yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/modals --no-interactive # --> data-access
-yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/modals --no-interactive        # --> util
+# Sub-pages' nav-bar (includes back button)
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/subpagenav --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/subpagenav --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/subpagenav --no-interactive        # --> util
