@@ -150,3 +150,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/acc
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/subpagenav --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/subpagenav --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/subpagenav --no-interactive        # --> util
+
+# Shared Modules
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/shared --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/shared --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/shared --no-interactive        # --> util
