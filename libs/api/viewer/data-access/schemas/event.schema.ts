@@ -7,6 +7,7 @@ import { Device } from './device.schema';
 import { TEMP_DEVICE_TO_DT } from './TEMP_DEVICE_TO_DT.schema';
 import { TEMP_DEVICE_BUFFER } from './TEMP_DEVICE_BUFFER.schema';
 import { User } from './user.schema';
+import { EventLocation } from './Eventlocation.schema';
 
 export type EventDocument = HydratedDocument<Event>;
 
@@ -29,7 +30,7 @@ export class Event{
     Category: string | undefined | null;
 
     @Prop({ required: true })
-    Location: string | undefined | null;
+    Location: EventLocation | undefined | null;
 
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })
     thisFloorLayout: FloorLayout | undefined | null;
@@ -51,6 +52,12 @@ export class Event{
     
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     Managers: User[] | undefined | null;
+
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    Requesters: User[] | undefined | null;
+
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    Viewers: User[] | undefined | null;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
