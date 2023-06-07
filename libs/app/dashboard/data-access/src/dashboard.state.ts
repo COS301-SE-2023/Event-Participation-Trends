@@ -23,10 +23,10 @@ export interface DashboardStateModel {
 export class DashboardState {
     // constructor(private readonly dashboardApi: DashboardApi) { }
 
-    // @Selector()
-    // static dashboardStatistics(state: DashboardStateModel) {
-    //     return state.dashboardStatistics;
-    // }
+    @Selector()
+    static dashboardStatistics(state: DashboardStateModel) {
+        return state.dashboardStatistics;
+    }
 
     // @Action(GetDashboardStatistics)
     // async getDashboardStatistics(ctx: StateContext<DashboardStateModel>, { eventName }: GetDashboardStatistics) {
