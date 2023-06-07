@@ -1,6 +1,6 @@
 import { ViewerModule as ViewerDataAccessModule } from '@event-participation-trends/api/viewer/data-access';
 import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { CommandBus, CqrsModule, QueryBus } from '@nestjs/cqrs';
 
 import {
     CreateViewerHandler,

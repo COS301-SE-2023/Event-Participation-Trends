@@ -12,5 +12,5 @@ export class ViewerService {
 
     async createViewer(request: ICreateViewerRequest) {
         return await this.commandBus.execute<CreateViewerCommand, ICreateViewerResponse>(new CreateViewerCommand(request));
-      }
+    }
 }
