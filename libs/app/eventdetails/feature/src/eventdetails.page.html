@@ -1,1 +1,51 @@
 <subpagenav [currentPage]="'/home/eventdetails'"></subpagenav>
+
+<ion-content>
+  <ion-grid ngClass="content">
+
+    <!-- <ion-col ngClass="tool-menu">
+        <h1>Tools</h1>
+        <h3>
+            Components</h3><hr ngClass="hr-components"/>
+        <button ngClass="dropdown-toggle" (click)="toggleDropdown()">()</button>
+        <div ngClass="components-list">
+            <p>item 1</p>
+            <p>item 2</p>
+            <p>item 3</p>
+        </div>
+        <h3>Component Attributes</h3><hr ngClass="hr-attributes"/>
+    </ion-col> -->
+    <ion-col class="tool-menu">
+        <h1>Tools</h1>
+        <h3 ngClass="components-heading">
+            
+              Components<button ngClass="dropdown-toggle" (click)="toggleDropdown()">
+                <ion-icon [ngClass]="{'dropdown-icon': true, 'rotated': isDropdownOpen}" name="chevron-down-outline"></ion-icon>
+              </button></h3>
+        
+        <div class="components-list" [class.show]="isDropdownOpen">
+          <p>Item 1</p>
+          <p>Item 2</p>
+          <p>Item 3</p>
+        </div>
+        <h3 ngClass="attributes-heading">Component Attributes</h3>
+        <ion-item ngClass="attributes-list" lines="none">
+          <ion-label>Width:</ion-label>
+          <ion-input type="text" value="100"></ion-input>
+        </ion-item>
+        <ion-item ngClass="attributes-list" lines="none">
+            <ion-label>Height:</ion-label>
+            <ion-input type="text" value="100"></ion-input>
+          </ion-item>
+          <ion-item ngClass="attributes-list" lines="none">
+            <ion-label>Angle:</ion-label>
+            <ion-input type="text" value="100"></ion-input>
+          </ion-item>
+          <ion-button ngClass="create-event" expand="block">Create Event</ion-button>
+      </ion-col>
+      
+    <ion-col ngClass="floorplan-area">
+
+    </ion-col> 
+  </ion-grid>
+</ion-content>
