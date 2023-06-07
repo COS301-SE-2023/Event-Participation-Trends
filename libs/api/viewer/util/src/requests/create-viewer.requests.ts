@@ -1,5 +1,5 @@
 import { IUser } from '../interfaces';
 
-export interface IcreateViewerRequest {
+export interface ICreateViewerRequest {
   user: IUser;
 }
