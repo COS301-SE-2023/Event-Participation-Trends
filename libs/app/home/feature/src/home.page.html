@@ -1,27 +1,58 @@
 <ion-tabs class="text-ept-off-white">
-    <ion-tab-bar slot="top" class="bg-black bg-opacity-90 backdrop-blur-md drop-shadow-lg text-ept-off-white grid grid-cols-3 px-4">
-      <div class="main-title flex justify-self-start">
-        <ion-label ngClass="title-text" class="text-2xl font-semibold">Event Participation Trends <sub><ion-text color="medium">/ role</ion-text></sub></ion-label>
-      </div>
+  <ion-tab-bar
+    slot="top"
+    class="bg-black bg-opacity-90 backdrop-blur-md drop-shadow-lg text-ept-off-white grid grid-cols-3 px-4"
+  >
+    <div class="main-title flex justify-self-start">
+      <ion-label ngClass="title-text" class="text-2xl font-semibold"
+        >Event Participation Trends
+        <sub><ion-text color="medium">/ role</ion-text></sub></ion-label
+      >
+    </div>
 
-      <div class="flex justify-center items-center bg-transparent text-inherit text-md h-full">
-        <ion-tab-button tab="usermanagement" ngClass="tab-button" class="bg-inherit hover:text-ept-bumble-yellow" (click)="selectTab('Users')" (selected)="usersSelected">
-          <ion-label ngClass="tab-text">Users</ion-label>
-        </ion-tab-button>
-    
-        <ion-tab-button tab="viewevents" ngClass="tab-button" class="bg-inherit hover:text-ept-bumble-yellow" (click)="selectTab('View')">
-          <ion-label>View</ion-label>
-        </ion-tab-button>
-  
-        <ion-tab-button tab="comparingevents" ngClass="tab-button" class="bg-inherit hover:text-ept-bumble-yellow" (click)="selectTab('Compare Events')">
-          <ion-label>Compare Events</ion-label>
-        </ion-tab-button>
-      </div>
+    <div
+      class="flex justify-center items-center bg-transparent text-inherit text-md h-full"
+    >
+      <ion-tab-button
+        tab="usermanagement"
+        ngClass="tab-button"
+        class="bg-inherit hover:text-ept-bumble-yellow"
+        (click)="selectTab('Users')"
+        (selected)="usersSelected"
+      >
+        <ion-label ngClass="tab-text">Users</ion-label>
+      </ion-tab-button>
 
-      <ion-button ngClass="profile-section" class="flex justify-self-end">
-        <ion-icon slot="end" name="person-circle"></ion-icon>
-        <ion-label ngClass="profile-name">Username</ion-label>
-      </ion-button>
+      <div
+        class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
+      ></div>
 
-    </ion-tab-bar>
-  </ion-tabs>
+      <ion-tab-button
+        tab="viewevents"
+        ngClass="tab-button"
+        class="bg-inherit hover:text-ept-bumble-yellow"
+        (click)="selectTab('View')"
+      >
+        <ion-label>Events</ion-label>
+      </ion-tab-button>
+
+      <div
+        class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
+      ></div>
+
+      <ion-tab-button
+        tab="comparingevents"
+        ngClass="tab-button"
+        class="bg-inherit hover:text-ept-bumble-yellow"
+        (click)="selectTab('Compare Events')"
+      >
+        <ion-label>Compare</ion-label>
+      </ion-tab-button>
+    </div>
+
+    <ion-button ngClass="profile-section" class="flex justify-self-end">
+      <ion-icon slot="end" name="person-circle" class="w-[40px] h-[40px]"></ion-icon>
+      <ion-label ngClass="profile-name">Username</ion-label>
+    </ion-button>
+  </ion-tab-bar>
+</ion-tabs>
