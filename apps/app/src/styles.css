@@ -21,3 +21,7 @@
 
 /* Theme variables */
 @import './theme/variables.css';
+
+* {
+    font-family: "Poppins", sans-serif;
+}
