@@ -12,7 +12,7 @@ module.exports = {
     extend: {
       colors: {
         "ept-deep-grey": "#101010",
-        "ept-bumble-yellow": "#F9A826",
+        "ept-bumble-yellow": "#facc15",
         "ept-off-white": "#F5F5F5",
       },
     },
