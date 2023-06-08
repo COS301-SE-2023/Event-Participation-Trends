@@ -39,6 +39,15 @@
       "@event-participation-trends/api/passport": [
         "libs/api/passport/src/index.ts"
       ],
+      "@event-participation-trends/api/user/data-access": [
+        "libs/api/user/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/api/user/feature": [
+        "libs/api/user/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/user/util": [
+        "libs/api/user/util/src/index.ts"
+      ],
       "@event-participation-trends/api/viewer/data-access": [
         "libs/api/viewer/data-access/src/index.ts"
       ],
