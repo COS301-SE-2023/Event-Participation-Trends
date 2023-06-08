@@ -9,6 +9,9 @@ import { ErrorsState } from '@event-participation-trends/app/error/data-access';
 // import { AuthState } from '@event-participation-trends/app/auth/data-access';
 // import { AuthModule } from '@event-participation-trends/app/auth/feature';
 import { ErrorModule } from '@event-participation-trends/app/error/feature';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { AccessRequestsState } from '@event-participation-trends/app/accessrequests/data-access';
+import { AccessRequestsModule } from '@event-participation-trends/app/accessrequests/feature';
 // import { SocialLoginModule } from 'angularx-social-login';
 // import { GoogleLoginProvider, SocialAuthServiceConfig } from 'angularx-social-login';
 
@@ -18,7 +21,9 @@ import { ErrorModule } from '@event-participation-trends/app/error/feature';
     BrowserModule,
     IonicModule.forRoot(),
     CoreRoutingModule,
-    NgxsModule.forRoot(),
+    NgxsModule.forRoot([ErrorsState]),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    ErrorModule,
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [CoreShell]

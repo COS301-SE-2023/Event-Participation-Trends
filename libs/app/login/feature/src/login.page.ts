@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 @Component({
   selector: 'event-participation-trends-login',
   templateUrl: './login.page.html',
-  styleUrls: ['./login.page.css'],
+  // styleUrls: ['./login.page.css'],
 })
 export class LoginPage {
   constructor(private readonly store: Store) {}

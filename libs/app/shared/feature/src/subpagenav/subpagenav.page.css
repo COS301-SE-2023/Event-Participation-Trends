@@ -1,0 +1,41 @@
+.nav-bar {
+    background-color: #212121;
+    height: 49px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-text {
+    color: #fff;
+    font-size: 20px;
+    position: absolute;
+    top: 15px;
+}
+
+.back-button {
+    color: #fff;
+    font-size: 15px;
+}
+
+ion-icon {
+    width: 30px;
+    height: 30px;
+}
+
+ion-button {
+    text-transform: none;
+}
+
+.profile-section {
+    float: right;
+    right: 20px;
+    font-size: 15px;
+    color: #797979;
+    height: 100%;
+}
+.profile-icon {
+    width: 30px;
+    height: 30px;
+}

@@ -1,0 +1,109 @@
+<ion-content>
+  <ion-grid ngClass="main-grid">
+    <ion-col ngClass="content">
+      <ion-grid ngClass="content-grid">
+        <ion-row ngClass="content-header">
+          <ion-col ngClass="content-header-title">
+            <h1>Comparing Events</h1>
+            <ion-icon
+              ngClass="compare-icon"
+              name="swap-horizontal-outline"
+            ></ion-icon>
+          </ion-col>
+          <ion-col ngClass="content-header-actions">
+            <select id="filter-select" ngClass="filter-button">
+              <option value="">Select Filter</option>
+              <option value="option1">Last Week</option>
+              <option value="option2">Last Month</option>
+              <option value="option3">Last Year</option>
+            </select>
+          </ion-col>
+        </ion-row>
+        <div
+          ngClass="content-body"
+          [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+        >
+          <ion-row ngClass="content-body-row-1">
+            <ion-col ngClass="content-body-row-1-col-1">
+              <img
+                src="assets/icon/arrow-up.svg"
+                alt=""
+                height="235px"
+                width="740px"
+              />
+            </ion-col>
+            <ion-col ngClass="content-body-row-1-col-2">
+              <img
+                src="assets/icon/arrow-up.svg"
+                alt=""
+                height="235px"
+                width="300"
+              />
+            </ion-col>
+          </ion-row>
+          <ion-row ngClass="content-body-row-2">
+            <ion-col ngClass="content-body-row-2-col-1">
+              <img
+                src="assets/icon/arrow-up.svg"
+                alt=""
+                height="235px"
+                width="740px"
+              />
+            </ion-col>
+            <ion-col ngClass="content-body-row-2-col-2">
+              <ion-row ngClass="content-body-row-2-col-2-row-1">
+                <img
+                  src="assets/icon/arrow-up.svg"
+                  alt=""
+                  height="112px"
+                  width="300px"
+                />
+              </ion-row>
+              <ion-row ngClass="content-body-row-2-col-2-row-2">
+                <img
+                  src="assets/icon/arrow-up.svg"
+                  alt=""
+                  height="112px"
+                  width="300px"
+                />
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-grid>
+    </ion-col>
+    <ion-col size="auto" ngClass="sidebar">
+      <h1 ngClass="sidebar-header sidebar-title">Select events to compare</h1>
+      <hr />
+      <span ngClass="sidebar-content">
+        <ion-searchbar
+          ngClass="sidebar-searchbar"
+          placeholder="Search"
+        ></ion-searchbar>
+        <ion-icon ngClass="search-filter" name="options-outline"></ion-icon>
+      </span>
+      <p ngClass="hint" *ngIf="isMaxSelectionReached()">Note: you can only compare two events at once</p>
+      <p *ngIf="isEmpty()" ngClass="no-events">No events to compare.<br/>Try selecting a different time period.</p>
+      <ion-list *ngIf="!isEmpty()"
+        ngClass="compare-list"
+        [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+      >
+        <ion-item
+          *ngFor="let event of events"
+          ngClass="compare-list-item"
+          [ngClass]="{'compare-list-item': true, 'disabled': isItemDisabled(event)}"
+        >
+          <ion-checkbox
+            ngClass="compare-list-item-checkbox compare-list-item-label"
+            (ionChange)="toggleItemSelection(event)"
+            [checked]="event.selected"
+            [disabled]="isItemDisabled(event)"
+          >
+            <h1>{{event.name}}</h1>
+            <p>{{event.description}}</p>
+          </ion-checkbox>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+  </ion-grid>
+</ion-content>
