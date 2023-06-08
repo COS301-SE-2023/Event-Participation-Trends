@@ -6,7 +6,7 @@ ion-tab-button {
 
 .tab-button.tab-selected,
 .tab-button-no-border.tab-selected {
-  color: #F9A826;
+  color: #facc15;
 }
 
 /* @media (max-width: 900px) {
