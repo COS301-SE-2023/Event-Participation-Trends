@@ -10,7 +10,6 @@ export class User extends AggregateRoot implements IUser {
         public FirstName?: string | undefined | null,
         public LastName?: string | undefined | null,
         public photo?: string | undefined | null ,
-        public Number?: string | undefined | null,
         public Role?: string | undefined | null
     ){
         super();
@@ -26,7 +25,6 @@ export class User extends AggregateRoot implements IUser {
           user.FirstName,
           user.LastName,
           user.photo,
-          user.Number,
           user.Role,
         );
     
@@ -39,7 +37,6 @@ export class User extends AggregateRoot implements IUser {
             FirstName: this.FirstName,
             LastName: this.LastName,
             photo : this.photo,
-            Number: this.Number,
             Role: this.Role
         };
     }
