@@ -1,4 +1,19 @@
-.main-grid {
+.sidebar-searchbar {
+  --border-radius: 15px;
+  width: auto;
+}
+
+ion-checkbox {
+  --checkbox-background-checked: #101010;
+  --checkmark-color: #facc15;
+  --checkmark-width: 4px;
+}
+
+ion-checkbox::part(container) {
+  border: 2px solid #101010;
+}
+
+/* .main-grid {
   display: grid;
   grid-template-columns: 3fr 1fr;
   grid-gap: 10px;
@@ -209,4 +224,4 @@ ion-list ion-item:last-child::after {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
+} */

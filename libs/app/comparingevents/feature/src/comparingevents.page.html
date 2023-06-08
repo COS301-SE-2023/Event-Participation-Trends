@@ -1,17 +1,18 @@
 <ion-content>
-  <ion-grid ngClass="main-grid">
-    <ion-col ngClass="content">
+  <ion-grid ngClass="main-grid" class="flex justify-stretch items-center justify-items-center">
+    <ion-col ngClass="content" class="w-auto">
       <ion-grid ngClass="content-grid">
         <ion-row ngClass="content-header">
-          <ion-col ngClass="content-header-title">
-            <h1>Comparing Events</h1>
+          <ion-col ngClass="content-header-title" class="flex items-center">
+            <p class="text-xl">Comparing Events</p>
             <ion-icon
               ngClass="compare-icon"
               name="swap-horizontal-outline"
+              class="h-6 w-6 ml-2"
             ></ion-icon>
           </ion-col>
           <ion-col ngClass="content-header-actions">
-            <select id="filter-select" ngClass="filter-button">
+            <select id="filter-select" ngClass="filter-button" class="rounded-md">
               <option value="">Select Filter</option>
               <option value="option1">Last Week</option>
               <option value="option2">Last Month</option>
@@ -72,21 +73,21 @@
         </div>
       </ion-grid>
     </ion-col>
-    <ion-col size="auto" ngClass="sidebar">
-      <h1 ngClass="sidebar-header sidebar-title">Select events to compare</h1>
+    <ion-col size="auto" ngClass="sidebar" class="backdrop-blur-sm bg-ept-deep-grey bg-opacity-[2%] rounded-lg p-5 shadow-lg justify-self-center m-2">
+      <p ngClass="sidebar-header sidebar-title" class="text-2xl">Available Events</p>
       <hr />
-      <span ngClass="sidebar-content">
+      <span ngClass="sidebar-content" class="flex w-full">
         <ion-searchbar
           ngClass="sidebar-searchbar"
           placeholder="Search"
         ></ion-searchbar>
-        <ion-icon ngClass="search-filter" name="options-outline"></ion-icon>
+        <ion-icon ngClass="search-filter" class="h-10 w-10 self-center hover:opacity-50 p-2" name="options-outline"></ion-icon>
       </span>
-      <p ngClass="hint" *ngIf="isMaxSelectionReached()">Note: you can only compare two events at once</p>
       <p *ngIf="isEmpty()" ngClass="no-events">No events to compare.<br/>Try selecting a different time period.</p>
       <ion-list *ngIf="!isEmpty()"
         ngClass="compare-list"
         [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+        class="rounded-lg shadow-lg"
       >
         <ion-item
           *ngFor="let event of events"
