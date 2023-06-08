@@ -4,6 +4,5 @@ export interface IUser {
 	FirstName?: string | undefined | null;
 	LastName?: string | undefined | null;
 	photo?: string | undefined | null ;
-	Number?: string | undefined | null;
 	Role?: string | undefined | null;
 }
