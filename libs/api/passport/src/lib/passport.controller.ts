@@ -27,7 +27,11 @@ export class PassportController {
         });
         const newUser:IUser = await this.passportService.getUser(req);
         console.log(newUser);
-        this.viewerService.createViewer({user: newUser});
-
+        try{
+            this.viewerService.createViewer({user: newUser});
+        } catch (error) {
+            if (error instanceof Error) 
+                console.log("ERROR: "+error.message);
+        }
     }
 }
