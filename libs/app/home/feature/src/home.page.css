@@ -1,4 +1,15 @@
-@media (max-width: 900px) {
+ion-tab-button {
+  --color-selected: none;
+  --color: none;
+  font-size: inherit;
+}
+
+.tab-button.tab-selected,
+.tab-button-no-border.tab-selected {
+  color: #F9A826;
+}
+
+/* @media (max-width: 900px) {
     ion-tab-button {
         --color: var(#fff);
         --color-selected: var(--ion-color-warning);
@@ -96,7 +107,7 @@
     
     .tab-text {
         width: 100%;
-        /* border-right: 2px solid #fff; */
+        border-right: 2px solid #fff; 
         white-space: nowrap;
     }
     
@@ -128,4 +139,4 @@
     ion-button {
         text-transform: none;
     }
-}
+} */

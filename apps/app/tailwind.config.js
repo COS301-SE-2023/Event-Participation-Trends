@@ -7,8 +7,15 @@ module.exports = {
     join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
+  important: true,
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "ept-deep-grey": "#101010",
+        "ept-bumble-yellow": "#F9A826",
+        "ept-off-white": "#F5F5F5",
+      },
+    },
   },
   plugins: [],
 };
