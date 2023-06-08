@@ -1,15 +1,14 @@
-<subpagenav [currentPage]="'/home/eventdetails'"></subpagenav>
+<!-- <subpagenav [currentPage]="'/home/eventdetails'"></subpagenav>
 
 <ion-content>
   <ion-grid ngClass="content">
-    <ion-col class="tool-menu">
+    <ion-col ngClass="tool-menu">
         <h1>Tools</h1>
         <h3 ngClass="components-heading">
             
               Components<button ngClass="dropdown-toggle" (click)="toggleDropdown()">
                 <ion-icon [ngClass]="{'dropdown-icon': true, 'rotated': isDropdownOpen}" name="chevron-down-outline"></ion-icon>
               </button></h3>
-        
         <div class="components-list" [class.show]="isDropdownOpen">
           <p>Item 1</p>
           <p>Item 2</p>
@@ -35,4 +34,48 @@
 
     </ion-col> 
   </ion-grid>
+</ion-content> -->
+
+
+<subpagenav [currentPage]="'/home/eventdetails'"></subpagenav>
+
+
+<!-- BELOW IS THE CODE FOR EDITING/CREATING THE FLOOR PLAN -->
+<ion-content>
+  <div class="grid grid-cols-12 gap-3 p-3 h-full">
+    <div class="tool-menu col-span-2 shadow-lg border-2 rounded-lg relative">
+      <h1 class="text-lg font-semibold text-center mt-5">Tools</h1>
+      <h3 class="components-heading flex justify-between items-center mt-6 ml-2">
+        Components
+        <button class="dropdown-toggle" class="mr-3" (click)="toggleDropdown()">
+          <ion-icon [class.dropdown-icon]="true" [class.rotated]="isDropdownOpen" name="chevron-down-outline"></ion-icon>
+        </button>
+      </h3>
+      <div class="components-list mb-1" [class.show]="isDropdownOpen">
+        <p>Item 1</p>
+        <p>Item 2</p>
+        <p>Item 3</p>
+      </div>
+      <h3 class="attributes-heading mt-3 ml-2">Component Attributes</h3>
+      <ion-item class="attributes-list" lines="none">
+        <ion-label>Width:</ion-label>
+        <input class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded" type="text" value="100">
+      </ion-item>
+      <ion-item class="attributes-list" lines="none">
+        <ion-label>Height:</ion-label>
+        <input class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded justify-self-end" type="text" value="100">
+      </ion-item>
+      <ion-item class="attributes-list" lines="none">
+        <ion-label>Angle:</ion-label>
+        <input class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded justify-self-end" type="text" value="100">
+      </ion-item>
+
+      
+      <ion-button class="create-event bg-green-500 drop-shadow-lg hover:shadow-lg absolute bottom-0 mb-10 right-2.5" >Create Event</ion-button>
+    </div>
+  
+    <div class="floorplan-area col-span-10 border-5 border-black rounded-lg">
+      
+    </div> 
+  </div>
 </ion-content>
