@@ -13,23 +13,25 @@ export class CreateViewerHandler implements ICommandHandler<CreateViewerCommand,
       async execute(command: CreateViewerCommand) {
         console.log(`${CreateViewerCommand.name}`);
 
-        /*error checking here*/ 
-        /*check that user not already in DB by email*/
-
         const request = command.request.user;
 
-        const data: IUser = {
-            Email: request.Email,
-            FirstName: request.FirstName,
-            LastName: request.LastName,
-            photo: request.photo,
-            Number: request.Number,
-            Role: Role.VIEWER,
-        }
+        if (!request.Email)
+            throw new Error('Missing required field: Eamil');
 
-        const user = this.publisher.mergeObjectContext(User.fromData(data));
-        user.create();
-        user.commit();
+        const userDoc= await this.viewerRepository.getUser(request.Email || "");
+        if(userDoc.length == 0){
+            const data: IUser = {
+                Email: request.Email,
+                FirstName: request.FirstName,
+                LastName: request.LastName,
+                photo: request.photo,
+                Role: Role.VIEWER,
+            }
+    
+            const user = this.publisher.mergeObjectContext(User.fromData(data));
+            user.create();
+            user.commit();
+        }
 
         return { status : Status.SUCCESS };
       }
