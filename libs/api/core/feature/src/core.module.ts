@@ -1,10 +1,10 @@
-import { ViewerModule, ViewerService } from '@event-participation-trends/api/viewer/feature';
-import { ViewerController } from '../src/controllers/viewer.controller'
+import { UserModule, UserService } from '@event-participation-trends/api/user/feature';
+import { UserController } from '../src/controllers/user.controller'
 import { Module } from '@nestjs/common';
 
 @Module({
-    imports: [ViewerModule],
-    controllers: [ViewerController],
-    exports: [ViewerService]
+    imports: [UserModule],
+    controllers: [UserController],
+    exports: [UserService]
 })
 export class CoreModule {}
