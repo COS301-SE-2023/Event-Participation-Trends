@@ -13,6 +13,14 @@ ion-checkbox::part(container) {
   border: 2px solid #101010;
 }
 
+ion-list {
+  background: transparent;
+
+}
+ion-item {
+    --background: inherit;
+}
+
 /* .main-grid {
   display: grid;
   grid-template-columns: 3fr 1fr;

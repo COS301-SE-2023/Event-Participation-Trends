@@ -1,93 +1,90 @@
-<ion-content>
-  <ion-grid ngClass="main-grid" class="flex justify-stretch items-center justify-items-center">
-    <ion-col ngClass="content" class="w-auto">
-      <ion-grid ngClass="content-grid">
-        <ion-row ngClass="content-header">
-          <ion-col ngClass="content-header-title" class="flex items-center">
-            <p class="text-xl">Comparing Events</p>
-            <ion-icon
-              ngClass="compare-icon"
-              name="swap-horizontal-outline"
-              class="h-6 w-6 ml-2"
-            ></ion-icon>
-          </ion-col>
-          <ion-col ngClass="content-header-actions">
-            <select id="filter-select" ngClass="filter-button" class="rounded-md">
-              <option value="">Select Filter</option>
-              <option value="option1">Last Week</option>
-              <option value="option2">Last Month</option>
-              <option value="option3">Last Year</option>
-            </select>
-          </ion-col>
-        </ion-row>
-        <div
-          ngClass="content-body"
-          [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
-        >
-          <ion-row ngClass="content-body-row-1">
-            <ion-col ngClass="content-body-row-1-col-1">
-              <img
-                src="assets/icon/arrow-up.svg"
-                alt=""
-                height="235px"
-                width="740px"
-              />
-            </ion-col>
-            <ion-col ngClass="content-body-row-1-col-2">
-              <img
-                src="assets/icon/arrow-up.svg"
-                alt=""
-                height="235px"
-                width="300"
-              />
-            </ion-col>
-          </ion-row>
-          <ion-row ngClass="content-body-row-2">
-            <ion-col ngClass="content-body-row-2-col-1">
-              <img
-                src="assets/icon/arrow-up.svg"
-                alt=""
-                height="235px"
-                width="740px"
-              />
-            </ion-col>
-            <ion-col ngClass="content-body-row-2-col-2">
-              <ion-row ngClass="content-body-row-2-col-2-row-1">
-                <img
-                  src="assets/icon/arrow-up.svg"
-                  alt=""
-                  height="112px"
-                  width="300px"
-                />
-              </ion-row>
-              <ion-row ngClass="content-body-row-2-col-2-row-2">
-                <img
-                  src="assets/icon/arrow-up.svg"
-                  alt=""
-                  height="112px"
-                  width="300px"
-                />
-              </ion-row>
-            </ion-col>
-          </ion-row>
+<ion-content
+  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+>
+  <div class="backdrop-blur-[6px] h-full grid grid-cols-3">
+    <div class="col-span-2 my-8 mx-6">
+      <div class="grid grid-cols-3 mb-2">
+        <div class="col-span-1 flex items-center">
+          <p class="text-2xl">Comparing Events</p>
+          <ion-icon
+            ngClass="compare-icon"
+            name="swap-horizontal-outline"
+            class="h-6 w-6 ml-2"
+          ></ion-icon>
         </div>
-      </ion-grid>
-    </ion-col>
-    <ion-col size="auto" ngClass="sidebar" class="backdrop-blur-sm bg-ept-deep-grey bg-opacity-[2%] rounded-lg p-5 shadow-lg justify-self-center m-2">
-      <p ngClass="sidebar-header sidebar-title" class="text-2xl">Available Events</p>
-      <hr />
+        <div class="col-span-1">
+          <select
+            id="filter-select"
+            ngClass="filter-button"
+            class="rounded-md bg-transparent text-xl"
+          >
+            <option value="">Select Filter</option>
+            <option value="option1">Last Week</option>
+            <option value="option2">Last Month</option>
+            <option value="option3">Last Year</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-3">
+        <div class="col-span-2">
+          <img
+            src="assets/icon/arrow-up.svg"
+            alt=""
+            height="235px"
+            width="650px"
+          />
+        </div>
+        <div class="col-span-1">
+          <img
+            src="assets/icon/arrow-up.svg"
+            alt=""
+            height="235px"
+            width="300px"
+          />
+        </div>
+      </div>
+      <div class="grid grid-cols-3">
+        <div class="col-span-2">
+          <img
+            src="assets/icon/arrow-up.svg"
+            alt=""
+            height="235px"
+            width="650px"
+          />
+        </div>
+        <div class="col-span-1">
+          <img
+            src="assets/icon/arrow-up.svg"
+            alt=""
+            height="235px"
+            width="300px"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="col-span-1 bg-ept-off-white backdrop-blur-3xl bg-opacity-[75%] rounded-lg p-5 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center mx-2 mb-10 mt-4">
+      <p ngClass="sidebar-header sidebar-title" class="text-2xl ml-3">
+        Available Events
+      </p>
       <span ngClass="sidebar-content" class="flex w-full">
         <ion-searchbar
           ngClass="sidebar-searchbar"
           placeholder="Search"
         ></ion-searchbar>
-        <ion-icon ngClass="search-filter" class="h-10 w-10 self-center hover:opacity-50 p-2" name="options-outline"></ion-icon>
+        <ion-icon
+          ngClass="search-filter"
+          class="h-10 w-10 self-center hover:opacity-50 p-2"
+          name="options-outline"
+        ></ion-icon>
       </span>
-      <p *ngIf="isEmpty()" ngClass="no-events">No events to compare.<br/>Try selecting a different time period.</p>
-      <ion-list *ngIf="!isEmpty()"
+      <p *ngIf="isEmpty()" ngClass="no-events">
+        No events to compare.<br />Try selecting a different time period.
+      </p>
+      <ion-list
+        *ngIf="!isEmpty()"
         ngClass="compare-list"
         [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
-        class="rounded-lg shadow-lg"
+        class="rounded-lg"
       >
         <ion-item
           *ngFor="let event of events"
@@ -105,6 +102,6 @@
           </ion-checkbox>
         </ion-item>
       </ion-list>
-    </ion-col>
-  </ion-grid>
+    </div>
+  </div>
 </ion-content>
