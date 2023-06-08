@@ -1,7 +1,7 @@
 import { UntypedFormBuilder } from '@angular/forms';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { IUser } from '@event-participation-trends/api/viewer/util';
+import { IUser } from '@event-participation-trends/api/user/util';
 
 @Injectable()
 export class PassportService {

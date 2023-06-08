@@ -5,7 +5,7 @@ import { GoogleOAuthGuard } from '../google-oauth-guard.guard';
 import { GoogleStrategy } from './google.strategy';
 import { PassportModule as pass } from '@nestjs/passport';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { ViewerService, ViewerModule } from '@event-participation-trends/api/viewer/feature';
+import { UserService, UserModule } from '@event-participation-trends/api/user/feature';
 import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
@@ -17,11 +17,11 @@ import { CqrsModule } from '@nestjs/cqrs';
       secret: process.env['JWT_SECRET'],
       signOptions: { expiresIn: '1d' },
     }), 
-    ViewerModule,
+    UserModule,
     CqrsModule,
   ],
   controllers: [PassportController],
-  providers: [PassportService, GoogleStrategy, GoogleOAuthGuard, JwtService, ViewerService ],
+  providers: [PassportService, GoogleStrategy, GoogleOAuthGuard, JwtService, UserService ],
   exports: [PassportService, GoogleOAuthGuard],
 })
 export class PassportModule {}

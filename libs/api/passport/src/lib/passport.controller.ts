@@ -2,14 +2,14 @@ import { Controller, UseGuards, Req, Get, Request, Res } from '@nestjs/common';
 import { Response as express_response } from 'express';
 import { PassportService } from './passport.service';
 import { GoogleOAuthGuard } from '../google-oauth-guard.guard';
-import { ViewerService } from '@event-participation-trends/api/viewer/feature';
-import { IUser } from '@event-participation-trends/api/viewer/util';
+import { UserService } from '@event-participation-trends/api/user/feature';
+import { IUser } from '@event-participation-trends/api/user/util';
 
 @Controller('auth/')
 export class PassportController {
     constructor(
         private passportService: PassportService,
-        private readonly viewerService: ViewerService,
+        private readonly userService: UserService,
     ) { }
 
     @Get('google/')
@@ -28,7 +28,7 @@ export class PassportController {
         const newUser:IUser = await this.passportService.getUser(req);
         console.log(newUser);
         try{
-            this.viewerService.createViewer({user: newUser});
+            this.userService.createUser({user: newUser});
         } catch (error) {
             if (error instanceof Error) 
                 console.log("ERROR: "+error.message);
