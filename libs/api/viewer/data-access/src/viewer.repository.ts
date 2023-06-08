@@ -14,4 +14,8 @@ export class ViewerRepository {
     async createViewer(user: IUser){
         await this.userModel.create(user);
     }    
+
+    async getUser(userEmail: string){
+        return await this.userModel.find({Email: userEmail});
+    }
 }
