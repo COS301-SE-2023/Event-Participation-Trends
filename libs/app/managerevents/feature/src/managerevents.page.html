@@ -26,7 +26,7 @@
     >
       <ion-card
         *ngFor="let event of events"
-        class="h-56 m-8 rounded-lg md:rounded-xl bg-white bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:scale-105 hover:cursor-pointer hover:bg-opacity-100"
+        class="h-56 m-8 rounded-lg md:rounded-xl bg-white bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:scale-105 hover:cursor-pointer hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]"
       >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all"
@@ -37,7 +37,7 @@
           >
           </ion-icon>
           <p
-            class="p-4 text-xl md:text-2xl self-start duration-300 transition-all"
+            class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
           >
             {{event.name}}
           </p>
@@ -54,7 +54,7 @@
         </ion-card-content>
       </ion-card>
       <ion-card
-        class="h-56 m-8 rounded-lg md:rounded-xl bg-white bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:scale-105 hover:cursor-pointer hover:bg-opacity-100"
+        class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] duration-300 transition-all hover:scale-105 hover:cursor-pointer bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60"
       >
         <ion-card-content
           class="flex items-center justify-center h-full duration-300 transition-all"

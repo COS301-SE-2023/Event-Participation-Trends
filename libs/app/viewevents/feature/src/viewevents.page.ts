@@ -37,13 +37,13 @@ export class VieweventsPage {
       name: 'The Great Barrier Reef Marathon Festival',
       location: 'Australia',
       category: 'Running',
-      hasAccess: true,
+      hasAccess: false,
     },
     {
       name: 'The Great Wall Marathon',
       location: 'China',
       category: 'Running',
-      hasAccess: true,
+      hasAccess: false,
     }    
   ];
 }
