@@ -4,7 +4,10 @@ import {
     CreateUserCommand,
     IGetUsersRequest,
     IGetUsersResponse,
-    GetUsersQuery
+    GetUsersQuery,
+    IUpdateRoleRequest,
+    IupdateRoleResponse,
+    UpdateUserRoleCommand,
 } from '@event-participation-trends/api/user/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -19,5 +22,9 @@ export class UserService {
 
     async createUser(request: ICreateUserRequest) {
         return await this.commandBus.execute<CreateUserCommand, ICreateUserResponse>(new CreateUserCommand(request));
+    }
+
+    async updateUserRole(request: IUpdateRoleRequest) {
+        return await this.commandBus.execute<UpdateUserRoleCommand, IupdateRoleResponse>(new UpdateUserRoleCommand(request));
     }
 }
