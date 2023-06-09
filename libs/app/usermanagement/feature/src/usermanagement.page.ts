@@ -18,6 +18,7 @@ export class UsermanagementPage {
   constructor(private containerElement: ElementRef) {}
 
   overflow = false;
+  changed = false;
 
   ngAfterViewInit() {
     this.checkOverflow();
@@ -51,12 +52,9 @@ export class UsermanagementPage {
     return user.role === 'Manager';
   }
 
-  setRole(user: User, checked: boolean): void {
-    user.role = checked ? 'Manager' : 'Viewer';
-  }
-
   toggleRole(user: User): void {
     user.role = this.isManager(user) ? 'Viewer' : 'Manager';
+    this.changed = true;
   }
 
 }
