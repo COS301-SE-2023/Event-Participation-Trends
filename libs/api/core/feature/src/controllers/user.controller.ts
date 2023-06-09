@@ -4,6 +4,8 @@ import {
     ICreateUserResponse,
     IGetUsersRequest,
     IGetUsersResponse,
+    IUpdateRoleRequest,
+    IupdateRoleResponse,
 } from '@event-participation-trends/api/user/util';
 import { Body, Controller, Post } from '@nestjs/common';
 
@@ -23,5 +25,12 @@ export class UserController {
         @Body() request: IGetUsersRequest,
     ): Promise<IGetUsersResponse> {
         return this.userService.getUsers(request);
+    }
+
+    @Post('updateUserRole')
+    async updateUserRole(
+        @Body() request: IUpdateRoleRequest,
+    ): Promise<IupdateRoleResponse> {
+        return this.userService.updateUserRole(request);
     }
 }
