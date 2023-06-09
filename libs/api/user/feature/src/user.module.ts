@@ -4,17 +4,20 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { UserService } from './user.service';
 
 import {
-    CreateUserHandler,
+    CreateUserHandler, 
+    UpdateUserRoleHandler,
 } from './commands';
 import {
     GetUsersHandler,
 } from './queries';
 import {
-    CreateUserEventHandler,
+    CreateUserEventHandler, 
+    UpdateUserRoleEventHandler,
 } from './events';
 
 export const CommandHandlers = [
     CreateUserHandler,
+    UpdateUserRoleHandler,
 ]
 
 export const QueryHandlers = [
@@ -23,6 +26,7 @@ export const QueryHandlers = [
 
 export const EventHandlers = [
     CreateUserEventHandler,
+    UpdateUserRoleEventHandler,
 ];
 
 
