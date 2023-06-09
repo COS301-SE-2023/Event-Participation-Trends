@@ -27,6 +27,15 @@
       "@event-participation-trends/api/core/feature": [
         "libs/api/core/feature/src/index.ts"
       ],
+      "@event-participation-trends/api/event/data-access": [
+        "libs/api/event/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/api/event/feature": [
+        "libs/api/event/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/event/util": [
+        "libs/api/event/util/src/index.ts"
+      ],
       "@event-participation-trends/api/manager/data-access": [
         "libs/api/manager/data-access/src/index.ts"
       ],
