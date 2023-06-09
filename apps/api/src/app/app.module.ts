@@ -10,6 +10,7 @@ import {
   PassportService,
   PassportModule as Wow,
 } from '@event-participation-trends/api/passport';
+import { CoreModule } from '@event-participation-trends/api/core/feature'
 import { MqttService } from './mqtt.service';
 import { UserService, UserModule } from '@event-participation-trends/api/user/feature';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -34,7 +35,8 @@ import { CqrsModule } from '@nestjs/cqrs';
     }),
     MongooseModule.forRoot(process.env.MONGO_ALTALS_CONNECTION_URL),
     UserModule,
-    CqrsModule
+    CqrsModule,
+    CoreModule,
   ],
   controllers: [AppController, MqttController, PassportController],
   providers: [AppService, MqttService, PassportService, UserService],
