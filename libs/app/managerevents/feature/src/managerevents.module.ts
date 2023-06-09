@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ManagerEventsRoutingModule } from './managerevents.routing';
 import { ManagerEventsPage } from './managerevents.page';
 import { ManagerEventsModule as ManagerEventsDataAccessModule } from '@event-participation-trends/app/managerevents/data-access';
+import { IonicModule } from '@ionic/angular';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { ManagerEventsModule as ManagerEventsDataAccessModule } from '@event-par
   imports: [
     CommonModule,
     ManagerEventsRoutingModule,
-    ManagerEventsDataAccessModule
+    ManagerEventsDataAccessModule,
+    IonicModule
   ]
 })
 export class ManagerEventsModule { }
