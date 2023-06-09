@@ -1,1 +1,52 @@
-<p class="text-ept-deep-grey">usermanagement works!</p>
+<!-- <p class="text-ept-deep-grey">usermanagement works!</p> -->
+
+<ion-content
+  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+>
+  <div class="backdrop-blur-[6px] h-full">
+    <div class="grid grid-cols-3 m-6 mx-7">
+      <div class="col-span-1 flex items-center">
+        <p class="text-2xl">User Management</p>
+      </div>
+      <span ngClass="sidebar-content" class="flex w-full col-span-1">
+        <ion-searchbar
+          ngClass="sidebar-searchbar"
+          placeholder="Search"
+        ></ion-searchbar>
+        <ion-icon
+          ngClass="search-filter"
+          class="h-10 w-10 self-center hover:opacity-50 p-2"
+          name="options-outline"
+        ></ion-icon>
+      </span>
+    </div>
+    <p *ngIf="isEmpty()" ngClass="no-events">No users to show.</p>
+    <ion-list
+      *ngIf="!isEmpty()"
+      ngClass="user-list"
+      lines="none"
+      [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+      class="rounded-lg m-5 py-3 bg-ept-off-white bg-opacity-70 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
+    >
+      <ion-item *ngFor="let user of users" ngClass="user-item">
+        <div class="grid grid-cols-12">
+          <p class="col-span-1">{{user.id}}</p>
+          <p class="col-span-2">{{user.name}}</p>
+          <p class="col-span-3">{{user.email}}</p>
+          <p class="col-span-1">Viewer</p>
+          <ion-toggle
+            aria-label="Warning toggle"
+            [checked]="isManager(user)"
+            class="col-span-1"
+            (ionChange)="toggleRole(user)"
+          ></ion-toggle>
+          <p class="col-span-1">User Manager</p>
+          <p class="col-span-2"></p>
+          <ion-button class="col-span-1 text-ept-deep-grey text-md">
+            Save Changes
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
