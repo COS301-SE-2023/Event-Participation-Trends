@@ -15,11 +15,17 @@ export class UserRepository {
         await this.userModel.create(user);
     }    
 
+    //regactor
     async getUser(userEmail: string){
         return await this.userModel.find({Email: userEmail});
     }
 
+    //refactor
     async getUsersByRole(userRole: string){
         return await this.userModel.find({Role: userRole});
     }
+
+    async updateUserRole(userEmail: string, userRole: string){
+        await this.userModel.updateOne({Email: {$eq: userEmail}},{$set: {Role: userRole}});
+    } 
 }
