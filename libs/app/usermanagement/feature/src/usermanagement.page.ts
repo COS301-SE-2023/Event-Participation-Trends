@@ -57,4 +57,8 @@ export class UsermanagementPage {
     this.changed = true;
   }
 
+  saveChanges(): void {
+    this.changed = false;
+  }
+
 }

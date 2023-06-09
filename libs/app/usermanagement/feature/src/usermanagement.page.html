@@ -3,21 +3,25 @@
 >
   <div class="backdrop-blur-[6px] h-full">
     <div class="grid grid-cols-4 p-6 mx-7">
-      <div class="col-span-4 md:col-span-1 flex items-center justify-self-center md:justify-self-start">
+      <div
+        class="col-span-4 md:col-span-1 flex items-center justify-self-center md:justify-self-start"
+      >
         <p class="text-2xl">User Management</p>
       </div>
-      <span ngClass="sidebar-content" class="flex w-full col-span-4 md:col-span-2">
+      <span
+        ngClass="sidebar-content"
+        class="flex w-full col-span-4 md:col-span-2"
+      >
         <ion-searchbar
           ngClass="sidebar-searchbar"
           placeholder="Search"
         ></ion-searchbar>
-        <ion-icon
-          ngClass="search-filter"
-          class="h-10 w-10 self-center hover:opacity-50 p-2"
-          name="options-outline"
-        ></ion-icon>
       </span>
-      <ion-button [disabled]="!changed" class="col-span-4 md:col-span-1 text-ept-deep-grey text-md md:justify-self-end duration-300 transition-all">
+      <ion-button
+        [disabled]="!changed"
+        class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden text-ept-deep-grey text-md md:justify-self-end self-center duration-300 transition-all"
+        (click)="saveChanges()"
+      >
         Save Changes
       </ion-button>
     </div>
@@ -27,22 +31,34 @@
       ngClass="user-list"
       lines="none"
       [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
-      class="rounded-lg m-6 lg:m-auto py-3 w-auto lg:w-4/6 bg-ept-off-white bg-opacity-70 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
+      class="rounded-lg m-6 lg:m-auto py-3 w-auto lg:w-5/6 bg-ept-off-white bg-opacity-70 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
     >
       <ion-item *ngFor="let user of users" ngClass="user-item" class="w-full">
-        <div class="grid grid-cols-12 items-center w-full">
+        <div class="sm:hidden grid grid-cols-12 items-center w-full">
+          <p class="col-span-6 md:col-span-5 text-ellipsis truncate">{{user.email}}</p>
+          <p class="col-span-3 transition-all duration-300 text-ellipsis truncate">
+            {{isManager(user) ? "Manager" : "Viewer"}}
+          </p>
+          <ion-toggle
+            aria-label="Warning toggle"
+            [checked]="isManager(user)"
+            class="col-span-1 ml-3"
+            (ionChange)="toggleRole(user)"
+          ></ion-toggle>
+        </div>
+        <div class="hidden sm:grid grid-cols-12 items-center w-full">
           <p class="col-span-1">{{user.id}}</p>
           <p class="hidden md:block col-span-2">{{user.name}}</p>
           <p class="col-span-4 md:col-span-5">{{user.email}}</p>
           <div class="col-span-7 md:col-span-4 grid grid-cols-4">
-              <p class="col-span-1">Viewer</p>
-              <ion-toggle
-                aria-label="Warning toggle"
-                [checked]="isManager(user)"
-                class="col-span-1"
-                (ionChange)="toggleRole(user)"
-              ></ion-toggle>
-              <p class="col-span-2">Manager</p>
+            <p class="col-span-1">Viewer</p>
+            <ion-toggle
+              aria-label="Warning toggle"
+              [checked]="isManager(user)"
+              class="col-span-1"
+              (ionChange)="toggleRole(user)"
+            ></ion-toggle>
+            <p class="col-span-2">Manager</p>
           </div>
         </div>
       </ion-item>
