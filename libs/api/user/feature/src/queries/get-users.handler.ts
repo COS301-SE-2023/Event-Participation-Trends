@@ -3,7 +3,7 @@ import { GetUsersQuery, Role, IGetUsersResponse } from '@event-participation-tre
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 
 
-@QueryHandler(QueryHandler)
+@QueryHandler(GetUsersQuery)
 export class GetUsersHandler implements IQueryHandler<GetUsersQuery, IGetUsersResponse> {
     constructor(private readonly repository: UserRepository) {}
 
