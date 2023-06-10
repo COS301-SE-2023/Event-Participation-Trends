@@ -2,6 +2,8 @@ import { EventService } from '@event-participation-trends/api/event/feature';
 import {
     ICreateEventRequest,
     ICreateEventResponse,
+    IGetAllEventsRequest,
+    IGetAllEventsResponse,
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post } from '@nestjs/common';
 
@@ -15,4 +17,12 @@ export class EventController {
     ): Promise<ICreateEventResponse> {
         return this.eventService.createEvent(request);
     }
+
+    @Post('getAllEvents')
+    async getAllEvents(
+        @Body() request: IGetAllEventsRequest,
+    ): Promise<IGetAllEventsResponse> {
+        return this.eventService.getAllEvent(request);
+    }
+    
 }
