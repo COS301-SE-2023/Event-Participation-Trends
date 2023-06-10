@@ -5,6 +5,9 @@ import {
     IGetAllEventsRequest,
     IGetAllEventsResponse,
     GetAllEventsQuery,
+    IGetManagedEventsRequest,
+    IGetManagedEventsResponse,
+    GetManagedEventsQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -19,5 +22,9 @@ export class EventService {
 
     async getAllEvent(request: IGetAllEventsRequest) {
         return await this.queryBus.execute<GetAllEventsQuery, IGetAllEventsResponse>(new GetAllEventsQuery(request));
+    }
+
+    async getManagedEvents(request: IGetManagedEventsRequest) {
+        return await this.queryBus.execute<GetManagedEventsQuery, IGetManagedEventsResponse>(new GetManagedEventsQuery(request));
     }
 }
