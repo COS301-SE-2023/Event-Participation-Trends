@@ -39,6 +39,13 @@ const routes: Routes = [
       import('@event-participation-trends/app/flooreditor/feature').then((m) => m.FloorEditorModule),
   },
   {
+    path: 'createfloorplan',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/createfloorplan/feature').then((m) => m.CreateFloorPlanModule),
+  },
+  {
     path: 'eventscreenview',
     canActivate: [],
     // data: { authGuardPipe: redirectLoggedOut },
