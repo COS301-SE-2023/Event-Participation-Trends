@@ -8,10 +8,13 @@ interface AccessRequest {
 }
 
 interface Event {
+  date: string;
   name: string;
   location: string;
   category: string;
   hasAccess: boolean;
+  startsAt: string;
+  endsAt: string;
 }
 
 @Component({
@@ -20,9 +23,17 @@ interface Event {
   styleUrls: ['./eventdetails.page.css'],
 })
 export class EventDetailsPage {
-  public initialText: string;
+  public event: Event = {
+    date: "2021-05-01",
+    name: 'Polar Bear Plunge',
+    location: 'Antarctica',
+    category: 'Swimming',
+    hasAccess: true,
+    startsAt: '10:00',
+    endsAt: '11:00',
+  };
   constructor() {
-    this.initialText = 'Initial text value';
+    // Should be empty
   }
 
   public accessRequests: AccessRequest[] = [
@@ -46,12 +57,7 @@ export class EventDetailsPage {
       }
     }
   }
-  event: Event = {
-    name: 'Polar Bear Plunge',
-    location: 'Antarctica',
-    category: 'Swimming',
-    hasAccess: true,
-  };
+
 
   allowAccess(accessRequest: AccessRequest) {
     console.log('allowAccess', accessRequest);
