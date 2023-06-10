@@ -48,6 +48,15 @@
       "@event-participation-trends/app/core/feature": [
         "libs/app/core/feature/src/index.ts"
       ],
+      "@event-participation-trends/app/createfloorplan/data-access": [
+        "libs/app/createfloorplan/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/createfloorplan/feature": [
+        "libs/app/createfloorplan/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/createfloorplan/util": [
+        "libs/app/createfloorplan/util/src/index.ts"
+      ],
       "@event-participation-trends/app/dashboard/data-access": [
         "libs/app/dashboard/data-access/src/index.ts"
       ],

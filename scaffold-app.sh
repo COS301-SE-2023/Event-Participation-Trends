@@ -76,6 +76,11 @@ yarn nx generate @nrwl/angular:component subpagenav --project=app-subpagenav-fea
 yarn nx generate @nrwl/angular:module subpagenav --project=app-subpagenav-feature --routing
 yarn nx generate @nrwl/angular:module subpagenav --project=app-subpagenav-data-access
 
+# Create Floor plan
+yarn nx generate @nrwl/angular:component createfloorplan --project=app-createfloorplan-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-feature --routing
+yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -155,3 +160,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/sub
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/shared --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/shared --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/shared --no-interactive        # --> util
+
+# Create Floor plan
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/createfloorplan --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/createfloorplan --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/createfloorplan --no-interactive        # --> util
