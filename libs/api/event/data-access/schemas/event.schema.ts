@@ -48,7 +48,7 @@ export class Event{
     TEMPBuffer: TEMP_DEVICE_BUFFER[] | undefined | null;
     
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    Manager: Types.ObjectId[] | undefined | null;
+    Manager: Types.ObjectId | undefined | null;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     Requesters: User[] | undefined | null;
