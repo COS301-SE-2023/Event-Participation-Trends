@@ -5,4 +5,10 @@ import { Component } from '@angular/core';
   templateUrl: './createfloorplan.page.html',
   styleUrls: ['./createfloorplan.page.css'],
 })
-export class CreateFloorPlanPage {}
+export class CreateFloorPlanPage {
+  isDropdownOpen = false;
+
+  toggleDropdown(): void {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+}

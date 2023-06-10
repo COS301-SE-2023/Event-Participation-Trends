@@ -6,9 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./eventdetails.page.css'],
 })
 export class EventDetailsPage {
-  isDropdownOpen = false;
-
-  toggleDropdown(): void {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
+  
 }
