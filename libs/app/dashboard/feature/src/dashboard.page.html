@@ -1,0 +1,83 @@
+<subpagenav [currentPage]="'/home/viewevents'"></subpagenav>
+
+<ion-content fullscreen="true" class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full">
+    <div class="backdrop-blur-[6px] min-h-full h-fit">
+        <div class="dashboard-title-area">
+            <div ngClass="dashboard-title-icon">
+                <ion-title class="text-5xl">Dashboard</ion-title>
+                <ion-icon class="text-blue-600 w-9 h-9 mt-2"  name="stats-chart"></ion-icon>
+                <sub class="mt-4 ml-2 text-base">/ [event name]</sub>
+            </div>
+            <ion-button ngClass="access-requests-btn" (click)="openAccessRequests()">
+                <ion-text class="text-lg text-black pr-2" color="none">Access Requests</ion-text>
+                <ion-badge color="danger" ngClass="access-requests-badge">{{ AccessRequestsLength }}</ion-badge>
+            </ion-button>
+        </div>
+        
+      <ng-container>
+        <ion-card ngClass="floor-map-card">
+          <ion-card-content ngClass="floor-map-card-content">
+            <div class="floor-map-snapshot-area">
+              <ion-img ngClass="floor-map-snapshot" src=""></ion-img>
+            </div>
+            <ion-icon
+              ngClass="floor-map-settings-icon"
+              name="settings-outline"
+              routerLink="/eventdetails"
+            ></ion-icon>
+          </ion-card-content>
+        </ion-card>
+    
+        <ion-title>Event Activity</ion-title>
+    
+        <div class="statistics">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12" size-md="6" size-lg="4">
+                <ion-card color="none" ngClass="stats-card">
+                  <ion-card-content></ion-card-content>
+                </ion-card>
+              </ion-col>
+              <ion-col size="12" size-md="6" size-lg="4">
+                <ion-card color="none" ngClass="stats-card">
+                  <ion-card-content></ion-card-content>
+                </ion-card>
+              </ion-col>
+              <ion-col size="6" size-md="4" size-lg="2">
+                <ion-card color="none" ngClass="stats-card">
+                  <ion-card-content></ion-card-content>
+                </ion-card>
+              </ion-col>
+              <ion-col size="6" size-md="4" size-lg="2">
+                <ion-card color="none" ngClass="stats-card">
+                  <ion-card-content></ion-card-content>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-md="6" size-lg="4">
+                <ion-card color="none" ngClass="stats-card">
+                  <ion-card-content></ion-card-content>
+                </ion-card>
+              </ion-col>
+              <ion-col size="12" size-md="6" size-lg="4">
+                <ion-card color="none" ngClass="stats-card">
+                  <ion-card-content></ion-card-content>
+                </ion-card>
+              </ion-col>
+              <ion-col size="6" size-md="4" size-lg="2">
+                <ion-card color="none" ngClass="stats-card">
+                  <ion-card-content></ion-card-content>
+                </ion-card>
+              </ion-col>
+              <ion-col size="6" size-md="4" size-lg="2">
+                <ion-card color="none" ngClass="stats-card">
+                  <ion-card-content></ion-card-content>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </ng-container>
+    </div>
+</ion-content>

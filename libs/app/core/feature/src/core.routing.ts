@@ -9,6 +9,48 @@ const routes: Routes = [
     data: {},
     loadChildren: () =>
       import('@event-participation-trends/app/login/feature').then((m) => m.LoginModule),
+  },
+  {
+    path: 'home',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/home/feature').then((m) => m.HomeModule),
+  },
+  {
+    path: 'dashboard',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/dashboard/feature').then((m) => m.DashboardModule),
+  },
+  {
+    path: 'eventdetails',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/eventdetails/feature').then((m) => m.EventDetailsModule),
+  },
+  {
+    path: 'flooreditor',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/flooreditor/feature').then((m) => m.FloorEditorModule),
+  },
+  {
+    path: 'createfloorplan',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/createfloorplan/feature').then((m) => m.CreateFloorPlanModule),
+  },
+  {
+    path: 'eventscreenview',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/eventscreenview/feature').then((m) => m.EventScreenViewModule),
   }
 ];
 

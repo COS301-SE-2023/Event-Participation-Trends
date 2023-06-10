@@ -8,7 +8,7 @@ set -ex
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # CORE
-yarn nx generate @nrwl/angular:component core --project=app-core-feature --export --flat --type=shell
+yarn nx generate @nrwl/angular:component core --project=app-core-feature --export --flat --type=shell --standalone
 yarn nx generate @nrwl/angular:module core --project=app-core-feature --routing
 
 # ERROR
@@ -22,6 +22,64 @@ yarn nx generate @nrwl/angular:module login --project=app-login-feature --routin
 # AUTH
 yarn nx generate @nrwl/angular:module auth --project=app-auth-feature
 yarn nx generate @nrwl/angular:module auth --project=app-auth-data-access
+
+# HOME
+yarn nx generate @nrwl/angular:module home --project=app-home-feature --routing
+
+# ACCESS REQUESTS
+yarn nx generate @nrwl/angular:component accessrequests --project=app-accessrequests-feature --export --flat --type=component --standalone
+yarn nx generate @nrwl/angular:module accessrequests --project=app-accessrequests-feature --routing
+yarn nx generate @nrwl/angular:module accessrequests --project=app-accessrequests-data-access
+
+# USER MANAGEMENT (Tab visible for Admins only)
+yarn nx generate @nrwl/angular:component usermanagement --project=app-usermanagement-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module usermanagement --project=app-usermanagement-feature --routing
+yarn nx generate @nrwl/angular:module usermanagement --project=app-usermanagement-data-access
+
+# VIEW EVENTS
+yarn nx generate @nrwl/angular:component viewevents --project=app-viewevents-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module viewevents --project=app-viewevents-feature --routing
+yarn nx generate @nrwl/angular:module viewevents --project=app-viewevents-data-access
+
+# COMPARE EVENTS
+yarn nx generate @nrwl/angular:component comparingevents --project=app-comparingevents-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module comparingevents --project=app-comparingevents-feature --routing
+yarn nx generate @nrwl/angular:module comparingevents --project=app-comparingevents-data-access
+
+# DASHBOARD
+yarn nx generate @nrwl/angular:component dashboard --project=app-dashboard-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module dashboard --project=app-dashboard-feature --routing
+yarn nx generate @nrwl/angular:module dashboard --project=app-dashboard-data-access
+
+# My Events (for Event Manager)
+yarn nx generate @nrwl/angular:component managerevents --project=app-managerevents-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module managerevents --project=app-managerevents-feature --routing
+yarn nx generate @nrwl/angular:module managerevents --project=app-managerevents-data-access
+
+# Floor Editor
+yarn nx generate @nrwl/angular:component flooreditor --project=app-flooreditor-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module flooreditor --project=app-flooreditor-feature --routing
+yarn nx generate @nrwl/angular:module flooreditor --project=app-flooreditor-data-access
+
+# Event Details
+yarn nx generate @nrwl/angular:component eventdetails --project=app-eventdetails-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module eventdetails --project=app-eventdetails-feature --routing
+yarn nx generate @nrwl/angular:module eventdetails --project=app-eventdetails-data-access
+
+# Event Full View
+yarn nx generate @nrwl/angular:component eventscreenview --project=app-eventscreenview-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module eventscreenview --project=app-eventscreenview-feature --routing
+yarn nx generate @nrwl/angular:module eventscreenview --project=app-eventscreenview-data-access
+
+# Sub-pages' nav-bar (includes back button)
+yarn nx generate @nrwl/angular:component subpagenav --project=app-subpagenav-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module subpagenav --project=app-subpagenav-feature --routing
+yarn nx generate @nrwl/angular:module subpagenav --project=app-subpagenav-data-access
+
+# Create Floor plan
+yarn nx generate @nrwl/angular:component createfloorplan --project=app-createfloorplan-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-feature --routing
+yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-data-access
 
 # ============================================================================================================================
 
@@ -44,3 +102,66 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/log
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/auth --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/auth --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/auth --no-interactive        # --> util
+
+# HOME
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/home --no-interactive     # --> feature
+
+# USER MANAGEMENT (Used by Admins only)
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/usermanagement --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/usermanagement --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/usermanagement --no-interactive        # --> util
+
+# VIEW EVENTS
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/viewevents --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/viewevents --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/viewevents --no-interactive        # --> util
+
+# COMPARE EVENTS
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/comparingevents --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/comparingevents --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/comparingevents --no-interactive        # --> util
+
+# DASHBOARD
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/dashboard --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/dashboard --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/dashboard --no-interactive        # --> util
+
+# My Events (for Event Manager)
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/managerevents --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/managerevents --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/managerevents --no-interactive        # --> util
+
+# Floor Editor
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/flooreditor --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/flooreditor --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/flooreditor --no-interactive        # --> util
+
+# Event Details
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/eventdetails --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/eventdetails --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/eventdetails --no-interactive        # --> util
+
+# Event Full View
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/eventscreenview --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/eventscreenview --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/eventscreenview --no-interactive        # --> util
+
+# Access Requests
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/accessrequests --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/accessrequests --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/accessrequests --no-interactive        # --> util
+
+# Sub-pages' nav-bar (includes back button)
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/subpagenav --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/subpagenav --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/subpagenav --no-interactive        # --> util
+
+# Shared Modules
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/shared --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/shared --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/shared --no-interactive        # --> util
+
+# Create Floor plan
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/createfloorplan --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/createfloorplan --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/createfloorplan --no-interactive        # --> util

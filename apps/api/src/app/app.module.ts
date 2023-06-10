@@ -16,10 +16,15 @@ import { UserService, UserModule } from '@event-participation-trends/api/user/fe
 import { CqrsModule } from '@nestjs/cqrs';
 import { EventService } from '@event-participation-trends/api/event/feature';
 import { EventModule } from '@event-participation-trends/api/event/data-access';
+import { ApiGuardsModule } from '@event-participation-trends/api/guards';
 
 @Module({
   imports: [
     Wow,
+    JwtModule.register({
+      secret: process.env['JWT_SECRET'],
+      signOptions: { expiresIn: '1d' },
+    }),
     ClientsModule.register([
       {
         name: 'MQTT_SERVICE',
@@ -31,15 +36,12 @@ import { EventModule } from '@event-participation-trends/api/event/data-access';
         },
       },
     ]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
-    }),
     MongooseModule.forRoot(process.env.MONGO_ALTALS_CONNECTION_URL),
     UserModule,
     EventModule,
     CqrsModule,
     CoreModule,
+    ApiGuardsModule
   ],
   controllers: [AppController, MqttController, PassportController],
   providers: [AppService, MqttService, PassportService, UserService, EventService],

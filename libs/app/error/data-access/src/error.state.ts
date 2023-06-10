@@ -16,25 +16,25 @@ export interface ErrorsStateModel {
 })
 @Injectable()
 export class ErrorsState {
-  constructor(private readonly toastController: ToastController) {}
+  // constructor(private readonly toastController: ToastController) {}
 
-  @Action(SetError)
-  async setError(ctx: StateContext<ErrorsStateModel>, { error }: SetError) {
-    if (!error) return;
+  // @Action(SetError)
+  // async setError(ctx: StateContext<ErrorsStateModel>, { error }: SetError) {
+  //   if (!error) return;
 
-    ctx.setState(
-      produce((draft) => {
-        draft.error = error;
-      })
-    );
+  //   ctx.setState(
+  //     produce((draft) => {
+  //       draft.error = error;
+  //     })
+  //   );
 
-    const toast = await this.toastController.create({
-      message: error,
-      color: 'danger',
-      duration: 1500,
-      position: 'bottom',
-    });
+  //   const toast = await this.toastController.create({
+  //     message: error,
+  //     color: 'danger',
+  //     duration: 1500,
+  //     position: 'bottom',
+  //   });
 
-    await toast.present();
-  }
+  //   await toast.present();
+  // }
 }

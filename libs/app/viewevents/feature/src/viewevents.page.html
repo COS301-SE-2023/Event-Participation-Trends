@@ -1,0 +1,74 @@
+<ion-content
+  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+>
+  <div class="backdrop-blur-[6px] min-h-full h-fit">
+    <div class="grid grid-cols-3 p-6 px-7">
+      <div class="col-span-1 flex items-center">
+        <!-- <p class="text-2xl">User Management</p> -->
+      </div>
+      <span
+        ngClass="sidebar-content"
+        class="flex w-full col-span-3 lg:col-span-1"
+      >
+        <ion-searchbar
+          ngClass="sidebar-searchbar"
+          placeholder="Search"
+        ></ion-searchbar>
+        <ion-icon
+          ngClass="search-filter"
+          class="h-10 w-10 self-center hover:opacity-50 p-2"
+          name="options-outline"
+        ></ion-icon>
+      </span>
+    </div>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:gird-cols-5 col-auto duration-300 transition-all"
+    >
+      <ion-card
+        *ngFor="let event of events"
+        class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:cursor-pointer"
+        [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : event.hasAccess, 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !event.hasAccess}"
+      >
+        <ion-card-content
+          class="flex flex-col h-full duration-300 transition-all"
+        >
+          <ion-icon
+            *ngIf="!event.hasAccess"
+            class="h-6 w-6 p-4 duration-300 transition-all absolute self-end text-ept-off-white font-lg"
+            name="lock-closed-outline"
+          >
+          </ion-icon>
+          <p
+            class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
+          >
+            {{event.name}}
+          </p>
+          <div
+            class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
+          >
+            <p class="px-4 py-2 self-start duration-300 transition-all">
+              Location: {{event.location}}
+            </p>
+            <p class="px-4 py-2 self-start duration-300 transition-all">
+              Category: {{event.category}}
+            </p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <ion-buttons>
+      <ion-button routerLink="/dashboard">
+        <ion-text color="danger">View Dashboard</ion-text>
+      </ion-button>
+      <ion-button routerLink="/eventdetails">
+        <ion-text color="danger">Event Details</ion-text>
+      </ion-button>
+      <ion-button routerLink="/flooreditor">
+        <ion-text color="danger">Floor Editor</ion-text>
+      </ion-button>
+      <ion-button routerLink="/createfloorplan">
+        <ion-text color="danger">Create Floor Plan</ion-text>
+      </ion-button>
+    </ion-buttons>
+  </div>
+</ion-content>
