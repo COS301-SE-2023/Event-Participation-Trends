@@ -6,13 +6,25 @@ interface AccessRequest {
   email: string;
   timestamp: number;
 }
+
+interface Event {
+  name: string;
+  location: string;
+  category: string;
+  hasAccess: boolean;
+}
+
 @Component({
   selector: 'event-participation-trends-eventdetails',
   templateUrl: './eventdetails.page.html',
   styleUrls: ['./eventdetails.page.css'],
 })
 export class EventDetailsPage {
-  
+  public initialText: string;
+  constructor() {
+    this.initialText = 'Initial text value';
+  }
+
   public accessRequests: AccessRequest[] = [
     {
       id: 1,
@@ -33,6 +45,15 @@ export class EventDetailsPage {
         break;
       }
     }
+  event: Event = {
+    name: 'Polar Bear Plunge',
+    location: 'Antarctica',
+    category: 'Swimming',
+    hasAccess: true,
+  };
+
+  allowAccess(accessRequest: AccessRequest) {
+    console.log('allowAccess', accessRequest);
   }
 
   acceptRequest(accessRequest: AccessRequest) {
@@ -58,4 +79,5 @@ export class EventDetailsPage {
   }
 
   show_requests = true;
+  showRequests = false;
 }
