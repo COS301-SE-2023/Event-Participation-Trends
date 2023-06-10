@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IUser } from '@event-participation-trends/api/user/util';
+import { IEventDetails } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
@@ -18,7 +18,7 @@ export class EventRepository {
     constructor(
         @InjectModel(Event.name) private eventModel: mongoose.Model<Event>,
         @InjectModel(Device.name) private deviceModel: mongoose.Model<Device>,
-        @InjectModel(FloorLayout.name) private floorLayoutModel: mongoose.Model<FloorLayout>,
+        //@InjectModel(FloorLayout.name) private floorLayoutModel: mongoose.Model<FloorLayout>,
         @InjectModel(DeviceLocation.name) private deviceLocationModel: mongoose.Model<DeviceLocation>,
         @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
@@ -27,4 +27,7 @@ export class EventRepository {
         @InjectModel(TEMP_DEVICE_TO_DT.name) private TEMP_DEVICE_TO_DTModel: mongoose.Model<TEMP_DEVICE_TO_DT>,
     ){}
 
+    async createEvent(event: IEventDetails){
+        await this.eventModel.create(event);
+    }   
 }
