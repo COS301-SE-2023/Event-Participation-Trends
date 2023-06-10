@@ -105,16 +105,26 @@
           <h1 class="text-2xl p-4 self-start">{{event.name}}</h1>
         </div>
         <div class="p-4 self-start w-full">
-          <label>Date</label>
-          <ion-input type="date" class="w-full"></ion-input>
-          <label>Location</label>
-          <ion-input type="text" class="w-full"></ion-input>
-          <label>Category</label>
-          <ion-input type="text" class="w-full"></ion-input>
-          <label>Starts At:</label>
-          <ion-input type="time" class="w-full"></ion-input>
-          <label>Ends At:</label>
-          <ion-input type="time" class="w-full"></ion-input>
+          <div class="py-3">
+            <label>Date</label>
+            <ion-input type="date" class="p-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey" [(ngModel)]="event.date"></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Location</label>
+            <ion-input type="text" class="p-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey" [(ngModel)]="event.location"></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Category</label>
+            <ion-input type="text" class="p-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey" [(ngModel)]="event.category"></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Starts At:</label>
+            <ion-input type="time" class="p-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey" [(ngModel)]="event.startsAt"></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Ends At:</label>
+            <ion-input type="time" class="p-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey" [(ngModel)]="event.endsAt"></ion-input>
+          </div>
         </div>
         <div
           class="flex flex-col items-start text-left justify-center align-middle duration-300 transition-all h-full"

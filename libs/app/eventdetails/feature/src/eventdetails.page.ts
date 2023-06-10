@@ -8,10 +8,13 @@ interface AccessRequest {
 }
 
 interface Event {
+  date: string;
   name: string;
   location: string;
   category: string;
   hasAccess: boolean;
+  startsAt: string;
+  endsAt: string;
 }
 
 @Component({
@@ -20,12 +23,23 @@ interface Event {
   styleUrls: ['./eventdetails.page.css'],
 })
 export class EventDetailsPage {
+
   public initialText: string;
   public inviteEmail: string;
   constructor() {
     this.initialText = 'Initial text value';
     this.inviteEmail = '';
   }
+
+  public event: Event = {
+    date: "2021-05-01",
+    name: 'Polar Bear Plunge',
+    location: 'Antarctica',
+    category: 'Swimming',
+    hasAccess: true,
+    startsAt: '10:00',
+    endsAt: '11:00',
+  };
 
   public accessRequests: AccessRequest[] = [
     {
@@ -39,6 +53,10 @@ export class EventDetailsPage {
       timestamp: 1620000000000,
     },
   ];
+  
+  overflow = false;
+  show_invites = false;
+  show_requests = false;
 
   removeRequest(accessRequest: AccessRequest) {
     for (let i = 0; i < this.accessRequests.length; i++) {
@@ -48,12 +66,6 @@ export class EventDetailsPage {
       }
     }
   }
-  event: Event = {
-    name: 'Polar Bear Plunge',
-    location: 'Antarctica',
-    category: 'Swimming',
-    hasAccess: true,
-  };
 
   allowAccess(accessRequest: AccessRequest) {
     console.log('allowAccess', accessRequest);
@@ -67,8 +79,6 @@ export class EventDetailsPage {
     this.removeRequest(accessRequest);
   }
 
-  overflow = false;
-
   isEmpty() {
     return this.accessRequests.length === 0;
   }
@@ -81,8 +91,6 @@ export class EventDetailsPage {
     this.show_requests = false;
   }
 
-  show_requests = false;
-
   showInvites() {
     this.show_invites = true;
   }
@@ -90,8 +98,6 @@ export class EventDetailsPage {
   hideInvites() {
     this.show_invites = false;
   }
-
-  show_invites = true;
 
   sendInvite() {
     if (this.inviteEmail === '') {
