@@ -11,7 +11,6 @@ import { EventSchema,
          TEMP_DEVICE_BUFFERSchema,
          TEMP_DEVICE_TO_DTSchema,
    } from '../schemas';
-
 @Module({
     imports: [MongooseModule.forFeature([
         {name: 'Device', schema: DeviceSchema },
