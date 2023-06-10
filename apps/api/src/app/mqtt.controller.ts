@@ -3,14 +3,14 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('mqtt')
 export class MqttController {
-    @MessagePattern(process.env.MQTT_TOPIC_BLE)
+    @MessagePattern('/ble')
     async mqtt_ble(@Payload() data) {
         console.log(data);
-        return `Received ${data} on ${process.env.MQTT_TOPIC_BLE}}`
+        return `Received ${data} on /ble`
     };
-    @MessagePattern(process.env.MQTT_TOPIC_WIFI)
+    @MessagePattern('/wifi')
     async mqtt_wifi(@Payload() data) {
         console.log(data);
-        return `Received ${data} on ${process.env.MQTT_TOPIC_WIFI}}`
+        return `Received ${data} on /wifi`
     }
 }
