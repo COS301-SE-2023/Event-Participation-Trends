@@ -9,7 +9,8 @@ import {
 } from './commands';
 
 import { 
-    GetAllEventsHandler
+    GetAllEventsHandler,
+    GetManagedEventsHandler
  } from './queries';
 
 import {
@@ -25,7 +26,8 @@ export const EventHandlers = [
 ];
 
 export const QueryHandlers = [
-    GetAllEventsHandler
+    GetAllEventsHandler,
+    GetManagedEventsHandler,
 ];
 
 @Module({
