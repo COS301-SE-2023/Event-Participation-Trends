@@ -45,6 +45,7 @@ export class EventDetailsPage {
         break;
       }
     }
+  }
   event: Event = {
     name: 'Polar Bear Plunge',
     location: 'Antarctica',
@@ -79,5 +80,4 @@ export class EventDetailsPage {
   }
 
   show_requests = true;
-  showRequests = false;
 }
