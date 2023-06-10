@@ -12,6 +12,7 @@ import { Event,
          TEMP_DEVICE_BUFFER,
          TEMP_DEVICE_TO_DT,
 } from '../schemas';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class EventRepository {
@@ -34,4 +35,9 @@ export class EventRepository {
     async getAllEvents(){
         return await this.eventModel.find();
     }
+
+    async getManagedEvents(managerID: Types.ObjectId){
+        return await this.eventModel.find({Manager: {$eq: managerID}});
+    }
+    
 }
