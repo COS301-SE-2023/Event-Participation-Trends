@@ -30,4 +30,8 @@ export class EventRepository {
     async createEvent(event: IEventDetails){
         await this.eventModel.create(event);
     }   
+
+    async getAllEvents(){
+        return await this.eventModel.find();
+    }
 }
