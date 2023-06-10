@@ -21,8 +21,10 @@ interface Event {
 })
 export class EventDetailsPage {
   public initialText: string;
+  public inviteEmail: string;
   constructor() {
     this.initialText = 'Initial text value';
+    this.inviteEmail = '';
   }
 
   public accessRequests: AccessRequest[] = [
@@ -80,4 +82,21 @@ export class EventDetailsPage {
   }
 
   show_requests = false;
+
+  showInvites() {
+    this.show_invites = true;
+  }
+
+  hideInvites() {
+    this.show_invites = false;
+  }
+
+  show_invites = true;
+
+  sendInvite() {
+    if (this.inviteEmail === '') {
+      return;
+    }
+    console.log('sendInvite', this.inviteEmail);
+  }
 }

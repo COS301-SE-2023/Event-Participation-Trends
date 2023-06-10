@@ -11,3 +11,12 @@ ion-button {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
 }
+
+ion-input.invite {
+  --highlight-color: #facc15;
+}
+
+ion-input.invite .helper-text,
+ion-input.invite .counter {
+  color: var(--ion-color-step-700, #373737);
+}
