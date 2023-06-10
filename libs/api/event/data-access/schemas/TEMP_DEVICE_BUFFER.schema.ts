@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Sensor } from './sensor.schema';
+import { Types } from 'mongoose';
 
 export type TEMP_DEVICE_BUFFERocument = HydratedDocument<TEMP_DEVICE_BUFFER>;
 
@@ -10,7 +10,7 @@ export class TEMP_DEVICE_BUFFER{
     DeviceId: string | undefined | null;
 
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Sensor' })
-    SensorId: Sensor | undefined | null;
+    SensorId: Types.ObjectId[] | undefined | null;
 
     @Prop({ required: true})
     TimeStamp: Date | undefined | null;
