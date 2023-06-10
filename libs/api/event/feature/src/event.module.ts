@@ -8,6 +8,10 @@ import {
     CreateEventHandler
 } from './commands';
 
+import { 
+    GetAllEventsHandler
+ } from './queries';
+
 import {
     CreateEventEventHandler
 } from './events';
@@ -20,10 +24,13 @@ export const EventHandlers = [
     CreateEventEventHandler,
 ];
 
+export const QueryHandlers = [
+    GetAllEventsHandler
+];
 
 @Module({
     imports: [CqrsModule, EventDataAccessModule, UserDataAccessModule],
-    providers: [EventService, ...CommandHandlers, ...EventHandlers],
+    providers: [EventService, ...CommandHandlers, ...EventHandlers, ...QueryHandlers],
     exports: [EventService],
 })
 export class EventModule {}
