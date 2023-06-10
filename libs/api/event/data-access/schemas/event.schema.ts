@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { FloorLayout } from './floorlayout.schema';
 import { Stall } from './stall.schema';
 import { Sensor } from './sensor.schema';
@@ -13,9 +13,6 @@ export type EventDocument = HydratedDocument<Event>;
 
 @Schema({timestamps: true, collection: 'Event' })
 export class Event{
-
-    @Prop({ required: true })
-    EventId: string | undefined | null;
 
     @Prop({ required: true })
     StartDate: Date | undefined | null;
@@ -32,31 +29,31 @@ export class Event{
     @Prop({ required: true })
     Location: EventLocation | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })
     thisFloorLayout: FloorLayout | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
     Stalls: Stall[] | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Sensor' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Sensor' })
     Sensors: Sensor[] | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Device' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Device' })
     Devices: Device[] | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_TO_DT' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_TO_DT' })
     BTIDtoDeviceBuffer: TEMP_DEVICE_TO_DT[] | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_BUFFER' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_BUFFER' })
     TEMPBuffer: TEMP_DEVICE_BUFFER[] | undefined | null;
     
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    Managers: User[] | undefined | null;
+    Manager: Types.ObjectId[] | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     Requesters: User[] | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     Viewers: User[] | undefined | null;
 }
 
