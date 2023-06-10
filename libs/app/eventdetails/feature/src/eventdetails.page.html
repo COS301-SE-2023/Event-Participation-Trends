@@ -4,14 +4,55 @@
 >
   <div class="backdrop-blur-[6px] min-h-full h-full">
     <div
-      *ngIf="showRequests"
-      class="bg-ept-bumble-yellow bg-opacity-10 h-full flex justify-center items-center"
+      *ngIf="show_requests"
+      class="bg-ept-deep-grey bg-opacity-20 h-full flex justify-center items-center transition-all duration-300"
     >
       <div
-        class="w-2/6 h-5/6 bg-ept-off-white rounded-lg bg-opacity-100 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
+        class="w-2/6 h-5/6 bg-white rounded-lg bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
       >
-        <p class="text-2xl m-3">Access Requests</p>
-    </div>
+        <div class="flex flex-col w-full content-center">
+          <ion-icon
+            class="h-8 w-8 m-4 duration-300 transition-all absolute self-end text-ept-deep-grey font-lg hover:cursor-pointer hover:scale-125 hover:opacity-70"
+            name="close"
+            (click)="hideRequests()"
+          ></ion-icon>
+          <p class="text-3xl text-semibold my-4 self-center">Access Requests</p>
+        </div>
+        <div *ngIf="isEmpty()" class="flex flex-col w-full h-fit">
+          <p *ngIf="isEmpty()" ngClass="no-events" class="self-center mt-10">
+            No users to show.
+          </p>
+        </div>
+        <ion-list
+          *ngIf="!isEmpty()"
+          ngClass="user-list"
+          lines="none"
+          [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+          class="rounded-lg m-6 lg:m-auto py-3 w-auto lg:w-5/6"
+        >
+          <ion-item
+            *ngFor="let request of accessRequests"
+            ngClass="user-item"
+            class="w-full"
+          >
+            <div class="grid grid-cols-4 items-center w-full">
+              <p class="col-span-2">{{request.email}}</p>
+              <ion-button
+                class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden bg-green-400 text-ept-deep-grey text-md md:justify-self-end self-center duration-300 transition-all hover:scale-105 hover:bg-green-500"
+                (click)="acceptRequest(request)"
+              >
+                Accept
+              </ion-button>
+              <ion-button
+                class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden bg-red-400 text-ept-deep-grey text-md md:justify-self-end self-center duration-300 transition-all hover:scale-105 hover:bg-red-500"
+                (click)="declineRequest(request)"
+              >
+                Decline
+              </ion-button>
+            </div>
+          </ion-item>
+        </ion-list>
+      </div>
     </div>
   </div>
 </ion-content>

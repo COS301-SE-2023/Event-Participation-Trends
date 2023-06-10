@@ -26,13 +26,36 @@ export class EventDetailsPage {
     },
   ];
 
-  allowAccess(accessRequest: AccessRequest) {
-    console.log('allowAccess', accessRequest);
+  removeRequest(accessRequest: AccessRequest) {
+    for (let i = 0; i < this.accessRequests.length; i++) {
+      if (this.accessRequests[i].id === accessRequest.id) {
+        this.accessRequests.splice(i, 1);
+        break;
+      }
+    }
   }
 
-  denyAccess(accessRequest: AccessRequest) {
-    console.log('denyAccess', accessRequest);
+  acceptRequest(accessRequest: AccessRequest) {
+    this.removeRequest(accessRequest);
   }
 
-  showRequests = true;
+  declineRequest(accessRequest: AccessRequest) {
+    this.removeRequest(accessRequest);
+  }
+
+  overflow = false;
+
+  isEmpty() {
+    return this.accessRequests.length === 0;
+  }
+
+  showRequests() {
+    this.show_requests = true;
+  }
+
+  hideRequests() {
+    this.show_requests = false;
+  }
+
+  show_requests = true;
 }

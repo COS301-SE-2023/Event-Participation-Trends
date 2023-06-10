@@ -1,0 +1,13 @@
+ion-list {
+  background: transparent;
+  width: auto;
+}
+ion-item {
+  --background: inherit;
+  width: auto;
+}
+
+ion-button {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
