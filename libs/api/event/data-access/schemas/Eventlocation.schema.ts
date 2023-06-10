@@ -7,13 +7,25 @@ export type EventLocationDocument = HydratedDocument<EventLocation>;
 export class EventLocation{
 
     @Prop({ required: true })
-    x_coordinate: number | undefined | null;
+    Latitude: number | undefined | null;
 
     @Prop({ required: true })
-    y_coordinate: number | undefined | null;
+    Longitude: number | undefined | null;
     
     @Prop({ required: true })
-    Timestamp: Date | undefined | null;
+    StreetName: string | undefined | null;
+
+    @Prop({ required: true })
+    CityName: string | undefined | null;
+
+    @Prop({ required: true })
+    ProvinceName: string | undefined | null;
+
+    @Prop({ required: true })
+    CountryName: string | undefined | null;
+
+    @Prop({ required: true })
+    ZIPCode: string | undefined | null;
 }
     
 
