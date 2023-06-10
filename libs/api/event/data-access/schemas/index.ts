@@ -1,4 +1,3 @@
-export * from './user.schema';
 export * from './event.schema';
 export * from './device.schema';
 export * from './floorlayout.schema';
