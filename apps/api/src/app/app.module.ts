@@ -14,6 +14,8 @@ import { CoreModule } from '@event-participation-trends/api/core/feature'
 import { MqttService } from './mqtt.service';
 import { UserService, UserModule } from '@event-participation-trends/api/user/feature';
 import { CqrsModule } from '@nestjs/cqrs';
+import { EventService } from '@event-participation-trends/api/event/feature';
+import { EventModule } from '@event-participation-trends/api/event/data-access';
 
 @Module({
   imports: [
@@ -35,10 +37,11 @@ import { CqrsModule } from '@nestjs/cqrs';
     }),
     MongooseModule.forRoot(process.env.MONGO_ALTALS_CONNECTION_URL),
     UserModule,
+    EventModule,
     CqrsModule,
     CoreModule,
   ],
   controllers: [AppController, MqttController, PassportController],
-  providers: [AppService, MqttService, PassportService, UserService],
+  providers: [AppService, MqttService, PassportService, UserService, EventService],
 })
 export class AppModule {}
