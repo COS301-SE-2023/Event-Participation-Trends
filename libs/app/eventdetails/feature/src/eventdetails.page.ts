@@ -79,5 +79,5 @@ export class EventDetailsPage {
     this.show_requests = false;
   }
 
-  show_requests = true;
+  show_requests = false;
 }
