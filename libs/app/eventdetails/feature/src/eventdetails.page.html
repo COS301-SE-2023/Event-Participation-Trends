@@ -40,13 +40,13 @@
             <div class="grid grid-cols-4 items-center w-full">
               <p class="col-span-2">{{request.email}}</p>
               <ion-button
-                class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden bg-ept-bumble-yellow text-ept-deep-grey text-md md:justify-self-end self-center duration-300 transition-all hover:scale-105 hover:bg-green-500"
+                class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden bg-green-400 text-ept-off-white text-md md:justify-self-end self-center duration-300 transition-all hover:scale-105 hover:bg-green-500 hover:text-ept-off-white"
                 (click)="acceptRequest(request)"
               >
                 Accept
               </ion-button>
               <ion-button
-                class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden bg-ept-deep-grey text-ept-bumble-yellow text-md md:justify-self-end self-center duration-300 transition-all hover:scale-105 hover:bg-red-500"
+                class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden bg-red-400 text-ept-off-white text-md md:justify-self-end self-center duration-300 transition-all hover:scale-105 hover:bg-red-500 hover:text-ept-off-white"
                 (click)="declineRequest(request)"
               >
                 Decline
