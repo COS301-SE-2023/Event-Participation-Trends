@@ -2587,7 +2587,7 @@
     tmp "~0.2.1"
     tslib "^2.3.0"
 
-"@nx/nest@16.2.1", "@nx/nest@^16.1.0":
+"@nx/nest@16.2.1":
   version "16.2.1"
   resolved "https://registry.yarnpkg.com/@nx/nest/-/nest-16.2.1.tgz#8262fbbf3fd971974557e8029c7d417318909c92"
   integrity sha512-+i0yfF4V5BdboV75JVP3a7XLZD5DBzAHjLKviO6vMCXiMfVryuwjkgHWHPHahHaqt8Cn00S3nWcZwooTVtDK9A==

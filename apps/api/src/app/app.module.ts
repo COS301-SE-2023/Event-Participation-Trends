@@ -16,6 +16,7 @@ import { UserService, UserModule } from '@event-participation-trends/api/user/fe
 import { CqrsModule } from '@nestjs/cqrs';
 import { EventService } from '@event-participation-trends/api/event/feature';
 import { EventModule } from '@event-participation-trends/api/event/data-access';
+import { GuardsModule } from '@event-participation-trends/guards';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { EventModule } from '@event-participation-trends/api/event/data-access';
     EventModule,
     CqrsModule,
     CoreModule,
+    GuardsModule
   ],
   controllers: [AppController, MqttController, PassportController],
   providers: [AppService, MqttService, PassportService, UserService, EventService],
