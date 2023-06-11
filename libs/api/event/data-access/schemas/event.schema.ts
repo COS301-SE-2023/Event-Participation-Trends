@@ -50,11 +50,11 @@ export class Event{
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     Manager: Types.ObjectId | undefined | null;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    Requesters: User[] | undefined | null;
+    @Prop({ type: [{type: mongoose.Schema.Types.ObjectId ,ref: 'User'}] })
+    Requesters: Types.ObjectId[] | undefined | null;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    Viewers: User[] | undefined | null;
+    @Prop({ type: [{type: mongoose.Schema.Types.ObjectId ,ref: 'User'}] })
+    Viewers: Types.ObjectId[] | undefined | null;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
