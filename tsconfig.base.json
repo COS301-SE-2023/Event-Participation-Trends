@@ -212,7 +212,8 @@
       ],
       "@event-participation-trends/app/viewevents/util": [
         "libs/app/viewevents/util/src/index.ts"
-      ]
+      ],
+      "@event-participation-trends/guards": ["libs/guards/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

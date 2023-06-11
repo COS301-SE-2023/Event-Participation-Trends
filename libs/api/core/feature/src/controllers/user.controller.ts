@@ -7,7 +7,9 @@ import {
     IUpdateRoleRequest,
     IupdateRoleResponse,
 } from '@event-participation-trends/api/user/util';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
+import { Request } from 'express';
+import { JwtGuard } from '@event-participation-trends/guards';
 
 @Controller('user')
 export class UserController {
@@ -32,5 +34,12 @@ export class UserController {
         @Body() request: IUpdateRoleRequest,
     ): Promise<IupdateRoleResponse> {
         return this.userService.updateUserRole(request);
+    }
+
+    @Get('lol')
+    @UseGuards(JwtGuard)
+    async lol(@Req() req: Request) {
+        const request: any = req;
+        return request.user;
     }
 }
