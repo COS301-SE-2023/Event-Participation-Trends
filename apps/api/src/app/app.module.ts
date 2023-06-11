@@ -21,10 +21,7 @@ import { GuardsModule } from '@event-participation-trends/guards';
 @Module({
   imports: [
     Wow,
-    JwtModule.register({
-      secret: process.env['JWT_SECRET'],
-      signOptions: { expiresIn: '1d' },
-    }),
+    JwtModule.register({}),
     ClientsModule.register([
       {
         name: 'MQTT_SERVICE',
