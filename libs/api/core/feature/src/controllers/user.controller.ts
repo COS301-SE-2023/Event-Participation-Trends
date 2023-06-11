@@ -20,8 +20,8 @@ export class UserController {
         return this.userService.createUser(request);
     }
 
-    @Post('getUsers')
-    async getUsers(
+    @Post('getAllUsers')
+    async getAllUsers(
         @Body() request: IGetUsersRequest,
     ): Promise<IGetUsersResponse> {
         return this.userService.getUsers(request);
