@@ -11,12 +11,12 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery, IGetUsersRe
         console.log(`${GetUsersHandler.name}`);
         const request = query.request;
 
-        if (!request.AdminEmail || !request.userRole)
+        if (!request.AdminEmail)
             throw new Error('Missing required field: AdminEmail');
         
         const AdminDoc = await this.repository.getUser(request.AdminEmail);
         if(AdminDoc[0].Role === Role.ADMIN){
-            const userDocs = await this.repository.getUsersByRole(request.userRole);
+            const userDocs = await this.repository.getAllUsers();
             return {users: userDocs};
         }else{
             throw new Error(`User with email ${request.AdminEmail} does not have admin Privileges`);
