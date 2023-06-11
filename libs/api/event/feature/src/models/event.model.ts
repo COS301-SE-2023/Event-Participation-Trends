@@ -29,8 +29,8 @@ export class Event extends AggregateRoot implements IEvent {
         public BTIDtoDeviceBuffer?: ITEMP_DEVICE_TO_DT[] | undefined | null,
         public TEMPBuffer?: ITEMP_DEVICE_BUFFER[] | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
-        public Requesters?: IUser[] | undefined | null,
-        public Viewers?: IUser[] | undefined | null,
+        public Requesters?: Types.ObjectId[] | undefined | null,
+        public Viewers?: Types.ObjectId[] | undefined | null,
     ){
         super();
     }
