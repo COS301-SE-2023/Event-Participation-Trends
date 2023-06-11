@@ -1,5 +1,4 @@
 
 export interface IGetUsersRequest {
-    AdminEmail: string,
-    userRole: string,
+    AdminEmail: string
 }
