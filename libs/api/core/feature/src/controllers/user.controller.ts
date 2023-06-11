@@ -1,7 +1,5 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
-    ICreateUserRequest,
-    ICreateUserResponse,
     IGetUsersRequest,
     IGetUsersResponse,
     IUpdateRoleRequest,
@@ -15,31 +13,32 @@ import { JwtGuard } from '@event-participation-trends/guards';
 export class UserController {
     constructor(private userService: UserService){}
 
-    @Post('createUser')
-    async createUser(
-        @Body() request: ICreateUserRequest,
-    ): Promise<ICreateUserResponse> {
-        return this.userService.createUser(request);
-    }
-
-    @Post('getAllUsers')
+    @Get('getAllUsers')
+    @UseGuards(JwtGuard)
     async getAllUsers(
-        @Body() request: IGetUsersRequest,
+        @Req() req: Request
     ): Promise<IGetUsersResponse> {
-        return this.userService.getUsers(request);
+        const request: any =req;
+        const extractRequest: IGetUsersRequest = {
+            AdminEmail: request.user["email"]
+        }
+        return this.userService.getUsers(extractRequest);
     }
 
     @Post('updateUserRole')
+    @UseGuards(JwtGuard)
     async updateUserRole(
-        @Body() request: IUpdateRoleRequest,
+        @Req() req: Request
     ): Promise<IupdateRoleResponse> {
-        return this.userService.updateUserRole(request);
+        const request: any =req;
+        const extractRequest: IUpdateRoleRequest = {
+            update: {
+                AdminEmail: request.user["email"],
+                UserEmail: request.body['UserEmail'],
+                UpdateRole: request.body['UpdateRole'],
+            }
+        }
+        return this.userService.updateUserRole(extractRequest);
     }
 
-    @Get('lol')
-    @UseGuards(JwtGuard)
-    async lol(@Req() req: Request) {
-        const request: any = req;
-        return request.user;
-    }
 }
