@@ -14,7 +14,7 @@ import { GuardsModule } from '@event-participation-trends/guards';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-    imports: [CqrsModule, UserModule, EventModule],
+    imports: [CqrsModule, UserModule, EventModule, JwtModule],
     controllers: [UserController, EventController],
     providers: [UserService, EventService],
     exports: [UserService ,EventService],
