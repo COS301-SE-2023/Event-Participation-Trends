@@ -32,6 +32,7 @@ export class UserController {
         @Body() requestBody: IUpdateRoleRequest,
     ): Promise<IupdateRoleResponse> {
         const request: any =req;
+        console.log(request.user["email"])
         const extractRequest: IUpdateRoleRequest = {
             update: {
                 AdminEmail: request.user["email"],
@@ -39,7 +40,7 @@ export class UserController {
                 UpdateRole: requestBody.update.UpdateRole
             }
         }
-        return this.userService.updateUserRole(request);
+        return this.userService.updateUserRole(extractRequest);
     }
 
 }
