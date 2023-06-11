@@ -17,9 +17,11 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { EventService } from '@event-participation-trends/api/event/feature';
 import { EventModule } from '@event-participation-trends/api/event/data-access';
 import { ApiGuardsModule } from '@event-participation-trends/api/guards';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     Wow,
     JwtModule.register({}),
     ClientsModule.register([
@@ -33,7 +35,7 @@ import { ApiGuardsModule } from '@event-participation-trends/api/guards';
         },
       },
     ]),
-    MongooseModule.forRoot(process.env.MONGO_ALTALS_CONNECTION_URL),
+    MongooseModule.forRoot(process.env['MONGO_ALTALS_CONNECTION_URL']),
     UserModule,
     EventModule,
     CqrsModule,

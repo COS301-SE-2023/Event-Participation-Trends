@@ -17,6 +17,7 @@
     "@angular/router": "~16.0.0",
     "@ionic/angular": "^7.0.7",
     "@nestjs/common": "^9.1.1",
+    "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.1.1",
     "@nestjs/cqrs": "^9.0.3",
     "@nestjs/jwt": "^10.0.3",
