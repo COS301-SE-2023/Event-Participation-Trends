@@ -8,7 +8,7 @@ import { EventService, EventModule } from '@event-participation-trends/api/event
 @Module({
     imports: [CqrsModule, UserModule, EventModule],
     controllers: [UserController, EventController],
-    providers: [UserService, EventService],
+    providers: [UserService, EventService] ,
     exports: [UserService ,EventService],
 })
 export class CoreModule {}
