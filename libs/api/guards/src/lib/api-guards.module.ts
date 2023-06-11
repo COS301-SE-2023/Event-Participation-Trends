@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtGuard } from './guards/jwt.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [],
   controllers: [],
-  providers: [JwtService, JwtGuard],
-  exports: [
-    JwtGuard
-  ],
+  providers: [JwtGuard, JwtService],
+  exports: [JwtGuard],
 })
 export class ApiGuardsModule {}

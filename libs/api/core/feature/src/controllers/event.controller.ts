@@ -11,7 +11,7 @@ import {
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtGuard } from '@event-participation-trends/guards';
+import { JwtGuard } from '@event-participation-trends/api/guards';
 import { IEventDetails, IEventId } from '@event-participation-trends/api/event/util';
 
 @Controller('event')
