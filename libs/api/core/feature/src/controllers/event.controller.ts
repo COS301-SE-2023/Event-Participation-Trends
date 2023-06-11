@@ -7,7 +7,10 @@ import {
     IGetManagedEventsRequest,
     IGetManagedEventsResponse,
 } from '@event-participation-trends/api/event/util';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
+import { Request } from 'express';
+//import error
+//import { JwtGuard } from '@event-participation-trends/api/guards';
 
 @Controller('event')
 export class EventController {
@@ -20,12 +23,18 @@ export class EventController {
         return this.eventService.createEvent(request);
     }
 
-    @Post('getAllEvents')
+    /*
+    @Get('getAllEvents')
+    @UseGuards(JwtGuard)
     async getAllEvents(
-        @Body() request: IGetAllEventsRequest,
+        @Req() req: Request 
     ): Promise<IGetAllEventsResponse> {
-        return this.eventService.getAllEvent(request);
+        const extractRequest: IGetAllEventsRequest = {
+            AdminEmail: <string>req.query['AdminEmail']
+        }
+        return this.eventService.getAllEvent(extractRequest);
     }
+    */
 
     @Post('getManagedEvents')
     async getManagedEvents(
