@@ -16,7 +16,7 @@ export class UserController {
     @Get('getAllUsers')
     @UseGuards(JwtGuard)
     async getAllUsers(
-        @Req() req: Request
+        @Req() req: Request,
     ): Promise<IGetUsersResponse> {
         const request: any =req;
         const extractRequest: IGetUsersRequest = {
@@ -28,17 +28,18 @@ export class UserController {
     @Post('updateUserRole')
     @UseGuards(JwtGuard)
     async updateUserRole(
-        @Req() req: Request
+        @Req() req: Request,
+        @Body() requestBody: IUpdateRoleRequest,
     ): Promise<IupdateRoleResponse> {
         const request: any =req;
         const extractRequest: IUpdateRoleRequest = {
             update: {
                 AdminEmail: request.user["email"],
-                UserEmail: request.body['UserEmail'],
-                UpdateRole: request.body['UpdateRole'],
+                UserEmail: requestBody.update.UserEmail,
+                UpdateRole: requestBody.update.UpdateRole
             }
         }
-        return this.userService.updateUserRole(extractRequest);
+        return this.userService.updateUserRole(request);
     }
 
 }
