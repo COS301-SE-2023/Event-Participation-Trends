@@ -12,6 +12,7 @@ import {
 import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtGuard } from '@event-participation-trends/guards';
+import { IEventDetails, IEventId } from '@event-participation-trends/api/event/util';
 
 @Controller('event')
 export class EventController {
@@ -20,12 +21,13 @@ export class EventController {
     @Post('createEvent')
     @UseGuards(JwtGuard)
     async createEvent(
-        @Req() req: Request
+        @Req() req: Request,
+        @Body() requestBody: IEventDetails,
     ): Promise<ICreateEventResponse> {
         const request: any =req;
         const extractRequest: ICreateEventRequest = {
             ManagerEmail: request.user['email'],
-            Event: request.body['Event']
+            Event: requestBody,
         }
         return this.eventService.createEvent(extractRequest);
     }
@@ -57,12 +59,13 @@ export class EventController {
     @Post('sendViewRequest')
     @UseGuards(JwtGuard)
     async sendViewRequest(
-        @Req() req: Request
+        @Req() req: Request,
+        @Body() requestBody: IEventId,
     ): Promise<ISendViewRequestResponse> {
         const request: any =req;
         const extractRequest: ISendViewRequestRequest = {
             UserEmail: request.user["email"],
-            eventId: request.body["eventId"]
+            eventId: requestBody.eventId,
         }
         return this.eventService.sendViewRequest(extractRequest);
     }
