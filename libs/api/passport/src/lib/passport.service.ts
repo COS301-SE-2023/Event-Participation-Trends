@@ -15,7 +15,10 @@ export class PassportService {
       lastnName: user.lastName,
       picture: user.picture,
     };
-    return await this.jwtService.signAsync(willSign);
+    return await this.jwtService.signAsync(willSign, {
+      privateKey: process.env['JWT_SECRET'],
+      expiresIn: process.env['JWT_EXPIRE_TIME'],
+    });
   }
 
   async getUser(toSign: any) : Promise<IUser>{
