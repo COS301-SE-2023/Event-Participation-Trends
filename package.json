@@ -33,6 +33,7 @@
     "angularx-social-login": "^4.1.0",
     "axios": "^1.0.0",
     "cookie-parser": "^1.4.6",
+    "helmet": "^7.0.0",
     "immer": "^10.0.2",
     "mongoose": "^7.2.1",
     "mqtt": "^4.3.7",
