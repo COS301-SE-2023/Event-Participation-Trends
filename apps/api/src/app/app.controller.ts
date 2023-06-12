@@ -1,7 +1,8 @@
-import { Controller, Get, UseGuards, Res } from '@nestjs/common';
-import { Response } from 'express';
-import { JwtGuard } from '@event-participation-trends/api/guards';
+import { Controller, Get, UseGuards, SetMetadata, Req } from '@nestjs/common';
+import { JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
 import { AppService } from './app.service';
+import { UserService } from '@event-participation-trends/api/user/feature';
+import { Role } from '@event-participation-trends/api/user/util';
 
 @Controller()
 export class AppController {
@@ -10,8 +11,9 @@ export class AppController {
   ) {}
 
   @Get()
-  @UseGuards(JwtGuard)
-  getData() {
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard, RbacGuard)
+  getData(@Req() req: any) {
     return this.appService.getData();
   }
 }
