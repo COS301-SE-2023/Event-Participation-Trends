@@ -59,5 +59,10 @@ export class EventRepository {
             {_id :{$eq: eventID}},
             { Requesters: 1 })
     }
-    
+
+    async getPopulatedRequesters(eventID: Types.ObjectId, managerID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}, Manager:{$eq: managerID}},
+            { Requesters: 1 }).populate('Requesters');
+    }
 }

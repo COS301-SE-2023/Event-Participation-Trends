@@ -9,6 +9,7 @@ import {
 } from './commands';
 import {
     GetUsersHandler,
+    GetUserRoleHandler
 } from './queries';
 import {
     CreateUserEventHandler, 
@@ -22,6 +23,7 @@ export const CommandHandlers = [
 
 export const QueryHandlers = [
     GetUsersHandler,
+    GetUserRoleHandler,
 ]
 
 export const EventHandlers = [

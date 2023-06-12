@@ -8,6 +8,9 @@ import {
     IUpdateRoleRequest,
     IupdateRoleResponse,
     UpdateUserRoleCommand,
+    IGetUserRoleRequest,
+    IGetUserRoleResponse,
+    GetUserRoleQuery
 } from '@event-participation-trends/api/user/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -26,5 +29,9 @@ export class UserService {
 
     async updateUserRole(request: IUpdateRoleRequest) {
         return await this.commandBus.execute<UpdateUserRoleCommand, IupdateRoleResponse>(new UpdateUserRoleCommand(request));
+    }
+
+    async getUserRole(request: IGetUserRoleRequest) {
+        return await this.queryBus.execute<GetUserRoleQuery, IGetUserRoleResponse>(new GetUserRoleQuery(request));
     }
 }

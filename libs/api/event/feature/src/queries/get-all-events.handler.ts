@@ -22,30 +22,6 @@ export class GetAllEventsHandler implements IQueryHandler<GetAllEventsQuery, IGe
         const AdminDoc = await this.userRepository.getUser(request.AdminEmail);
         if(AdminDoc[0].Role === Role.ADMIN){
             const eventDocs = await this.eventRepository.getAllEvents();
-            /*
-            if(eventDocs.length !=0){
-                let eventsArr:Event[] =[];
-                eventDocs.forEach(element=>{
-                    eventsArr.push(
-                        new Event(
-                            element.StartDate,
-                            element.EndDate,
-                            element.Name,
-                            element.Category,
-                            element.Location,
-                            element.thisFloorLayout,
-                            element.Stalls,
-                            element.Sensors,
-                            element.Devices,
-                            element.BTIDtoDeviceBuffer,
-                            element.TEMPBuffer,
-                            element.Manager,
-                            element.Requesters,
-                            element.Viewers
-                    ))
-                })
-            }
-            */
             return {events: <IEvent[]>eventDocs};
         }else{
             throw new Error(`User with email ${request.AdminEmail} does not have admin Privileges`);

@@ -10,8 +10,8 @@ import {
   EventService,
   EventModule,
 } from '@event-participation-trends/api/event/feature';
-import { ApiGuardsModule } from '@event-participation-trends/api/guards';
 import { JwtModule } from '@nestjs/jwt';
+import { ApiGuardsModule } from '@event-participation-trends/api/guards';
 
 @Module({
     imports: [CqrsModule, UserModule, EventModule, JwtModule, ApiGuardsModule],
