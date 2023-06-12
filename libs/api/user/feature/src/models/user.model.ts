@@ -3,6 +3,7 @@ import {
     CreateUserEvent, 
     } from '@event-participation-trends/api/user/util';
 import { AggregateRoot } from '@nestjs/cqrs';
+import { Types } from 'mongoose';
 
 export class User extends AggregateRoot implements IUser {
     constructor(
@@ -10,7 +11,8 @@ export class User extends AggregateRoot implements IUser {
         public FirstName?: string | undefined | null,
         public LastName?: string | undefined | null,
         public photo?: string | undefined | null ,
-        public Role?: string | undefined | null
+        public Role?: string | undefined | null,
+        public Viewing?: Types.ObjectId[] | undefined | null,
     ){
         super();
     }
@@ -26,6 +28,7 @@ export class User extends AggregateRoot implements IUser {
           user.LastName,
           user.photo,
           user.Role,
+          user.Viewing,
         );
     
         return instance;
@@ -37,7 +40,8 @@ export class User extends AggregateRoot implements IUser {
             FirstName: this.FirstName,
             LastName: this.LastName,
             photo : this.photo,
-            Role: this.Role
+            Role: this.Role,
+            Viewing: this.Viewing,
         };
     }
 
