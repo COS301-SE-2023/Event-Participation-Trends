@@ -28,7 +28,7 @@ async function bootstrap() {
       password: process.env.MQTT_PASSWORD,
     },
   });
-  mqtt_app.listen();
+ // mqtt_app.listen();
   Logger.log("💥 MQTT Microservice is listening");
 }
 
