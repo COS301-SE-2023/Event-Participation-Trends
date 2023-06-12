@@ -10,7 +10,10 @@ import {
     UpdateUserRoleCommand,
     IGetUserRoleRequest,
     IGetUserRoleResponse,
-    GetUserRoleQuery
+    GetUserRoleQuery,
+    IAddViewingEventRequest,
+    IAddViewingEventResponse,
+    AddViewingEventCommand
 } from '@event-participation-trends/api/user/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -33,5 +36,9 @@ export class UserService {
 
     async getUserRole(request: IGetUserRoleRequest) {
         return await this.queryBus.execute<GetUserRoleQuery, IGetUserRoleResponse>(new GetUserRoleQuery(request));
+    }
+
+    async addViewingEvent(request: IAddViewingEventRequest) {
+        return await this.commandBus.execute<AddViewingEventCommand, IAddViewingEventResponse>(new AddViewingEventCommand(request));
     }
 }

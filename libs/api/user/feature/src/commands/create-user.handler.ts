@@ -3,6 +3,7 @@ import { CreateUserCommand, IUser, ICreateUserResponse } from '@event-participat
 import { Status, Role } from'@event-participation-trends/api/user/util';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { User } from '../models';
+import { Types } from 'mongoose';
  
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand, ICreateUserResponse> {
@@ -27,6 +28,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand, ICr
                 LastName: request.LastName,
                 photo: request.photo,
                 Role: Role.VIEWER,
+                Viewing: new Array<Types.ObjectId>(), 
             }
     
             const user = this.publisher.mergeObjectContext(User.fromData(data));

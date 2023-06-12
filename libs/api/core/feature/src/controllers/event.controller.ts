@@ -10,11 +10,16 @@ import {
     ISendViewRequestResponse,
     IGetAllViewRequestsRequest,
     IGetAllViewRequestsResponse,
+    IDeclineViewRequestRequest,
+    IDeclineViewRequestResponse,
+    IAcceptViewRequestRequest,
+    IAcceptViewRequestResponse,
 } from '@event-participation-trends/api/event/util';
-import { Body, Controller, Post, Get, UseGuards, Req, Param, Query } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata } from '@nestjs/common';
 import { Request } from 'express';
 import { IEventDetails, IEventId } from '@event-participation-trends/api/event/util';
-import { JwtGuard } from '@event-participation-trends/api/guards';
+import { JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
+import { Role } from '@event-participation-trends/api/user/util';
 
 
 @Controller('event')
@@ -22,7 +27,8 @@ export class EventController {
     constructor(private eventService: EventService){}
 
     @Post('createEvent')
-    @UseGuards(JwtGuard)
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard)
     async createEvent(
         @Req() req: Request,
         @Body() requestBody: IEventDetails,
@@ -36,7 +42,8 @@ export class EventController {
     }
 
     @Get('getAllEvents')
-    @UseGuards(JwtGuard)
+    @SetMetadata('role',Role.ADMIN)
+    @UseGuards(JwtGuard, RbacGuard)
     async getAllEvents(
         @Req() req: Request 
     ): Promise<IGetAllEventsResponse> {
@@ -48,7 +55,8 @@ export class EventController {
     }
 
     @Get('getManagedEvents')
-    @UseGuards(JwtGuard)
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard)
     async getManagedEvents(
         @Req() req: Request
     ): Promise<IGetManagedEventsResponse> {
@@ -60,7 +68,8 @@ export class EventController {
     }
 
     @Post('sendViewRequest')
-    @UseGuards(JwtGuard)
+    @SetMetadata('role',Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard)
     async sendViewRequest(
         @Req() req: Request,
         @Body() requestBody: IEventId,
@@ -74,18 +83,44 @@ export class EventController {
     }
 
     @Get('getAllViewRequests')
-    @UseGuards(JwtGuard)
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard)
     async getAllViewRequests(
         @Req() req: Request,
         @Query() query: any
     ): Promise<IGetAllViewRequestsResponse> {
         const request: any =req;
-        console.log(query);
         const extractRequest: IGetAllViewRequestsRequest = {
             managerEmail: request.user["email"],
             eventId: query.eventId,
         }
         return this.eventService.getAllViewRequests(extractRequest);
     }
+
+    @Post('declineViewRequest')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard)
+    async declineViewRequest(
+        @Body() requestBody: IDeclineViewRequestRequest,
+    ): Promise<IDeclineViewRequestResponse> {
+        const extractRequest: IDeclineViewRequestRequest = {
+            userEmail: requestBody.userEmail,
+            eventId: requestBody.eventId,
+        }
+        return this.eventService.declineViewRequest(extractRequest);
+    }
     
+    @Post('acceptViewRequest')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard)
+    async acceptViewRequest(
+        @Body() requestBody: IAcceptViewRequestRequest,
+    ): Promise<IAcceptViewRequestResponse> {
+        const extractRequest: IAcceptViewRequestRequest = {
+            userEmail: requestBody.userEmail,
+            eventId: requestBody.eventId,
+        }
+        return this.eventService.acceptViewRequest(extractRequest);
+    }
+
 }

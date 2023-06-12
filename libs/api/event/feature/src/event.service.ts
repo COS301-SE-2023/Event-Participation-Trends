@@ -13,7 +13,13 @@ import {
     SendViewRequestCommand,
     IGetAllViewRequestsRequest,
     IGetAllViewRequestsResponse,
-    GetAllViewRequestsQuery
+    GetAllViewRequestsQuery,
+    IDeclineViewRequestRequest,
+    IDeclineViewRequestResponse,
+    DeclineViewRequestCommand,
+    IAcceptViewRequestRequest,
+    IAcceptViewRequestResponse,
+    AcceptViewRequestCommand,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -40,5 +46,13 @@ export class EventService {
 
     async getAllViewRequests(request: IGetAllViewRequestsRequest) {
         return await this.queryBus.execute<GetAllViewRequestsQuery, IGetAllViewRequestsResponse>(new GetAllViewRequestsQuery(request));
+    }
+    
+    async declineViewRequest(request: IDeclineViewRequestRequest) {
+        return await this.commandBus.execute<DeclineViewRequestCommand, IDeclineViewRequestResponse>(new DeclineViewRequestCommand(request));
+    }
+
+    async acceptViewRequest(request: IAcceptViewRequestRequest) {
+        return await this.commandBus.execute<AcceptViewRequestCommand, IAcceptViewRequestResponse>(new AcceptViewRequestCommand(request));
     }
 }
