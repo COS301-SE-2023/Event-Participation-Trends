@@ -54,6 +54,12 @@ export class EventRepository {
             { $push: { Requesters: userID } });
     }
 
+    async addViewer(userID: Types.ObjectId, eventID: Types.ObjectId){
+        return await this.eventModel.updateOne(
+            { _id: {$eq: eventID}},
+            { $push: { Viewers: userID } });
+    }
+
     async getRequesters(eventID: Types.ObjectId){
         return await this.eventModel.find(
             {_id :{$eq: eventID}},

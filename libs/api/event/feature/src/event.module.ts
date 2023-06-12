@@ -8,6 +8,7 @@ import {
     CreateEventHandler,
     SendViewRequestHandler,
     DeclineViewRequestHandler,
+    AcceptViewRequestHandler,
 } from './commands';
 
 import { 
@@ -19,19 +20,25 @@ import {
     CreateEventEventHandler,
     SendViewRequestEventHandler,
     DeclineViewRequestEventHandler,
+    AcceptViewRequestEventHandler
 } from './events';
+
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
+
+import { EventsSagas } from './event.sagas';
 
 export const CommandHandlers = [
     CreateEventHandler,
     SendViewRequestHandler,
     DeclineViewRequestHandler,
+    AcceptViewRequestHandler,
 ]
 
 export const EventHandlers = [
     CreateEventEventHandler,
     SendViewRequestEventHandler,
     DeclineViewRequestEventHandler,
+    AcceptViewRequestEventHandler,
 ];
 
 export const QueryHandlers = [
@@ -42,7 +49,7 @@ export const QueryHandlers = [
 
 @Module({
     imports: [CqrsModule, EventDataAccessModule, UserDataAccessModule],
-    providers: [EventService, ...CommandHandlers, ...EventHandlers, ...QueryHandlers],
+    providers: [EventService, ...CommandHandlers, ...EventHandlers, ...QueryHandlers, EventsSagas],
     exports: [EventService],
 })
 export class EventModule {}

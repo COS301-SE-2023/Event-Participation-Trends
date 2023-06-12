@@ -6,6 +6,7 @@ import { UserService } from './user.service';
 import {
     CreateUserHandler, 
     UpdateUserRoleHandler,
+    AddViewingEventHandler,
 } from './commands';
 import {
     GetUsersHandler,
@@ -14,11 +15,13 @@ import {
 import {
     CreateUserEventHandler, 
     UpdateUserRoleEventHandler,
+    AddViewingEventEventHandler,
 } from './events';
 
 export const CommandHandlers = [
     CreateUserHandler,
     UpdateUserRoleHandler,
+    AddViewingEventHandler,
 ]
 
 export const QueryHandlers = [
@@ -29,6 +32,7 @@ export const QueryHandlers = [
 export const EventHandlers = [
     CreateUserEventHandler,
     UpdateUserRoleEventHandler,
+    AddViewingEventEventHandler,
 ];
 
 
