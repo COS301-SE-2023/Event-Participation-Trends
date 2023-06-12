@@ -10,7 +10,10 @@ import {
     GetManagedEventsQuery,
     ISendViewRequestRequest,
     ISendViewRequestResponse,
-    SendViewRequestCommand
+    SendViewRequestCommand,
+    IGetAllViewRequestsRequest,
+    IGetAllViewRequestsResponse,
+    GetAllViewRequestsQuery
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -35,4 +38,7 @@ export class EventService {
         return await this.commandBus.execute<SendViewRequestCommand, ISendViewRequestResponse>(new SendViewRequestCommand(request));
     }
 
+    async getAllViewRequests(request: IGetAllViewRequestsRequest) {
+        return await this.queryBus.execute<GetAllViewRequestsQuery, IGetAllViewRequestsResponse>(new GetAllViewRequestsQuery(request));
+    }
 }
