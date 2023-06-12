@@ -4,6 +4,17 @@
   "sourceRoot": "libs/api/guards/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/api/guards",
+        "tsConfig": "libs/api/guards/tsconfig.lib.json",
+        "packageJson": "libs/api/guards/package.json",
+        "main": "libs/api/guards/src/index.ts",
+        "assets": ["libs/api/guards/*.md"]
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],

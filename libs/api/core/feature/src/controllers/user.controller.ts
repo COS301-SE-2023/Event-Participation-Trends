@@ -7,7 +7,7 @@ import {
 } from '@event-participation-trends/api/user/util';
 import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtGuard } from '@event-participation-trends/guards';
+import { JwtGuard } from '@event-participation-trends/api/guards';
 
 @Controller('user')
 export class UserController {
