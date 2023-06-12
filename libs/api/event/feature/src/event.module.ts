@@ -7,6 +7,7 @@ import { EventService } from './event.service';
 import {
     CreateEventHandler,
     SendViewRequestHandler,
+    DeclineViewRequestHandler,
 } from './commands';
 
 import { 
@@ -17,17 +18,20 @@ import {
 import {
     CreateEventEventHandler,
     SendViewRequestEventHandler,
+    DeclineViewRequestEventHandler,
 } from './events';
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
 
 export const CommandHandlers = [
     CreateEventHandler,
     SendViewRequestHandler,
+    DeclineViewRequestHandler,
 ]
 
 export const EventHandlers = [
     CreateEventEventHandler,
     SendViewRequestEventHandler,
+    DeclineViewRequestEventHandler,
 ];
 
 export const QueryHandlers = [
