@@ -78,6 +78,7 @@
       "@event-participation-trends/app/accessrequests/util": [
         "libs/app/accessrequests/util/src/index.ts"
       ],
+      "@event-participation-trends/app/api": ["libs/app/api/src/index.ts"],
       "@event-participation-trends/app/auth/data-access": [
         "libs/app/auth/data-access/src/index.ts"
       ],
