@@ -7,7 +7,9 @@ import {
     IGetManagedEventsRequest,
     IGetManagedEventsResponse,
     ISendViewRequestRequest,
-    ISendViewRequestResponse
+    ISendViewRequestResponse,
+    IGetAllViewRequestsRequest,
+    IGetAllViewRequestsResponse,
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
 import { Request } from 'express';
@@ -68,6 +70,20 @@ export class EventController {
             eventId: requestBody.eventId,
         }
         return this.eventService.sendViewRequest(extractRequest);
+    }
+
+    @Get('getAllViewRequests')
+    @UseGuards(JwtGuard)
+    async getAllViewRequests(
+        @Req() req: Request,
+        @Body() requestBody: IEventId,
+    ): Promise<IGetAllViewRequestsResponse> {
+        const request: any =req;
+        const extractRequest: IGetAllViewRequestsRequest = {
+            managerEmail: request.user["email"],
+            eventId: requestBody.eventId,
+        }
+        return this.eventService.getAllViewRequests(extractRequest);
     }
     
 }
