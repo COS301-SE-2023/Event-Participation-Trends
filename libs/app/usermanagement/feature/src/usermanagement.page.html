@@ -35,7 +35,7 @@
     >
       <ion-item *ngFor="let user of users" ngClass="user-item" class="w-full">
         <div class="sm:hidden grid grid-cols-12 items-center w-full">
-          <p class="col-span-6 md:col-span-5 text-ellipsis truncate">{{user.email}}</p>
+          <p class="col-span-6 md:col-span-5 text-ellipsis truncate">{{user.Email}}</p>
           <p class="col-span-3 transition-all duration-300 text-ellipsis truncate">
             {{isManager(user) ? "Manager" : "Viewer"}}
           </p>
@@ -47,9 +47,8 @@
           ></ion-toggle>
         </div>
         <div class="hidden sm:grid grid-cols-12 items-center w-full">
-          <p class="col-span-1">{{user.id}}</p>
-          <p class="hidden md:block col-span-2">{{user.name}}</p>
-          <p class="col-span-4 md:col-span-5">{{user.email}}</p>
+          <p class="hidden md:block col-span-2">{{user.FirstName}}</p>
+          <p class="col-span-4 md:col-span-5">{{user.Email}}</p>
           <div class="col-span-7 md:col-span-4 grid grid-cols-4">
             <p class="col-span-1">Viewer</p>
             <ion-toggle
