@@ -10,4 +10,4 @@ export * from './TEMP_DEVICE_TO_DT.interface';
 export * from './event-details.interface';
 export * from './view-event.interface';
 export * from './eventID.interface';
-export * from './decline-view-event.interface';
+export * from './view-request.interface';
