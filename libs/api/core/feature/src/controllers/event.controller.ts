@@ -11,10 +11,11 @@ import {
     IGetAllViewRequestsRequest,
     IGetAllViewRequestsResponse,
 } from '@event-participation-trends/api/event/util';
-import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req, Param, Query } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtGuard } from '@event-participation-trends/api/guards';
 import { IEventDetails, IEventId } from '@event-participation-trends/api/event/util';
+import { JwtGuard } from '@event-participation-trends/api/guards';
+
 
 @Controller('event')
 export class EventController {
@@ -76,12 +77,13 @@ export class EventController {
     @UseGuards(JwtGuard)
     async getAllViewRequests(
         @Req() req: Request,
-        @Body() requestBody: IEventId,
+        @Query() query: any
     ): Promise<IGetAllViewRequestsResponse> {
         const request: any =req;
+        console.log(query);
         const extractRequest: IGetAllViewRequestsRequest = {
             managerEmail: request.user["email"],
-            eventId: requestBody.eventId,
+            eventId: query.eventId,
         }
         return this.eventService.getAllViewRequests(extractRequest);
     }
