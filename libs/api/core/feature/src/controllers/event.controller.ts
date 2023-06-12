@@ -6,32 +6,68 @@ import {
     IGetAllEventsResponse,
     IGetManagedEventsRequest,
     IGetManagedEventsResponse,
+    ISendViewRequestRequest,
+    ISendViewRequestResponse
 } from '@event-participation-trends/api/event/util';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
+import { Request } from 'express';
+import { JwtGuard } from '@event-participation-trends/api/guards';
+import { IEventDetails, IEventId } from '@event-participation-trends/api/event/util';
 
 @Controller('event')
 export class EventController {
     constructor(private eventService: EventService){}
 
     @Post('createEvent')
+    @UseGuards(JwtGuard)
     async createEvent(
-        @Body() request: ICreateEventRequest,
+        @Req() req: Request,
+        @Body() requestBody: IEventDetails,
     ): Promise<ICreateEventResponse> {
-        return this.eventService.createEvent(request);
+        const request: any =req;
+        const extractRequest: ICreateEventRequest = {
+            ManagerEmail: request.user['email'],
+            Event: requestBody,
+        }
+        return this.eventService.createEvent(extractRequest);
     }
 
-    @Post('getAllEvents')
+    @Get('getAllEvents')
+    @UseGuards(JwtGuard)
     async getAllEvents(
-        @Body() request: IGetAllEventsRequest,
+        @Req() req: Request 
     ): Promise<IGetAllEventsResponse> {
-        return this.eventService.getAllEvent(request);
+        const request: any =req;
+        const extractRequest: IGetAllEventsRequest = {
+            AdminEmail: request.user["email"],
+        }
+        return this.eventService.getAllEvent(extractRequest);
     }
 
-    @Post('getManagedEvents')
+    @Get('getManagedEvents')
+    @UseGuards(JwtGuard)
     async getManagedEvents(
-        @Body() request: IGetManagedEventsRequest,
+        @Req() req: Request
     ): Promise<IGetManagedEventsResponse> {
-        return this.eventService.getManagedEvents(request);
+        const request: any =req;
+        const extractRequest: IGetManagedEventsRequest = {
+            ManagerEmail: request.user["email"],
+        }
+        return this.eventService.getManagedEvents(extractRequest);
+    }
+
+    @Post('sendViewRequest')
+    @UseGuards(JwtGuard)
+    async sendViewRequest(
+        @Req() req: Request,
+        @Body() requestBody: IEventId,
+    ): Promise<ISendViewRequestResponse> {
+        const request: any =req;
+        const extractRequest: ISendViewRequestRequest = {
+            UserEmail: request.user["email"],
+            eventId: requestBody.eventId,
+        }
+        return this.eventService.sendViewRequest(extractRequest);
     }
     
 }

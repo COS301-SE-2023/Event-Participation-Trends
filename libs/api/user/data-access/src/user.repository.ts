@@ -25,6 +25,10 @@ export class UserRepository {
         return await this.userModel.find({Role: userRole});
     }
 
+    async getAllUsers(){
+        return await this.userModel.find({Role: { $ne: "admin"}});
+    }
+
     async updateUserRole(userEmail: string, userRole: string){
         await this.userModel.updateOne({Email: {$eq: userEmail}},{$set: {Role: userRole}});
     } 

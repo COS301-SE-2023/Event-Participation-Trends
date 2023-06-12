@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { JwtGuard } from '@event-participation-trends/guards';
+import { JwtGuard } from '@event-participation-trends/api/guards';
 import { AppService } from './app.service';
 
 @Controller()

@@ -7,4 +7,4 @@ import { JwtService } from '@nestjs/jwt';
   providers: [JwtGuard, JwtService],
   exports: [JwtGuard],
 })
-export class GuardsModule {}
+export class ApiGuardsModule {}

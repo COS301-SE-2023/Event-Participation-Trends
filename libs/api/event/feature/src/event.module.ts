@@ -5,24 +5,28 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { EventService } from './event.service';
 
 import {
-    CreateEventHandler
+    CreateEventHandler,
+    SendViewRequestHandler,
 } from './commands';
 
 import { 
     GetAllEventsHandler,
-    GetManagedEventsHandler
+    GetManagedEventsHandler,
  } from './queries';
 
 import {
-    CreateEventEventHandler
+    CreateEventEventHandler,
+    SendViewRequestEventHandler,
 } from './events';
 
 export const CommandHandlers = [
     CreateEventHandler,
+    SendViewRequestHandler,
 ]
 
 export const EventHandlers = [
     CreateEventEventHandler,
+    SendViewRequestEventHandler,
 ];
 
 export const QueryHandlers = [

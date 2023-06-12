@@ -1,7 +1,5 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
-    ICreateUserRequest,
-    ICreateUserResponse,
     IGetUsersRequest,
     IGetUsersResponse,
     IUpdateRoleRequest,
@@ -9,37 +7,40 @@ import {
 } from '@event-participation-trends/api/user/util';
 import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtGuard } from '@event-participation-trends/guards';
+import { JwtGuard } from '@event-participation-trends/api/guards';
 
 @Controller('user')
 export class UserController {
     constructor(private userService: UserService){}
 
-    @Post('createUser')
-    async createUser(
-        @Body() request: ICreateUserRequest,
-    ): Promise<ICreateUserResponse> {
-        return this.userService.createUser(request);
-    }
-
-    @Post('getUsers')
-    async getUsers(
-        @Body() request: IGetUsersRequest,
+    @Get('getAllUsers')
+    @UseGuards(JwtGuard)
+    async getAllUsers(
+        @Req() req: Request,
     ): Promise<IGetUsersResponse> {
-        return this.userService.getUsers(request);
+        const request: any =req;
+        const extractRequest: IGetUsersRequest = {
+            AdminEmail: request.user["email"]
+        }
+        return this.userService.getUsers(extractRequest);
     }
 
     @Post('updateUserRole')
+    @UseGuards(JwtGuard)
     async updateUserRole(
-        @Body() request: IUpdateRoleRequest,
+        @Req() req: Request,
+        @Body() requestBody: IUpdateRoleRequest,
     ): Promise<IupdateRoleResponse> {
-        return this.userService.updateUserRole(request);
+        const request: any =req;
+        console.log(request.user["email"])
+        const extractRequest: IUpdateRoleRequest = {
+            update: {
+                AdminEmail: request.user["email"],
+                UserEmail: requestBody.update.UserEmail,
+                UpdateRole: requestBody.update.UpdateRole
+            }
+        }
+        return this.userService.updateUserRole(extractRequest);
     }
 
-    @Get('lol')
-    @UseGuards(JwtGuard)
-    async lol(@Req() req: Request) {
-        const request: any = req;
-        return request.user;
-    }
 }

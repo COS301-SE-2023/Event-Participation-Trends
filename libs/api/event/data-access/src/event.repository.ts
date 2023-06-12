@@ -36,8 +36,28 @@ export class EventRepository {
         return await this.eventModel.find();
     }
 
+    async getEventByName(eventName: string){
+        return await this.eventModel.find({Name: {$eq: eventName}});
+    }
+
+    async getEventById(eventID: Types.ObjectId){
+        return await this.eventModel.find({_id: {$eq: eventID}});
+    }
+
     async getManagedEvents(managerID: Types.ObjectId){
         return await this.eventModel.find({Manager: {$eq: managerID}});
+    }
+
+    async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
+        return await this.eventModel.updateOne(
+            { _id: {$eq: eventID}},
+            { $push: { Requesters: userID } });
+    }
+
+    async getRequesters(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { Requesters: 1 })
     }
     
 }

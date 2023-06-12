@@ -8,10 +8,8 @@ import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices'
 import { AppModule } from './app/app.module';
 import cookieParser = require('cookie-parser');
-import * as dotenv from 'dotenv';
 
 async function bootstrap() {
-  dotenv.config();
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
@@ -30,7 +28,7 @@ async function bootstrap() {
       password: process.env.MQTT_PASSWORD,
     },
   });
-  //mqtt_app.listen();
+  mqtt_app.listen();
   Logger.log("💥 MQTT Microservice is listening");
 }
 

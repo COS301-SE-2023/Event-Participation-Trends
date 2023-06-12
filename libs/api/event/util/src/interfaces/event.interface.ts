@@ -21,6 +21,6 @@ export interface IEvent {
     BTIDtoDeviceBuffer?: ITEMP_DEVICE_TO_DT[] | undefined | null;
     TEMPBuffer?: ITEMP_DEVICE_BUFFER[] | undefined | null;
     Manager?: Types.ObjectId | undefined | null;
-    Requesters?: IUser[] | undefined | null;
-    Viewers?: IUser[] | undefined | null;
+    Requesters?: Types.ObjectId[] | undefined | null;
+    Viewers?: Types.ObjectId[] | undefined | null;
 }

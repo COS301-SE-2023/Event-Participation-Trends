@@ -1,6 +1,6 @@
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
-import { GetManagedEventsQuery, IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
+import { GetManagedEventsQuery, IEvent, IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
 import { Role } from '@event-participation-trends/api/user/util';
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 
@@ -27,7 +27,7 @@ export class GetManagedEventsHandler implements IQueryHandler<GetManagedEventsQu
                 if(eventDocs.length == 0)
                     throw new Error(`User with email ${request.ManagerEmail} does not manage any events`);
                 else
-                    return {events: eventDocs};
+                    return {events: <IEvent[]>eventDocs};
             }else{
                 throw new Error(`User with email ${request.ManagerEmail} does not have manager Privileges`);
             }
