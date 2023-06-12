@@ -1,5 +1,5 @@
-import { IDecelineView} from '../interfaces';
+import { IViewRequest} from '../interfaces';
 
 export class DeclineViewRequestEvent {
-  constructor(public readonly event: IDecelineView) {}
+  constructor(public readonly event: IViewRequest) {}
 }
