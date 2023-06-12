@@ -18,6 +18,7 @@ import {
     CreateEventEventHandler,
     SendViewRequestEventHandler,
 } from './events';
+import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
 
 export const CommandHandlers = [
     CreateEventHandler,
@@ -32,6 +33,7 @@ export const EventHandlers = [
 export const QueryHandlers = [
     GetAllEventsHandler,
     GetManagedEventsHandler,
+    GetAllViewRequestsHandler,
 ];
 
 @Module({
