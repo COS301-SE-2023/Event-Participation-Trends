@@ -1,6 +1,7 @@
 import { 
     IViewRequest, 
     DeclineViewRequestEvent, 
+    AcceptViewRequestEvent,
     } from '@event-participation-trends/api/event/util';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { Types } from 'mongoose';
@@ -15,6 +16,10 @@ export class ViewRequest extends AggregateRoot implements IViewRequest {
 
     decline() {
         this.apply(new DeclineViewRequestEvent(this.toJSON()));
+    }
+
+    accept() {
+        this.apply(new AcceptViewRequestEvent(this.toJSON()));
     }
 
     static fromData(event: IViewRequest): ViewRequest {
