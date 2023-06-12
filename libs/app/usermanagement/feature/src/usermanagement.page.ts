@@ -15,12 +15,12 @@ export class UsermanagementPage {
     private containerElement: ElementRef,
     private appApiService: AppApiService
   ) {
-    this.appApiService.getAllUsers().then((users) => {
-      this.users = users;
-    });
-    this.appApiService.getAllUsers().then((users) => {
-      this.old_users = users;
-    });
+    // this.appApiService.getAllUsers().then((users) => {
+    //   this.users = users;
+    // });
+    // this.appApiService.getAllUsers().then((users) => {
+    //   this.old_users = users;
+    // });
   }
 
   overflow = false;

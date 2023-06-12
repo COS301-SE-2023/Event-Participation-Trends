@@ -25,7 +25,8 @@
         Save Changes
       </ion-button>
     </div>
-    <p *ngIf="isEmpty()" ngClass="no-events">No users to show.</p>
+    <div *ngIf="isEmpty()" ngClass="no-events" class="flex justify-center mt-5">
+      <p class="text-lg">No users to show.</p></div>
     <ion-list
       *ngIf="!isEmpty()"
       ngClass="user-list"
