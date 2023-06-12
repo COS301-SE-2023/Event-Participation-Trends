@@ -1,9 +1,9 @@
 import { EventRepository} from '@event-participation-trends/api/event/data-access';
 import { UserRepository} from '@event-participation-trends/api/user/data-access';
-import { DeclineViewRequestCommand, IDeclineViewRequestResponse, IDecelineView } from '@event-participation-trends/api/event/util';
+import { DeclineViewRequestCommand, IDeclineViewRequestResponse, IViewRequest } from '@event-participation-trends/api/event/util';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { Status } from'@event-participation-trends/api/user/util';
-import { DecelineView } from '../models';
+import { ViewRequest } from '../models';
 import { Types } from 'mongoose';
 
 @CommandHandler(DeclineViewRequestCommand)
@@ -32,13 +32,13 @@ export class DeclineViewRequestHandler implements ICommandHandler<DeclineViewReq
             });
         
         if(requested){
-            const data: IDecelineView={
+            const data: IViewRequest={
                 userEmail: request.userEmail,
                 eventId: eventIdObj
             }
 
-            const event = this.publisher.mergeObjectContext(DecelineView.fromData(data));
-            event.create();
+            const event = this.publisher.mergeObjectContext(ViewRequest.fromData(data));
+            event.decline();
             event.commit();
     
             return { status : Status.SUCCESS };
