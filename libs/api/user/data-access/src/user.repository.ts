@@ -3,6 +3,7 @@ import { IUser } from '@event-participation-trends/api/user/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import {User} from '../schemas';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UserRepository {
@@ -32,4 +33,10 @@ export class UserRepository {
     async updateUserRole(userEmail: string, userRole: string){
         await this.userModel.updateOne({Email: {$eq: userEmail}},{$set: {Role: userRole}});
     } 
+
+    async addViewingEvent(userID: Types.ObjectId, eventID: Types.ObjectId){
+        return await this.userModel.updateOne(
+            { _id: {$eq: userID}},
+            { $push: { Viewing: eventID } });
+    }
 }
