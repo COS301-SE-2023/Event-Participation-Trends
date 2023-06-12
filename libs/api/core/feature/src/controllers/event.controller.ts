@@ -10,6 +10,8 @@ import {
     ISendViewRequestResponse,
     IGetAllViewRequestsRequest,
     IGetAllViewRequestsResponse,
+    IDeclineViewRequestRequest,
+    IDeclineViewRequestResponse
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post, Get, UseGuards, Req, Param, Query } from '@nestjs/common';
 import { Request } from 'express';
@@ -80,12 +82,25 @@ export class EventController {
         @Query() query: any
     ): Promise<IGetAllViewRequestsResponse> {
         const request: any =req;
-        console.log(query);
         const extractRequest: IGetAllViewRequestsRequest = {
             managerEmail: request.user["email"],
             eventId: query.eventId,
         }
         return this.eventService.getAllViewRequests(extractRequest);
+    }
+
+    @Post('declineViewRequest')
+    @UseGuards(JwtGuard)
+    async declineViewRequest(
+        @Req() req: Request,
+        @Body() requestBody: IDeclineViewRequestRequest,
+    ): Promise<IDeclineViewRequestResponse> {
+        const request: any =req;
+        const extractRequest: IDeclineViewRequestRequest = {
+            userEmail: requestBody.userEmail,
+            eventId: requestBody.eventId,
+        }
+        return this.eventService.declineViewRequest(extractRequest);
     }
     
 }

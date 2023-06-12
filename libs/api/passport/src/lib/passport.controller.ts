@@ -26,7 +26,6 @@ export class PassportController {
             res.redirect(process.env['FRONTEND_URL'] || "");
         });
         const newUser:IUser = await this.passportService.getUser(req);
-        console.log(newUser);
         try{
             this.userService.createUser({user: newUser});
         } catch (error) {

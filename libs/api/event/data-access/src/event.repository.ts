@@ -65,4 +65,10 @@ export class EventRepository {
             {_id :{$eq: eventID}, Manager:{$eq: managerID}},
             { Requesters: 1 }).populate('Requesters');
     }
+
+    async removeEventViewRequest(eventID: Types.ObjectId, userID: Types.ObjectId){
+        return await this.eventModel.updateOne(
+            {_id :{$eq: eventID}},
+            { $pull: { Requesters: userID } });
+    }
 }
