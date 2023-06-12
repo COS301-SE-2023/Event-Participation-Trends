@@ -25,15 +25,15 @@
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:gird-cols-5 col-auto duration-300 transition-all"
     >
       <ion-card
-        *ngFor="let event of events"
+        *ngFor="let event of all_events"
         class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:cursor-pointer"
-        [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : event.hasAccess, 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !event.hasAccess}"
+        [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : hasAccess(event), 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !hasAccess(event)}"
       >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all"
         >
           <ion-icon
-            *ngIf="!event.hasAccess"
+            *ngIf="!hasAccess(event)"
             class="h-6 w-6 p-4 duration-300 transition-all absolute self-end text-ept-off-white font-lg"
             name="lock-closed-outline"
           >
@@ -41,16 +41,16 @@
           <p
             class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
           >
-            {{event.name}}
+            {{event.Name}}
           </p>
           <div
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
           >
             <p class="px-4 py-2 self-start duration-300 transition-all">
-              Location: {{event.location}}
+              Location: {{event.Location}}
             </p>
             <p class="px-4 py-2 self-start duration-300 transition-all">
-              Category: {{event.category}}
+              Category: {{event.Category}}
             </p>
           </div>
         </ion-card-content>

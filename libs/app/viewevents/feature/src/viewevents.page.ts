@@ -1,11 +1,6 @@
 import { Component } from '@angular/core';
-
-interface Event {
-  name: string;
-  location: string;
-  category: string;
-  hasAccess: boolean;
-}
+import { AppApiService } from '@event-participation-trends/app/api';
+import { IEvent } from '@nestjs/cqrs';
 
 @Component({
   selector: 'event-participation-trends-viewevents',
@@ -13,37 +8,28 @@ interface Event {
   styleUrls: ['./viewevents.page.css'],
 })
 export class VieweventsPage {
-  events: Event[] = [
-    // Mock event names, categories and locations. They have to be believable.
-    {
-      name: 'Polar Bear Plunge',
-      location: 'Antarctica',
-      category: 'Swimming',
-      hasAccess: true,
-    },
-    {
-      name: 'The Great Wall Marathon',
-      location: 'China',
-      category: 'Running',
-      hasAccess: true,
-    },
-    {
-      name: 'The Color Run',
-      location: 'United States',
-      category: 'Running',
-      hasAccess: true,
-    },
-    {
-      name: 'The Great Barrier Reef Marathon Festival',
-      location: 'Australia',
-      category: 'Running',
-      hasAccess: false,
-    },
-    {
-      name: 'The Great Wall Marathon',
-      location: 'China',
-      category: 'Running',
-      hasAccess: false,
-    }    
-  ];
+  constructor(private appApiService: AppApiService) {
+    this.appApiService.getAllEvents().then((events) => {
+      this.all_events = events;
+      this.subscribed_events = events;
+    });
+  }
+
+  public all_events: any[] = [];
+  public subscribed_events: any[] = [];
+
+  hasAccess(event: any): boolean {
+    // if event in this.subscribed_events return true
+    console.log(event);
+
+    for (let i = 0; i < this.subscribed_events.length; i++) {
+      console.log(this.subscribed_events[i]._id);
+      if (this.subscribed_events[i]._id == event._id) {
+        return true;
+      }
+    }
+
+    return false;
+
+  }
 }
