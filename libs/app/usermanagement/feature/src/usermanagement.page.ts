@@ -1,7 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { IUser } from '@event-participation-trends/api/user/util';
-import { IUpdateRoleRequest } from '@event-participation-trends/api/user/util';
 
 @Component({
   selector: 'event-participation-trends-usermanagement',
@@ -15,12 +14,12 @@ export class UsermanagementPage {
     private containerElement: ElementRef,
     private appApiService: AppApiService
   ) {
-    // this.appApiService.getAllUsers().then((users) => {
-    //   this.users = users;
-    // });
-    // this.appApiService.getAllUsers().then((users) => {
-    //   this.old_users = users;
-    // });
+    this.appApiService.getAllUsers().then((users) => {
+      this.users = users;
+    });
+    this.appApiService.getAllUsers().then((users) => {
+      this.old_users = users;
+    });
   }
 
   overflow = false;
@@ -48,21 +47,10 @@ export class UsermanagementPage {
 
   toggleRole(user: IUser): void {
     user.Role = this.isManager(user) ? 'viewer' : 'manager';
-    console.log("Old");
-    console.log(this.old_users);
-    console.log("New");
-    console.log(this.users);
     this.changed = true;
   }
 
   saveChanges(): void {
-    // this.appApiService.updateUserRole({
-    //   update: {
-    //     UserEmail: "u20439963@tuks.co.za",
-    //     UpdateRole: "manager",
-    //   },
-    // });
-
     for (let i = 0; i < this.users.length; i++) {
       if (this.users[i].Role !== this.old_users[i].Role) {
         this.appApiService.updateUserRole({
@@ -71,12 +59,6 @@ export class UsermanagementPage {
             UpdateRole: this.users[i].Role,
           },
         });
-        console.log("Actual");
-        console.log(this.users[i].Email);
-        console.log(this.users[i].Role);
-        console.log("Old");
-        console.log(this.old_users[i].Email);
-        console.log(this.old_users[i].Role);
       }
     }
 
