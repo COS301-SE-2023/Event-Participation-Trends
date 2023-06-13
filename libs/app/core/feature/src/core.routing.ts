@@ -30,6 +30,7 @@ const routes: Routes = [
     // data: { authGuardPipe: redirectLoggedOut },
     loadChildren: () =>
       import('@event-participation-trends/app/eventdetails/feature').then((m) => m.EventDetailsModule),
+    data: { queryParamName: 'id' },
   },
   {
     path: 'flooreditor',

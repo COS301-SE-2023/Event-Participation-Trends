@@ -1,7 +1,9 @@
 import { Time } from '@angular/common';
 import { Component } from '@angular/core';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { IUser } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
+import { Redirect } from '@nestjs/common';
 
 interface Event {
   _id?: string;
@@ -25,13 +27,26 @@ export class EventDetailsPage {
   public inviteEmail: string;
   public appApiService: AppApiService;
   public accessRequests: any[] = [];
-  constructor(appApiService: AppApiService) {
+  constructor(appApiService: AppApiService, private route: ActivatedRoute, private router: Router) {
     this.initialText = 'Initial text value';
     this.inviteEmail = '';
     this.appApiService = appApiService;
     appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
       console.log('users', users);
       this.accessRequests = users;
+    });
+  }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      const id = params['id'];
+
+      // TODO get event by id
+      if (!id) {
+        this.router.navigate(['/home']);
+      }
+
+
     });
   }
 
