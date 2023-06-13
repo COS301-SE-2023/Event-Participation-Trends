@@ -11,7 +11,7 @@ export class VieweventsPage {
   constructor(private appApiService: AppApiService) {
     this.appApiService.getAllEvents().then((events) => {
       this.all_events = events;
-      this.subscribed_events = events;
+      //this.subscribed_events = events;
     });
 
     this.appApiService.getManagedEvents().then((events) => {
@@ -26,7 +26,6 @@ export class VieweventsPage {
   public my_events: any[] = [];
 
   hasEvents(): boolean {
-    return true;
     return this.my_events.length > 0;
   }
 
@@ -41,4 +40,21 @@ export class VieweventsPage {
     return false;
 
   }
+
+  requestAccess(event: any) {
+    this.appApiService.sendViewRequest({eventId: event._id}).then((status) => {
+      console.log(status);
+    });
+  }
+
+  subscribedEvents(): any[] {
+    return this.subscribed_events;
+  }
+
+  unsubscribedEvents(): any[] {
+    return this.all_events.filter((event) => {
+      return !this.hasAccess(event);
+    });
+  }
+
 }
