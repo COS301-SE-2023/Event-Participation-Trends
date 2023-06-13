@@ -13,17 +13,26 @@ export class VieweventsPage {
       this.all_events = events;
       this.subscribed_events = events;
     });
+
+    this.appApiService.getManagedEvents().then((events) => {
+      this.my_events = events;
+      console.log(events);
+    });
   }
 
   public all_events: any[] = [];
   public subscribed_events: any[] = [];
 
+  public my_events: any[] = [];
+
+  hasEvents(): boolean {
+    return true;
+    return this.my_events.length > 0;
+  }
+
   hasAccess(event: any): boolean {
-    // if event in this.subscribed_events return true
-    console.log(event);
 
     for (let i = 0; i < this.subscribed_events.length; i++) {
-      console.log(this.subscribed_events[i]._id);
       if (this.subscribed_events[i]._id == event._id) {
         return true;
       }
