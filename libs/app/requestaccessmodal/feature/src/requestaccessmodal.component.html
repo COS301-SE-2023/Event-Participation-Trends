@@ -1,10 +1,10 @@
 <ion-content>
     <ion-title class="text-center mt-10 text-4xl">Access Denied</ion-title>
-    <img src="assets/images/RequestAccess.png" alt="Access Denied" />
     <ion-button
       ngClass="request-access-button"
       color="none"
       expand="block"
+      (click)="sendAccessRequest()"
     >
         <ion-text class="font-bold">Request Access</ion-text>
     </ion-button>

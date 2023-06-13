@@ -3,5 +3,5 @@ ion-button {
     border-radius: 10px;
     --tw-bg-opacity: 1; 
     background-color: rgb(16 16 16 / var(--tw-bg-opacity));
-    margin: 0 4.5rem;
+    margin: 3rem 4.5rem;
 }

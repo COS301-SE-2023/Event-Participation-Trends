@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ModalController, AlertController, ToastController } from '@ionic/angular';
 import { Store } from '@ngxs/store';
 
@@ -8,6 +8,8 @@ import { Store } from '@ngxs/store';
   styleUrls: ['./requestaccessmodal.component.css'],
 })
 export class RequestAccessModalComponent {
+  @Input() eventName: string | undefined;
+  @Input() eventId: string | undefined;
 
   handlerMessage = '';
 
@@ -17,9 +19,10 @@ export class RequestAccessModalComponent {
     await this.modalController.dismiss();
   }
 
-  async sendAccessRequest(eventName: string, eventId: string) {
+  async sendAccessRequest() {
     const alert = await this.alertController.create({
-      header: `Are you sure you want to request access to ${eventName}?`,
+      header: `Are you sure you want to request access to ${this.eventName}?`,
+      cssClass: 'access-request-alert',
       buttons: [
         {
           text: 'Cancel',
@@ -34,7 +37,7 @@ export class RequestAccessModalComponent {
           handler: () => {
             this.handlerMessage = `Access request sent.`;
             this.presentToast('bottom', 'Access request sent.');
-            // this.store.dispatch(new ApproveAccessRequest(userId));
+            // this.appApiService.sendAccessRequest(eventId);
           },
         },
       ],
