@@ -153,6 +153,9 @@
       "@event-participation-trends/app/usermanagement/util": [
         "libs/app/usermanagement/util/src/index.ts"
       ],
+      "@event-participation-trends/app/vieweventmodal/feature": [
+        "libs/app/vieweventmodal/feature/src/index.ts"
+      ],
       "@event-participation-trends/app/viewevents/data-access": [
         "libs/app/viewevents/data-access/src/index.ts"
       ],
