@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { DashboardState, DashboardStateModel } from '@event-participation-trends/app/dashboard/data-access';
 import { GetAccessRequests, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
 import { AccessRequestsState } from '@event-participation-trends/app/accessrequests/data-access';
+import { ActivatedRoute, Router } from '@angular/router';
 
 interface IAccessRequest {
   userId: string;
@@ -22,9 +23,21 @@ export class DashboardPage implements OnInit {
   @Select(DashboardState.dashboardStatistics) dashboardStatistics$!: Observable<DashboardStateModel | null>;
   @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
 
-  constructor(private modalController : ModalController, private readonly store: Store) { }
+  constructor(private modalController : ModalController, private route: ActivatedRoute, private router: Router, private readonly store: Store) { 
+
+  }
 
   ngOnInit(): void {
+
+    this.route.queryParams.subscribe((params) => {
+      const id = params['id'];
+
+      // TODO get event by id
+      if (!id) {
+        this.router.navigate(['/home']);
+      }
+    });
+
     // this.store.dispatch(new GetAccessRequests());
     // this.store.dispatch(new GetDashboardStatistics());
     console.log('dashboard page init');
