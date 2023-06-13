@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 
 interface Event {
   name: string;
@@ -46,4 +47,21 @@ export class VieweventsPage {
       hasAccess: false,
     }    
   ];
+
+  constructor(private readonly modalController: ModalController) {}
+
+  showPopupMenu() {
+    // const modal = await this.modalController.create({
+    //   component: AccessRequestsComponent,
+    // });
+
+    // await modal.present();
+
+    // const { data } = await modal.onDidDismiss();
+    console.log('showPopupMenu');
+  }
+
+  showAccessRequestMenu() {
+    console.log('showAccessRequestMenu');
+  }
 }
