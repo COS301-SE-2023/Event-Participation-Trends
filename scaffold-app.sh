@@ -81,6 +81,11 @@ yarn nx generate @nrwl/angular:component createfloorplan --project=app-createflo
 yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-feature --routing
 yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-data-access
 
+# Create Event
+yarn nx generate @nrwl/angular:component addevent --project=app-addevent-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module addevent --project=app-addevent-feature --routing
+yarn nx generate @nrwl/angular:module addevent --project=app-addevent-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -165,3 +170,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/sha
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/createfloorplan --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/createfloorplan --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/createfloorplan --no-interactive        # --> util
+
+# Create Event
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/addevent --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/addevent --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/addevent --no-interactive        # --> util
