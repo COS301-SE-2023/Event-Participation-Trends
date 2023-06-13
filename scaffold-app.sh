@@ -81,6 +81,16 @@ yarn nx generate @nrwl/angular:component createfloorplan --project=app-createflo
 yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-feature --routing
 yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-data-access
 
+# Popup Modal for Clicking on accessible events
+yarn nx generate @nrwl/angular:component vieweventmodal --project=app-vieweventmodal-feature --export --flat --type=component --standalone
+yarn nx generate @nrwl/angular:module vieweventmodal --project=app-vieweventmodal-feature --routing
+yarn nx generate @nrwl/angular:module vieweventmodal --project=app-vieweventmodal-data-access
+
+# Popup Modal for Clicking on locked events
+yarn nx generate @nrwl/angular:component requestaccessmodal --project=app-requestaccessmodal-feature --export --flat --type=component --standalone
+yarn nx generate @nrwl/angular:module requestaccessmodal --project=app-requestaccessmodal-feature --routing
+yarn nx generate @nrwl/angular:module requestaccessmodal --project=app-requestaccessmodal-data-access
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -165,3 +175,9 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/sha
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/createfloorplan --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/createfloorplan --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/createfloorplan --no-interactive        # --> util
+
+# Show popup for clicking on accessible events
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/vieweventmodal --no-interactive     # --> feature
+
+# Show popup for clicking on locked events
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/requestaccessmodal --no-interactive     # --> feature
