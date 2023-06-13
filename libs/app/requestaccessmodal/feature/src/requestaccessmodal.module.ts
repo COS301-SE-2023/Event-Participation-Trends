@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RequestaccessmodalComponent } from './requestaccessmodal.component';
+import { RequestAccessModalComponent } from './requestaccessmodal.component';
+import { IonicModule } from '@ionic/angular';
 
 @NgModule({
-  declarations: [RequestaccessmodalComponent],
+  declarations: [RequestAccessModalComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    IonicModule
   ]
 })
-export class RequestaccessmodalModule { }
+export class RequestAccessModalModule { }

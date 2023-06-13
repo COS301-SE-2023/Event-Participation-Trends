@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RequestAccessModalComponent } from '@event-participation-trends/app/requestaccessmodal/feature';
 import { ModalController } from '@ionic/angular';
 
 interface Event {
@@ -61,7 +62,13 @@ export class VieweventsPage {
     console.log('showPopupMenu');
   }
 
-  showAccessRequestMenu() {
-    console.log('showAccessRequestMenu');
+  async showRequestAccessMenu() {
+    const modal = await this.modalController.create({
+      component: RequestAccessModalComponent,
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onDidDismiss();
   }
 }
