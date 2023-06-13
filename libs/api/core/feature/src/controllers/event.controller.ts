@@ -42,7 +42,7 @@ export class EventController {
     }
 
     @Get('getAllEvents')
-    @SetMetadata('role',Role.ADMIN)
+    @SetMetadata('role',Role.VIEWER)
     @UseGuards(JwtGuard, RbacGuard)
     async getAllEvents(
         @Req() req: Request 
