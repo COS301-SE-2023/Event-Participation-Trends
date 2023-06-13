@@ -46,6 +46,13 @@ const routes: Routes = [
       import('@event-participation-trends/app/createfloorplan/feature').then((m) => m.CreateFloorPlanModule),
   },
   {
+    path: 'addevent',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/addevent/feature').then((m) => m.AddEventModule),
+  },
+  {
     path: 'eventscreenview',
     canActivate: [],
     // data: { authGuardPipe: redirectLoggedOut },

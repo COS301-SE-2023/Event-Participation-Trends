@@ -1,1 +1,77 @@
-<p>addevent works!</p>
+<subpagenav [currentPage]="'/home/addevent'"></subpagenav>
+<ion-content
+  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+>
+  <div class="backdrop-blur-[6px] h-full">
+    <div class="w-full min-h-full grid grid-cols-3">
+      <div
+        class="col-span-1 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white flex flex-col"
+      >
+        <div class="p-4 self-start w-full">
+          <div class="py-3">
+            <label>Event Name</label>
+            <ion-input
+              type="text"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey placeholder:italic placeholder:text-slate-200/20"
+              name="eventname"
+              placeholder="Enter the name for your event"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Date</label>
+            <ion-input
+              type="date"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Location</label>
+            <ion-input
+              type="text"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey placeholder:italic placeholder:text-slate-200/20"
+              placeholder="Enter the location of your event"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Category</label>
+            <ion-input
+              type="text"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey placeholder:italic placeholder:text-slate-200/20"
+              placeholder="Enter the category of your event"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Starts At:</label>
+            <ion-input
+              type="time"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Ends At:</label>
+            <ion-input
+              type="time"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              
+            ></ion-input>
+          </div>
+        </div>
+        <div
+          class="flex flex-col items-start text-left justify-center align-middle duration-300 transition-all h-full"
+        >
+          <!-- Ionic save button -->
+          <ion-button
+            class="m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
+            >Create</ion-button
+          >
+        </div>
+      </div>
+      <div
+        class="col-span-2 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
+        routerLink="/flooreditor"
+      ></div>
+    </div>
+  </div>
+</ion-content>
