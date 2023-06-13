@@ -1,13 +1,10 @@
 import { Time } from '@angular/common';
 import { Component } from '@angular/core';
-
-interface AccessRequest {
-  id: number;
-  email: string;
-  timestamp: number;
-}
+import { IUser } from '@event-participation-trends/api/user/util';
+import { AppApiService } from '@event-participation-trends/app/api';
 
 interface Event {
+  _id?: string;
   date: string;
   name: string;
   location: string;
@@ -26,12 +23,20 @@ export class EventDetailsPage {
 
   public initialText: string;
   public inviteEmail: string;
-  constructor() {
+  public appApiService: AppApiService;
+  public accessRequests: any[] = [];
+  constructor(appApiService: AppApiService) {
     this.initialText = 'Initial text value';
     this.inviteEmail = '';
+    this.appApiService = appApiService;
+    appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
+      console.log('users', users);
+      this.accessRequests = users;
+    });
   }
 
   public event: Event = {
+    _id: '648789728d8ed5b40edd0701',
     date: "2021-05-01",
     name: 'Polar Bear Plunge',
     location: 'Antarctica',
@@ -41,41 +46,29 @@ export class EventDetailsPage {
     endsAt: '11:00',
   };
 
-  public accessRequests: AccessRequest[] = [
-    {
-      id: 1,
-      email: 'user_1@gmail.com',
-      timestamp: 1620000000000,
-    },
-    {
-      id: 2,
-      email: 'user_2@gmail.com',
-      timestamp: 1620000000000,
-    },
-  ];
   
   overflow = false;
   show_invites = false;
   show_requests = false;
 
-  removeRequest(accessRequest: AccessRequest) {
+  removeRequest(accessRequest: any) {
     for (let i = 0; i < this.accessRequests.length; i++) {
-      if (this.accessRequests[i].id === accessRequest.id) {
+      if (this.accessRequests[i]._id === accessRequest._id) {
         this.accessRequests.splice(i, 1);
         break;
       }
     }
   }
 
-  allowAccess(accessRequest: AccessRequest) {
-    console.log('allowAccess', accessRequest);
-  }
-
-  acceptRequest(accessRequest: AccessRequest) {
+  acceptRequest(accessRequest: any) {
+    this.appApiService.acceptAccessRequest({userEmail: accessRequest.Email, eventId: this.event._id}).then((respoonse) => {
+      console.log('acceptAccessRequest', respoonse);
+    });
     this.removeRequest(accessRequest);
   }
 
-  declineRequest(accessRequest: AccessRequest) {
+  declineRequest(accessRequest: any) {
+    this.appApiService.declineAccessRequest({userEmail: accessRequest.Email, eventId: this.event._id});
     this.removeRequest(accessRequest);
   }
 
