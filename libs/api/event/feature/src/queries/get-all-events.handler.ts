@@ -19,12 +19,7 @@ export class GetAllEventsHandler implements IQueryHandler<GetAllEventsQuery, IGe
         if (!request.AdminEmail)
             throw new Error('Missing required field: AdminEmail');
         
-        const AdminDoc = await this.userRepository.getUser(request.AdminEmail);
-        if(AdminDoc[0].Role === Role.ADMIN){
-            const eventDocs = await this.eventRepository.getAllEvents();
-            return {events: <IEvent[]>eventDocs};
-        }else{
-            throw new Error(`User with email ${request.AdminEmail} does not have admin Privileges`);
-        }
+        const eventDocs = await this.eventRepository.getAllEvents();
+        return {events: <IEvent[]>eventDocs};
     } 
 }
