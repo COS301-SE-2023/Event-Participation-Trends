@@ -83,13 +83,11 @@ yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorp
 
 # Popup Modal for Clicking on accessible events
 yarn nx generate @nrwl/angular:component vieweventmodal --project=app-vieweventmodal-feature --export --flat --type=component --standalone
-yarn nx generate @nrwl/angular:module vieweventmodal --project=app-vieweventmodal-feature --routing
-yarn nx generate @nrwl/angular:module vieweventmodal --project=app-vieweventmodal-data-access
+yarn nx generate @nrwl/angular:module vieweventmodal --project=app-vieweventmodal-feature
 
 # Popup Modal for Clicking on locked events
 yarn nx generate @nrwl/angular:component requestaccessmodal --project=app-requestaccessmodal-feature --export --flat --type=component --standalone
-yarn nx generate @nrwl/angular:module requestaccessmodal --project=app-requestaccessmodal-feature --routing
-yarn nx generate @nrwl/angular:module requestaccessmodal --project=app-requestaccessmodal-data-access
+yarn nx generate @nrwl/angular:module requestaccessmodal --project=app-requestaccessmodal-feature
 
 # ============================================================================================================================
 
