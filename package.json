@@ -31,6 +31,7 @@
     "axios": "^1.0.0",
     "cookie-parser": "^1.4.6",
     "immer": "^10.0.2",
+    "moment": "^2.29.4",
     "mqtt": "^4.3.7",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",

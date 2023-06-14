@@ -4,6 +4,7 @@
 >
   <div class="backdrop-blur-[6px] h-full">
     <div class="w-full min-h-full grid grid-cols-3">
+      <form [formGroup]="eventForm" (ngSubmit)="createEvent()">
       <div
         class="col-span-1 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white flex flex-col"
       >
@@ -13,49 +14,91 @@
             <ion-input
               type="text"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey placeholder:italic placeholder:text-slate-200/20"
-              name="eventname"
+              name="eventName"
+              id="eventName"
+              formControlName="eventName"
               placeholder="Enter the name for your event"
+              [ngClass]="{ 'border-2 border-rose-500': eventName?.hasError('required') && (eventName?.dirty || eventName?.touched), 'border-2 border-green-400' : eventName?.valid && (eventName?.dirty || eventName?.touched)}"
             ></ion-input>
+            <div *ngIf="eventName?.invalid && (eventName?.dirty || eventName?.touched)">
+              <div class="text-red-500 text-sm italic" *ngIf="eventName?.errors?.['required']">Invalid event name</div>
+            </div>
           </div>
           <div class="py-3">
             <label>Date</label>
             <ion-input
               type="date"
+              name="date"
+              id="date"
+              formControlName="eventDate"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              
+              [ngClass]="{ 'border-2 border-rose-500': eventDate?.hasError('required') && (eventDate?.dirty || eventDate?.touched), 'border-2 border-green-400' : eventDate?.valid && (eventDate?.dirty || eventDate?.touched)}"
             ></ion-input>
+            <div *ngIf="eventDate?.invalid && (eventDate?.dirty || eventDate?.touched)">
+              <div class="text-red-500 text-sm italic" *ngIf="eventDate?.errors?.['required']">Invalid date</div>
+            </div>
           </div>
           <div class="py-3">
             <label>Location</label>
             <ion-input
               type="text"
+              name="location"
+              id="location"
+              formControlName="eventLocation"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey placeholder:italic placeholder:text-slate-200/20"
               placeholder="Enter the location of your event"
+              [ngClass]="{ 'border-2 border-rose-500': eventLocation?.hasError('required') && (eventLocation?.dirty || eventLocation?.touched), 'border-2 border-green-400' : eventLocation?.valid && (eventLocation?.dirty || eventLocation?.touched)}"
             ></ion-input>
+            <div *ngIf="eventLocation?.invalid && (eventLocation?.dirty || eventLocation?.touched)">
+              <div class="text-red-500 text-sm italic" *ngIf="eventLocation?.errors?.['required']">Invalid location</div>
+            </div>
           </div>
           <div class="py-3">
             <label>Category</label>
             <ion-input
               type="text"
+              name="category"
+              id="category"
+              formControlName="eventCategory"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey placeholder:italic placeholder:text-slate-200/20"
               placeholder="Enter the category of your event"
+              [ngClass]="{ 'border-2 border-rose-500': eventCategory?.hasError('required') && (eventCategory?.dirty || eventCategory?.touched), 'border-2 border-green-400' : eventCategory?.valid && (eventCategory?.dirty || eventCategory?.touched)}"
             ></ion-input>
+            <div *ngIf="eventCategory?.invalid && (eventCategory?.dirty || eventCategory?.touched)">
+              <div class="text-red-500 text-sm italic" *ngIf="eventCategory?.errors?.['required']">Invalid category</div>
+            </div>
           </div>
           <div class="py-3">
             <label>Starts At:</label>
             <ion-input
               type="time"
-              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              
+              name="startTime"
+              id="startTime"
+              formControlName="eventStartTime"
+              class="input px-2 bg-white w-full invalid:border-red-500 overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              [ngClass]="{ 'border-2 border-rose-500': eventStartTime?.hasError('required') && (eventStartTime?.dirty || eventStartTime?.touched), 'border-2 border-green-400' : ((eventStartTime?.valid && (eventStartTime?.dirty || eventStartTime?.touched)) || (eventEndTime?.valid && (eventEndTime?.dirty || eventEndTime?.touched)))}"
+              (ionChange)="onStartTimeChange()"
+              pattern="^(?:2[0-3]|[01][0-9]):[0-5][0-9]$"
             ></ion-input>
+            <div *ngIf="eventStartTime?.invalid && (eventStartTime?.dirty || eventStartTime?.touched)">
+              <div class="text-red-500 text-sm italic" *ngIf="eventStartTime?.errors?.['required']">Invalid start time</div>
+            </div>
           </div>
           <div class="py-3">
             <label>Ends At:</label>
             <ion-input
               type="time"
+              name="endTime"
+              id="endTime"
+              formControlName="eventEndTime"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              
+              [ngClass]="{ 'border-2 border-rose-500': eventEndTime?.hasError('required') && (eventEndTime?.dirty || eventEndTime?.touched), 'border-2 border-green-400' : ((eventEndTime?.valid && (eventEndTime?.dirty || eventEndTime?.touched)) || (eventStartTime?.valid && (eventStartTime?.dirty || eventStartTime?.touched)))}"
+              (ionChange)="onEndTimeChange()"
+              pattern="^(?:2[0-3]|[01][0-9]):[0-5][0-9]$"
             ></ion-input>
+            <div *ngIf="eventEndTime?.invalid && (eventEndTime?.dirty || eventEndTime?.touched)">
+              <div class="text-red-500 text-sm italic" *ngIf="eventEndTime?.errors?.['required']">Invalid end time</div>
+            </div>
           </div>
         </div>
         <div
@@ -64,14 +107,24 @@
           <!-- Ionic save button -->
           <ion-button
             class="m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
+            type="submit"
+            [disabled]="eventForm.invalid"
             >Create</ion-button
           >
         </div>
       </div>
+    </form>
       <div
-        class="col-span-2 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
-        routerLink="/flooreditor"
-      ></div>
+        class="col-span-2 m-7 flex flex-col items-center justify-center rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
+      >
+        <ion-button
+          class="m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
+          routerLink="/createfloorplan"
+        >
+          <ion-icon name="create-outline"></ion-icon>Create Floor
+          Plan</ion-button
+        >
+      </div>
     </div>
   </div>
 </ion-content>
