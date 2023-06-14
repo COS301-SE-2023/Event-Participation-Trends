@@ -76,7 +76,9 @@
               id="startTime"
               formControlName="eventStartTime"
               class="input px-2 bg-white w-full invalid:border-red-500 overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              [ngClass]="{ 'border-2 border-rose-500': eventStartTime?.hasError('required') && (eventStartTime?.dirty || eventStartTime?.touched), 'border-2 border-green-400' : eventStartTime?.valid && (eventStartTime?.dirty || eventStartTime?.touched)}"
+              [ngClass]="{ 'border-2 border-rose-500': eventStartTime?.hasError('required') && (eventStartTime?.dirty || eventStartTime?.touched), 'border-2 border-green-400' : ((eventStartTime?.valid && (eventStartTime?.dirty || eventStartTime?.touched)) || (eventEndTime?.valid && (eventEndTime?.dirty || eventEndTime?.touched)))}"
+              (ionChange)="onStartTimeChange()"
+              pattern="^(?:2[0-3]|[01][0-9]):[0-5][0-9]$"
             ></ion-input>
             <div *ngIf="eventStartTime?.invalid && (eventStartTime?.dirty || eventStartTime?.touched)">
               <div class="text-red-500 text-sm italic" *ngIf="eventStartTime?.errors?.['required']">Invalid start time</div>
@@ -90,7 +92,9 @@
               id="endTime"
               formControlName="eventEndTime"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              [ngClass]="{ 'border-2 border-rose-500': eventEndTime?.hasError('required') && (eventEndTime?.dirty || eventEndTime?.touched), 'border-2 border-green-400' : eventEndTime?.valid && (eventEndTime?.dirty || eventEndTime?.touched)}"
+              [ngClass]="{ 'border-2 border-rose-500': eventEndTime?.hasError('required') && (eventEndTime?.dirty || eventEndTime?.touched), 'border-2 border-green-400' : ((eventEndTime?.valid && (eventEndTime?.dirty || eventEndTime?.touched)) || (eventStartTime?.valid && (eventStartTime?.dirty || eventStartTime?.touched)))}"
+              (ionChange)="onEndTimeChange()"
+              pattern="^(?:2[0-3]|[01][0-9]):[0-5][0-9]$"
             ></ion-input>
             <div *ngIf="eventEndTime?.invalid && (eventEndTime?.dirty || eventEndTime?.touched)">
               <div class="text-red-500 text-sm italic" *ngIf="eventEndTime?.errors?.['required']">Invalid end time</div>
