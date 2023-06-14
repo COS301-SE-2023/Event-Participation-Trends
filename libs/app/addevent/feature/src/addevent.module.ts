@@ -5,7 +5,7 @@ import { AddEventRoutingModule } from './addevent.routing';
 import { AddEventModule as AddEventDataAccessModule } from '@event-participation-trends/app/addevent/data-access';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '@event-participation-trends/app/shared/feature';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddEventPage } from './addevent.page';
 
 
@@ -17,7 +17,8 @@ import { AddEventPage } from './addevent.page';
     SharedModule,
     AddEventRoutingModule,
     AddEventDataAccessModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class AddEventModule { }
