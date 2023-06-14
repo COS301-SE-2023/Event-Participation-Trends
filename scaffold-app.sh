@@ -81,6 +81,13 @@ yarn nx generate @nrwl/angular:component createfloorplan --project=app-createflo
 yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-feature --routing
 yarn nx generate @nrwl/angular:module createfloorplan --project=app-createfloorplan-data-access
 
+# Popup Modal for Clicking on accessible events
+yarn nx generate @nrwl/angular:component vieweventmodal --project=app-vieweventmodal-feature --export --flat --type=component --standalone
+yarn nx generate @nrwl/angular:module vieweventmodal --project=app-vieweventmodal-feature
+
+# Popup Modal for Clicking on locked events
+yarn nx generate @nrwl/angular:component requestaccessmodal --project=app-requestaccessmodal-feature --export --flat --type=component --standalone
+yarn nx generate @nrwl/angular:module requestaccessmodal --project=app-requestaccessmodal-feature
 # Create Event
 yarn nx generate @nrwl/angular:component addevent --project=app-addevent-feature --export --flat --type=page --standalone
 yarn nx generate @nrwl/angular:module addevent --project=app-addevent-feature --routing
@@ -171,6 +178,11 @@ yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/createfloorplan --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/createfloorplan --no-interactive        # --> util
 
+# Show popup for clicking on accessible events
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/vieweventmodal --no-interactive     # --> feature
+
+# Show popup for clicking on locked events
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/requestaccessmodal --no-interactive     # --> feature
 # Create Event
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/addevent --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/addevent --no-interactive # --> data-access
