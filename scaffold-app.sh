@@ -88,6 +88,10 @@ yarn nx generate @nrwl/angular:module vieweventmodal --project=app-vieweventmoda
 # Popup Modal for Clicking on locked events
 yarn nx generate @nrwl/angular:component requestaccessmodal --project=app-requestaccessmodal-feature --export --flat --type=component --standalone
 yarn nx generate @nrwl/angular:module requestaccessmodal --project=app-requestaccessmodal-feature
+# Create Event
+yarn nx generate @nrwl/angular:component addevent --project=app-addevent-feature --export --flat --type=page --standalone
+yarn nx generate @nrwl/angular:module addevent --project=app-addevent-feature --routing
+yarn nx generate @nrwl/angular:module addevent --project=app-addevent-data-access
 
 # ============================================================================================================================
 
@@ -179,3 +183,7 @@ yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/
 
 # Show popup for clicking on locked events
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/requestaccessmodal --no-interactive     # --> feature
+# Create Event
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/addevent --no-interactive     # --> feature
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/addevent --no-interactive # --> data-access
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/addevent --no-interactive        # --> util

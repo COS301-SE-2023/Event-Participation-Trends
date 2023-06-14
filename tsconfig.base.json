@@ -27,6 +27,15 @@
       "@event-participation-trends/app/accessrequests/util": [
         "libs/app/accessrequests/util/src/index.ts"
       ],
+      "@event-participation-trends/app/addevent/data-access": [
+        "libs/app/addevent/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/addevent/feature": [
+        "libs/app/addevent/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/addevent/util": [
+        "libs/app/addevent/util/src/index.ts"
+      ],
       "@event-participation-trends/app/auth/data-access": [
         "libs/app/auth/data-access/src/index.ts"
       ],
