@@ -1,11 +1,18 @@
 <ion-content>
-    <ion-title class="text-center mt-10 text-4xl">Access Denied</ion-title>
+    <div class="text-center bg-[url('assets/access_denied_v1.svg')] bg-cover bg-no-repeat bg-center bg-fixed h-56">
+        <!-- <ion-icon name="lock-closed-outline" class="text-9xl text-red-500"></ion-icon> -->
+    </div>
+    <ion-title>
+        <div class="text-center mt-10 ml-10 mr-10 ept text-4xl whitespace-normal">
+            You do not have access to this event
+        </div>
+    </ion-title>
     <ion-button
       ngClass="request-access-button"
       color="none"
       expand="block"
       (click)="sendAccessRequest()"
     >
-        <ion-text class="font-bold">Request Access</ion-text>
+        <ion-text class="font-bold text-red-500">Request Access</ion-text>
     </ion-button>
 </ion-content>
