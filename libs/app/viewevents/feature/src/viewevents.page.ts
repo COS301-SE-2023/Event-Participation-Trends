@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RequestAccessModalComponent } from '@event-participation-trends/app/requestaccessmodal/feature';
+import { ViewEventModalComponent } from '@event-participation-trends/app/vieweventmodal/feature';
 import { ModalController } from '@ionic/angular';
 
 interface Event {
@@ -57,15 +58,18 @@ export class VieweventsPage {
 
   constructor(private readonly modalController: ModalController) {}
 
-  showPopupMenu() {
-    // const modal = await this.modalController.create({
-    //   component: AccessRequestsComponent,
-    // });
+  async showPopupMenu(eventName: string, eventId: string) {
+    const modal = await this.modalController.create({
+      component: ViewEventModalComponent,
+      componentProps: {
+        eventName: eventName,
+        evventId: eventId,
+      }
+    });
 
-    // await modal.present();
+    await modal.present();
 
-    // const { data } = await modal.onDidDismiss();
-    console.log('showPopupMenu');
+    const { data } = await modal.onDidDismiss();
   }
 
   async showRequestAccessMenu(eventName: string, eventId: string) {
