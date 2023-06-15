@@ -101,6 +101,9 @@ export class AddEventPage implements OnInit {
       this.eventForm.patchValue({ eventStartTime: newStartTime });
     }
   }
-  
+
+  getCurrentDate(): string {
+    return new Date().toISOString().split("T")[0];
+  }
 
 }
