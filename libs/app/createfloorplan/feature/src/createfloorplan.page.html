@@ -10,10 +10,19 @@
           <ion-icon [class.dropdown-icon]="true" [class.rotated]="isDropdownOpen" name="chevron-down-outline"></ion-icon>
         </button>
       </h3>
-      <div class="components-list mb-1" [class.show]="isDropdownOpen">
-        <p>Item 1</p>
-        <p>Item 2</p>
-        <p>Item 3</p>
+      <!-- <div class="components-list mb-1 overflow-hidden" [class.show]="isDropdownOpen">
+        <div class="overflow-y-auto max-h-52 ">
+        <p class="border-2 rounded-lg p-1 w-20 mt-2" draggable="true" (dragstart)="onDragStart($event)">Sensor 1</p>
+        <p class="border-2 rounded-lg p-1 w-20 mt-2" draggable="true" (dragstart)="onDragStart($event)">Sensor 2</p>
+        <p class="border-2 rounded-lg p-1 w-20 mt-2" draggable="true" (dragstart)="onDragStart($event)">Sensor 3</p>
+        </div>
+      </div> -->
+      <div class="components-list mb-1 overflow-hidden" [class.show]="isDropdownOpen">
+        <div class="overflow-y-auto max-h-52">
+          <p class="border-2 rounded-lg p-1 w-20 mt-2" draggable="true" (dragstart)="onDragStart($event)">Sensor 1</p>
+          <p class="border-2 rounded-lg p-1 w-20 mt-2" draggable="true" (dragstart)="onDragStart($event)">Sensor 2</p>
+          <p class="border-2 rounded-lg p-1 w-20 mt-2" draggable="true" (dragstart)="onDragStart($event)">Sensor 3</p>
+        </div>
       </div>
       <h3 class="attributes-heading mt-3 ml-2">Component Attributes</h3>
       <ion-item class="attributes-list" lines="none">
@@ -33,8 +42,30 @@
       <ion-button class="create-event mt-20 ml-20 right-2.5 h-40px text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg absolute bottom-0 mb-10 hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]" >Create Event</ion-button>
     </div>
   
-    <div class="col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey">
-      
-    </div> 
+    <!-- <div class="canvas relative col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey" [ngClass]="{'flex flex-col items-center justify-center' : noItemsAdded()}" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+      <p class="text-center text-2xl text-ept-deep-grey opacity-30 font-semibold mt-10" *ngIf="noItemsAdded()">Drag a component to the canvas</p>
+      <div *ngFor="let item of canvasItems" class="dropped-item absolute bg-blue-300 p-1.5 rounded" [style.left.px]="item.positionX" [style.top.px]="item.positionY">{{ item.name }}</div>
+    </div>  -->
+    <!-- <div class="canvas relative col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey"
+     [ngClass]="{'flex flex-col items-center justify-center': noItemsAdded()}"
+     (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+  <p class="text-center text-2xl text-ept-deep-grey opacity-30 font-semibold mt-10" *ngIf="noItemsAdded()">Drag a component to the canvas</p>
+  <div *ngFor="let item of canvasItems; let i = index"
+       class="dropped-item absolute bg-blue-300 p-1.5 rounded"
+       [style.left.px]="item.positionX"
+       [style.top.px]="item.positionY"
+       draggable="true"
+       (dragstart)="onDragStart($event, i)"
+       (dragover)="onDragOverItem($event, i)"
+       (drop)="onDropItem($event, i)">
+    {{ item.name }}
+  </div> -->
+  <div class="canvas relative col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey"
+  [ngClass]="{'flex flex-col items-center justify-center' : noItemsAdded()}" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+  <p class="text-center text-2xl text-ept-deep-grey opacity-30 font-semibold mt-10" *ngIf="noItemsAdded()">
+    Drag a component to the canvas
+  </p>
+  <canvas #canvasElement></canvas>
+</div>
   </div>
 </ion-content>
