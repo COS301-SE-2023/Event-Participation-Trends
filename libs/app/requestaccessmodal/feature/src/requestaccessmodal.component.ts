@@ -15,7 +15,7 @@ export class RequestAccessModalComponent {
 
   constructor(private modalController : ModalController, private store: Store, private readonly alertController: AlertController, private readonly toastController: ToastController) { }
 
-  async closeAccessRequests() {
+  async closeModal() {
     await this.modalController.dismiss();
   }
 

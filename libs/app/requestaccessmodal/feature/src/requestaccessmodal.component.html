@@ -1,9 +1,9 @@
 <ion-content>
-    <div class="text-center bg-[url('assets/access_denied_v1.svg')] bg-cover bg-no-repeat bg-center bg-fixed h-56">
+    <div class="text-center bg-[url('assets/access_denied_steel_gate.svg')] bg-cover bg-no-repeat bg-center bg-fixed h-72">
         <!-- <ion-icon name="lock-closed-outline" class="text-9xl text-red-500"></ion-icon> -->
     </div>
     <ion-title>
-        <div class="text-center mt-10 ml-10 mr-10 ept text-4xl whitespace-normal">
+        <div class="text-center mt-10 ml-10 mr-10 ept text-2xl whitespace-normal">
             You do not have access to this event
         </div>
     </ion-title>
@@ -13,6 +13,9 @@
       expand="block"
       (click)="sendAccessRequest()"
     >
-        <ion-text class="font-bold text-red-500">Request Access</ion-text>
+        <ion-text class="font-bold">Request Access</ion-text>
     </ion-button>
+    <div class="text-center text-gray-400 text-sm pr-2">
+        <ion-text (click)="closeModal()" class="cursor-pointer">Go back</ion-text>
+    </div>
 </ion-content>
