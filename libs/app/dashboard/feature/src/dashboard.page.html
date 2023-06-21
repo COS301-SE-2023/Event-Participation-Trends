@@ -6,7 +6,7 @@
             <div ngClass="dashboard-title-icon">
                 <ion-title class="text-5xl">Dashboard</ion-title>
                 <ion-icon class="text-blue-600 w-9 h-9 mt-2"  name="stats-chart"></ion-icon>
-                <sub class="mt-4 ml-2 text-base">/ [event name]</sub>
+                <sub class="mt-4 ml-2 text-base" *ngIf="(eventData$ | async) as eventData">/ {{ eventData.eventName }}</sub>
             </div>
             <ion-button ngClass="access-requests-btn" (click)="openAccessRequests()">
                 <ion-text class="text-lg text-black pr-2" color="none">Access Requests</ion-text>
