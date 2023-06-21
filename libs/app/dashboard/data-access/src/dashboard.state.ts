@@ -7,6 +7,10 @@ import { DashboardApi } from './dashboard.api';
 // Once we know the interface for the dashboard page we can remove the comment from the line below
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DashboardStateModel {
+    eventData: {
+        eventId: string;
+        eventName: string;
+    }
     accessRequests: any[];
     dashboardStatistics: any[];
 }
@@ -14,6 +18,10 @@ export interface DashboardStateModel {
 @State<DashboardStateModel>({
     name: 'dashboard',
     defaults: {
+        eventData: {
+            eventId: '',
+            eventName: ''
+        },
         accessRequests: [],
         dashboardStatistics: []
     }
@@ -22,6 +30,11 @@ export interface DashboardStateModel {
 @Injectable()
 export class DashboardState {
     // constructor(private readonly dashboardApi: DashboardApi) { }
+
+    @Selector()
+    static eventData(state: DashboardStateModel) {
+        return state.eventData;
+    }
 
     @Selector()
     static dashboardStatistics(state: DashboardStateModel) {
