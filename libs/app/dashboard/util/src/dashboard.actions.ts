@@ -6,9 +6,7 @@ export class GetDashboardStatistics {
 export class SetDashboardState {
   static readonly type = '[Dashboard] Set Dashboard State';
   constructor(
-    public readonly eventData: any | null | undefined,
-    public readonly accessRequests: any[] | null | undefined,
-    public readonly statistics: any[] | null | undefined
+    public readonly event: any | null | undefined,
   ) {}
 }
 

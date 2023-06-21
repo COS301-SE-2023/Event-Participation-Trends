@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Select, Selector, State, StateContext } from '@ngxs/store';
-import { GetDashboardStatistics, SetDashboardState } from '@event-participation-trends/app/dashboard/util';
+import { GetDashboardStatistics, SetDashboardState, SetEventData } from '@event-participation-trends/app/dashboard/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { DashboardApi } from './dashboard.api';
 
@@ -46,14 +46,13 @@ export class DashboardState {
     }
 
     @Action(SetDashboardState)
-    setDashboardState(ctx: StateContext<DashboardStateModel>, { eventData, accessRequests, statistics }: SetDashboardState) {
-        return ctx.patchState({
-            event: {
-                eventData: eventData || { eventId: '', eventName: '' },
-                accessRequests : accessRequests || [],
-                dashboardStatistics: statistics || []
-            }
-        });
+    setDashboardState(ctx: StateContext<DashboardStateModel>, { event }: SetDashboardState) {
+        return ctx.patchState({ event: event });
+    }
+
+    @Action(SetEventData)
+    setEventData(ctx: StateContext<DashboardStateModel>, { eventData }: SetEventData) {
+        return ctx.patchState({ event: { ...ctx.getState().event, eventData } });
     }
 
     // @Action(GetDashboardStatistics)
