@@ -60,7 +60,7 @@ h1 {
   
   .components-list.show {
     opacity: 1;
-    height: 80px;
+    height: 200px;
   }
 
  h3 > .dropdown-toggle {

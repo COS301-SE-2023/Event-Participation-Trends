@@ -33,6 +33,7 @@
               formControlName="eventDate"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
               [ngClass]="{ 'border-2 border-rose-500': eventDate?.hasError('required') && (eventDate?.dirty || eventDate?.touched), 'border-2 border-green-400' : eventDate?.valid && (eventDate?.dirty || eventDate?.touched)}"
+              [min]="getCurrentDate()"
             ></ion-input>
             <div *ngIf="eventDate?.invalid && (eventDate?.dirty || eventDate?.touched)">
               <div class="text-red-500 text-sm italic" *ngIf="eventDate?.errors?.['required']">Invalid date</div>

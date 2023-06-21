@@ -79,7 +79,8 @@ export class AddEventPage implements OnInit {
     let endTime = this.eventForm.get('eventEndTime')?.value;
 
     if (!endTime) {
-      endTime = this.eventForm.get('eventEndTime')?.setValue(startTime);
+      endTime = moment(startTime, 'HH:mm').add(1, 'hours').format('HH:mm');
+      this.eventForm.patchValue({ eventEndTime: endTime });
     }
     else if (startTime && endTime && startTime >= endTime) {
       const newEndTime = moment(startTime, 'HH:mm').add(1, 'hours').format('HH:mm');
@@ -92,13 +93,17 @@ export class AddEventPage implements OnInit {
     const endTime = this.eventForm.get('eventEndTime')?.value;
 
     if (!startTime) {
-      startTime = this.eventForm.get('eventStartTime')?.setValue(endTime);
+      startTime = moment(endTime, 'HH:mm').subtract(1, 'hours').format('HH:mm');
+      this.eventForm.patchValue({ eventStartTime: startTime });
     }
     else if (endTime && startTime && endTime <= startTime) {
       const newStartTime = moment(endTime, 'HH:mm').subtract(1, 'hours').format('HH:mm');
       this.eventForm.patchValue({ eventStartTime: newStartTime });
     }
   }
-  
+
+  getCurrentDate(): string {
+    return new Date().toISOString().split("T")[0];
+  }
 
 }
