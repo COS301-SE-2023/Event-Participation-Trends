@@ -41,6 +41,11 @@ export class DashboardState {
         return state.dashboardStatistics;
     }
 
+    @Action(SetDashboardState)
+    setDashboardState(ctx: StateContext<DashboardStateModel>, { eventData, accessRequests, statistics }: SetDashboardState) {
+        return ctx.patchState({ eventData });
+    }
+
     // @Action(GetDashboardStatistics)
     // async getDashboardStatistics(ctx: StateContext<DashboardStateModel>, { eventName }: GetDashboardStatistics) {
     //     try {
