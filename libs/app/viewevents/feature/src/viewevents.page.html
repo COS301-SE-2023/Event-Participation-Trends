@@ -32,7 +32,6 @@
         *ngFor="let event of my_events"
         class="h-56 m-8 rounded-lg md:rounded-xl bg-white bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:scale-105 hover:cursor-pointer hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]"
         [routerLink]="['/eventdetails']" [queryParams]="{id: event._id}" queryParamsHandling="merge"
-        (click)="event.hasAccess ? showPopupMenu(event.name, event.eventId) : showRequestAccessMenu(event.name, event.eventId)"
         >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all bg-transparent"
@@ -79,7 +78,7 @@
         *ngFor="let event of subscribedEvents()"
         class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:cursor-pointer"
         [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : hasAccess(event), 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !hasAccess(event)}"
-        [routerLink]="['/dashboard']" [queryParams]="{id: event._id}" queryParamsHandling="merge"
+        (click)="showPopupMenu(event.Name)"
         >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all"
@@ -111,7 +110,7 @@
         *ngFor="let event of unsubscribedEvents()"
         class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:cursor-pointer"
         [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : hasAccess(event), 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !hasAccess(event)}"
-        (click)="requestAccess(event)"  
+        (click)="showRequestAccessMenu(event)"  
         >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all"

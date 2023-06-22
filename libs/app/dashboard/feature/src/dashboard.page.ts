@@ -30,16 +30,6 @@ export class DashboardPage implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.route.queryParams.subscribe((params) => {
-      const id = params['id'];
-
-      // TODO get event by id
-      if (!id) {
-        this.router.navigate(['/home']);
-      }
-    });
-
     // this.store.dispatch(new GetAccessRequests());
     // this.store.dispatch(new GetDashboardStatistics());
     console.log('dashboard page init');
@@ -70,11 +60,16 @@ export class DashboardPage implements OnInit {
 
     // Get query params from URL
     this.route.queryParams.subscribe(params => {
-      const eventId = params['eventId'] ? params['eventId'] : '';
+      const id = params['id'];
       const eventName = params['eventName'];
 
+      // TODO get event by id - skip for now
+      // if (!id) {
+      //   this.router.navigate(['/home']);
+      // }
+
       // Set state for the event
-      this.store.dispatch(new SetEventData({ eventId, eventName }));
+      this.store.dispatch(new SetEventData({ id, eventName }));
     });
   }
 

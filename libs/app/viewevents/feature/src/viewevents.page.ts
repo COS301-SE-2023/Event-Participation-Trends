@@ -11,6 +11,10 @@ import { IEvent } from '@nestjs/cqrs';
   styleUrls: ['./viewevents.page.css'],
 })
 export class VieweventsPage {
+  public all_events: IEvent[] = [];
+  public subscribed_events: any[] = [];
+
+  public my_events: any[] = [];
 
   constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
     this.appApiService.getAllEvents().then((events) => {
@@ -24,12 +28,11 @@ export class VieweventsPage {
     });
   }
 
-  async showPopupMenu(eventName: string, eventId: string) {
+  async showPopupMenu(eventName: string) {
     const modal = await this.modalController.create({
       component: ViewEventModalComponent,
       componentProps: {
         eventName: eventName,
-        evventId: eventId,
       }
     });
 
@@ -38,12 +41,11 @@ export class VieweventsPage {
     const { data } = await modal.onDidDismiss();
   }
 
-  async showRequestAccessMenu(eventName: string, eventId: string) {
+  async showRequestAccessMenu(event: any) {
     const modal = await this.modalController.create({
       component: RequestAccessModalComponent,
       componentProps: {
-        eventName: eventName,
-        eventId: eventId,
+        event: event,
       },
     });
 
@@ -51,11 +53,6 @@ export class VieweventsPage {
 
     const { data } = await modal.onDidDismiss();
   }
-
-  public all_events: any[] = [];
-  public subscribed_events: any[] = [];
-
-  public my_events: any[] = [];
 
   hasEvents(): boolean {
     return this.my_events.length > 0;
@@ -71,12 +68,12 @@ export class VieweventsPage {
 
     return false;
   }
-
-  requestAccess(event: any) {
-    this.appApiService.sendViewRequest({eventId: event._id}).then((status) => {
-      console.log(status);
-    });
-  }
+  // Added to RequestAccess modal component
+  // requestAccess(event: any) {
+  //   this.appApiService.sendViewRequest({eventId: event._id}).then((status) => {
+  //     console.log(status);
+  //   });
+  // }
 
   subscribedEvents(): any[] {
     return this.subscribed_events;

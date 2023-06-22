@@ -1,5 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { ModalController, AlertController, ToastController } from '@ionic/angular';
+import { AppApiService } from '@event-participation-trends/app/api';
+import {
+  ModalController,
+  AlertController,
+  ToastController,
+} from '@ionic/angular';
 import { Store } from '@ngxs/store';
 
 @Component({
@@ -13,7 +18,13 @@ export class RequestAccessModalComponent {
 
   handlerMessage = '';
 
-  constructor(private modalController : ModalController, private store: Store, private readonly alertController: AlertController, private readonly toastController: ToastController) { }
+  constructor(
+    private modalController: ModalController,
+    private store: Store,
+    private readonly alertController: AlertController,
+    private readonly toastController: ToastController,
+    private readonly appApiService: AppApiService
+  ) {}
 
   async closeModal() {
     await this.modalController.dismiss();
@@ -37,7 +48,7 @@ export class RequestAccessModalComponent {
           handler: () => {
             this.handlerMessage = `Access request sent.`;
             this.presentToast('bottom', 'Access request sent.');
-            // this.appApiService.sendAccessRequest(eventId);
+            this.requestAccess({ _id: this.eventId }); //api request
           },
         },
       ],
@@ -46,7 +57,6 @@ export class RequestAccessModalComponent {
     await alert.present();
 
     const { role } = await alert.onDidDismiss();
-
   }
 
   async presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
@@ -58,5 +68,13 @@ export class RequestAccessModalComponent {
     });
 
     await toast.present();
+  }
+
+  requestAccess(event: any) {
+    this.appApiService
+      .sendViewRequest({ eventId: event._id })
+      .then((status) => {
+        console.log(status);
+      });
   }
 }

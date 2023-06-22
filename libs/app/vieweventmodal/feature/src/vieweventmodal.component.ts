@@ -9,7 +9,6 @@ import { Store } from '@ngxs/store';
 })
 export class ViewEventModalComponent {
   @Input() eventName: string | undefined;
-  @Input() eventId: string | undefined;
 
   handlerMessage = '';
 
@@ -21,6 +20,6 @@ export class ViewEventModalComponent {
 
   openDashboard() {
     this.closeModal();
-    this.navController.navigateForward('/dashboard', { queryParams: { eventId: this.eventId , eventName: this.eventName } });
+    this.navController.navigateForward('/dashboard', { queryParams: { eventName: this.eventName, queryParamsHandling: 'merge' } });
   }
 }
