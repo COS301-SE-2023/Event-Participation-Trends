@@ -23,7 +23,7 @@
                 routerLink="/eventdetails"
               >
               </ion-icon>
-              <ion-badge class="absolute left-4 top-1 rounded-full">{{ AccessRequestsLength }}</ion-badge>
+              <ion-badge *ngIf="AccessRequestsLength > 0" class="absolute left-4 top-1 rounded-full">{{ AccessRequestsLength }}</ion-badge>
             </div>
           </ion-card-content>
         </ion-card>
