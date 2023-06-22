@@ -7,6 +7,7 @@ import { DashboardState, DashboardStateModel } from '@event-participation-trends
 import { GetAccessRequests, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
 import { AccessRequestsState } from '@event-participation-trends/app/accessrequests/data-access';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SetEventData } from '@event-participation-trends/app/dashboard/util';
 
 interface IAccessRequest {
   userId: string;
@@ -22,6 +23,7 @@ interface IAccessRequest {
 export class DashboardPage implements OnInit {
   @Select(DashboardState.dashboardStatistics) dashboardStatistics$!: Observable<DashboardStateModel | null>;
   @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
+  @Select(DashboardState.eventData) eventData$!: Observable<{eventId: string, eventName: string} | null>;
 
   constructor(private modalController : ModalController, private route: ActivatedRoute, private router: Router, private readonly store: Store) { 
 
@@ -65,6 +67,15 @@ export class DashboardPage implements OnInit {
         role: 'Manager'
       }
     ]));
+
+    // Get query params from URL
+    this.route.queryParams.subscribe(params => {
+      const eventId = params['eventId'] ? params['eventId'] : '';
+      const eventName = params['eventName'];
+
+      // Set state for the event
+      this.store.dispatch(new SetEventData({ eventId, eventName }));
+    });
   }
 
   async openAccessRequests() {

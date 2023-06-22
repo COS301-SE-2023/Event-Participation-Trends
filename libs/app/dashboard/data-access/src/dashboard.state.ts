@@ -1,21 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Action, Select, Selector, State, StateContext } from '@ngxs/store';
-import { GetDashboardStatistics, SetDashboardState } from '@event-participation-trends/app/dashboard/util';
+import { GetDashboardStatistics, SetDashboardState, SetEventData } from '@event-participation-trends/app/dashboard/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { DashboardApi } from './dashboard.api';
 
 // Once we know the interface for the dashboard page we can remove the comment from the line below
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DashboardStateModel {
-    accessRequests: any[];
-    dashboardStatistics: any[];
+    event: {
+        eventData: {
+            eventId: string;
+            eventName: string | undefined;
+        }
+        accessRequests: any[] | null | undefined;
+        dashboardStatistics: any[] | null | undefined;
+    }
 }
 
 @State<DashboardStateModel>({
     name: 'dashboard',
     defaults: {
-        accessRequests: [],
-        dashboardStatistics: []
+        event: {
+            eventData: {
+                eventId: '',
+                eventName: ''
+            },
+            accessRequests: [],
+            dashboardStatistics: []
+        }
     }
 })
 
@@ -24,8 +36,23 @@ export class DashboardState {
     // constructor(private readonly dashboardApi: DashboardApi) { }
 
     @Selector()
-    static dashboardStatistics(state: DashboardStateModel) {
-        return state.dashboardStatistics;
+    static eventData({ event }: DashboardStateModel) {
+        return event.eventData;
+    }
+
+    @Selector()
+    static dashboardStatistics({ event }: DashboardStateModel) {
+        return event.dashboardStatistics;
+    }
+
+    @Action(SetDashboardState)
+    setDashboardState(ctx: StateContext<DashboardStateModel>, { event }: SetDashboardState) {
+        return ctx.patchState({ event: event });
+    }
+
+    @Action(SetEventData)
+    setEventData(ctx: StateContext<DashboardStateModel>, { eventData }: SetEventData) {
+        return ctx.patchState({ event: { ...ctx.getState().event, eventData } });
     }
 
     // @Action(GetDashboardStatistics)
