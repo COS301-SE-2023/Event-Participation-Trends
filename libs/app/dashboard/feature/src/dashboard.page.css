@@ -115,6 +115,11 @@ ion-button {
     rotate: 0deg;
     transition: 0.5s;
     cursor: pointer;
+    margin-top: 10px;
+}
+
+ion-badge {
+    background-color: red;
 }
 
 .floor-map-settings-icon:hover {

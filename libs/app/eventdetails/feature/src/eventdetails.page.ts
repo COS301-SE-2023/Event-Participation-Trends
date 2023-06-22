@@ -41,10 +41,10 @@ export class EventDetailsPage {
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
 
-      // TODO get event by id
-      if (!id) {
-        this.router.navigate(['/home']);
-      }
+      // TODO get event by id - skip for now
+      // if (!id) {
+      //   this.router.navigate(['/home']);
+      // }
 
 
     });
