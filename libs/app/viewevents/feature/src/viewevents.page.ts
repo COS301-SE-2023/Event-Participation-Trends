@@ -2,14 +2,8 @@ import { Component } from '@angular/core';
 import { RequestAccessModalComponent } from '@event-participation-trends/app/requestaccessmodal/feature';
 import { ViewEventModalComponent } from '@event-participation-trends/app/vieweventmodal/feature';
 import { ModalController } from '@ionic/angular';
-
-interface Event {
-  eventId: string;
-  name: string;
-  location: string;
-  category: string;
-  hasAccess: boolean;
-}
+import { AppApiService } from '@event-participation-trends/app/api';
+import { IEvent } from '@nestjs/cqrs';
 
 @Component({
   selector: 'event-participation-trends-viewevents',
@@ -17,46 +11,18 @@ interface Event {
   styleUrls: ['./viewevents.page.css'],
 })
 export class VieweventsPage {
-  events: Event[] = [
-    // Mock event names, categories and locations. They have to be believable.
-    {
-      eventId: '1',
-      name: 'Polar Bear Plunge',
-      location: 'Antarctica',
-      category: 'Swimming',
-      hasAccess: true,
-    },
-    {
-      eventId: '2',
-      name: 'The Great Wall Marathon',
-      location: 'China',
-      category: 'Running',
-      hasAccess: true,
-    },
-    {
-      eventId: '3',
-      name: 'The Color Run',
-      location: 'United States',
-      category: 'Running',
-      hasAccess: true,
-    },
-    {
-      eventId: '4',
-      name: 'The Great Barrier Reef Marathon Festival',
-      location: 'Australia',
-      category: 'Running',
-      hasAccess: false,
-    },
-    {
-      eventId: '5',
-      name: 'The Great Wall Marathon',
-      location: 'China',
-      category: 'Running',
-      hasAccess: false,
-    }    
-  ];
 
-  constructor(private readonly modalController: ModalController) {}
+  constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
+    this.appApiService.getAllEvents().then((events) => {
+      this.all_events = events;
+      this.subscribed_events = events;
+    });
+
+    this.appApiService.getManagedEvents().then((events) => {
+      this.my_events = events;
+      console.log(events);
+    });
+  }
 
   async showPopupMenu(eventName: string, eventId: string) {
     const modal = await this.modalController.create({
@@ -84,5 +50,26 @@ export class VieweventsPage {
     await modal.present();
 
     const { data } = await modal.onDidDismiss();
+  }
+
+  public all_events: any[] = [];
+  public subscribed_events: any[] = [];
+
+  public my_events: any[] = [];
+
+  hasEvents(): boolean {
+    return true;
+    return this.my_events.length > 0;
+  }
+
+  hasAccess(event: any): boolean {
+
+    for (let i = 0; i < this.subscribed_events.length; i++) {
+      if (this.subscribed_events[i]._id == event._id) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

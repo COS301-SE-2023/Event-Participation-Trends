@@ -1,6 +1,6 @@
-import { UntypedFormBuilder } from '@angular/forms';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { IUser } from '@event-participation-trends/api/user/util';
 
 @Injectable()
 export class PassportService {
@@ -14,6 +14,20 @@ export class PassportService {
       lastnName: user.lastName,
       picture: user.picture,
     };
-    return await this.jwtService.signAsync(willSign);
+    return await this.jwtService.signAsync(willSign, {
+      privateKey: process.env['JWT_SECRET'],
+      expiresIn: process.env['JWT_EXPIRE_TIME'],
+    });
   }
+
+  async getUser(toSign: any) : Promise<IUser>{
+    const user = toSign.user;
+    const willSign: IUser = {
+        Email: user.email,
+        FirstName: user.firstName,
+        LastName: user.lastName,
+        photo: user.picture,
+    };
+        return Promise.resolve(willSign);
+    }
 }

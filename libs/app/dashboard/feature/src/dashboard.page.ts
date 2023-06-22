@@ -25,9 +25,21 @@ export class DashboardPage implements OnInit {
   @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
   @Select(DashboardState.eventData) eventData$!: Observable<{eventId: string, eventName: string} | null>;
 
-  constructor(private modalController : ModalController, private readonly store: Store, private readonly route: ActivatedRoute) { }
+  constructor(private modalController : ModalController, private route: ActivatedRoute, private router: Router, private readonly store: Store) { 
+
+  }
 
   ngOnInit(): void {
+
+    this.route.queryParams.subscribe((params) => {
+      const id = params['id'];
+
+      // TODO get event by id
+      if (!id) {
+        this.router.navigate(['/home']);
+      }
+    });
+
     // this.store.dispatch(new GetAccessRequests());
     // this.store.dispatch(new GetDashboardStatistics());
     console.log('dashboard page init');

@@ -1,11 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
+import { AppApiService } from '@event-participation-trends/app/api';
+import { IUser } from '@event-participation-trends/api/user/util';
 
 @Component({
   selector: 'event-participation-trends-usermanagement',
@@ -15,7 +10,17 @@ interface User {
 export class UsermanagementPage {
   @ViewChild('content-body', { static: true }) contentBody!: ElementRef;
 
-  constructor(private containerElement: ElementRef) {}
+  constructor(
+    private containerElement: ElementRef,
+    private appApiService: AppApiService
+  ) {
+    this.appApiService.getAllUsers().then((users) => {
+      this.users = users;
+    });
+    this.appApiService.getAllUsers().then((users) => {
+      this.old_users = users;
+    });
+  }
 
   overflow = false;
   changed = false;
@@ -29,36 +34,34 @@ export class UsermanagementPage {
     this.overflow = container.scrollHeight > container.clientHeight;
   }
 
-  users: User[] = [
-    {
-      id: 1,
-      name: 'User 1',
-      email: 'user1@gmail.com',
-      role: 'Manager',
-    },
-    {
-      id: 2,
-      name: 'User 2',
-      email: 'user2@gmail.com',
-      role: 'Viewer',
-    },
-  ]
+  old_users: IUser[] = [];
+  users: IUser[] = [];
 
   isEmpty(): boolean {
     return this.users.length === 0;
   }
 
-  isManager(user: User): boolean {
-    return user.role === 'Manager';
+  isManager(user: IUser): boolean {
+    return user.Role === 'manager';
   }
 
-  toggleRole(user: User): void {
-    user.role = this.isManager(user) ? 'Viewer' : 'Manager';
+  toggleRole(user: IUser): void {
+    user.Role = this.isManager(user) ? 'viewer' : 'manager';
     this.changed = true;
   }
 
   saveChanges(): void {
+    for (let i = 0; i < this.users.length; i++) {
+      if (this.users[i].Role !== this.old_users[i].Role) {
+        this.appApiService.updateUserRole({
+          update: {
+            UserEmail: this.users[i].Email,
+            UpdateRole: this.users[i].Role,
+          },
+        });
+      }
+    }
+
     this.changed = false;
   }
-
 }

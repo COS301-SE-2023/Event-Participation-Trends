@@ -14,6 +14,7 @@ import { AccessRequestsState } from '@event-participation-trends/app/accessreque
 import { AccessRequestsModule } from '@event-participation-trends/app/accessrequests/feature';
 // import { SocialLoginModule } from 'angularx-social-login';
 // import { GoogleLoginProvider, SocialAuthServiceConfig } from 'angularx-social-login';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [CoreShell],
@@ -24,6 +25,7 @@ import { AccessRequestsModule } from '@event-participation-trends/app/accessrequ
     NgxsModule.forRoot([ErrorsState]),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     ErrorModule,
+    HttpClientModule
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [CoreShell]
