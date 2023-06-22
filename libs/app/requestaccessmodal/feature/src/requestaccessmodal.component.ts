@@ -13,8 +13,7 @@ import { Store } from '@ngxs/store';
   styleUrls: ['./requestaccessmodal.component.css'],
 })
 export class RequestAccessModalComponent {
-  @Input() eventName: string | undefined;
-  @Input() eventId: string | undefined;
+  @Input() event: any;
 
   handlerMessage = '';
 
@@ -32,7 +31,7 @@ export class RequestAccessModalComponent {
 
   async sendAccessRequest() {
     const alert = await this.alertController.create({
-      header: `Are you sure you want to request access to ${this.eventName}?`,
+      header: `Are you sure you want to request access to ${this.event.Name}?`,
       cssClass: 'access-request-alert',
       buttons: [
         {
@@ -47,8 +46,11 @@ export class RequestAccessModalComponent {
           role: 'confirm',
           handler: () => {
             this.handlerMessage = `Access request sent.`;
-            this.presentToast('bottom', 'Access request sent.');
-            this.requestAccess({ _id: this.eventId }); //api request
+            this.requestAccess({ _id: this.event._Id }); //api request
+            // this.presentToastSuccess('bottom', 'Access request sent.'); // if access request is successful
+            // this.presentToastFailure('bottom', 'Access request failed.'); // if access request fails
+
+            this.closeModal();
           },
         },
       ],
@@ -59,12 +61,23 @@ export class RequestAccessModalComponent {
     const { role } = await alert.onDidDismiss();
   }
 
-  async presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
+  async presentToastSuccess(position: 'top' | 'middle' | 'bottom', message: string) {
     const toast = await this.toastController.create({
       message: message,
       duration: 1600,
       position: position,
       color: 'success',
+    });
+
+    await toast.present();
+  }
+
+  async presentToastFailure(position: 'top' | 'middle' | 'bottom', message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 1600,
+      position: position,
+      color: 'danger',
     });
 
     await toast.present();

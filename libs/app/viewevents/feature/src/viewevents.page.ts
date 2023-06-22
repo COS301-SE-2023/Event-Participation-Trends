@@ -80,6 +80,50 @@ export class VieweventsPage {
   }
 
   unsubscribedEvents(): any[] {
+    // mock data with the following interface
+    /* interface IEvent {
+      StartDate?: Date | undefined | null;
+      EndDate?: Date | undefined | null;
+      Name?: string | undefined | null;
+      Category?: string | undefined | null;
+      Location?: IEventLocation | undefined | null;
+      thisFloorLayout?: IFloorLayout | undefined | null;
+      Stalls?: IStall[] | undefined | null;
+      Sensors?: ISensor[] | undefined | null;
+      Devices?: IDevice[] | undefined | null;
+      BTIDtoDeviceBuffer?: ITEMP_DEVICE_TO_DT[] | undefined | null;
+      TEMPBuffer?: ITEMP_DEVICE_BUFFER[] | undefined | null;
+      Manager?: Types.ObjectId | undefined | null;
+      Requesters?: Types.ObjectId[] | undefined | null;
+      Viewers?: Types.ObjectId[] | undefined | null;
+    } */
+
+    return [
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: "Event 1",
+        Category: "Category 1",
+        Location: {
+          Name: "Location 1",
+          Address: "Address 1",
+          City: "City 1",
+          State: "State 1",
+          Zip: "Zip 1",
+          Country: "Country 1",
+        },
+        thisFloorLayout: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        BTIDtoDeviceBuffer: null,
+        TEMPBuffer: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+      },
+    ];
+
     return this.all_events.filter((event) => {
       return !this.hasAccess(event);
     });
