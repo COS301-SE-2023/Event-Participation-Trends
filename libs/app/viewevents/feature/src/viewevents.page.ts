@@ -11,7 +11,7 @@ export class VieweventsPage {
   constructor(private appApiService: AppApiService) {
     this.appApiService.getAllEvents().then((events) => {
       this.all_events = events;
-      //this.subscribed_events = events;
+      this.subscribed_events = events;
     });
 
     this.appApiService.getManagedEvents().then((events) => {

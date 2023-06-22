@@ -34,20 +34,15 @@
         [routerLink]="['/eventdetails']" [queryParams]="{id: event._id}" queryParamsHandling="merge"
         >
         <ion-card-content
-          class="flex flex-col h-full duration-300 transition-all"
+          class="flex flex-col h-full duration-300 transition-all bg-transparent"
         >
-          <ion-icon
-            class="h-6 w-6 p-4 duration-300 transition-all absolute self-end text-ept-bumble-yellow"
-            name="settings-outline"
-          >
-          </ion-icon>
           <p
-            class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
+            class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium bg-transparent"
           >
             {{event.Name}}
           </p>
           <div
-            class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
+            class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all bg-transparent"
           >
             <p class="px-4 py-2 self-start duration-300 transition-all">
               Location: {{event.Location}}
@@ -115,7 +110,7 @@
         *ngFor="let event of unsubscribedEvents()"
         class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:cursor-pointer"
         [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : hasAccess(event), 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !hasAccess(event)}"
-        (click)="requestAccess(event)"
+        (click)="requestAccess(event)"  
         >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all"
