@@ -1,6 +1,6 @@
 <subpagenav [currentPage]="'/home/createfloorplan'"></subpagenav>
 
-<ion-content>
+<ion-content [fullscreen]="true">
   <div class="grid grid-cols-12 gap-3 p-3 h-full">
     <div
       class="tool-menu col-span-2 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative"
@@ -81,18 +81,32 @@
       >
     </div>
     <div
-      class="canvas relative col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey"
-      [ngClass]="{'flex flex-col items-center justify-center' : noItemsAdded()}"
+      #canvasParent
+      class="relative col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2"
       (drop)="onDrop($event)"
       (dragover)="onDragOver($event)"
     >
       <p
-        class="text-center text-2xl text-ept-deep-grey opacity-30 font-semibold mt-10"
+        class="text-center text-2xl text-ept-deep-grey opacity-30 font-semibold mt-10 absolute top-1/2 left-1/3"
         *ngIf="noItemsAdded()"
       >
         Drag a component to the canvas
       </p>
-      <canvas #canvasElement></canvas>
+      <canvas #canvasElement class="border-ept-off-white border-4"></canvas>
     </div>
+    <!-- <div
+      #canvasParent
+      class="relative col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2"
+      (drop)="onDrop($event)"
+      (dragover)="onDragOver($event)"
+    >
+      <p
+        *ngIf="noItemsAdded()"
+        class="z-50 text-center text-2xl text-ept-deep-grey opacity-30 font-semibold absolute top-1/2 left-1/4"
+      >
+        Drag & Drop components
+      </p>
+      <canvas #canvasElement></canvas>
+    </div> -->
   </div>
 </ion-content>

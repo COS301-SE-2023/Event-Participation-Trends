@@ -22,12 +22,24 @@ export class CreateFloorPlanPage {
   canvasItems: DroppedItem[] = [];
   canvas!: fabric.Canvas;
   @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
 
   ngAfterViewInit(): void {
-    const canvasElement = this.canvasElement.nativeElement;
-    this.canvas = new fabric.Canvas(canvasElement);
-    this.canvas.setDimensions({ width: 800, height: 600 });
-    this.canvas.on('object:moving', this.onObjectMoving.bind(this));
+    // wait for elements to render before initializing fabric canvas
+    setTimeout(() => {
+      const canvasElement = this.canvasElement?.nativeElement;
+      const canvasContainer = this.canvasParent;
+
+      // get width and height of the parent element
+      const width = canvasContainer.nativeElement.offsetWidth;
+      const height = canvasContainer.nativeElement.offsetHeight;
+
+      console.log(width, height);
+      
+      this.canvas = new fabric.Canvas(canvasElement);
+      this.canvas.setDimensions({ width: width*0.98, height: height*0.965 });
+      this.canvas.on('object:moving', this.onObjectMoving.bind(this));
+    }, 1);
   }
 
   noItemsAdded(): boolean {
