@@ -6,3 +6,4 @@ export * from './get-all-view-requests.response';
 export * from './decline-view-request.response';
 export * from './accept-view-request.response';
 export * from './get-all-viewer-events.response';
+export * from './remove-viewer.response';
