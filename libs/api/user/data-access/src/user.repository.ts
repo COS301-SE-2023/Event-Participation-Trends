@@ -39,4 +39,10 @@ export class UserRepository {
             { _id: {$eq: userID}},
             { $push: { Viewing: eventID } });
     }
+
+    async getPopulatedViewingEvents(userId: Types.ObjectId){
+        return await this.userModel.find(
+            {_id :{$eq: userId}},
+            { Viewing: 1 }).populate('Viewing');
+    }
 }
