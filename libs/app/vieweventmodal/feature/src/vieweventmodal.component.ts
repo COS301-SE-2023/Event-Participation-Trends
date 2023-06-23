@@ -22,4 +22,9 @@ export class ViewEventModalComponent {
     this.closeModal();
     this.navController.navigateForward('/dashboard', { queryParams: { eventName: this.eventName, queryParamsHandling: 'merge' } });
   }
+
+  openEventScreenView() {
+    this.closeModal();
+    this.navController.navigateForward('/eventscreenview', { queryParams: { eventName: this.eventName, queryParamsHandling: 'merge' } });
+  }
 }
