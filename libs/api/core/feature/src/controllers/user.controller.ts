@@ -46,4 +46,13 @@ export class UserController {
         return this.userService.updateUserRole(extractRequest);
     }
 
+    @Get('getRole')
+    @SetMetadata('role',Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getRole(
+        @Req() req: Request,
+    ): Promise<Role> {
+        const request: any =req;
+        return request.user["role"];
+    }
 }
