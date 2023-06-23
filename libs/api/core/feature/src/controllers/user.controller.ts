@@ -8,7 +8,7 @@ import {
 } from '@event-participation-trends/api/user/util';
 import { Body, Controller, Post, Get, UseGuards, Req, SetMetadata } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
+import { JwtGuard, RbacGuard, CsrfGuard } from '@event-participation-trends/api/guards';
 
 @Controller('user')
 export class UserController {
@@ -16,7 +16,7 @@ export class UserController {
 
     @Get('getAllUsers')
     @SetMetadata('role',Role.ADMIN)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getAllUsers(
         @Req() req: Request,
     ): Promise<IGetUsersResponse> {
@@ -29,7 +29,7 @@ export class UserController {
 
     @Post('updateUserRole')
     @SetMetadata('role',Role.ADMIN)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async updateUserRole(
         @Req() req: Request,
         @Body() requestBody: IUpdateRoleRequest,

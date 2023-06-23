@@ -40,6 +40,7 @@
     "moment": "^2.29.4",
     "mongoose": "^7.2.1",
     "mqtt": "^4.3.7",
+    "ngx-cookie-service": "^16.0.0",
     "object-hash": "^3.0.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
