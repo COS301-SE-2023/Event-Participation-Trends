@@ -45,4 +45,10 @@ export class UserRepository {
             {_id :{$eq: userId}},
             { Viewing: 1 }).populate('Viewing');
     }
+
+    async removeEvent(eventID: Types.ObjectId, userID: Types.ObjectId){
+        return await this.userModel.updateOne(
+            {_id :{$eq: userID}},
+            { $pull: { Viewing: eventID } });
+    }
 }
