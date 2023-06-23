@@ -35,8 +35,16 @@ export class UsermanagementPage {
     if (this.searchValue === '') {
       return this.users;
     } else {
-      return this.users.filter((user) =>
-        user.Email? user.Email.includes(this.searchValue) : false
+      return this.users.filter((user) => {
+        let include = false;
+
+        include = user.Email? (user.Email.toLowerCase().includes(this.searchValue.toLowerCase()) ? true : include) : include;
+        include = user.Role? (user.Role.toLowerCase().includes(this.searchValue.toLowerCase()) ? true : include) : include;
+        include = user.FirstName? (user.FirstName.toLowerCase().includes(this.searchValue.toLowerCase()) ? true : include) : include;
+        include = user.LastName? (user.LastName.toLowerCase().includes(this.searchValue.toLowerCase()) ? true : include) : include;
+
+        return include;
+      }
       );
     }
   }
