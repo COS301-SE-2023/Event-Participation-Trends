@@ -14,6 +14,7 @@
       class="flex justify-center items-center bg-transparent text-inherit text-md h-full"
     >
       <ion-tab-button
+        *ngIf="allowUsers()"
         tab="usermanagement"
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
@@ -24,10 +25,12 @@
       </ion-tab-button>
 
       <div
+        *ngIf="allowUsers()"
         class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
       ></div>
 
       <ion-tab-button
+        *ngIf="allowView()"
         tab="viewevents"
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
@@ -37,10 +40,12 @@
       </ion-tab-button>
 
       <div
+        *ngIf="allowCompare()"
         class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
       ></div>
 
       <ion-tab-button
+        *ngIf="allowCompare()"
         tab="comparingevents"
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
