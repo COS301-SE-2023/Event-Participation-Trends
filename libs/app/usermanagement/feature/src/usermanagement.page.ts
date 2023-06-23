@@ -10,6 +10,8 @@ import { IUser } from '@event-participation-trends/api/user/util';
 export class UsermanagementPage {
   @ViewChild('content-body', { static: true }) contentBody!: ElementRef;
 
+  public searchValue = '';
+
   constructor(
     private containerElement: ElementRef,
     private appApiService: AppApiService
@@ -27,6 +29,16 @@ export class UsermanagementPage {
 
   ngAfterViewInit() {
     this.checkOverflow();
+  }
+
+  getUsers(): IUser[] {
+    if (this.searchValue === '') {
+      return this.users;
+    } else {
+      return this.users.filter((user) =>
+        user.Email? user.Email.includes(this.searchValue) : false
+      );
+    }
   }
 
   checkOverflow() {
