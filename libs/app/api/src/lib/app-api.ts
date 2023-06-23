@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
+  IGetUserRoleResponse,
   IGetUsersResponse,
   IUpdateRoleRequest,
   IUser,
   IupdateRoleResponse,
+  Role,
 } from '@event-participation-trends/api/user/util';
 import {
   IAcceptViewRequestRequest,
@@ -59,6 +61,19 @@ export class AppApiService {
       })
     ).then((response) => {
       return response.status;
+    });
+  }
+
+  async getRole(): Promise<IGetUserRoleResponse> {
+    return firstValueFrom(
+      this.http.get<IGetUserRoleResponse>('/api/user/getRole', {
+        headers: {
+          'x-csrf-token': this.cookieService.get('csrf'),
+        },
+      })
+    ).then((response) => {
+      console.log('response', response);
+      return response;
     });
   }
 
