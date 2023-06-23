@@ -20,6 +20,9 @@ import {
     IAcceptViewRequestRequest,
     IAcceptViewRequestResponse,
     AcceptViewRequestCommand,
+    IGetUserViewingEventsRequest,
+    IGetUserViewingEventsResponse,
+    GetUserViewingEventsQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -54,5 +57,9 @@ export class EventService {
 
     async acceptViewRequest(request: IAcceptViewRequestRequest) {
         return await this.commandBus.execute<AcceptViewRequestCommand, IAcceptViewRequestResponse>(new AcceptViewRequestCommand(request));
+    }
+
+    async getUserViewingEvenst(request: IGetUserViewingEventsRequest) {
+        return await this.queryBus.execute<GetUserViewingEventsQuery, IGetUserViewingEventsResponse>(new GetUserViewingEventsQuery(request));
     }
 }
