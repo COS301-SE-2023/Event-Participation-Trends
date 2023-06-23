@@ -58,7 +58,7 @@ export class UsermanagementPage {
   users: IUser[] = [];
 
   isEmpty(): boolean {
-    return this.users.length === 0;
+    return this.getUsers().length === 0;
   }
 
   isManager(user: IUser): boolean {
