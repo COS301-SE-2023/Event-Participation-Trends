@@ -14,6 +14,8 @@ import {
     IDeclineViewRequestResponse,
     IAcceptViewRequestRequest,
     IAcceptViewRequestResponse,
+    IGetUserViewingEventsRequest,
+    IGetUserViewingEventsResponse,
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata } from '@nestjs/common';
 import { Request } from 'express';
@@ -121,6 +123,20 @@ export class EventController {
             eventId: requestBody.eventId,
         }
         return this.eventService.acceptViewRequest(extractRequest);
+    }
+
+    @Get('getAllViewingEvents')
+    @SetMetadata('role',Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard)
+    async getAllViewingEvents(
+        @Req() req: Request,
+        @Query() query: any
+    ): Promise<IGetUserViewingEventsResponse> {
+        const request: any =req;
+        const extractRequest: IGetUserViewingEventsRequest = {
+            userEmail: request.user["email"],
+        }
+        return this.eventService.getUserViewingEvenst(extractRequest);
     }
 
 }
