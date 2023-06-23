@@ -16,6 +16,8 @@ import { AccessRequestsModule } from '@event-participation-trends/app/accessrequ
 // import { GoogleLoginProvider, SocialAuthServiceConfig } from 'angularx-social-login';
 import { HttpClientModule } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorInterceptor } from '@event-participation-trends/app/api';
 
 @NgModule({
   declarations: [CoreShell],
@@ -28,7 +30,11 @@ import { CookieService } from 'ngx-cookie-service';
     ErrorModule,
     HttpClientModule,
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, CookieService],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, CookieService, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+  }],
   bootstrap: [CoreShell]
 })
 export class CoreModule { }
