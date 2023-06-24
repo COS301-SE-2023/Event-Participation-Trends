@@ -130,6 +130,14 @@ export class EventController {
         @Query() query: any
     ): Promise<IGetAllViewRequestsResponse> {
         const request: any =req;
+
+        if(request.user['email']==undefined || request.user['email']==null)
+        throw new HttpException("Bad Request: manager email not provided", 400);
+
+        if(query.eventId==undefined || query.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
+
         const extractRequest: IGetAllViewRequestsRequest = {
             managerEmail: request.user["email"],
             eventId: query.eventId,
