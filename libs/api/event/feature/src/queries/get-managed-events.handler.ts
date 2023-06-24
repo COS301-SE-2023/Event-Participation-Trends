@@ -29,7 +29,7 @@ export class GetManagedEventsHandler implements IQueryHandler<GetManagedEventsQu
                 else
                     return {events: <IEvent[]>eventDocs};
             }else{
-                throw new Error(`User with email ${request.ManagerEmail} does not have manager Privileges`);
+                return {events: <IEvent[]>[]};
             }
         }
     } 
