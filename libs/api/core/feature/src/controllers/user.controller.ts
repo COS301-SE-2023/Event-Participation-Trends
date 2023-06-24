@@ -6,7 +6,7 @@ import {
     IupdateRoleResponse,
     Role,
 } from '@event-participation-trends/api/user/util';
-import { Body, Controller, Post, Get, UseGuards, Req, SetMetadata } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
 
@@ -21,6 +21,10 @@ export class UserController {
         @Req() req: Request,
     ): Promise<IGetUsersResponse> {
         const request: any =req;
+
+        if(request.user["email"]==undefined || request.user["email"]==null)
+            throw new HttpException("Bad Request: admin email not provided", 400);
+
         const extractRequest: IGetUsersRequest = {
             AdminEmail: request.user["email"]
         }
