@@ -28,7 +28,10 @@ import {
     RemoveViewerFromEventCommand,
     IUpdateEventDetailsRequest,
     IUpdateEventDetailsResponse,
-    UpdateEventDetailsCommand
+    UpdateEventDetailsCommand,
+    IGetEventRequest,
+    IGetEventResponse,
+    GetEventQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -75,5 +78,9 @@ export class EventService {
 
     async updateEventDetails(request: IUpdateEventDetailsRequest){
         return await this.commandBus.execute<UpdateEventDetailsCommand, IUpdateEventDetailsResponse>(new UpdateEventDetailsCommand(request));
+    }
+
+    async getEvent(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventRequest>(new GetEventQuery(request));
     }
 }
