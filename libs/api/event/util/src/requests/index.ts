@@ -7,3 +7,4 @@ export * from './decline-view-request.request';
 export * from './accept-veiw-request.request';
 export * from './get-all-viewer-events.request';
 export * from './remove-viewer.request';
+export * from './update-event-details.request';
