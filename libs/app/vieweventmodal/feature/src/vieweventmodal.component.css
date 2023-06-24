@@ -5,3 +5,29 @@ ion-button {
     background-color: rgb(16 16 16 / var(--tw-bg-opacity));
     text-transform: none;
 }
+
+.parent-for-icon {
+    position: relative;
+    /* Add other styles for the parent element as needed */
+  }
+  
+  .div-icon {
+    animation: bouncing-animation 2.3s infinite;
+    /* Add other styles for the div as needed */
+  }
+  
+  @keyframes bouncing-animation {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-30px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  
+  .parent-for-icon:not(:hover) .div-icon {
+    animation-play-state: paused;
+  }
