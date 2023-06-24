@@ -14,6 +14,10 @@ import {
     IDeclineViewRequestResponse,
     IAcceptViewRequestRequest,
     IAcceptViewRequestResponse,
+    IGetUserViewingEventsRequest,
+    IGetUserViewingEventsResponse,
+    IRemoveViewerRequest,
+    IRemoveViewerResponse,
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata } from '@nestjs/common';
 import { Request } from 'express';
@@ -121,6 +125,31 @@ export class EventController {
             eventId: requestBody.eventId,
         }
         return this.eventService.acceptViewRequest(extractRequest);
+    }
+
+    @Get('getAllViewingEvents')
+    @SetMetadata('role',Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard)
+    async getAllViewingEvents(
+        @Req() req: Request,
+    ): Promise<IGetUserViewingEventsResponse> {
+        const request: any =req;
+        const extractRequest: IGetUserViewingEventsRequest = {
+            userEmail: request.user["email"],
+        }
+        return this.eventService.getUserViewingEvents(extractRequest);
+    }
+
+    @Post('removeViewerFromEvent')
+    @SetMetadata('role',Role.MANAGER)
+    async removeViewerFromEvent(
+        @Body() requestBody: IRemoveViewerRequest,
+    ): Promise<IRemoveViewerResponse> {
+        const extractRequest: IRemoveViewerRequest = {
+            userEmail: requestBody.userEmail,
+            eventId: requestBody.eventId
+        }
+        return this.eventService.removeViewerFromEvent(extractRequest);
     }
 
 }
