@@ -18,6 +18,8 @@ import {
     IGetUserViewingEventsResponse,
     IRemoveViewerRequest,
     IRemoveViewerResponse,
+    IUpdateEventDetailsRequest,
+    IUpdateEventDetailsResponse,
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata } from '@nestjs/common';
 import { Request } from 'express';
@@ -150,6 +152,18 @@ export class EventController {
             eventId: requestBody.eventId
         }
         return this.eventService.removeViewerFromEvent(extractRequest);
+    }
+
+    @Post('updateEventDetails')
+    @SetMetadata('role',Role.MANAGER)
+    async updateEventDetails(
+        @Body() requestBody: IUpdateEventDetailsRequest,
+    ): Promise<IUpdateEventDetailsResponse> {
+        const extractRequest: IUpdateEventDetailsRequest = {
+            eventId: requestBody.eventId,
+            eventDetails: requestBody.eventDetails,
+        }
+        return this.eventService.updateEventDetails(extractRequest);
     }
 
 }
