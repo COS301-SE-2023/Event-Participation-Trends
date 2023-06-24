@@ -151,6 +151,13 @@ export class EventController {
     async declineViewRequest(
         @Body() requestBody: IDeclineViewRequestRequest,
     ): Promise<IDeclineViewRequestResponse> {
+        
+        if(requestBody.userEmail==undefined || requestBody.userEmail==null)
+            throw new HttpException("Bad Request: viewer email not provided", 400);
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
         const extractRequest: IDeclineViewRequestRequest = {
             userEmail: requestBody.userEmail,
             eventId: requestBody.eventId,
