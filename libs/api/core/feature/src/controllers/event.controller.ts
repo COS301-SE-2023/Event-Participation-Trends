@@ -73,6 +73,10 @@ export class EventController {
         @Req() req: Request 
     ): Promise<IGetAllEventsResponse> {
         const request: any =req;
+
+        if(request.user['email']==undefined)
+            throw new HttpException("Bad Request: Admin email not provided", 400);
+
         const extractRequest: IGetAllEventsRequest = {
             AdminEmail: request.user["email"],
         }
