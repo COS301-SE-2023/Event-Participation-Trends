@@ -26,6 +26,9 @@ import {
     IRemoveViewerRequest,
     IRemoveViewerResponse,
     RemoveViewerFromEventCommand,
+    IUpdateEventDetailsRequest,
+    IUpdateEventDetailsResponse,
+    UpdateEventDetailsCommand
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -68,5 +71,9 @@ export class EventService {
 
     async removeViewerFromEvent(request: IRemoveViewerRequest) {
         return await this.commandBus.execute<RemoveViewerFromEventCommand, IRemoveViewerResponse>(new RemoveViewerFromEventCommand(request));
+    }
+
+    async updateEventDetails(request: IUpdateEventDetailsRequest){
+        return await this.commandBus.execute<UpdateEventDetailsCommand, IUpdateEventDetailsResponse>(new UpdateEventDetailsCommand(request));
     }
 }
