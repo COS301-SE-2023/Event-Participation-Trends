@@ -16,7 +16,7 @@ export class GetUserViewingEventsHandler implements IQueryHandler<GetUserViewing
         const userDoc = await this.userRepository.getUser(request.userEmail);
 
         const eventDocs = await this.userRepository.getPopulatedViewingEvents(userDoc[0]._id);
-
-        return {events: <IEvent[]>eventDocs};
+        
+        return {events: <IEvent[]>eventDocs[0].Viewing};
     }
 }
