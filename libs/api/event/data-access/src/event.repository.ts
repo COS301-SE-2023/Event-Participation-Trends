@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventLocation } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
@@ -89,4 +89,34 @@ export class EventRepository {
             {_id :{$eq: eventID}},
             { $pull: { Viewers: userID } });
     }
+
+    async updateEventStartDate(eventID: Types.ObjectId, startDate: Date){
+        return await this.eventModel.updateOne(
+            {_id :{$eq: eventID}},{$set: {StartDate :startDate}})
+    }
+
+    async updateEventEndDate(eventID: Types.ObjectId, endDate: Date){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {EndDate :endDate}})
+    }
+
+    async updateEventName(eventID: Types.ObjectId, name: string){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {Name :name}})
+    }
+
+    async updateEventCategory(eventID: Types.ObjectId, category: string){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {Category :category}})
+    }
+
+    async updateEventLocation(eventID: Types.ObjectId, location: IEventLocation){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {Location :location}})
+    }
+
+    async getALLEventNames(){
+        return await this.eventModel.find({ Name: 1 });
+    }
+
 }

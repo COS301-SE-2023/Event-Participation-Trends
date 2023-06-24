@@ -18,8 +18,10 @@ import {
     IGetUserViewingEventsResponse,
     IRemoveViewerRequest,
     IRemoveViewerResponse,
+    IUpdateEventDetailsRequest,
+    IUpdateEventDetailsResponse,
 } from '@event-participation-trends/api/event/util';
-import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
 import { IEventDetails, IEventId } from '@event-participation-trends/api/event/util';
 import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
@@ -38,11 +40,30 @@ export class EventController {
         @Body() requestBody: IEventDetails,
     ): Promise<ICreateEventResponse> {
         const request: any =req;
+        
+        if(request.user['email']==undefined)
+            throw new HttpException("Bad Request: Manager email not provided", 400);
+
+        if(requestBody.StartDate == undefined || requestBody.StartDate ==null)
+            throw new HttpException("Bad Request: Event StartDate not provided", 400);
+
+        if(requestBody.EndDate == undefined || requestBody.EndDate ==null)
+            throw new HttpException("Bad Request: Event EndDate not provided", 400);
+
+        if(requestBody.Category == undefined || requestBody.Category ==null)
+            throw new HttpException("Bad Request: Event Category not provided", 400);
+        
+        if(requestBody.Name == undefined || requestBody.Name ==null)
+            throw new HttpException("Bad Request: Event Name not provided", 400);
+        
+        if(requestBody.Location == undefined || requestBody.Location ==null)
+            throw new HttpException("Bad Request: Event Location not provided", 400);
+            
         const extractRequest: ICreateEventRequest = {
             ManagerEmail: request.user['email'],
             Event: requestBody,
         }
-        return this.eventService.createEvent(extractRequest);
+       return this.eventService.createEvent(extractRequest);
     }
 
     @Get('getAllEvents')
@@ -52,6 +73,10 @@ export class EventController {
         @Req() req: Request 
     ): Promise<IGetAllEventsResponse> {
         const request: any =req;
+
+        if(request.user['email']==undefined || request.user['email']==null)
+            throw new HttpException("Bad Request: Admin email not provided", 400);
+
         const extractRequest: IGetAllEventsRequest = {
             AdminEmail: request.user["email"],
         }
@@ -65,6 +90,10 @@ export class EventController {
         @Req() req: Request
     ): Promise<IGetManagedEventsResponse> {
         const request: any =req;
+
+        if(request.user['email']==undefined || request.user['email']==null)
+            throw new HttpException("Bad Request: Manager email not provided", 400);
+
         const extractRequest: IGetManagedEventsRequest = {
             ManagerEmail: request.user["email"],
         }
@@ -79,6 +108,13 @@ export class EventController {
         @Body() requestBody: IEventId,
     ): Promise<ISendViewRequestResponse> {
         const request: any =req;
+
+        if(request.user['email']==undefined || request.user['email']==null)
+            throw new HttpException("Bad Request: viewer email not provided", 400);
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
         const extractRequest: ISendViewRequestRequest = {
             UserEmail: request.user["email"],
             eventId: requestBody.eventId,
@@ -94,6 +130,14 @@ export class EventController {
         @Query() query: any
     ): Promise<IGetAllViewRequestsResponse> {
         const request: any =req;
+
+        if(request.user['email']==undefined || request.user['email']==null)
+        throw new HttpException("Bad Request: manager email not provided", 400);
+
+        if(query.eventId==undefined || query.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
+
         const extractRequest: IGetAllViewRequestsRequest = {
             managerEmail: request.user["email"],
             eventId: query.eventId,
@@ -107,6 +151,13 @@ export class EventController {
     async declineViewRequest(
         @Body() requestBody: IDeclineViewRequestRequest,
     ): Promise<IDeclineViewRequestResponse> {
+        
+        if(requestBody.userEmail==undefined || requestBody.userEmail==null)
+            throw new HttpException("Bad Request: viewer email not provided", 400);
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
         const extractRequest: IDeclineViewRequestRequest = {
             userEmail: requestBody.userEmail,
             eventId: requestBody.eventId,
@@ -120,6 +171,13 @@ export class EventController {
     async acceptViewRequest(
         @Body() requestBody: IAcceptViewRequestRequest,
     ): Promise<IAcceptViewRequestResponse> {
+
+        if(requestBody.userEmail==undefined || requestBody.userEmail==null)
+            throw new HttpException("Bad Request: viewer email not provided", 400);
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
         const extractRequest: IAcceptViewRequestRequest = {
             userEmail: requestBody.userEmail,
             eventId: requestBody.eventId,
@@ -134,6 +192,10 @@ export class EventController {
         @Req() req: Request,
     ): Promise<IGetUserViewingEventsResponse> {
         const request: any =req;
+
+        if( request.user["email"]==undefined ||  request.user["email"]==null)
+            throw new HttpException("Bad Request: viewer email not provided", 400);
+
         const extractRequest: IGetUserViewingEventsRequest = {
             userEmail: request.user["email"],
         }
@@ -145,11 +207,34 @@ export class EventController {
     async removeViewerFromEvent(
         @Body() requestBody: IRemoveViewerRequest,
     ): Promise<IRemoveViewerResponse> {
+
+        if(requestBody.userEmail==undefined || requestBody.userEmail==null)
+        throw new HttpException("Bad Request: viewer email not provided", 400);
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
         const extractRequest: IRemoveViewerRequest = {
             userEmail: requestBody.userEmail,
             eventId: requestBody.eventId
         }
         return this.eventService.removeViewerFromEvent(extractRequest);
+    }
+
+    @Post('updateEventDetails')
+    @SetMetadata('role',Role.MANAGER)
+    async updateEventDetails(
+        @Body() requestBody: IUpdateEventDetailsRequest,
+    ): Promise<IUpdateEventDetailsResponse> {
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
+        const extractRequest: IUpdateEventDetailsRequest = {
+            eventId: requestBody.eventId,
+            eventDetails: requestBody.eventDetails,
+        }
+        return this.eventService.updateEventDetails(extractRequest);
     }
 
 }

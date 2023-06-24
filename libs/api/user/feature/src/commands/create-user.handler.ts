@@ -4,6 +4,7 @@ import { Status, Role } from'@event-participation-trends/api/user/util';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { User } from '../models';
 import { Types } from 'mongoose';
+import { HttpException } from '@nestjs/common';
  
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand, ICreateUserResponse> {
@@ -18,7 +19,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand, ICr
         const request = command.request.user;
 
         if (!request.Email)
-            throw new Error('Missing required field: Eamil');
+            throw new HttpException("Bad Request: email not provided", 400);
 
         const userDoc= await this.userRepository.getUser(request.Email || "");
         if(userDoc.length == 0){

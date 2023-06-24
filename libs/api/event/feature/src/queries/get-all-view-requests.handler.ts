@@ -1,6 +1,6 @@
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
-import { GetAllViewRequestsQuery, IEvent, IGetAllViewRequestsResponse } from '@event-participation-trends/api/event/util';
+import { GetAllViewRequestsQuery, IGetAllViewRequestsResponse } from '@event-participation-trends/api/event/util';
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { Types } from 'mongoose';
 import { IUser } from '@event-participation-trends/api/user/util';

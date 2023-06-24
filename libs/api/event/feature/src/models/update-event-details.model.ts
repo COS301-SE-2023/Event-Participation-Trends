@@ -1,6 +1,5 @@
 import { 
-    IEventDetails, 
-    CreateEventEvent, 
+    IUpdateEventDetails,
     UpdateEventDetialsEvent,
     } from '@event-participation-trends/api/event/util';
 import {
@@ -9,8 +8,9 @@ import {
 import { Types } from 'mongoose';
 import { AggregateRoot } from '@nestjs/cqrs';
 
-export class EventDetails extends AggregateRoot implements IEventDetails {
+export class UpdateEventDetails extends AggregateRoot implements IUpdateEventDetails {
     constructor(
+        public EventId?: Types.ObjectId | undefined | null,
         public StartDate?: Date | undefined | null,
         public EndDate?: Date | undefined | null,
         public Name?: string | undefined | null,
@@ -21,12 +21,13 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
         super();
     }
 
-    create() {
-        this.apply(new CreateEventEvent(this.toJSON()));
+    update(){
+        this.apply(new UpdateEventDetialsEvent(this.toJSON()));
     }
 
-    static fromData(event: IEventDetails): EventDetails {
-        const instance = new EventDetails(
+    static fromData(event: IUpdateEventDetails): UpdateEventDetails {
+        const instance = new UpdateEventDetails(
+            event.EventId,
             event.StartDate,
             event.EndDate,
             event.Name,
@@ -37,8 +38,9 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
         return instance;
     }
 
-    toJSON(): IEventDetails {
+    toJSON(): IUpdateEventDetails {
         return {
+            EventId: this.EventId,
             StartDate: this.StartDate,
             EndDate: this.EndDate,
             Name: this.Name,

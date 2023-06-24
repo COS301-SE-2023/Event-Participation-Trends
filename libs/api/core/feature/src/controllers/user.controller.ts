@@ -7,15 +7,7 @@ import {
   IupdateRoleResponse,
   Role,
 } from '@event-participation-trends/api/user/util';
-import {
-  Body,
-  Controller,
-  Post,
-  Get,
-  UseGuards,
-  Req,
-  SetMetadata,
-} from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
 import {
   JwtGuard,
@@ -26,45 +18,59 @@ import {
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
+    @Get('getAllUsers')
+    @SetMetadata('role',Role.ADMIN)
+    @UseGuards(JwtGuard, RbacGuard)
+    async getAllUsers(
+        @Req() req: Request,
+    ): Promise<IGetUsersResponse> {
+        const request: any =req;
 
-  @Get('getAllUsers')
-  @SetMetadata('role', Role.ADMIN)
-  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
-  async getAllUsers(@Req() req: Request): Promise<IGetUsersResponse> {
-    const request: any = req;
-    const extractRequest: IGetUsersRequest = {
-      AdminEmail: request.user['email'],
-    };
-    return this.userService.getUsers(extractRequest);
-  }
+        if(request.user["email"]==undefined || request.user["email"]==null)
+            throw new HttpException("Bad Request: admin email not provided", 400);
 
-  @Post('updateUserRole')
-  @SetMetadata('role', Role.ADMIN)
-  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
-  async updateUserRole(
-    @Req() req: Request,
-    @Body() requestBody: IUpdateRoleRequest
-  ): Promise<IupdateRoleResponse> {
-    const request: any = req;
-    console.log(request.user['email']);
-    const extractRequest: IUpdateRoleRequest = {
-      update: {
-        AdminEmail: request.user['email'],
-        UserEmail: requestBody.update.UserEmail,
-        UpdateRole: requestBody.update.UpdateRole,
-      },
-    };
-    return this.userService.updateUserRole(extractRequest);
-  }
+        const extractRequest: IGetUsersRequest = {
+            AdminEmail: request.user["email"]
+        }
+        return this.userService.getUsers(extractRequest);
+    }
+
+    @Post('updateUserRole')
+    @SetMetadata('role',Role.ADMIN)
+    @UseGuards(JwtGuard, RbacGuard)
+    async updateUserRole(
+        @Req() req: Request,
+        @Body() requestBody: IUpdateRoleRequest,
+    ): Promise<IupdateRoleResponse> {
+        const request: any =req;
+        
+        if(request.user["email"]==undefined || request.user["email"]==null)
+            throw new HttpException("Bad Request: Admin email not provided", 400);
+
+        if(requestBody.update.UserEmail==undefined || requestBody.update.UserEmail ==null)
+            throw new HttpException("Bad Request: User email not provided", 400);
+
+        if(requestBody.update.UpdateRole==undefined || requestBody.update.UpdateRole ==null)
+            throw new HttpException("Bad Request: role not provided", 400);
+
+        console.log(request.user["email"])
+        const extractRequest: IUpdateRoleRequest = {
+            update: {
+                AdminEmail: request.user["email"],
+                UserEmail: requestBody.update.UserEmail,
+                UpdateRole: requestBody.update.UpdateRole
+            }
+        }
+        return this.userService.updateUserRole(extractRequest);
+    }
 
   @Get('getRole')
   @SetMetadata('role', Role.VIEWER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
   async getRole(@Req() req: Request): Promise<IGetUserRoleResponse> {
     const request: any = req;
-
     return {
         userRole: request.user['role'],
     };
-  }
+    }
 }

@@ -5,6 +5,7 @@ import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { Status } from'@event-participation-trends/api/user/util';
 import { ViewEvent } from '../models';
 import { Types } from 'mongoose';
+import { HttpException } from '@nestjs/common';
 
 @CommandHandler(SendViewRequestCommand)
 export class SendViewRequestHandler implements ICommandHandler<SendViewRequestCommand, ISendViewRequestResponse> {
@@ -19,40 +20,41 @@ export class SendViewRequestHandler implements ICommandHandler<SendViewRequestCo
         
         const request = command.request;
 
-        if (!request.eventId)
-            throw new Error('Missing required field: eventId');
+        if (!request.eventId){
+                
+            const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
 
-        const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
+            const eventDoc = await this.eventRepository.getEventById(eventIdObj);
+            if(eventDoc.length == 0)
+                throw new HttpException(`Bad Request: event with eventID ${request.eventId} does not exist in DB`, 400);
 
-        const eventDoc = await this.eventRepository.getEventById(eventIdObj);
-        if(eventDoc.length == 0)
-            throw new Error(`event with eventID ${request.eventId} does not exist in DB`);
+            //check if already requested
+            const userDoc = await this.userRepository.getUser(request.UserEmail|| "");
+            let requested =false;
+            const eventRequestersDoc = await this.eventRepository.getRequesters(eventIdObj);
+            if(eventRequestersDoc.length != 0)
+                eventRequestersDoc[0].Requesters?.forEach(element => {
+                    if(element.toString() == userDoc[0]._id.toString())
+                        requested =true; 
+                });
 
-        //check if already requested
-        const userDoc = await this.userRepository.getUser(request.UserEmail|| "");
-        let requested =false;
-        const eventRequestersDoc = await this.eventRepository.getRequesters(eventIdObj);
-        if(eventRequestersDoc.length != 0)
-            eventRequestersDoc[0].Requesters?.forEach(element => {
-                if(element.toString() == userDoc[0]._id.toString())
-                    requested =true; 
-            });
-
-        if(!requested){
-            const data: IViewEvent = {
-                UserEmail: request.UserEmail,
-                eventId: eventIdObj
+            if(!requested){
+                const data: IViewEvent = {
+                    UserEmail: request.UserEmail,
+                    eventId: eventIdObj
+                }
+    
+                const event = this.publisher.mergeObjectContext(ViewEvent.fromData(data));
+                event.create();
+                event.commit();
+    
+                return { status : Status.SUCCESS };
+            }else {
+                return { status : Status.FAILURE };
             }
-    
-            const event = this.publisher.mergeObjectContext(ViewEvent.fromData(data));
-            event.create();
-            event.commit();
-    
-            return { status : Status.SUCCESS };
-        }else {
+        }else{
             return { status : Status.FAILURE };
         }
-
  
     }
 }

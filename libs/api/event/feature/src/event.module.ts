@@ -11,6 +11,7 @@ import {
     AcceptViewRequestHandler,
     RemoveViewerFromEventHandler,
     RemoveEventFromViewerHandler,
+    UpdateEventDetailsHandler,
 } from './commands';
 
 import { 
@@ -26,6 +27,7 @@ import {
     AcceptViewRequestEventHandler,
     RemoveViewerFromEventEventHandler,
     RemoveEventFromViewerEventHandler,
+    UpdateEventDetialsEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -39,6 +41,7 @@ export const CommandHandlers = [
     AcceptViewRequestHandler,
     RemoveViewerFromEventHandler,
     RemoveEventFromViewerHandler,
+    UpdateEventDetailsHandler,
 ]
 
 export const EventHandlers = [
@@ -48,6 +51,7 @@ export const EventHandlers = [
     AcceptViewRequestEventHandler,
     RemoveViewerFromEventEventHandler,
     RemoveEventFromViewerEventHandler,
+    UpdateEventDetialsEventHandler,
 ];
 
 export const QueryHandlers = [
