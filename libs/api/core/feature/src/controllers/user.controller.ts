@@ -39,6 +39,16 @@ export class UserController {
         @Body() requestBody: IUpdateRoleRequest,
     ): Promise<IupdateRoleResponse> {
         const request: any =req;
+        
+        if(request.user["email"]==undefined || request.user["email"]==null)
+            throw new HttpException("Bad Request: Admin email not provided", 400);
+
+        if(requestBody.update.UserEmail==undefined || requestBody.update.UserEmail ==null)
+            throw new HttpException("Bad Request: User email not provided", 400);
+
+        if(requestBody.update.UpdateRole==undefined || requestBody.update.UpdateRole ==null)
+            throw new HttpException("Bad Request: role not provided", 400);
+
         console.log(request.user["email"])
         const extractRequest: IUpdateRoleRequest = {
             update: {
