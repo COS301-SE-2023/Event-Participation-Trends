@@ -3,7 +3,8 @@ import { RequestAccessModalComponent } from '@event-participation-trends/app/req
 import { ViewEventModalComponent } from '@event-participation-trends/app/vieweventmodal/feature';
 import { ModalController } from '@ionic/angular';
 import { AppApiService } from '@event-participation-trends/app/api';
-import {IEvent} from '@event-participation-trends/api/event/util';
+import { IEvent, IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
+import { Observable, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'event-participation-trends-viewevents',
@@ -11,50 +12,74 @@ import {IEvent} from '@event-participation-trends/api/event/util';
   styleUrls: ['./viewevents.page.css'],
 })
 export class VieweventsPage {
+  public all_events: any[] = [];
   public subscribed_events: any[] = [];
   public unsubscribed_events: any[] = [];
   public my_events: any[] = [];
-
+  public role = 'Viewer';
   public searchValue = '';
 
-  constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
-    this.appApiService.getAllEvents().then((events) => {
-      this.subscribed_events = events;
-      this.unsubscribed_events = events.filter((event) => {
-        return !this.hasAccess(event);
-      });
-      this.unsubscribed_events.push(
-        {
-          StartDate: new Date(),
-          EndDate: new Date(),
-          Name: "Event 1",
-          Category: "Category 1",
-          Location: {
-            Latitude: 0,
-            Longitude: 0,
-            StreetName: "Street 1",
-            CityName: "City 1",
-            ProvinceName: "Province 1",
-            CountryName: "Country 1",
-            ZIPCode: "ZIP 1",
-          },
-          thisFloorLayout: null,
-          Stalls: null,
-          Sensors: null,
-          Devices: null,
-          BTIDtoDeviceBuffer: null,
-          TEMPBuffer: null,
-          Manager: null,
-          Requesters: null,
-          Viewers: null,
-        },
-      );
-    });
+  constructor(
+    private appApiService: AppApiService,
+    private readonly modalController: ModalController
+  ) {
+    // get role
+    this.appApiService.getRole().subscribe((role) => {
+      this.role = role.userRole ? role.userRole : 'Viewer';
 
-    this.appApiService.getManagedEvents().then((events) => {
-      this.my_events = events;
-    });
+      let my_events_request : Observable<IGetManagedEventsResponse>;
 
+      if (this.role === 'admin') {
+        this.appApiService.getAllEvents().subscribe((response) => {
+          this.my_events = response.events;
+        })
+
+        return;
+      }
+      
+      if (this.role === 'manager') {
+        my_events_request = this.appApiService.getManagedEvents();
+      }else {
+        my_events_request = new Observable((observer) => {
+          observer.next({
+            events: []
+          });
+          setTimeout(() => {
+            observer.complete();
+          })
+        });
+      }
+
+      forkJoin([my_events_request, this.appApiService.getAllEvents(), this.appApiService.getSubscribedEvents()]).subscribe((response) => {
+        console.log("Joined");
+        const my_events = response[0].events;
+        const all_events = response[1].events;
+        const subscribed_events = response[2].events;
+
+        this.my_events = my_events;
+        this.all_events = all_events;
+
+        this.subscribed_events = subscribed_events.filter((event: any) => {
+          // event is not in my_events
+          return (
+            this.my_events.filter((my_event) => {
+              return my_event._id == event._id;
+            }).length == 0
+          );
+        });
+
+        // Set unsubscribed events
+        this.unsubscribed_events = all_events.filter((event: any) => {
+          return (
+            !this.hasAccess(event) &&
+            this.my_events.filter((my_event) => {
+              return my_event._id == event._id;
+            }).length == 0
+          );
+        });
+      })
+
+    });
   }
 
   async showPopupMenu(eventName: string) {
@@ -62,7 +87,7 @@ export class VieweventsPage {
       component: ViewEventModalComponent,
       componentProps: {
         eventName: eventName,
-      }
+      },
     });
 
     await modal.present();
@@ -88,7 +113,6 @@ export class VieweventsPage {
   }
 
   hasAccess(event: any): boolean {
-
     for (let i = 0; i < this.subscribed_events.length; i++) {
       if (this.subscribed_events[i]._id == event._id) {
         return true;
@@ -98,22 +122,46 @@ export class VieweventsPage {
     return false;
   }
 
+  myEventsTitle(): boolean {
+    return this.my_events.length > 0 && this.role === 'manager';
+  }
+
+  allEventsTitle(): boolean {
+    return this.all_events.length > 0 && this.role === 'manager';
+  }
+
+  requestAccess(event: any) {
+    this.appApiService
+      .sendViewRequest(event._id)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   managedEvents(): any[] {
     return this.my_events.filter((event) => {
-      return event.Name ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase()) : false;
+      return event.Name
+        ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
+        : false;
     });
-  };
+  }
 
   subscribedEvents(): any[] {
     return this.subscribed_events.filter((event) => {
-      return event.Name ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase()) : false;
+      return event.Name
+        ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
+        : false;
     });
   }
 
   unsubscribedEvents(): any[] {
     return this.unsubscribed_events.filter((event) => {
-      return event.Name ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase()) : false;
+      return event.Name
+        ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
+        : false;
     });
   }
-
 }

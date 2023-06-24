@@ -10,9 +10,9 @@ import { AppApiService } from '@event-participation-trends/app/api';
 export class ManagerEventsPage {
 
   constructor(private appApiService: AppApiService) {
-    this.appApiService.getManagedEvents().then((events) => {
-      this.events = events;
-    });
+    // this.appApiService.getManagedEvents().then((events) => {
+    //   this.events = events;
+    // });
   }
 
   events: IEvent[] = [];

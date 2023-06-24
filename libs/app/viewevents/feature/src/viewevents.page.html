@@ -21,7 +21,9 @@
       </span>
     </div>
     <div class="grid grid-cols-3 p-6 px-7" *ngIf="hasEvents()">
-      <div class="col-span-1 flex items-center">
+      <div class="col-span-1 flex items-center"
+        *ngIf="myEventsTitle()"
+      >
         <p class="text-2xl">My Events</p>
       </div>
     </div>
@@ -68,7 +70,9 @@
       </ion-card>
     </div>
     <div class="grid grid-cols-3 p-6 px-7">
-      <div class="col-span-1 flex items-center">
+      <div class="col-span-1 flex items-center"
+        *ngIf="allEventsTitle()"
+      >
         <p class="text-2xl">All Events</p>
       </div>
     </div>

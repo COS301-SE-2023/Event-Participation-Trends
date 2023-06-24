@@ -19,9 +19,10 @@ import {
   IEventId,
   IGetAllEventsResponse,
   IGetManagedEventsResponse,
+  IGetUserViewingEventsResponse,
   ISendViewRequestResponse,
 } from '@event-participation-trends/api/event/util';
-import { firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { Status } from '@event-participation-trends/api/user/util';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -64,17 +65,12 @@ export class AppApiService {
     });
   }
 
-  async getRole(): Promise<IGetUserRoleResponse> {
-    return firstValueFrom(
-      this.http.get<IGetUserRoleResponse>('/api/user/getRole', {
+  getRole(): Observable<IGetUserRoleResponse> {
+    return this.http.get<IGetUserRoleResponse>('/api/user/getRole', {
         headers: {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
       })
-    ).then((response) => {
-      console.log('response', response);
-      return response;
-    });
   }
 
   // EVENTS //
@@ -90,28 +86,28 @@ export class AppApiService {
     });
   }
 
-  async getAllEvents(): Promise<IEvent[]> {
-    return firstValueFrom(
-      this.http.get<IGetAllEventsResponse>('/api/event/getAllEvents', {
+  getAllEvents(): Observable<IGetAllEventsResponse> {
+    return this.http.get<IGetAllEventsResponse>('/api/event/getAllEvents', {
         headers: {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
       })
-    ).then((response) => {
-      return response.events;
-    });
   }
 
-  async getManagedEvents(): Promise<IEvent[]> {
-    return firstValueFrom(
-      this.http.get<IGetManagedEventsResponse>('/api/event/getManagedEvents', {
+  getSubscribedEvents(): Observable<IGetUserViewingEventsResponse> {
+    return this.http.get<IGetUserViewingEventsResponse>('/api/event/getAllViewingEvents', {
         headers: {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
-      })
-    ).then((response) => {
-      return response.events;
-    });
+      });
+  }
+
+  getManagedEvents(): Observable<IGetManagedEventsResponse> {
+    return this.http.get<IGetManagedEventsResponse>('/api/event/getManagedEvents', {
+        headers: {
+          'x-csrf-token': this.cookieService.get('csrf'),
+        },
+      });
   }
 
   async sendViewRequest(eventId: IEventId): Promise<Status | null | undefined> {
