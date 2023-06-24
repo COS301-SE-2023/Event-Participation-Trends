@@ -18,9 +18,9 @@ export class ViewEventModalComponent {
     await this.modalController.dismiss();
   }
 
-  openDashboard() {
+  openEventDetails() {
     this.closeModal();
-    this.navController.navigateForward('/dashboard', { queryParams: { eventName: this.eventName, queryParamsHandling: 'merge' } });
+    this.navController.navigateForward('/eventdetails', { queryParams: { eventName: this.eventName, queryParamsHandling: 'merge' } });
   }
 
   openEventScreenView() {
