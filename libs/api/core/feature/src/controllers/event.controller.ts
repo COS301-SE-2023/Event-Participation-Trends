@@ -171,6 +171,13 @@ export class EventController {
     async acceptViewRequest(
         @Body() requestBody: IAcceptViewRequestRequest,
     ): Promise<IAcceptViewRequestResponse> {
+
+        if(requestBody.userEmail==undefined || requestBody.userEmail==null)
+            throw new HttpException("Bad Request: viewer email not provided", 400);
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
         const extractRequest: IAcceptViewRequestRequest = {
             userEmail: requestBody.userEmail,
             eventId: requestBody.eventId,
