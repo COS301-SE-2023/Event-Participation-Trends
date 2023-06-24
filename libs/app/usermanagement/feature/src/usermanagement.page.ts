@@ -10,6 +10,8 @@ import { IUser } from '@event-participation-trends/api/user/util';
 export class UsermanagementPage {
   @ViewChild('content-body', { static: true }) contentBody!: ElementRef;
 
+  public searchValue = '';
+
   constructor(
     private containerElement: ElementRef,
     private appApiService: AppApiService
@@ -29,6 +31,24 @@ export class UsermanagementPage {
     this.checkOverflow();
   }
 
+  getUsers(): IUser[] {
+    if (this.searchValue === '') {
+      return this.users;
+    } else {
+      return this.users.filter((user) => {
+        let include = false;
+
+        include = user.Email? (user.Email.toLowerCase().includes(this.searchValue.toLowerCase()) ? true : include) : include;
+        include = user.Role? (user.Role.toLowerCase().includes(this.searchValue.toLowerCase()) ? true : include) : include;
+        include = user.FirstName? (user.FirstName.toLowerCase().includes(this.searchValue.toLowerCase()) ? true : include) : include;
+        include = user.LastName? (user.LastName.toLowerCase().includes(this.searchValue.toLowerCase()) ? true : include) : include;
+
+        return include;
+      }
+      );
+    }
+  }
+
   checkOverflow() {
     const container = this.containerElement.nativeElement;
     this.overflow = container.scrollHeight > container.clientHeight;
@@ -38,7 +58,7 @@ export class UsermanagementPage {
   users: IUser[] = [];
 
   isEmpty(): boolean {
-    return this.users.length === 0;
+    return this.getUsers().length === 0;
   }
 
   isManager(user: IUser): boolean {

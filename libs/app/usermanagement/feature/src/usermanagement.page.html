@@ -15,6 +15,7 @@
         <ion-searchbar
           ngClass="sidebar-searchbar"
           placeholder="Search"
+          [(ngModel)]="searchValue"
         ></ion-searchbar>
       </span>
       <ion-button
@@ -34,7 +35,7 @@
       [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
       class="rounded-lg m-6 lg:m-auto py-3 w-auto lg:w-5/6 bg-ept-off-white bg-opacity-70 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
     >
-      <ion-item *ngFor="let user of users" ngClass="user-item" class="w-full">
+      <ion-item *ngFor="let user of getUsers()" ngClass="user-item" class="w-full">
         <div class="sm:hidden grid grid-cols-12 items-center w-full">
           <p class="col-span-6 md:col-span-5 text-ellipsis truncate">{{user.Email}}</p>
           <p class="col-span-3 transition-all duration-300 text-ellipsis truncate">

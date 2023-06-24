@@ -66,6 +66,12 @@ export class EventRepository {
             { Requesters: 1 })
     }
 
+    async getViewers(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { Viewers: 1 })
+    }
+
     async getPopulatedRequesters(eventID: Types.ObjectId, managerID: Types.ObjectId){
         return await this.eventModel.find(
             {_id :{$eq: eventID}, Manager:{$eq: managerID}},
@@ -76,5 +82,11 @@ export class EventRepository {
         return await this.eventModel.updateOne(
             {_id :{$eq: eventID}},
             { $pull: { Requesters: userID } });
+    }
+
+    async removeViewer(eventID: Types.ObjectId, userID: Types.ObjectId){
+        return await this.eventModel.updateOne(
+            {_id :{$eq: eventID}},
+            { $pull: { Viewers: userID } });
     }
 }

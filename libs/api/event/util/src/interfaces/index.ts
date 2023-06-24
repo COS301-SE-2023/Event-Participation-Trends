@@ -11,3 +11,4 @@ export * from './event-details.interface';
 export * from './view-event.interface';
 export * from './eventID.interface';
 export * from './view-request.interface';
+export * from './remove-viewer.interface';

@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { AppApiService } from "@event-participation-trends/app/api";
 
 @Component({
     selector: 'event-participation-trends-home',
@@ -11,7 +12,13 @@ export class HomePage {
     viewSelected = false;
     compareSelected = false;
 
-    options = ['Users', 'View', 'Compare Events'];
+    public role = 'Viewer';
+    constructor(private appApiService: AppApiService) {
+        this.appApiService.getRole().then((role) => {
+            console.log('role', role);
+            this.role = role.userRole ? role.userRole : 'Viewer';
+        });
+    }
 
     selectTab(option: string) {
         this.selected = option;
@@ -32,4 +39,17 @@ export class HomePage {
             this.compareSelected = true;
         }
     }
+
+    allowUsers(): boolean {
+        return this.role === 'admin';
+    }
+
+    allowView(): boolean {
+        return this.role === 'manager' || this.role === 'admin';
+    }
+
+    allowCompare(): boolean {
+        return this.role === 'manager' || this.role === 'admin';
+    }
+
 }

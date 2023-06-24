@@ -3,7 +3,7 @@ import { RequestAccessModalComponent } from '@event-participation-trends/app/req
 import { ViewEventModalComponent } from '@event-participation-trends/app/vieweventmodal/feature';
 import { ModalController } from '@ionic/angular';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { IEvent } from '@nestjs/cqrs';
+import {IEvent} from '@event-participation-trends/api/event/util';
 
 @Component({
   selector: 'event-participation-trends-viewevents',
@@ -11,21 +11,50 @@ import { IEvent } from '@nestjs/cqrs';
   styleUrls: ['./viewevents.page.css'],
 })
 export class VieweventsPage {
-  public all_events: IEvent[] = [];
   public subscribed_events: any[] = [];
-
+  public unsubscribed_events: any[] = [];
   public my_events: any[] = [];
+
+  public searchValue = '';
 
   constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
     this.appApiService.getAllEvents().then((events) => {
-      this.all_events = events;
       this.subscribed_events = events;
+      this.unsubscribed_events = events.filter((event) => {
+        return !this.hasAccess(event);
+      });
+      this.unsubscribed_events.push(
+        {
+          StartDate: new Date(),
+          EndDate: new Date(),
+          Name: "Event 1",
+          Category: "Category 1",
+          Location: {
+            Latitude: 0,
+            Longitude: 0,
+            StreetName: "Street 1",
+            CityName: "City 1",
+            ProvinceName: "Province 1",
+            CountryName: "Country 1",
+            ZIPCode: "ZIP 1",
+          },
+          thisFloorLayout: null,
+          Stalls: null,
+          Sensors: null,
+          Devices: null,
+          BTIDtoDeviceBuffer: null,
+          TEMPBuffer: null,
+          Manager: null,
+          Requesters: null,
+          Viewers: null,
+        },
+      );
     });
 
     this.appApiService.getManagedEvents().then((events) => {
       this.my_events = events;
-      console.log(events);
     });
+
   }
 
   async showPopupMenu(eventName: string) {
@@ -68,64 +97,22 @@ export class VieweventsPage {
 
     return false;
   }
-  // Added to RequestAccess modal component
-  // requestAccess(event: any) {
-  //   this.appApiService.sendViewRequest({eventId: event._id}).then((status) => {
-  //     console.log(status);
-  //   });
-  // }
+
+  managedEvents(): any[] {
+    return this.my_events.filter((event) => {
+      return event.Name ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase()) : false;
+    });
+  };
 
   subscribedEvents(): any[] {
-    return this.subscribed_events;
+    return this.subscribed_events.filter((event) => {
+      return event.Name ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase()) : false;
+    });
   }
 
   unsubscribedEvents(): any[] {
-    // mock data with the following interface
-    /* interface IEvent {
-      StartDate?: Date | undefined | null;
-      EndDate?: Date | undefined | null;
-      Name?: string | undefined | null;
-      Category?: string | undefined | null;
-      Location?: IEventLocation | undefined | null;
-      thisFloorLayout?: IFloorLayout | undefined | null;
-      Stalls?: IStall[] | undefined | null;
-      Sensors?: ISensor[] | undefined | null;
-      Devices?: IDevice[] | undefined | null;
-      BTIDtoDeviceBuffer?: ITEMP_DEVICE_TO_DT[] | undefined | null;
-      TEMPBuffer?: ITEMP_DEVICE_BUFFER[] | undefined | null;
-      Manager?: Types.ObjectId | undefined | null;
-      Requesters?: Types.ObjectId[] | undefined | null;
-      Viewers?: Types.ObjectId[] | undefined | null;
-    } */
-
-    return [
-      {
-        StartDate: new Date(),
-        EndDate: new Date(),
-        Name: "Event 1",
-        Category: "Category 1",
-        Location: {
-          Name: "Location 1",
-          Address: "Address 1",
-          City: "City 1",
-          State: "State 1",
-          Zip: "Zip 1",
-          Country: "Country 1",
-        },
-        thisFloorLayout: null,
-        Stalls: null,
-        Sensors: null,
-        Devices: null,
-        BTIDtoDeviceBuffer: null,
-        TEMPBuffer: null,
-        Manager: null,
-        Requesters: null,
-        Viewers: null,
-      },
-    ];
-
-    return this.all_events.filter((event) => {
-      return !this.hasAccess(event);
+    return this.unsubscribed_events.filter((event) => {
+      return event.Name ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase()) : false;
     });
   }
 
