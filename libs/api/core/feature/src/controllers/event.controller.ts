@@ -74,7 +74,7 @@ export class EventController {
     ): Promise<IGetAllEventsResponse> {
         const request: any =req;
 
-        if(request.user['email']==undefined)
+        if(request.user['email']==undefined || request.user['email']==null)
             throw new HttpException("Bad Request: Admin email not provided", 400);
 
         const extractRequest: IGetAllEventsRequest = {
@@ -91,7 +91,7 @@ export class EventController {
     ): Promise<IGetManagedEventsResponse> {
         const request: any =req;
 
-        if(request.user['email']==undefined)
+        if(request.user['email']==undefined || request.user['email']==null)
             throw new HttpException("Bad Request: Manager email not provided", 400);
 
         const extractRequest: IGetManagedEventsRequest = {
