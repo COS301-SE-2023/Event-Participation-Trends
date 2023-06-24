@@ -18,18 +18,6 @@ import {
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
-
-  @Get('getAllUsers')
-  @SetMetadata('role', Role.ADMIN)
-  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
-  async getAllUsers(@Req() req: Request): Promise<IGetUsersResponse> {
-    const request: any = req;
-    const extractRequest: IGetUsersRequest = {
-      AdminEmail: request.user['email'],
-    };
-    return this.userService.getUsers(extractRequest);
-  }
-
     @Get('getAllUsers')
     @SetMetadata('role',Role.ADMIN)
     @UseGuards(JwtGuard, RbacGuard)
