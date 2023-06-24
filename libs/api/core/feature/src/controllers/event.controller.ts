@@ -108,6 +108,13 @@ export class EventController {
         @Body() requestBody: IEventId,
     ): Promise<ISendViewRequestResponse> {
         const request: any =req;
+
+        if(request.user['email']==undefined || request.user['email']==null)
+            throw new HttpException("Bad Request: viewer email not provided", 400);
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
         const extractRequest: ISendViewRequestRequest = {
             UserEmail: request.user["email"],
             eventId: requestBody.eventId,
