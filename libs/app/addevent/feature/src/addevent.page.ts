@@ -56,24 +56,6 @@ export class AddEventPage implements OnInit {
     return this.eventForm.get('eventEndTime');
   }
 
-  // onStartTimeChange() {
-  //   const startTime = this.eventForm.get('eventStartTime')?.value;
-  //   console.log("Start Time: " + startTime);
-  //   let endTime = this.eventForm.get('eventEndTime')?.value;
-
-  //   if (!endTime) {
-  //     endTime = this.eventForm.get('eventEndTime')?.setValue(startTime);
-  //   }
-  
-  //   if (((startTime && !endTime) || (startTime && endTime)) && startTime >= endTime) {
-  //     // const newEndTime = new Date(startTime);
-  //     // newEndTime.setHours(newEndTime.getHours() + 1);
-  //     this.eventForm.patchValue({ eventEndTime: endTime.toISOString().slice(0, -8) });
-  //     // this.eventForm.get('eventEndTime')?.setValue(newEndTime.toISOString().slice(0, -8));
-  //     console.log("End Time: " + endTime);
-  //   }
-  // }
-
   onStartTimeChange() {
     const startTime = this.eventForm.get('eventStartTime')?.value;
     let endTime = this.eventForm.get('eventEndTime')?.value;
