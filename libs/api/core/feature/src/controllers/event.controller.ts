@@ -90,6 +90,10 @@ export class EventController {
         @Req() req: Request
     ): Promise<IGetManagedEventsResponse> {
         const request: any =req;
+
+        if(request.user['email']==undefined)
+            throw new HttpException("Bad Request: Manager email not provided", 400);
+
         const extractRequest: IGetManagedEventsRequest = {
             ManagerEmail: request.user["email"],
         }
