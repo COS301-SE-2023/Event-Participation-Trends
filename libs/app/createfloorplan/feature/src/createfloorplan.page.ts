@@ -33,8 +33,6 @@ export class CreateFloorPlanPage {
       // get width and height of the parent element
       const width = canvasContainer.nativeElement.offsetWidth;
       const height = canvasContainer.nativeElement.offsetHeight;
-
-      console.log(width, height);
       
       this.canvas = new fabric.Canvas(canvasElement);
       this.canvas.setDimensions({ width: width*0.98, height: height*0.965 });
