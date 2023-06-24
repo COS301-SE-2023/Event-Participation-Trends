@@ -8,12 +8,12 @@ const routes: Routes = [
     component: HomePage,
     children: [
       {
-        path: 'usermanagement',
-        loadChildren: () => import('@event-participation-trends/app/usermanagement/feature').then(m => m.UsermanagementModule)
-      },
-      {
         path: 'viewevents',
         loadChildren: () => import('@event-participation-trends/app/viewevents/feature').then(m => m.VieweventsModule)
+      },
+      {
+        path: 'usermanagement',
+        loadChildren: () => import('@event-participation-trends/app/usermanagement/feature').then(m => m.UsermanagementModule)
       },
       {
         path: 'comparingevents',
@@ -26,14 +26,14 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: '/home/usermanagement', //this is only temporary
+        redirectTo: '/home/viewevents', //this is only temporary
       },
     ],
   },
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '/home/usermanagement', //this is only temporary
+    redirectTo: '/home/viewevents', //this is only temporary
   },
 ];
 

@@ -5,6 +5,7 @@ import { UsermanagementRoutingModule } from './usermanagement.routing';
 import { UsermanagementPage } from './usermanagement.page';
 import { UsermanagementModule as UsermanagementDataAccessModule } from '@event-participation-trends/app/usermanagement/data-access';
 import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { IonicModule } from '@ionic/angular';
     CommonModule,
     UsermanagementRoutingModule,
     UsermanagementDataAccessModule,
-    IonicModule
+    IonicModule,
+    FormsModule
   ]
 })
 export class UsermanagementModule { }

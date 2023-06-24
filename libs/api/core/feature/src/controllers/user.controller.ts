@@ -1,19 +1,23 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
-    IGetUsersRequest,
-    IGetUsersResponse,
-    IUpdateRoleRequest,
-    IupdateRoleResponse,
-    Role,
+    IGetUserRoleResponse,
+  IGetUsersRequest,
+  IGetUsersResponse,
+  IUpdateRoleRequest,
+  IupdateRoleResponse,
+  Role,
 } from '@event-participation-trends/api/user/util';
 import { Body, Controller, Post, Get, UseGuards, Req, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
+import {
+  JwtGuard,
+  RbacGuard,
+  CsrfGuard,
+} from '@event-participation-trends/api/guards';
 
 @Controller('user')
 export class UserController {
-    constructor(private userService: UserService){}
-
+  constructor(private userService: UserService) {}
     @Get('getAllUsers')
     @SetMetadata('role',Role.ADMIN)
     @UseGuards(JwtGuard, RbacGuard)
@@ -60,4 +64,13 @@ export class UserController {
         return this.userService.updateUserRole(extractRequest);
     }
 
+  @Get('getRole')
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async getRole(@Req() req: Request): Promise<IGetUserRoleResponse> {
+    const request: any = req;
+    return {
+        userRole: request.user['role'],
+    };
+    }
 }
