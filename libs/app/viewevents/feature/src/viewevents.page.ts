@@ -82,11 +82,11 @@ export class VieweventsPage {
     });
   }
 
-  async showPopupMenu(eventName: string) {
+  async showPopupMenu(event: any) {
     const modal = await this.modalController.create({
       component: ViewEventModalComponent,
       componentProps: {
-        eventName: eventName,
+        event: event,
       },
     });
 
