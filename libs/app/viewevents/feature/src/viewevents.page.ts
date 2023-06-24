@@ -51,7 +51,6 @@ export class VieweventsPage {
       }
 
       forkJoin([my_events_request, this.appApiService.getAllEvents(), this.appApiService.getSubscribedEvents()]).subscribe((response) => {
-        console.log("Joined");
         const my_events = response[0].events;
         const all_events = response[1].events;
         const subscribed_events = response[2].events;
@@ -123,7 +122,7 @@ export class VieweventsPage {
   }
 
   myEventsTitle(): boolean {
-    return this.my_events.length > 0 && this.role === 'manager';
+    return this.role === 'manager';
   }
 
   allEventsTitle(): boolean {
