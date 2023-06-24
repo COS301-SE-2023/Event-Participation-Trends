@@ -1,6 +1,7 @@
 import { 
     IEventDetails, 
     CreateEventEvent, 
+    UpdateEventDetialsEvent,
     } from '@event-participation-trends/api/event/util';
 import {
     IEventLocation,
