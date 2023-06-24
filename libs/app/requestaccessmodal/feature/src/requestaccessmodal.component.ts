@@ -4,6 +4,7 @@ import {
   ModalController,
   AlertController,
   ToastController,
+  NavController,
 } from '@ionic/angular';
 import { Store } from '@ngxs/store';
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RequestAccessModalComponent } from '@event-participation-trends/app/requestaccessmodal/feature';
 import { ViewEventModalComponent } from '@event-participation-trends/app/vieweventmodal/feature';
-import { ModalController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { IEvent, IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
 import { Observable, forkJoin } from 'rxjs';
@@ -22,7 +22,8 @@ export class VieweventsPage {
 
   constructor(
     private appApiService: AppApiService,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly navController: NavController
   ) {
     // get role
     this.appApiService.getRole().subscribe((role) => {
@@ -165,5 +166,9 @@ export class VieweventsPage {
     }
     
     return this.address_location;
+  }
+
+  openEventScreenView(event: any) {
+    this.navController.navigateForward('/eventscreenview', { queryParams: {id: event._id, queryParamsHandling: 'merge' } });
   }
 }
