@@ -192,6 +192,10 @@ export class EventController {
         @Req() req: Request,
     ): Promise<IGetUserViewingEventsResponse> {
         const request: any =req;
+
+        if( request.user["email"]==undefined ||  request.user["email"]==null)
+            throw new HttpException("Bad Request: viewer email not provided", 400);
+
         const extractRequest: IGetUserViewingEventsRequest = {
             userEmail: request.user["email"],
         }
