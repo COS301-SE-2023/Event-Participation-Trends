@@ -226,6 +226,10 @@ export class EventController {
     async updateEventDetails(
         @Body() requestBody: IUpdateEventDetailsRequest,
     ): Promise<IUpdateEventDetailsResponse> {
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
         const extractRequest: IUpdateEventDetailsRequest = {
             eventId: requestBody.eventId,
             eventDetails: requestBody.eventDetails,
