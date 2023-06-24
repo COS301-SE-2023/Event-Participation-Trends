@@ -18,6 +18,7 @@ export class VieweventsPage {
   public my_events: any[] = [];
   public role = 'Viewer';
   public searchValue = '';
+  public address_location = '';
 
   constructor(
     private appApiService: AppApiService,
@@ -163,5 +164,14 @@ export class VieweventsPage {
         ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
         : false;
     });
+  }
+
+  getLocation(event: any): string {
+    this.address_location = '';
+    if (event.Location.StreetName) {
+      this.address_location += event.Location.StreetName;
+    }
+    
+    return this.address_location;
   }
 }
