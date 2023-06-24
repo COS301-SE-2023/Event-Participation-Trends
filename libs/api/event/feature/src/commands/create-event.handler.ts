@@ -4,6 +4,7 @@ import { CreateEventCommand, IEventDetails, ICreateEventResponse } from '@event-
 import { Status } from'@event-participation-trends/api/user/util';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { EventDetails } from '../models';
+import { HttpException } from '@nestjs/common';
 
 @CommandHandler(CreateEventCommand)
 export class CreateEventHandler implements ICommandHandler<CreateEventCommand, ICreateEventResponse> {
@@ -21,7 +22,7 @@ export class CreateEventHandler implements ICommandHandler<CreateEventCommand, I
             //check user exists
             const managerDoc= await this.userRepository.getUser(request.ManagerEmail || "");
             if(managerDoc.length == 0)
-                throw new Error(`User with email ${request.ManagerEmail} does not exist`);
+                throw new HttpException(`Bad Request: User with email ${request.ManagerEmail} does not exist`, 400);
 
             //check if event already exists
             let eventExists =false;
