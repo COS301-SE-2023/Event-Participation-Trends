@@ -3,6 +3,7 @@ import { EventRepository } from '@event-participation-trends/api/event/data-acce
 import { GetManagedEventsQuery, IEvent, IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
 import { Role } from '@event-participation-trends/api/user/util';
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
+import { HttpException } from '@nestjs/common';
 
 @QueryHandler(GetManagedEventsQuery)
 export class GetManagedEventsHandler implements IQueryHandler<GetManagedEventsQuery, IGetManagedEventsResponse> {
@@ -18,12 +19,12 @@ export class GetManagedEventsHandler implements IQueryHandler<GetManagedEventsQu
         if(request.ManagerEmail != null && request.ManagerEmail != undefined){
             const managerDoc = await this.userRepository.getUser(request.ManagerEmail);
             if(managerDoc.length == 0)
-                throw new Error(`user with email ${request.ManagerEmail} does not exist in DB`);
+            throw new HttpException(`Bad Request: user with email ${request.ManagerEmail} does not exist in DB`, 400);
             else {
                 if(managerDoc[0].Role === Role.MANAGER){
                     const eventDocs = await this.eventRepository.getManagedEvents(managerDoc[0]._id);
                     if(eventDocs.length == 0)
-                        throw new Error(`User with email ${request.ManagerEmail} does not manage any events`);
+                        return {events: <IEvent[]>[]};
                     else
                         return {events: <IEvent[]>eventDocs};
                 }else{
