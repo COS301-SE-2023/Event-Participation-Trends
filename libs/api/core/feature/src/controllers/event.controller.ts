@@ -21,7 +21,7 @@ import {
     IUpdateEventDetailsRequest,
     IUpdateEventDetailsResponse,
 } from '@event-participation-trends/api/event/util';
-import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
 import { IEventDetails, IEventId } from '@event-participation-trends/api/event/util';
 import { JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
@@ -40,11 +40,30 @@ export class EventController {
         @Body() requestBody: IEventDetails,
     ): Promise<ICreateEventResponse> {
         const request: any =req;
+        
+        if(request.user['email']==undefined)
+            throw new HttpException("Bad Request: Manager email not provided", 400);
+
+        if(requestBody.StartDate == undefined || requestBody.StartDate ==null)
+            throw new HttpException("Bad Request: Event StartDate not provided", 400);
+
+        if(requestBody.EndDate == undefined || requestBody.EndDate ==null)
+            throw new HttpException("Bad Request: Event EndDate not provided", 400);
+
+        if(requestBody.Category == undefined || requestBody.Category ==null)
+            throw new HttpException("Bad Request: Event Category not provided", 400);
+        
+        if(requestBody.Name == undefined || requestBody.Name ==null)
+            throw new HttpException("Bad Request: Event Name not provided", 400);
+        
+        if(requestBody.Location == undefined || requestBody.Location ==null)
+            throw new HttpException("Bad Request: Event Location not provided", 400);
+            
         const extractRequest: ICreateEventRequest = {
             ManagerEmail: request.user['email'],
             Event: requestBody,
         }
-        return this.eventService.createEvent(extractRequest);
+       return this.eventService.createEvent(extractRequest);
     }
 
     @Get('getAllEvents')
