@@ -24,7 +24,7 @@ import {
 import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
 import { IEventDetails, IEventId } from '@event-participation-trends/api/event/util';
-import { JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
+import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
 import { Role } from '@event-participation-trends/api/user/util';
 
 
@@ -34,7 +34,7 @@ export class EventController {
 
     @Post('createEvent')
     @SetMetadata('role',Role.MANAGER)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async createEvent(
         @Req() req: Request,
         @Body() requestBody: IEventDetails,
@@ -68,7 +68,7 @@ export class EventController {
 
     @Get('getAllEvents')
     @SetMetadata('role',Role.VIEWER)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getAllEvents(
         @Req() req: Request 
     ): Promise<IGetAllEventsResponse> {
@@ -85,7 +85,7 @@ export class EventController {
 
     @Get('getManagedEvents')
     @SetMetadata('role',Role.MANAGER)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getManagedEvents(
         @Req() req: Request
     ): Promise<IGetManagedEventsResponse> {
@@ -102,7 +102,7 @@ export class EventController {
 
     @Post('sendViewRequest')
     @SetMetadata('role',Role.VIEWER)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async sendViewRequest(
         @Req() req: Request,
         @Body() requestBody: IEventId,
@@ -124,7 +124,7 @@ export class EventController {
 
     @Get('getAllViewRequests')
     @SetMetadata('role',Role.MANAGER)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getAllViewRequests(
         @Req() req: Request,
         @Query() query: any
@@ -147,7 +147,7 @@ export class EventController {
 
     @Post('declineViewRequest')
     @SetMetadata('role',Role.MANAGER)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async declineViewRequest(
         @Body() requestBody: IDeclineViewRequestRequest,
     ): Promise<IDeclineViewRequestResponse> {
@@ -167,7 +167,7 @@ export class EventController {
     
     @Post('acceptViewRequest')
     @SetMetadata('role',Role.MANAGER)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async acceptViewRequest(
         @Body() requestBody: IAcceptViewRequestRequest,
     ): Promise<IAcceptViewRequestResponse> {

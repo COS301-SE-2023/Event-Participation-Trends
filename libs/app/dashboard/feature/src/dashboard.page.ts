@@ -6,11 +6,25 @@ import { Observable } from 'rxjs';
 import { DashboardState, DashboardStateModel } from '@event-participation-trends/app/dashboard/data-access';
 import { GetAccessRequests, SetAccessRequests } from '@event-participation-trends/app/accessrequests/util';
 import { AccessRequestsState } from '@event-participation-trends/app/accessrequests/data-access';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SetEventData } from '@event-participation-trends/app/dashboard/util';
+import { AppApiService } from '@event-participation-trends/app/api';
 
 interface IAccessRequest {
   userId: string;
   email: string;
   role: string;
+}
+
+interface Event {
+  _id?: string;
+  date: string;
+  name: string;
+  location: string;
+  category: string;
+  hasAccess: boolean;
+  startsAt: string;
+  endsAt: string;
 }
 
 @Component({
@@ -20,9 +34,29 @@ interface IAccessRequest {
 })
 export class DashboardPage implements OnInit {
   @Select(DashboardState.dashboardStatistics) dashboardStatistics$!: Observable<DashboardStateModel | null>;
-  @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
+  // @Select(AccessRequestsState.accessRequests) accessRequests$!: Observable<IAccessRequest[] | null>;
+  @Select(DashboardState.eventData) eventData$!: Observable<{eventId: string, eventName: string} | null>;
 
-  constructor(private modalController : ModalController, private readonly store: Store) { }
+  public event: Event = {
+    _id: '648789728d8ed5b40edd0701',
+    date: "2021-05-01",
+    name: 'Polar Bear Plunge',
+    location: 'Antarctica',
+    category: 'Swimming',
+    hasAccess: true,
+    startsAt: '10:00',
+    endsAt: '11:00',
+  };
+
+  public accessRequests: any[] = [];
+
+  constructor(private modalController : ModalController, private route: ActivatedRoute, private router: Router, private readonly store: Store, private readonly appApiService: AppApiService) { 
+    this.appApiService = appApiService;
+    appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
+      console.log('users', users);
+      this.accessRequests = users;
+    });
+  }
 
   ngOnInit(): void {
     // this.store.dispatch(new GetAccessRequests());
@@ -30,28 +64,21 @@ export class DashboardPage implements OnInit {
     console.log('dashboard page init');
 
     // For now we will load mock data for the access requests
-    this.store.dispatch(new SetAccessRequests([
-      {
-        userId: 'jnskdjnceu1299',
-        email: 'something@gmail.com',
-        role: 'Manager'
-      },
-      {
-        userId: 'sjdksjdbfhb2093',
-        email: 'anything@gmail.com',
-        role: 'Manager'
-      },
-      {
-        userId: 'hhsbdchsuru2902',
-        email: 'ideas@gmail.com',
-        role: 'Manager'
-      },
-      {
-        userId: 'sdhbsjfhbw1208',
-        email: 'curious@gmail.com',
-        role: 'Manager'
-      }
-    ]));
+    this.store.dispatch(new SetAccessRequests(this.accessRequests));
+
+    // Get query params from URL
+    this.route.queryParams.subscribe(params => {
+      const id = params['id'];
+      const eventName = params['eventName'];
+
+      // TODO get event by id - skip for now
+      // if (!id) {
+      //   this.router.navigate(['/home']);
+      // }
+
+      // Set state for the event
+      this.store.dispatch(new SetEventData({ id, eventName }));
+    });
   }
 
   async openAccessRequests() {
@@ -65,14 +92,6 @@ export class DashboardPage implements OnInit {
   }
 
   get AccessRequestsLength() {
-    let numRequests = 0;
-
-    this.accessRequests$.subscribe((accessRequests) => {
-      if (accessRequests) {
-        numRequests = accessRequests.length;
-      }
-    });
-    
-    return numRequests;
+    return this.accessRequests.length;
   }
 }

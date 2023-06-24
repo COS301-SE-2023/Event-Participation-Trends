@@ -30,6 +30,7 @@ const routes: Routes = [
     // data: { authGuardPipe: redirectLoggedOut },
     loadChildren: () =>
       import('@event-participation-trends/app/eventdetails/feature').then((m) => m.EventDetailsModule),
+    data: { queryParamName: 'id' },
   },
   {
     path: 'flooreditor',
@@ -44,6 +45,13 @@ const routes: Routes = [
     // data: { authGuardPipe: redirectLoggedOut },
     loadChildren: () =>
       import('@event-participation-trends/app/createfloorplan/feature').then((m) => m.CreateFloorPlanModule),
+  },
+  {
+    path: 'addevent',
+    canActivate: [],
+    // data: { authGuardPipe: redirectLoggedOut },
+    loadChildren: () =>
+      import('@event-participation-trends/app/addevent/feature').then((m) => m.AddEventModule),
   },
   {
     path: 'eventscreenview',

@@ -33,6 +33,7 @@ export class RbacGuard implements CanActivate {
         throw new UnauthorizedException();
       }
       const min_role = this.reflector.get<Role>('role', context.getHandler());
+      request.user.role = role;
       switch(min_role){
         case Role.ADMIN:
           if(role === Role.ADMIN.toString()){

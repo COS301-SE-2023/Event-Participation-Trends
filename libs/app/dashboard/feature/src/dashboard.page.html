@@ -6,12 +6,8 @@
             <div ngClass="dashboard-title-icon">
                 <ion-title class="text-5xl">Dashboard</ion-title>
                 <ion-icon class="text-blue-600 w-9 h-9 mt-2"  name="stats-chart"></ion-icon>
-                <sub class="mt-4 ml-2 text-base">/ [event name]</sub>
+                <sub class="mt-4 ml-2 text-base" *ngIf="(eventData$ | async) as eventData">/ {{ eventData.eventName }}</sub>
             </div>
-            <ion-button ngClass="access-requests-btn" (click)="openAccessRequests()">
-                <ion-text class="text-lg text-black pr-2" color="none">Access Requests</ion-text>
-                <ion-badge color="danger" ngClass="access-requests-badge">{{ AccessRequestsLength }}</ion-badge>
-            </ion-button>
         </div>
         
       <ng-container>
@@ -20,11 +16,15 @@
             <div class="floor-map-snapshot-area">
               <ion-img ngClass="floor-map-snapshot" src=""></ion-img>
             </div>
-            <ion-icon
-              ngClass="floor-map-settings-icon"
-              name="settings-outline"
-              routerLink="/eventdetails"
-            ></ion-icon>
+            <div class="relative">
+              <ion-icon
+                ngClass="floor-map-settings-icon"
+                name="settings-outline"
+                routerLink="/eventdetails"
+              >
+              </ion-icon>
+              <ion-badge *ngIf="AccessRequestsLength > 0" class="absolute left-4 top-1 rounded-full">{{ AccessRequestsLength }}</ion-badge>
+            </div>
           </ion-card-content>
         </ion-card>
     
