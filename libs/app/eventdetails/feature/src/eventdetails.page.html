@@ -108,11 +108,19 @@
         </div>
         <div class="p-4 self-start w-full">
           <div class="py-3">
-            <label>Date</label>
+            <label>Start Date</label>
             <ion-input
               type="date"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              [(ngModel)]="event.date"
+              [(ngModel)]="startDate"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>End Date</label>
+            <ion-input
+              type="date"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              [(ngModel)]="endDate"
             ></ion-input>
           </div>
           <div class="py-3">
@@ -120,7 +128,7 @@
             <ion-input
               type="text"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              [(ngModel)]="event.location"
+              [(ngModel)]="location"
             ></ion-input>
           </div>
           <div class="py-3">
@@ -128,7 +136,7 @@
             <ion-input
               type="text"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              [(ngModel)]="event.category"
+              [(ngModel)]="category"
             ></ion-input>
           </div>
           <div class="py-3">
@@ -136,7 +144,7 @@
             <ion-input
               type="time"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              [(ngModel)]="event.startsAt"
+              [(ngModel)]="startTime"
             ></ion-input>
           </div>
           <div class="py-3">
@@ -144,7 +152,7 @@
             <ion-input
               type="time"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
-              [(ngModel)]="event.endsAt"
+              [(ngModel)]="endTime"
             ></ion-input>
           </div>
         </div>

@@ -1,20 +1,11 @@
 import { Time } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Route, Router } from '@angular/router';
-import { IUser } from '@event-participation-trends/api/user/util';
+import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { Redirect } from '@nestjs/common';
-
-interface Event {
-  _id?: string;
-  date: string;
-  name: string;
-  location: string;
-  category: string;
-  hasAccess: boolean;
-  startsAt: string;
-  endsAt: string;
-}
+import { IEvent } from '@event-participation-trends/api/event/util';
+import { promisify } from 'util';
 
 @Component({
   selector: 'event-participation-trends-eventdetails',
@@ -27,39 +18,44 @@ export class EventDetailsPage {
   public inviteEmail: string;
   public appApiService: AppApiService;
   public accessRequests: any[] = [];
+  public event: any = {};
+  public role: Role = Role.VIEWER;
+  public startDate = '';
+  public endDate = '';
+  public startTime = '';
+  public endTime = '';
+  public location = '';
+  public category = '';
   constructor(appApiService: AppApiService, private route: ActivatedRoute, private router: Router) {
     this.initialText = 'Initial text value';
     this.inviteEmail = '';
     this.appApiService = appApiService;
-    appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
-      console.log('users', users);
-      this.accessRequests = users;
-    });
-  }
 
-  ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
 
-      // TODO get event by id - skip for now
-      // if (!id) {
-      //   this.router.navigate(['/home']);
-      // }
-
-
+      this.appApiService.getRole().subscribe((response)=>{
+        this.role = (response.userRole as Role) || Role.VIEWER;
+      })
+      this.appApiService.getAllEvents().subscribe((response)=>{
+        this.event = response.events.find((event: any) => event._id === id);
+        if(!this.event){
+          this.router.navigateByUrl('/home');
+        }
+        this.startDate = this.event.StartDate.split('T')[0];
+        this.endDate = this.event.EndDate.split('T')[0];
+        this.startTime = this.event.StartDate.split('T')[1].split('.')[0];
+        this.endTime = this.event.EndDate.split('T')[1].split('.')[0];
+        this.location = this.event.Location.StreetName + ', ' + this.event.Location.CityName;
+        this.category = this.event.Category;
+        console.log(this.event)
+        appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
+          console.log('users', users);
+          this.accessRequests = users;
+        });
+      })
     });
   }
-
-  public event: Event = {
-    _id: '648789728d8ed5b40edd0701',
-    date: "2021-05-01",
-    name: 'Polar Bear Plunge',
-    location: 'Antarctica',
-    category: 'Swimming',
-    hasAccess: true,
-    startsAt: '10:00',
-    endsAt: '11:00',
-  };
 
   
   overflow = false;
