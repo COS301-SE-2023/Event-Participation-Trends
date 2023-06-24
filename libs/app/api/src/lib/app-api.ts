@@ -21,6 +21,8 @@ import {
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
   ISendViewRequestResponse,
+  IUpdateEventDetailsRequest,
+  IUpdateEventDetailsResponse,
 } from '@event-participation-trends/api/event/util';
 import { Observable, firstValueFrom } from 'rxjs';
 import { Status } from '@event-participation-trends/api/user/util';
@@ -108,6 +110,19 @@ export class AppApiService {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
       });
+  }
+
+  async updateEventDetails(details: IUpdateEventDetailsRequest): Promise<IUpdateEventDetailsResponse> {
+    return firstValueFrom(
+      this.http.post<IUpdateEventDetailsResponse>('/api/event/updateEventDetails', details, {
+        headers: {
+          'x-csrf-token': this.cookieService.get('csrf'),
+        },
+      })
+    ).then((response) => {
+      return response;
+    }
+    );
   }
 
   async sendViewRequest(eventId: IEventId): Promise<Status | null | undefined> {

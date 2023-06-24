@@ -4,7 +4,7 @@ import { ActivatedRoute, Route, Router } from '@angular/router';
 import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { Redirect } from '@nestjs/common';
-import { IEvent } from '@event-participation-trends/api/event/util';
+import { IEvent, IEventDetails, IUpdateEventDetailsRequest } from '@event-participation-trends/api/event/util';
 import { promisify } from 'util';
 
 @Component({
@@ -26,6 +26,7 @@ export class EventDetailsPage {
   public endTime = '';
   public location = '';
   public category = '';
+  public name = '';
   constructor(appApiService: AppApiService, private route: ActivatedRoute, private router: Router) {
     this.initialText = 'Initial text value';
     this.inviteEmail = '';
@@ -48,6 +49,7 @@ export class EventDetailsPage {
         this.endTime = this.event.EndDate.split('T')[1].split('.')[0];
         this.location = this.event.Location.StreetName + ', ' + this.event.Location.CityName;
         this.category = this.event.Category;
+        this.name = this.event.Name;
         console.log(this.event)
         appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
           console.log('users', users);
@@ -108,5 +110,19 @@ export class EventDetailsPage {
       return;
     }
     console.log('sendInvite', this.inviteEmail);
+  }
+
+  save(){
+    const updateDetails: IUpdateEventDetailsRequest = {
+      eventId: this.event._id,
+      eventDetails: {
+        Name: this.name,
+        Category: this.category,
+        Location: this.event.Location,
+        StartDate: new Date(this.startDate + 'T' + this.startTime),
+        EndDate: new Date(this.endDate + 'T' + this.endTime),
+      }
+    }
+    this.appApiService.updateEventDetails(updateDetails);
   }
 }
