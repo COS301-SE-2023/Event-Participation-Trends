@@ -16,11 +16,17 @@ export class UsermanagementPage {
     private containerElement: ElementRef,
     private appApiService: AppApiService
   ) {
-    this.appApiService.getAllUsers().then((users) => {
-      this.users = users;
-    });
-    this.appApiService.getAllUsers().then((users) => {
-      this.old_users = users;
+    this.appApiService.getRole().subscribe((role) => {
+      if (role.userRole !== 'admin') {
+        window.location.href = '/home';
+      }else {
+        this.appApiService.getAllUsers().then((users) => {
+          this.users = users;
+        });
+        this.appApiService.getAllUsers().then((users) => {
+          this.old_users = users;
+        });
+      }
     });
   }
 
