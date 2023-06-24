@@ -131,14 +131,7 @@ export class VieweventsPage {
   }
 
   requestAccess(event: any) {
-    this.appApiService
-      .sendViewRequest(event._id)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.appApiService.sendViewRequest(event._id);
   }
 
   managedEvents(): any[] {

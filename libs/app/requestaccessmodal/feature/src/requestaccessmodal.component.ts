@@ -46,7 +46,7 @@ export class RequestAccessModalComponent {
           role: 'confirm',
           handler: () => {
             this.handlerMessage = `Access request sent.`;
-            this.requestAccess({ _id: this.event._Id }); //api request
+            this.requestAccess({ _id: this.event._id }); //api request
             // this.presentToastSuccess('bottom', 'Access request sent.'); // if access request is successful
             // this.presentToastFailure('bottom', 'Access request failed.'); // if access request fails
 
@@ -84,10 +84,12 @@ export class RequestAccessModalComponent {
   }
 
   requestAccess(event: any) {
-    this.appApiService
-      .sendViewRequest({ eventId: event._id })
-      .then((status) => {
-        console.log(status);
-      });
+    this.appApiService.sendViewRequest({ eventId: event._id }).subscribe((response) => {
+      if (response.status === 'success') {
+        this.presentToastSuccess('bottom', 'Access request sent.');
+      } else {
+        this.presentToastFailure('bottom', 'Access request failed. Please try again later.');
+      }
+    });
   }
 }
