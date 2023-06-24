@@ -20,6 +20,8 @@ import {
     IRemoveViewerResponse,
     IUpdateEventDetailsRequest,
     IUpdateEventDetailsResponse,
+    IGetEventRequest,
+    IGetEventResponse,
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
@@ -235,6 +237,22 @@ export class EventController {
             eventDetails: requestBody.eventDetails,
         }
         return this.eventService.updateEventDetails(extractRequest);
+    }
+
+    @Get('getEvent')
+    @SetMetadata('role',Role.MANAGER)
+    async getEvent(
+        @Query() query: any
+    ): Promise<IGetEventResponse> {
+
+        if(query.eventId==undefined || query.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
+        const extractRequest: IGetEventRequest = {
+            eventId: query.eventId
+        }
+
+        return <IGetEventResponse> <unknown> this.eventService.getEvent(extractRequest);
     }
 
 }

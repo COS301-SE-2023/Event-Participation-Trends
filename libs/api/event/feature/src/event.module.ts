@@ -18,6 +18,7 @@ import {
     GetAllEventsHandler,
     GetManagedEventsHandler,
     GetUserViewingEventsHandler,
+    GetEventHandler,
  } from './queries';
 
 import {
@@ -59,6 +60,7 @@ export const QueryHandlers = [
     GetManagedEventsHandler,
     GetAllViewRequestsHandler,
     GetUserViewingEventsHandler,
+    GetEventHandler,
 ];
 
 @Module({
