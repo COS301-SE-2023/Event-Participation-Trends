@@ -34,6 +34,8 @@ export class CreateFloorPlanPage {
       const width = canvasContainer.nativeElement.offsetWidth;
       const height = canvasContainer.nativeElement.offsetHeight;
       
+      console.log(width, height); // debugging purposes
+
       this.canvas = new fabric.Canvas(canvasElement);
       this.canvas.setDimensions({ width: width*0.98, height: height*0.965 });
       this.canvas.on('object:moving', this.onObjectMoving.bind(this));
