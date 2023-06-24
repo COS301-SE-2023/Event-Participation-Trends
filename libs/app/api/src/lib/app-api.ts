@@ -76,16 +76,13 @@ export class AppApiService {
   }
 
   // EVENTS //
-  async createEvent(event: IEventDetails): Promise<Status | null | undefined> {
-    return firstValueFrom(
-      this.http.post<ICreateEventResponse>('/api/event/createEvent', event, {
+  createEvent(event: IEventDetails): Observable<ICreateEventResponse> {
+    return this.http.post<ICreateEventResponse>('/api/event/createEvent', event, {
         headers: {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
       })
-    ).then((response) => {
-      return response.status;
-    });
+    
   }
 
   getAllEvents(): Observable<IGetAllEventsResponse> {
