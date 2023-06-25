@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 
 @Component({
@@ -12,10 +13,10 @@ export class HomePage {
   viewSelected = false;
   compareSelected = false;
 
-  public role = 'Viewer';
+  public role = Role.VIEWER;
   constructor(private appApiService: AppApiService) {
-    this.appApiService.getRole().subscribe((role) => {
-      this.role = role.userRole ? role.userRole : 'Viewer';
+    this.appApiService.getRole().subscribe((response)=>{
+      this.role = (response.userRole as Role) || Role.VIEWER;
     });
   }
 
@@ -47,5 +48,9 @@ export class HomePage {
 
   allowCompare(): boolean {
     return this.role === 'manager' || this.role === 'admin';
+  }
+
+  getRole(): Role {
+    return this.role;
   }
 }
