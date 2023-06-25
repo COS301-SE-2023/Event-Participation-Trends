@@ -10,7 +10,7 @@ describe('AppController', () => {
     appcontroller = new AppController(appservice); 
   });
 
-  describe('findAll', () => {
+  describe('getData', () => {
     it('Should return `Hello API`', async () => {
       const result = {
         message: 'Hello API',
