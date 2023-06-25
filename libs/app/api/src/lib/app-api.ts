@@ -69,64 +69,62 @@ export class AppApiService {
 
   getRole(): Observable<IGetUserRoleResponse> {
     return this.http.get<IGetUserRoleResponse>('/api/user/getRole', {
-        headers: {
-          'x-csrf-token': this.cookieService.get('csrf'),
-        },
-      })
+      headers: {
+        'x-csrf-token': this.cookieService.get('csrf'),
+      },
+    });
   }
 
   // EVENTS //
   createEvent(event: IEventDetails): Observable<ICreateEventResponse> {
-    return this.http.post<ICreateEventResponse>('/api/event/createEvent', event, {
+    return this.http.post<ICreateEventResponse>(
+      '/api/event/createEvent',
+      event,
+      {
         headers: {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
-      })
-    
+      }
+    );
   }
 
   getAllEvents(): Observable<IGetAllEventsResponse> {
     return this.http.get<IGetAllEventsResponse>('/api/event/getAllEvents', {
-        headers: {
-          'x-csrf-token': this.cookieService.get('csrf'),
-        },
-      })
+      headers: {
+        'x-csrf-token': this.cookieService.get('csrf'),
+      },
+    });
   }
 
   getSubscribedEvents(): Observable<IGetUserViewingEventsResponse> {
-    return this.http.get<IGetUserViewingEventsResponse>('/api/event/getAllViewingEvents', {
+    return this.http.get<IGetUserViewingEventsResponse>(
+      '/api/event/getAllViewingEvents',
+      {
         headers: {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
-      });
-  }
-
-  getManagedEvents(): Observable<IGetManagedEventsResponse> {
-    return this.http.get<IGetManagedEventsResponse>('/api/event/getManagedEvents', {
-        headers: {
-          'x-csrf-token': this.cookieService.get('csrf'),
-        },
-      });
-  }
-
-  async updateEventDetails(details: IUpdateEventDetailsRequest): Promise<IUpdateEventDetailsResponse> {
-    return firstValueFrom(
-      this.http.post<IUpdateEventDetailsResponse>('/api/event/updateEventDetails', details, {
-        headers: {
-          'x-csrf-token': this.cookieService.get('csrf'),
-        },
-      })
-    ).then((response) => {
-      return response;
-    }
+      }
     );
   }
 
-  async sendViewRequest(eventId: IEventId): Promise<Status | null | undefined> {
+  getManagedEvents(): Observable<IGetManagedEventsResponse> {
+    return this.http.get<IGetManagedEventsResponse>(
+      '/api/event/getManagedEvents',
+      {
+        headers: {
+          'x-csrf-token': this.cookieService.get('csrf'),
+        },
+      }
+    );
+  }
+
+  async updateEventDetails(
+    details: IUpdateEventDetailsRequest
+  ): Promise<IUpdateEventDetailsResponse> {
     return firstValueFrom(
-      this.http.post<ISendViewRequestResponse>(
-        '/api/event/sendViewRequest',
-        eventId,
+      this.http.post<IUpdateEventDetailsResponse>(
+        '/api/event/updateEventDetails',
+        details,
         {
           headers: {
             'x-csrf-token': this.cookieService.get('csrf'),
@@ -134,8 +132,20 @@ export class AppApiService {
         }
       )
     ).then((response) => {
-      return response.status;
+      return response;
     });
+  }
+
+  sendViewRequest(eventId: IEventId): Observable<ISendViewRequestResponse> {
+    return this.http.post<ISendViewRequestResponse>(
+      '/api/event/sendViewRequest',
+      eventId,
+      {
+        headers: {
+          'x-csrf-token': this.cookieService.get('csrf'),
+        },
+      }
+    );
   }
 
   // REQUESTS //

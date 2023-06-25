@@ -20,7 +20,7 @@ export class SendViewRequestHandler implements ICommandHandler<SendViewRequestCo
         
         const request = command.request;
 
-        if (!request.eventId){
+        if (request.eventId){
                 
             const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
 
@@ -30,13 +30,15 @@ export class SendViewRequestHandler implements ICommandHandler<SendViewRequestCo
 
             //check if already requested
             const userDoc = await this.userRepository.getUser(request.UserEmail|| "");
-            let requested =false;
+            let requested = false;
             const eventRequestersDoc = await this.eventRepository.getRequesters(eventIdObj);
-            if(eventRequestersDoc.length != 0)
+            if(eventRequestersDoc.length != 0) {
+                
                 eventRequestersDoc[0].Requesters?.forEach(element => {
                     if(element.toString() == userDoc[0]._id.toString())
-                        requested =true; 
+                    requested =true; 
                 });
+            }
 
             if(!requested){
                 const data: IViewEvent = {
