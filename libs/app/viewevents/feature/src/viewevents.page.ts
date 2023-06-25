@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RequestAccessModalComponent } from '@event-participation-trends/app/requestaccessmodal/feature';
 import { ViewEventModalComponent } from '@event-participation-trends/app/vieweventmodal/feature';
-import { ModalController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { IEvent, IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
 import { Observable, forkJoin } from 'rxjs';
@@ -18,10 +18,12 @@ export class VieweventsPage {
   public my_events: any[] = [];
   public role = 'Viewer';
   public searchValue = '';
+  public address_location = '';
 
   constructor(
     private appApiService: AppApiService,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly navController: NavController
   ) {
     // get role
     this.appApiService.getRole().subscribe((role) => {
@@ -51,7 +53,6 @@ export class VieweventsPage {
       }
 
       forkJoin([my_events_request, this.appApiService.getAllEvents(), this.appApiService.getSubscribedEvents()]).subscribe((response) => {
-        console.log("Joined");
         const my_events = response[0].events;
         const all_events = response[1].events;
         const subscribed_events = response[2].events;
@@ -123,7 +124,7 @@ export class VieweventsPage {
   }
 
   myEventsTitle(): boolean {
-    return this.my_events.length > 0 && this.role === 'manager';
+    return this.role === 'manager';
   }
 
   allEventsTitle(): boolean {
@@ -131,14 +132,7 @@ export class VieweventsPage {
   }
 
   requestAccess(event: any) {
-    this.appApiService
-      .sendViewRequest(event._id)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.appApiService.sendViewRequest(event._id);
   }
 
   managedEvents(): any[] {
@@ -163,5 +157,18 @@ export class VieweventsPage {
         ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
         : false;
     });
+  }
+
+  getLocation(event: any): string {
+    this.address_location = '';
+    if (event.Location.StreetName) {
+      this.address_location += event.Location.StreetName;
+    }
+    
+    return this.address_location;
+  }
+
+  openEventScreenView(event: any) {
+    this.navController.navigateForward('/eventscreenview', { queryParams: {id: event._id, queryParamsHandling: 'merge' } });
   }
 }

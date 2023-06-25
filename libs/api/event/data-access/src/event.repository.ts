@@ -49,6 +49,7 @@ export class EventRepository {
     }
 
     async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
+        console.log("Unga Bunga");
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
             { $push: { Requesters: userID } });

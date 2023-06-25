@@ -15,7 +15,7 @@
         ></ion-searchbar>
         <ion-icon
           ngClass="search-filter"
-          class="h-10 w-10 self-center hover:opacity-50 p-2"
+          class="h-10 w-10 self-center hover:opacity-50 p-2 cursor-pointer"
           name="options-outline"
         ></ion-icon>
       </span>
@@ -48,7 +48,7 @@
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all bg-transparent"
           >
             <p class="px-4 py-2 self-start duration-300 transition-all">
-              Location: {{event.Location}}
+              Location: {{getLocation(event)}}
             </p>
             <p class="px-4 py-2 self-start duration-300 transition-all">
               Category: {{event.Category}}
@@ -61,7 +61,7 @@
       >
         <ion-card-content
           class="flex items-center justify-center h-full duration-300 transition-all"
-          routerLink="/createfloorplan"
+          routerLink="/addevent"
         >
           <ion-icon
             class="h-16 w-16 duration-300 transition-all"
@@ -84,7 +84,7 @@
         *ngFor="let event of subscribedEvents()"
         class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:cursor-pointer"
         [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : hasAccess(event), 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !hasAccess(event)}"
-        (click)="showPopupMenu(event.Name)"
+        (click)="openEventScreenView(event)"
         >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all"
@@ -104,7 +104,7 @@
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
           >
             <p class="px-4 py-2 self-start duration-300 transition-all">
-              Location: {{event.Location}}
+              Location: {{getLocation(event)}}
             </p>
             <p class="px-4 py-2 self-start duration-300 transition-all">
               Category: {{event.Category}}
@@ -136,7 +136,7 @@
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
           >
             <p class="px-4 py-2 self-start duration-300 transition-all">
-              Location: {{event.Location}}
+              Location: {{getLocation(event)}}
             </p>
             <p class="px-4 py-2 self-start duration-300 transition-all">
               Category: {{event.Category}}
@@ -145,19 +145,5 @@
         </ion-card-content>
       </ion-card>
     </div>
-    <ion-buttons>
-      <ion-button routerLink="/eventdetails">
-        <ion-text color="danger">Event Details</ion-text>
-      </ion-button>
-      <ion-button routerLink="/addevent">
-        <ion-text color="danger">Create event</ion-text>
-      </ion-button>
-      <ion-button routerLink="/flooreditor">
-        <ion-text color="danger">Floor Editor</ion-text>
-      </ion-button>
-      <ion-button routerLink="/createfloorplan">
-        <ion-text color="danger">Create Floor Plan</ion-text>
-      </ion-button>
-    </ion-buttons>
   </div>
 </ion-content>
