@@ -20,7 +20,7 @@ export class SendViewRequestHandler implements ICommandHandler<SendViewRequestCo
         
         const request = command.request;
 
-        if (!request.eventId){
+        if (request.eventId){
                 
             const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
 
