@@ -1,6 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  AlertController,
+  LoadingController,
+  ToastController,
+} from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ICreateEventResponse, IEventDetails } from '@event-participation-trends/api/event/util';
+import { AppApiService } from '@event-participation-trends/app/api';
 import * as moment from 'moment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'event-participation-trends-addevent',
@@ -10,7 +18,13 @@ import * as moment from 'moment';
 export class AddEventPage implements OnInit {
   eventForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder, 
+    private appApiService: AppApiService,
+    private readonly alertController: AlertController,
+    private readonly toastController: ToastController,
+    private readonly loadingController: LoadingController,
+    private readonly router: Router) {}
 
   ngOnInit(): void {
     this.eventForm = this.formBuilder.group({
@@ -23,13 +37,93 @@ export class AddEventPage implements OnInit {
     });
   }
 
-  createEvent(): void {
-    if (this.eventForm.invalid) {
-      alert('Please fill out all fields');
-      // Access individual form controls and mark them as touched
-      const controls = this.eventForm.controls;
-      Object.keys(controls).forEach(controlName => controls[controlName].markAsTouched());
+  isLoading = false;
+
+  async createEvent() {
+    const selectedDate = (document.getElementById('date') as HTMLIonInputElement).value;
+    const selectedStartTime = (document.getElementById('startTime') as HTMLIonInputElement).value;
+    const selectedEndTime = (document.getElementById('endTime') as HTMLIonInputElement).value;
+
+    const event: IEventDetails = {
+      Name: this.eventName?.value,
+      StartDate: this.combineDateTime(selectedDate, selectedStartTime),
+      EndDate: this.combineDateTime(selectedDate, selectedEndTime),
+      Location: {
+        "Latitude": -25.7461,
+        "Longitude": 28.1881,
+        "StreetName": "Lynnwood Road",
+        "CityName": "Pretoria",
+        "ProvinceName": "Gauteng",
+        "CountryName": "South Africa",
+        "ZIPCode": "0028",
+      },
+      Category: this.eventCategory?.value,
+    };
+
+    const loading = await this.loadingController.create({
+      message: 'Creating event...',
+      spinner: 'circles'
+    });
+    await loading.present();
+
+    if (this.validEvent(event)) {
+      this.appApiService.createEvent(event).subscribe((response: ICreateEventResponse) => {
+        if (response && response.status) {        
+          this.presentToastSuccess('bottom', 'Event created successfully');
+          loading.dismiss();
+          setTimeout(() => {
+            this.router.navigateByUrl('/home/viewevents');
+          },1000);
+          setTimeout(() => {
+            location.reload();
+          }, 1200); 
+        }
+        else {
+          this.presentToastFailure('bottom', 'Event creation failed. Please try again.');
+          loading.dismiss();
+          this.eventForm.reset();
+        }
+      });
+      
     }
+    else {
+      this.presentToastFailure('bottom', 'Invalid event data. Please try again.');
+      this.eventForm.reset();
+    }
+  }
+
+  validEvent(event: IEventDetails): boolean | null | undefined{
+    return !!(event.Name && event.StartDate && event.EndDate && event.Location && event.Category);
+  }
+
+  combineDateTime(date: string | number | undefined | null, time: string | number | undefined | null): Date {
+
+    const combinedDateTimeString = `${date}T${time}:00.000Z`;
+    const combinedDateTime = new Date(combinedDateTimeString);
+
+    return combinedDateTime;
+  }
+
+  async presentToastSuccess(position: 'top' | 'middle' | 'bottom', message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2500,
+      position: position,
+      color: 'success',
+    });
+
+    await toast.present();
+  }
+
+  async presentToastFailure(position: 'top' | 'middle' | 'bottom', message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2500,
+      position: position,
+      color: 'danger',
+    });
+
+    await toast.present();
   }
 
   get eventName() {
