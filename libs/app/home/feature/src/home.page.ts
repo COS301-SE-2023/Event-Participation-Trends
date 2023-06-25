@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 
@@ -52,5 +52,21 @@ export class HomePage {
 
   getRole(): Role {
     return this.role;
+  }
+
+  isLargeScreen = false;
+
+  ngOnInit() {
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize() {
+    this.isLargeScreen = window.innerWidth >= 1310;
+    console.log(window.innerWidth);
   }
 }
