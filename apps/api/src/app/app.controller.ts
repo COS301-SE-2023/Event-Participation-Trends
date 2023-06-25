@@ -13,7 +13,7 @@ export class AppController {
   @Get()
   @SetMetadata('role', Role.VIEWER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
-  getData(@Req() req: any) {
+  getData() {
     return this.appService.getData();
   }
 }
