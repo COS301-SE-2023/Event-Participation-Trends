@@ -5,13 +5,13 @@ export type SensorDocument = HydratedDocument<Sensor>;
 
 @Schema({timestamps: true, collection: 'Sensor' })
 export class Sensor{
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     SensorId: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: Number, required: true })
     x_coordiante: number | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: Number, required: true })
     y_coordiante: number | undefined | null;
 }
 
