@@ -3,7 +3,7 @@ import { RequestAccessModalComponent } from '@event-participation-trends/app/req
 import { ViewEventModalComponent } from '@event-participation-trends/app/vieweventmodal/feature';
 import { ModalController, NavController } from '@ionic/angular';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { IEvent, IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
+import { IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
 import { Observable, forkJoin } from 'rxjs';
 
 @Component({
@@ -28,14 +28,14 @@ export class VieweventsPage {
     // get role
     this.appApiService.getRole().subscribe((role) => {
       this.role = role.userRole ? role.userRole : 'Viewer';
-
+      
       let my_events_request : Observable<IGetManagedEventsResponse>;
-
+      
       if (this.role === 'admin') {
         this.appApiService.getAllEvents().subscribe((response) => {
           this.my_events = response.events;
         })
-
+        
         return;
       }
       
@@ -51,7 +51,7 @@ export class VieweventsPage {
           })
         });
       }
-
+      
       forkJoin([my_events_request, this.appApiService.getAllEvents(), this.appApiService.getSubscribedEvents()]).subscribe((response) => {
         const my_events = response[0].events;
         const all_events = response[1].events;
@@ -125,6 +125,10 @@ export class VieweventsPage {
 
   myEventsTitle(): boolean {
     return this.role === 'manager';
+  }
+
+  managerUp(): boolean {
+    return this.role === 'manager' || this.role === 'admin';
   }
 
   allEventsTitle(): boolean {
