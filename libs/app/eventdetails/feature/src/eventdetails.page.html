@@ -1,0 +1,176 @@
+<subpagenav [currentPage]="'/home/eventdetails'"></subpagenav>
+<ion-content
+  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+>
+  <div class="backdrop-blur-[6px] h-full">
+    <div
+      *ngIf="show_requests"
+      class="w-screen z-20 bg-ept-deep-grey bg-opacity-20 h-full flex justify-center items-center transition-all duration-300 absolute"
+    >
+      <div
+        class="w-2/6 h-5/6 bg-white rounded-lg bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
+      >
+        <div class="flex flex-col w-full content-center">
+          <ion-icon
+            class="h-8 w-8 m-4 duration-300 transition-all absolute self-end text-ept-deep-grey font-lg hover:cursor-pointer hover:scale-125 hover:opacity-70"
+            name="close"
+            (click)="hideRequests()"
+          ></ion-icon>
+          <p class="text-3xl text-semibold my-4 mt-8 self-center">
+            Access Requests
+          </p>
+        </div>
+        <div *ngIf="isEmpty()" class="flex flex-col w-full h-fit">
+          <p *ngIf="isEmpty()" ngClass="no-events" class="self-center mt-10">
+            No users to show.
+          </p>
+        </div>
+        <ion-list
+          *ngIf="!isEmpty()"
+          ngClass="user-list"
+          lines="none"
+          [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+          class="rounded-lg m-6 lg:m-auto py-3 w-auto lg:w-5/6"
+        >
+          <ion-item
+            *ngFor="let request of accessRequests"
+            ngClass="user-item"
+            class="w-full"
+          >
+            <div class="grid grid-cols-4 items-center w-full">
+              <p class="col-span-2">{{request.Email}}</p>
+              <ion-button
+                class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden bg-green-400 text-ept-off-white text-md md:justify-self-end self-center duration-300 transition-all hover:scale-105 hover:bg-green-500 hover:text-ept-off-white"
+                (click)="acceptRequest(request)"
+              >
+                Accept
+              </ion-button>
+              <ion-button
+                class="col-span-4 md:col-span-1 rounded-2xl overflow-hidden bg-red-400 text-ept-off-white text-md md:justify-self-end self-center duration-300 transition-all hover:scale-105 hover:bg-red-500 hover:text-ept-off-white"
+                (click)="declineRequest(request)"
+              >
+                Decline
+              </ion-button>
+            </div>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+    <div
+      *ngIf="show_invites"
+      class="w-screen z-20 bg-ept-deep-grey bg-opacity-20 h-full flex justify-center items-center transition-all duration-300 absolute"
+    >
+      <div
+        class="w-2/6 h-fit bg-white rounded-lg bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
+      >
+        <div class="flex flex-col w-full content-center">
+          <ion-icon
+            class="h-8 w-8 m-4 duration-300 transition-all absolute self-end text-ept-deep-grey font-lg hover:cursor-pointer hover:scale-125 hover:opacity-70"
+            name="close"
+            (click)="hideInvites()"
+          ></ion-icon>
+          <p class="text-3xl text-semibold my-4 self-center">Invite Someone</p>
+        </div>
+        <div class="flex m-8 mt-2">
+          <ion-input
+            class="input w-full m-4"
+            placeholder="email@domain.com"
+            type="email"
+            [(ngModel)]="inviteEmail"
+          ></ion-input>
+          <ion-button
+            class="m-4 w-1/3 rounded-lg overflow-hidden self-center text-ept-bumble-yellow bg-ept-deep-grey duration-300 transition-all hover:scale-105"
+            (click)="sendInvite()"
+            >Invite</ion-button
+          >
+        </div>
+      </div>
+    </div>
+    <div class="w-full min-h-full grid grid-cols-3">
+      <div
+        class="col-span-1 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white flex flex-col"
+      >
+        <div class="flex flex-col justify-center">
+          <div class="absolute self-end flex">
+            <ion-icon
+              class="h-7 w-7 duration-300 transition-all text-ept-deep-grey font-lg hover:cursor-pointer hover:scale-125 hover:opacity-70"
+              name="mail"
+              (click)="showInvites()"
+            ></ion-icon>
+            <ion-icon
+              class="h-7 w-7 mx-4 duration-300 transition-all font-lg hover:cursor-pointer"
+              name="notifications"
+              (click)="showRequests()"
+              [ngClass]="{'animate-pulse hover:cursor-pointer hover:scale-125 hover:opacity-70 text-ept-bumble-yellow': !isEmpty(), 'opacity-30 text-ept-deep-grey': isEmpty()}"
+            ></ion-icon>
+          </div>
+          <h1 class="text-2xl p-4 self-start">{{name}}</h1>
+        </div>
+        <div class="p-4 self-start w-full">
+          <div class="py-3">
+            <label>Start Date</label>
+            <ion-input
+              type="date"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              [(ngModel)]="startDate"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>End Date</label>
+            <ion-input
+              type="date"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              [(ngModel)]="endDate"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Location</label>
+            <ion-input
+              type="text"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              [(ngModel)]="location"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Category</label>
+            <ion-input
+              type="text"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              [(ngModel)]="category"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Starts At:</label>
+            <ion-input
+              type="time"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              [(ngModel)]="startTime"
+            ></ion-input>
+          </div>
+          <div class="py-3">
+            <label>Ends At:</label>
+            <ion-input
+              type="time"
+              class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
+              [(ngModel)]="endTime"
+            ></ion-input>
+          </div>
+        </div>
+        <div
+          class="flex flex-col items-start text-left justify-center align-middle duration-300 transition-all h-full"
+        >
+          <!-- Ionic save button -->
+          <ion-button
+            class="m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
+            (click)="save()"
+            >Save</ion-button
+          >
+        </div>
+      </div>
+      <div
+        class="col-span-2 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
+        routerLink="/flooreditor"
+      ></div>
+    </div>
+  </div>
+</ion-content>
