@@ -19,7 +19,7 @@ export class AddEventPage implements OnInit {
   eventForm!: FormGroup;
 
   constructor(
-    private formBuilder: FormBuilder, 
+    public formBuilder: FormBuilder, 
     private appApiService: AppApiService,
     private readonly alertController: AlertController,
     private readonly toastController: ToastController,
@@ -96,12 +96,28 @@ export class AddEventPage implements OnInit {
     return !!(event.Name && event.StartDate && event.EndDate && event.Location && event.Category);
   }
 
+  // combineDateTime(date: string | number | undefined | null, time: string | number | undefined | null): Date {
+
+  //   const combinedDateTimeString = `${date}T${time}:00.000Z`;
+  //   const combinedDateTime = new Date(combinedDateTimeString);
+
+  //   return combinedDateTime;
+  // }
   combineDateTime(date: string | number | undefined | null, time: string | number | undefined | null): Date {
+    // test if date and time are valid
+    if (!date || !time || typeof date !== 'string' || typeof time !== 'string') {
+      return new Date();
+    }
+    const [year, month, day] = date.split('-').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
+  
+    // Create a new Date object using the local time zone
+    const combinedDateTime = new Date(year, month - 1, day, hours, minutes);
 
-    const combinedDateTimeString = `${date}T${time}:00.000Z`;
-    const combinedDateTime = new Date(combinedDateTimeString);
+    // Adjust the combinedDateTime to UTC by subtracting the local time zone offset
+    const utcCombinedDateTime = new Date(combinedDateTime.getTime() - combinedDateTime.getTimezoneOffset() * 60000);
 
-    return combinedDateTime;
+    return utcCombinedDateTime;
   }
 
   async presentToastSuccess(position: 'top' | 'middle' | 'bottom', message: string) {
