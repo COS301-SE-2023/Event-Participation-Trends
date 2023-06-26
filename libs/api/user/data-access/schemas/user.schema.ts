@@ -9,16 +9,16 @@ export class User{
     @Prop({ required: true, type: String })
     Role: Role | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     FirstName: string | undefined | null;
 
-    @Prop()
+    @Prop({type: String})
     LastName: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     Email: string | undefined | null;
 
-    @Prop()
+    @Prop({type: String})
     Picture: string | undefined | null;
 
     @Prop({ type: [{type: mongoose.Schema.Types.ObjectId ,ref: 'Event'}] })
