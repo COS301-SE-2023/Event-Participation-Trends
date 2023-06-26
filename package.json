@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start:dev": "yarn concurrently \"yarn nx serve app\" \"yarn nx serve api\""
+    "start:dev": "yarn concurrently \"yarn nx serve app\" \"yarn nx serve api\"",
+    "test":"jest"
   },
   "private": true,
   "dependencies": {
