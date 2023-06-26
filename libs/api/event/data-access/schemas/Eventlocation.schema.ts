@@ -6,25 +6,25 @@ export type EventLocationDocument = HydratedDocument<EventLocation>;
 @Schema({timestamps: true, collection: 'EventLocation' })
 export class EventLocation{
 
-    @Prop({ required: true })
+    @Prop({ type: Number, required: true })
     Latitude: number | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: Number, required: true })
     Longitude: number | undefined | null;
     
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     StreetName: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     CityName: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     ProvinceName: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     CountryName: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     ZIPCode: string | undefined | null;
 }
     
