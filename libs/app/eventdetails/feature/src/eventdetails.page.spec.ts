@@ -83,5 +83,29 @@ describe('EventDetailsPage', () => {
       eventId: eventId,
     });
     expect(component.removeRequest).toHaveBeenCalledWith(accessRequest);
-  }));    
+  }));  
+  
+  it('should decline access request and remove it', fakeAsync(() => {
+    const accessRequest = { Email: 'test@example.com' };
+    const eventId = '123';
+    const mockResponse: IAcceptViewRequestResponse = {
+      status: Status.FAILURE,
+    };
+
+    jest
+      .spyOn(appApiService, 'declineAccessRequest')
+      .mockResolvedValue(mockResponse.status);
+    jest.spyOn(component, 'removeRequest');
+
+    component.event = { _id: eventId };
+    component.declineRequest(accessRequest);
+
+    tick(); // Simulate the passage of time until all asynchronous operations are complete
+
+    expect(appApiService.declineAccessRequest).toHaveBeenCalledWith({
+      userEmail: accessRequest.Email,
+      eventId: eventId,
+    });
+    expect(component.removeRequest).toHaveBeenCalledWith(accessRequest);
+  }));
 });
