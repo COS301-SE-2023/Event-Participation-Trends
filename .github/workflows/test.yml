@@ -13,6 +13,8 @@ jobs:
       - uses: actions/checkout@v2
       - run: echo "${{ secrets.DOTENVFILE }}" > .env
       - run: 'yarn install'
+      - run: 'chmod +x ./fix_node_modules.sh'
+      - run: './fix_node_modules.sh'
       - run: 'yarn nx run-many --target=lint --all --parallel --skip-nx-cache'
       - run: 'yarn nx run-many --target=build --all --parallel --skip-nx-cache'
       - run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache'

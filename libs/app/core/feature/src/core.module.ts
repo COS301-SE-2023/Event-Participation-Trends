@@ -9,8 +9,15 @@ import { ErrorsState } from '@event-participation-trends/app/error/data-access';
 // import { AuthState } from '@event-participation-trends/app/auth/data-access';
 // import { AuthModule } from '@event-participation-trends/app/auth/feature';
 import { ErrorModule } from '@event-participation-trends/app/error/feature';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { AccessRequestsState } from '@event-participation-trends/app/accessrequests/data-access';
+import { AccessRequestsModule } from '@event-participation-trends/app/accessrequests/feature';
 // import { SocialLoginModule } from 'angularx-social-login';
 // import { GoogleLoginProvider, SocialAuthServiceConfig } from 'angularx-social-login';
+import { HttpClientModule } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorInterceptor } from '@event-participation-trends/app/api';
 
 @NgModule({
   declarations: [CoreShell],
@@ -18,9 +25,16 @@ import { ErrorModule } from '@event-participation-trends/app/error/feature';
     BrowserModule,
     IonicModule.forRoot(),
     CoreRoutingModule,
-    NgxsModule.forRoot(),
+    NgxsModule.forRoot([ErrorsState]),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    ErrorModule,
+    HttpClientModule,
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, CookieService, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+  }],
   bootstrap: [CoreShell]
 })
 export class CoreModule { }
