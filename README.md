@@ -52,9 +52,16 @@ The system uses Google Authentication to ensure security and privacy of the data
 | Arno Jooste          | u21457451      | [08Arno30](https://github.com/08Arno30)                   | Ux/UI designer and frontend engineer | [Link](https://www.linkedin.com/in/arno-jooste-421078269)
 | Luca Loubser         | u20439963      | [LucaLoubser](https://github.com/LucaLoubser)             | Backend and Database engineer        | [Link](https://www.linkedin.com/in/luca-loubser-518b23192)
 
+
+
 ## Links
 
 | Description                       | Link                                                                                                     |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| System Requirements Specification | [Link](https://docs.google.com/document/d/1Doeb5QJNxG2spNTYSLdacT7NHsnLVPAS4rcuX1nRqrY/edit?usp=sharing) |
+| System Requirements Specification v1 | [Link](https://docs.google.com/document/d/1Doeb5QJNxG2spNTYSLdacT7NHsnLVPAS4rcuX1nRqrY/edit?usp=sharing) |
+| System Requirements Specification v2 | [Link](https://docs.google.com/document/d/1iHdudGcnUYoy227o1OgBhCBoATmbfdSvOFCusW7_F54/edit?usp=sharing) |
+| Architecture Requirements Document | [Link](https://docs.google.com/document/d/1DCmlr6tthxqHlV5Asj0hk7cu2i9cDNINY6NU2OYsUmg/edit?usp=sharing)
 | Notion | [Link](https://lukasanthonissen.notion.site/Indlovu-Event-Participant-Trends-ffbc614bd9444ad2a031b2d77ae02324) |
+| Coding Standards Document | [Link](https://lukasanthonissen.notion.site/Coding-Standards-16e0f2ae0b7444d2aaea57c899e761e6?pvs=4) |
+| Documentation Contributions | [Link](https://lukasanthonissen.notion.site/List-of-Contributions-4138b8e2291c4ac5aee4b98d20c515b6?pvs=4) |
+| User Manual | [Link](https://docs.google.com/document/d/1_cKCrhkL_yB80d10c_E82UGZVLFnSZI2S8DJMGUVsJ0/edit?usp=sharing)
