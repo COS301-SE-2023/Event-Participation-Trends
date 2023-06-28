@@ -8,3 +8,4 @@ export * from './TEMP_DEVICE_BUFFER.schema';
 export * from './TEMP_DEVICE_TO_DT.schema';
 export * from './Devicelocation.schema';
 export * from './Eventlocation.schema';
+export * from './walls.schema';
