@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { fabric } from 'fabric';
 
 interface DroppedItem {
@@ -90,4 +90,21 @@ export class CreateFloorPlanPage {
       droppedItem.fabricObject?.setCoords();
     }
   }
+  
+  shouldStackVertically = false;
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.checkScreenWidth();
+  }
+
+  ngOnInit() {
+    this.checkScreenWidth();
+  }
+
+  checkScreenWidth() {
+    this.shouldStackVertically = window.innerWidth < 1421;
+  }
+
+  
 }
