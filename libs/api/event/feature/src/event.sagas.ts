@@ -6,13 +6,14 @@ import {
 import {
     AddViewingEventCommand,
     AddViewingEventByNameCommand,
+    AddEventToAdminCommand,
 } from '@event-participation-trends/api/user/util';
 import{
     RemoveEventFromViewerCommand,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { ICommand, ofType, Saga } from '@nestjs/cqrs';
-import { map, Observable } from 'rxjs';
+import { from, map, mergeMap, Observable } from 'rxjs';
 
 @Injectable()
 export class EventsSagas {
@@ -34,10 +35,18 @@ export class EventsSagas {
 
     @Saga()
     onCreateEventEvent = (events$: Observable<any>): Observable<ICommand> => {
-      return events$.pipe(
-        ofType(CreateEventEvent),
-        map((event: CreateEventEvent) => new AddViewingEventByNameCommand({eventName: event.event.Name || ""})),
-      );
+        return events$.pipe(
+            ofType(CreateEventEvent),
+            mergeMap((event: CreateEventEvent) => {
+              const commands: ICommand[] = [];
+    
+              commands.push(new AddViewingEventByNameCommand({ eventName: event.event.Name || "" }));
+        
+              commands.push(new AddEventToAdminCommand({ eventName: event.event.Name || "" }));
+
+              return from(commands);
+            })
+          );
     };
 
 }
