@@ -83,14 +83,51 @@ export class CreateFloorPlanPage {
     this.canvas.add(element);
   }
 
+  // onObjectMoving(event: fabric.IEvent): void {
+  //   const movedObject = event.target as fabric.Object;
+  //   const droppedItem = this.canvasItems.find(item => item.fabricObject === movedObject);
+  //   if (droppedItem) {
+  //     droppedItem.fabricObject?.setCoords();
+  //   }
+  // }
   onObjectMoving(event: fabric.IEvent): void {
     const movedObject = event.target as fabric.Object;
     const droppedItem = this.canvasItems.find(item => item.fabricObject === movedObject);
+    
     if (droppedItem) {
+      const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
+      const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
+      const objectWidth = movedObject.getScaledWidth();
+      const objectHeight = movedObject.getScaledHeight();
+      const positionX = movedObject.left || 0;
+      const positionY = movedObject.top || 0;
+      
+      // Calculate the boundaries
+      const minX = 0;
+      const minY = 0;
+      const maxX = canvasWidth - objectWidth;
+      const maxY = canvasHeight - objectHeight;
+      
+      // Check if the object is beyond the boundaries
+      if (positionX < minX) {
+        movedObject.set('left', minX);
+      } else if (positionX > maxX) {
+        movedObject.set('left', maxX);
+      }
+      
+      if (positionY < minY) {
+        movedObject.set('top', minY);
+      } else if (positionY > maxY) {
+        movedObject.set('top', maxY);
+      }
+      
+      // Update the object's coordinates
       droppedItem.fabricObject?.setCoords();
+      this.canvas.renderAll();
     }
   }
   
+
   shouldStackVertically = false;
 
   @HostListener('window:resize')
