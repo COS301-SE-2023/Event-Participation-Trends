@@ -67,6 +67,5 @@ export class HomePage {
 
   private checkScreenSize() {
     this.isLargeScreen = window.innerWidth >= 1310;
-    console.log(window.innerWidth);
   }
 }
