@@ -1,4 +1,5 @@
 import { UserModule as UserDataAccessModule } from '@event-participation-trends/api/user/data-access';
+import { EventModule as EventDataAccessModule } from '@event-participation-trends/api/event/data-access';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UserService } from './user.service';
@@ -7,6 +8,7 @@ import {
     CreateUserHandler, 
     UpdateUserRoleHandler,
     AddViewingEventHandler,
+    AddViewingEventByNameHandler,
 } from './commands';
 import {
     GetUsersHandler,
@@ -22,6 +24,7 @@ export const CommandHandlers = [
     CreateUserHandler,
     UpdateUserRoleHandler,
     AddViewingEventHandler,
+    AddViewingEventByNameHandler,
 ]
 
 export const QueryHandlers = [
@@ -37,7 +40,7 @@ export const EventHandlers = [
 
 
 @Module({
-    imports: [CqrsModule, UserDataAccessModule],
+    imports: [CqrsModule, UserDataAccessModule, EventDataAccessModule],
     providers: [UserService, ...CommandHandlers, ...EventHandlers, ...QueryHandlers],
     exports: [UserService],
 })
