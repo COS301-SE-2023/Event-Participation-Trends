@@ -1,4 +1,4 @@
-<ion-header>
+<ion-tabs>
   <ion-tab-bar
     slot="top"
     color="none"
@@ -16,9 +16,14 @@
       >
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-back-button>
-      <ion-label ngClass="title-text" class="sm:text-lg md:text-xl font-semibold" [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
+      <ion-label
+        ngClass="title-text"
+        class="sm:text-lg md:text-xl font-semibold"
+        [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
         >Event Participation Trends
-        <sub><ion-text color="medium">/ {{getRole()}}</ion-text></sub></ion-label
+        <sub
+          ><ion-text color="medium">/ {{getRole()}}</ion-text></sub
+        ></ion-label
       >
     </div>
 
@@ -50,8 +55,12 @@
     </div>
 
     <ion-button ngClass="profile-section" class="flex justify-self-end">
-      <ion-icon slot="end" name="person-circle" class="w-[40px] h-[40px]"></ion-icon>
+      <ion-icon
+        slot="end"
+        name="person-circle"
+        class="w-[40px] h-[40px]"
+      ></ion-icon>
       <ion-label ngClass="profile-name">Username</ion-label>
     </ion-button>
   </ion-tab-bar>
-</ion-header>
+</ion-tabs>

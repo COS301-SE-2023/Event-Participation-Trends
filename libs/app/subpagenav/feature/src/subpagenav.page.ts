@@ -9,11 +9,12 @@ import { AppApiService } from '@event-participation-trends/app/api';
 })
 export class SubPageNavPage {
   @Input() currentPage!: string;
+  @Input() event: any;
   public role = Role.VIEWER;  
   public appApiService: AppApiService;
-  selected = 'Event Details';
-  detailsSelected = true;
-  dashboardSelected = false;
+  selected = 'Dashboard';
+  detailsSelected = false;
+  dashboardSelected = true;
 
   constructor(appApiService: AppApiService) {
     this.appApiService = appApiService;

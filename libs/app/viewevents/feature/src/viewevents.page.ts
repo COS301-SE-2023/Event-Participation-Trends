@@ -175,4 +175,8 @@ export class VieweventsPage {
   openEventScreenView(event: any) {
     this.navController.navigateForward('/eventscreenview', { queryParams: {id: event._id, queryParamsHandling: 'merge' } });
   }
+
+  openEvent(event: any) {
+    this.navController.navigateForward('/event/eventdetails', { queryParams: {id: event._id, queryParamsHandling: 'merge' } });
+  }
 }
