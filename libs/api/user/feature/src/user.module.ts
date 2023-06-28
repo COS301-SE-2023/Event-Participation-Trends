@@ -9,6 +9,7 @@ import {
     UpdateUserRoleHandler,
     AddViewingEventHandler,
     AddViewingEventByNameHandler,
+    AddEventToAdminHandler,
 } from './commands';
 import {
     GetUsersHandler,
@@ -18,6 +19,7 @@ import {
     CreateUserEventHandler, 
     UpdateUserRoleEventHandler,
     AddViewingEventEventHandler,
+    AddEventToAdminEventHandler,
 } from './events';
 
 export const CommandHandlers = [
@@ -25,6 +27,7 @@ export const CommandHandlers = [
     UpdateUserRoleHandler,
     AddViewingEventHandler,
     AddViewingEventByNameHandler,
+    AddEventToAdminHandler,
 ]
 
 export const QueryHandlers = [
@@ -36,6 +39,7 @@ export const EventHandlers = [
     CreateUserEventHandler,
     UpdateUserRoleEventHandler,
     AddViewingEventEventHandler,
+    AddEventToAdminEventHandler,
 ];
 
 
