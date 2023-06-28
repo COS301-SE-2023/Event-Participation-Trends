@@ -1,13 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
-import { FloorLayout } from './floorlayout.schema';
 import { Stall } from './stall.schema';
 import { Sensor } from './sensor.schema';
 import { Device } from './device.schema';
 import { TEMP_DEVICE_TO_DT } from './TEMP_DEVICE_TO_DT.schema';
 import { TEMP_DEVICE_BUFFER } from './TEMP_DEVICE_BUFFER.schema';
 import { EventLocation } from './Eventlocation.schema';
-import { User } from '@event-participation-trends/api/user/data-access'
+import { Wall } from './walls.schema';
 
 export type EventDocument = HydratedDocument<Event>;
 
@@ -29,8 +28,11 @@ export class Event{
     @Prop({ type: EventLocation, required: true })
     Location: EventLocation | undefined | null;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })
-    thisFloorLayout: FloorLayout | undefined | null;
+    //@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })
+    //thisFloorLayout: FloorLayout | undefined | null;
+
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
+    Walls: Wall[] | undefined | null;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
     Stalls: Stall[] | undefined | null;
