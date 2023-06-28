@@ -5,6 +5,7 @@ import { ModalController, NavController } from '@ionic/angular';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
 import { Observable, forkJoin } from 'rxjs';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'event-participation-trends-viewevents',
@@ -23,7 +24,8 @@ export class VieweventsPage {
   constructor(
     private appApiService: AppApiService,
     private readonly modalController: ModalController,
-    private readonly navController: NavController
+    private readonly navController: NavController,
+    private readonly router: Router
   ) {
     // get role
     this.appApiService.getRole().subscribe((role) => {
@@ -172,11 +174,27 @@ export class VieweventsPage {
     return this.address_location;
   }
 
-  openEventScreenView(event: any) {
-    this.navController.navigateForward('/eventscreenview', { queryParams: {id: event._id, queryParamsHandling: 'merge' } });
+  // openEventScreenView(event: any) {
+  //   this.navController.navigateForward('/eventscreenview', { queryParams: {id: event._id, queryParamsHandling: 'merge' } });
+  // }
+
+  openEventDetails(event: any) {
+    this.navController.navigateForward('/event/eventdetails', { queryParams: {m: true, id: event._id, queryParamsHandling: 'merge' } });
   }
 
   openEvent(event: any) {
-    this.navController.navigateForward('/event/eventdetails', { queryParams: {id: event._id, queryParamsHandling: 'merge' } });
+    const isMyEvent = this.my_events.filter((my_event) => {
+      return my_event._id == event._id;
+    }).length > 0;
+
+    const queryParams: NavigationExtras = {
+      queryParams: {
+        m: isMyEvent || this.role === 'admin' ? true : false,
+        id: event._id,
+        queryParamsHandling: 'merge',
+      },
+    };
+
+    this.router.navigate(['/event/dashboard'], queryParams);
   }
 }

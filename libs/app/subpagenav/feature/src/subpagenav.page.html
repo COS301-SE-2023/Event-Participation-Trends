@@ -11,7 +11,7 @@
         color="none"
         fill="clear"
         ngClass="back-button"
-        defaultHref="{{currentPage}}"
+        defaultHref="/home/viewevents"
         routerDirection="back"
       >
         <ion-icon name="arrow-back-outline"></ion-icon>
@@ -28,10 +28,11 @@
     </div>
 
     <div
+      *ngIf="showTabs"
       class="flex justify-center items-center bg-transparent text-inherit text-md h-full col-span-1"
     >
       <ion-tab-button
-        tab="eventdetails"
+      tab="eventdetails"
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Event Details')"
@@ -45,7 +46,7 @@
       ></div>
 
       <ion-tab-button
-        tab="dashboard"
+      tab="dashboard"
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Dashboard')"
@@ -54,7 +55,7 @@
       </ion-tab-button>
     </div>
 
-    <ion-button ngClass="profile-section" class="flex justify-self-end">
+    <ion-button ngClass="profile-section" class="flex justify-self-end" [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}">
       <ion-icon
         slot="end"
         name="person-circle"
