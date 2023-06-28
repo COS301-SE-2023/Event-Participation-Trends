@@ -10,6 +10,7 @@ import { EventSchema,
          StallSchema,
          TEMP_DEVICE_BUFFERSchema,
          TEMP_DEVICE_TO_DTSchema,
+         WallSchema,
    } from '../schemas';
 @Module({
     imports: [MongooseModule.forFeature([
@@ -22,6 +23,7 @@ import { EventSchema,
         {name: 'TEMP_DEVICE_BUFFER', schema: TEMP_DEVICE_BUFFERSchema },
         {name: 'TEMP_DEVICE_TO_DT', schema: TEMP_DEVICE_TO_DTSchema },
         {name: 'Event', schema: EventSchema },
+        {name: 'Wall', schema: WallSchema },
         ])],
   providers: [EventRepository],
   exports: [EventRepository],
