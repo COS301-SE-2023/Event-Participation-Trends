@@ -21,6 +21,10 @@ export class UserRepository {
         return await this.userModel.find({Email: userEmail});
     }
 
+    async getUserById(userID: Types.ObjectId){
+        return await this.userModel.find({ _id: {$eq: userID}},);
+    }
+
     //refactor
     async getUsersByRole(userRole: string){
         return await this.userModel.find({Role: userRole});
