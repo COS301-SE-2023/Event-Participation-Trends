@@ -15,7 +15,8 @@
           <ion-icon
             [class.dropdown-icon]="true"
             [class.rotated]="isDropdownOpen"
-            name="chevron-down-outline"
+            name="chevron-down-outline" 
+            (click)="toggleDropdown()"
           ></ion-icon>
         </button>
       </h3>
