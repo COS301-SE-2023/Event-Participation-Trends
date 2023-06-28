@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 
@@ -11,6 +11,9 @@ export class SubPageNavPage {
   @Input() currentPage!: string;
   public role = Role.VIEWER;  
   public appApiService: AppApiService;
+  selected = 'Event Details';
+  detailsSelected = true;
+  dashboardSelected = false;
 
   constructor(appApiService: AppApiService) {
     this.appApiService = appApiService;
@@ -22,5 +25,34 @@ export class SubPageNavPage {
 
   getRole(): Role {
     return this.role;
+  }
+
+  selectTab(option: string) {
+    this.selected = option;
+
+    if (option === 'Event Details') {
+      this.detailsSelected = true;
+      this.dashboardSelected = false;
+    }
+    else if (option === 'Dashboard') {
+      this.detailsSelected = false;
+      this.dashboardSelected = true;
+    }
+  }
+
+  isLargeScreen = false;
+
+  ngOnInit() {
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize() {
+    this.isLargeScreen = window.innerWidth >= 1310;
+    console.log(window.innerWidth);
   }
 }
