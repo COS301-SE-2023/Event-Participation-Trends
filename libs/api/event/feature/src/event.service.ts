@@ -81,6 +81,6 @@ export class EventService {
     }
 
     async getEvent(request: IGetEventRequest) {
-        return await this.queryBus.execute<GetEventQuery, IGetEventRequest>(new GetEventQuery(request));
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
     }
 }
