@@ -4,9 +4,9 @@ import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { NavController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
-import { SubPageNavState } from '../../data-access/src/subpagenav.state';
+import { SubPageNavState } from '@event-participation-trends/app/subpagenav/data-access';
 import { Observable } from 'rxjs';
-import { SetSubPageNav } from '../../util/src/subpagenav.actions';
+import { SetSubPageNav } from '@event-participation-trends/app/subpagenav/util';
 
 @Component({
   selector: 'subpagenav',
