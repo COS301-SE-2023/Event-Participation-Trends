@@ -95,7 +95,7 @@ export class CreateFloorPlanPage {
   onObjectMoving(event: fabric.IEvent): void {
     const movedObject = event.target as fabric.Object;
     const droppedItem = this.canvasItems.find(item => item.fabricObject === movedObject);
-    
+  
     if (droppedItem) {
       const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
       const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
@@ -103,31 +103,36 @@ export class CreateFloorPlanPage {
       const objectHeight = movedObject.getScaledHeight();
       const positionX = movedObject.left || 0;
       const positionY = movedObject.top || 0;
-      
+  
+      // Define the grid size
+      const gridSize = 20; // Adjust this value according to your needs
+  
       // Calculate the boundaries
       const minX = 0;
       const minY = 0;
       const maxX = canvasWidth - objectWidth;
       const maxY = canvasHeight - objectHeight;
-      
-      // Check if the object is beyond the boundaries
-      if (positionX < minX) {
-        movedObject.set('left', minX);
-      } else if (positionX > maxX) {
-        movedObject.set('left', maxX);
-      }
-      
-      if (positionY < minY) {
-        movedObject.set('top', minY);
-      } else if (positionY > maxY) {
-        movedObject.set('top', maxY);
-      }
-      
+  
+      // Snap the object to the nearest gridline
+      const snappedX = Math.round(positionX / gridSize) * gridSize;
+      const snappedY = Math.round(positionY / gridSize) * gridSize;
+  
+      // Limit the object within the boundaries
+      const limitedX = Math.max(minX, Math.min(maxX, snappedX));
+      const limitedY = Math.max(minY, Math.min(maxY, snappedY));
+  
+      // Update the object's position
+      movedObject.set({
+        left: limitedX,
+        top: limitedY
+      });
+  
       // Update the object's coordinates
       droppedItem.fabricObject?.setCoords();
       this.canvas.renderAll();
     }
   }
+  
 
   //create gridlines for the canvas
   createGridLines() {
