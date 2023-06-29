@@ -37,6 +37,8 @@ export class CreateFloorPlanPage {
       this.canvas = new fabric.Canvas(canvasElement);
       this.canvas.setDimensions({ width: width*0.98, height: height*0.965 });
       this.canvas.on('object:moving', this.onObjectMoving.bind(this));
+
+      this.createGridLines();
     }, 6);
   }
 
@@ -125,6 +127,40 @@ export class CreateFloorPlanPage {
       droppedItem.fabricObject?.setCoords();
       this.canvas.renderAll();
     }
+  }
+
+  //create gridlines for the canvas
+  createGridLines() {
+    const grid = 10;
+    const canvas = this.canvas;
+    const width = canvas.width ? canvas.width : 0;
+    const height = canvas.height ? canvas.height : 0;
+    const gridGroup = new fabric.Group([], {
+      left: 0,
+      top: 0,
+      selectable: false,
+      hoverCursor: 'default',
+      evented: false,
+    });
+    for (let i = 0; i < (width / grid); i++) {
+      const distance = i * grid;
+      const horizontalLine = new fabric.Line([distance, 0, distance, height], {
+        stroke: '#ccc',
+        selectable: false,
+        evented: false,
+        strokeWidth: 1,
+      });
+      const verticalLine = new fabric.Line([0, distance, width, distance], {
+        stroke: '#ccc',
+        selectable: false,
+        evented: false,
+        strokeWidth: 1,
+      });
+      gridGroup.addWithUpdate(horizontalLine);
+      gridGroup.addWithUpdate(verticalLine);
+    }
+    canvas.add(gridGroup);
+    canvas.sendToBack(gridGroup);
   }
   
 
