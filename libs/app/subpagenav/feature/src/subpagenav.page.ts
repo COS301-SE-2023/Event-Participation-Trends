@@ -10,7 +10,8 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./subpagenav.page.css'],
 })
 export class SubPageNavPage implements OnInit{
-  // @Input() currentPage!: string;
+  currentPage!: string;
+  prevPage = '/home';
   public role = Role.VIEWER;  
   public appApiService: AppApiService;
   selected = 'Dashboard';
@@ -39,8 +40,6 @@ export class SubPageNavPage implements OnInit{
       id: this.route.snapshot.queryParams['id'],
       queryParamsHandling: this.route.snapshot.queryParams['queryParamsHandling']
     };
-
-    console.log(this.params);
   }
 
   getRole(): Role {
@@ -55,15 +54,14 @@ export class SubPageNavPage implements OnInit{
       this.dashboardSelected = false;
       // forward params to event details page
       this.navController.navigateForward(['/event/eventdetails'], { queryParams: this.params});
-      console.log(this.route.snapshot.queryParams['m']);
+      this.currentPage = '/event/eventdetails'; 
     }
     else if (option === 'Dashboard') {
       this.detailsSelected = false;
       this.dashboardSelected = true;
       // forward params to event details page
       this.navController.navigateForward(['/event/dashboard'], { queryParams: this.params});
-      console.log(this.route.snapshot.queryParams['m']);
-
+      this.currentPage = '/event/dashboard';
     }
   }
 
@@ -71,6 +69,15 @@ export class SubPageNavPage implements OnInit{
 
   ngOnInit() {
     this.checkScreenSize();
+
+    // get path from router
+    this.router.events.subscribe((val) => {
+      this.currentPage = this.router.url.split('?')[0];
+      if (this.currentPage === '/event/createfloorplan') {
+        this.prevPage = '/event/addevent';
+      }
+      console.log(this.currentPage + " " + this.prevPage);
+    });
   }
 
   @HostListener('window:resize', ['$event'])
