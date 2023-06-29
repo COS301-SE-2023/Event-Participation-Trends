@@ -205,8 +205,14 @@
       "@event-participation-trends/app/shared/util": [
         "libs/app/shared/util/src/index.ts"
       ],
+      "@event-participation-trends/app/subpagenav/data-access": [
+        "libs/app/subpagenav/data-access/src/index.ts"
+      ],
       "@event-participation-trends/app/subpagenav/feature": [
         "libs/app/subpagenav/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/subpagenav/util": [
+        "libs/app/subpagenav/util/src/index.ts"
       ],
       "@event-participation-trends/app/usermanagement/data-access": [
         "libs/app/usermanagement/data-access/src/index.ts"
