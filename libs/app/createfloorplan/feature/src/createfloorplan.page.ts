@@ -24,6 +24,10 @@ export class CreateFloorPlanPage {
   @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLCanvasElement>;
   @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
 
+  isDraggingLine = false;
+  lineType: 'vertical' | 'horizontal' = 'vertical';
+  activeLine: fabric.Line | null = null;
+
   ngAfterViewInit(): void {
     // wait for elements to render before initializing fabric canvas
     setTimeout(() => {
@@ -37,6 +41,8 @@ export class CreateFloorPlanPage {
       this.canvas = new fabric.Canvas(canvasElement);
       this.canvas.setDimensions({ width: width*0.98, height: height*0.965 });
       this.canvas.on('object:moving', this.onObjectMoving.bind(this));
+      // Attach the mouse down event listener to start dragging lines
+      this.canvas.on('mouse:down', this.onMouseDown.bind(this));
 
       this.createGridLines();
     }, 6);
@@ -131,8 +137,90 @@ export class CreateFloorPlanPage {
       droppedItem.fabricObject?.setCoords();
       this.canvas.renderAll();
     }
-  }
+    // Snap any moving object to the grid
+    const gridSize = 10; // Adjust this value according to your needs
+    const target = event.target;
+    if (target) {
+      const left = target.left || 0;
+      const top = target.top || 0;
+      target.set({
+        left: Math.round(left / gridSize) * gridSize,
+        top: Math.round(top / gridSize) * gridSize
+      });
+    }
+
+  }  
   
+  //when the mouse is clicked on the canvas, add a marker to the nearest gridline crossing
+  // and when the user starts dragging the mouse, create a line that matches the distance from the marker to the mouse
+  onMouseDown(event: fabric.IEvent): void {
+    const target = event.target;
+    if (target && target instanceof fabric.Line) {
+      // Clicked on an existing line, do nothing
+      return;
+    }
+    const canvas = this.canvas;
+    const pointer = canvas.getPointer(event.e);
+    const grid = 10;
+    const snapPoint = {
+      x: Math.round(pointer.x / grid) * grid,
+      y: Math.round(pointer.y / grid) * grid,
+    };
+    const line = new fabric.Line([snapPoint.x, snapPoint.y, snapPoint.x, snapPoint.y], {
+      stroke: '#000',
+      strokeWidth: 2,
+      selectable: true,
+      evented: true,
+    });
+    this.activeLine = line;
+    canvas.add(line);
+    this.isDraggingLine = true;
+
+    // Attach the mouse move event listener
+    canvas.on('mouse:move', this.onMouseMove.bind(this));
+
+    // Attach the mouse up event listener to finish dragging lines
+    canvas.on('mouse:up', this.onMouseUp.bind(this));    
+  }
+
+  // When the mouse is moving the line at the end of the mouse should snap to the nearest gridline crossing
+  onMouseMove(event: fabric.IEvent): void {
+    const canvas = this.canvas;
+    const pointer = canvas.getPointer(event.e);
+    if (this.activeLine) {
+      const grid = 10;
+      const snapPoint = {
+        x: Math.round(pointer.x / grid) * grid,
+        y: Math.round(pointer.y / grid) * grid,
+      };
+      this.activeLine.set({ x2: snapPoint.x, y2: snapPoint.y });
+      this.activeLine.setCoords();
+      canvas.renderAll();
+    }
+  }
+
+  onMouseUp(event: fabric.IEvent): void {
+    const canvas = this.canvas;
+    const pointer = canvas.getPointer(event.e);
+    if (this.activeLine) {
+      const grid = 10;
+      const snapPoint = {
+        x: Math.round(pointer.x / grid) * grid,
+        y: Math.round(pointer.y / grid) * grid,
+      };
+      this.activeLine.set({ x2: snapPoint.x, y2: snapPoint.y });
+      this.activeLine.setCoords();
+      canvas.renderAll();
+      this.activeLine = null;
+    }
+    this.isDraggingLine = false;
+
+    // Remove the mouse move event listener
+    canvas.off('mouse:move', this.onMouseMove.bind(this));
+
+    // Remove the mouse up event listener
+    canvas.off('mouse:up', this.onMouseUp.bind(this));
+  }
 
   //create gridlines for the canvas
   createGridLines() {
