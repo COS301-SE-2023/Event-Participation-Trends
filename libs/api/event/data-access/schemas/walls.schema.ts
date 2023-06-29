@@ -13,6 +13,12 @@ export class Wall{
 
     @Prop({ type: Number, required: true })
     y_coordiante: number | undefined | null;
+
+    @Prop({ type: Number, required: true })
+    width: number | undefined | null;
+
+    @Prop({ type: Number, required: true })
+    height: number | undefined | null;
 }
 
 export const WallSchema = SchemaFactory.createForClass(Wall);
