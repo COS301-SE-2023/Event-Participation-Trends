@@ -31,7 +31,7 @@ export class Event{
     //@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })
     //thisFloorLayout: FloorLayout | undefined | null;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Wall' })
     Walls: Wall[] | undefined | null;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
