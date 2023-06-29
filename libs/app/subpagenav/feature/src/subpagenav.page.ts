@@ -3,6 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { NavController } from '@ionic/angular';
+import { Select, Store } from '@ngxs/store';
+import { SubPageNavState } from '../../data-access/src/subpagenav.state';
+import { Observable } from 'rxjs';
+import { SetSubPageNav } from '../../util/src/subpagenav.actions';
 
 @Component({
   selector: 'subpagenav',
@@ -10,6 +14,8 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./subpagenav.page.css'],
 })
 export class SubPageNavPage implements OnInit{
+  @Select(SubPageNavState.currentPage) currentPage$!: Observable<string | null>;
+  @Select(SubPageNavState.prevPage) prevPage$!: Observable<string | null>;
   currentPage!: string;
   prevPage = '/home';
   public role = Role.VIEWER;  
@@ -24,7 +30,7 @@ export class SubPageNavPage implements OnInit{
     queryParamsHandling: string
   } | null = null;
 
-  constructor(appApiService: AppApiService, private readonly route: ActivatedRoute, private router: Router, private navController: NavController) {
+  constructor(appApiService: AppApiService, private readonly route: ActivatedRoute, private router: Router, private navController: NavController, private readonly store: Store) {
     this.appApiService = appApiService;
 
     this.appApiService.getRole().subscribe((response)=>{
@@ -54,7 +60,9 @@ export class SubPageNavPage implements OnInit{
       this.dashboardSelected = false;
       // forward params to event details page
       this.navController.navigateForward(['/event/eventdetails'], { queryParams: this.params});
-      this.currentPage = '/event/eventdetails'; 
+      this.currentPage = '/event/eventdetails';
+      this.prevPage = '/home';
+      this.store.dispatch(new SetSubPageNav(this.currentPage, this.prevPage));
     }
     else if (option === 'Dashboard') {
       this.detailsSelected = false;
@@ -62,6 +70,8 @@ export class SubPageNavPage implements OnInit{
       // forward params to event details page
       this.navController.navigateForward(['/event/dashboard'], { queryParams: this.params});
       this.currentPage = '/event/dashboard';
+      this.prevPage = '/home';
+      this.store.dispatch(new SetSubPageNav(this.currentPage, this.prevPage));
     }
   }
 
@@ -73,10 +83,8 @@ export class SubPageNavPage implements OnInit{
     // get path from router
     this.router.events.subscribe((val) => {
       this.currentPage = this.router.url.split('?')[0];
-      if (this.currentPage === '/event/createfloorplan') {
-        this.prevPage = '/event/addevent';
-      }
-      console.log(this.currentPage + " " + this.prevPage);
+      this.prevPage = this.currentPage === '/event/createfloorplan' ? '/event/addevent' : '/home';
+      this.store.dispatch(new SetSubPageNav(this.currentPage, this.prevPage));
     });
   }
 
@@ -88,5 +96,16 @@ export class SubPageNavPage implements OnInit{
   private checkScreenSize() {
     this.isLargeScreen = window.innerWidth >= 1310;
     console.log(window.innerWidth);
+  }
+
+  getPrevPage() {
+    this.prevPage$.subscribe((prevPage) => {
+      this.prevPage = prevPage || '/home';
+    });
+    return this.prevPage;
+  }
+
+  goBack() {
+    this.navController.navigateBack([this.getPrevPage()]);
   }
 }

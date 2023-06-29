@@ -4,10 +4,6 @@ import { NgxsModule } from '@ngxs/store';
 import { SubPageNavState } from './subpagenav.state';
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    NgxsModule.forFeature([SubPageNavState])
-  ]
+  imports: [CommonModule, NgxsModule.forFeature([SubPageNavState])],
 })
-export class SubpagenavModule { }
+export class SubPageNavModule {}

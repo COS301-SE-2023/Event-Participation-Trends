@@ -5,13 +5,15 @@ import { SetSubPageNav } from '@event-participation-trends/app/subpagenav/util';
 // Once we know the interface for the usermanagement page we can remove the comment from the line below
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface SubPageNavStateModel {
-    currentPage: string
+    currentPage: string,
+    prevPage: string
 }
 
 @State<SubPageNavStateModel>({
     name: 'subpagenav',
     defaults: {
-        currentPage: ''
+        currentPage: '',
+        prevPage: ''
     }
 })
 
@@ -23,10 +25,16 @@ export class SubPageNavState {
         return state.currentPage;
     }
 
+    @Selector()
+    static prevPage(state: SubPageNavStateModel) {
+        return state.prevPage;
+    }
+
     @Action(SetSubPageNav)
     setSubPageNav(ctx: any, action: SetSubPageNav) {
         ctx.patchState({
-            currentPage: action.currentPage
+            currentPage: action.currentPage,
+            prevPage: action.prevPage
         });
     }
 }

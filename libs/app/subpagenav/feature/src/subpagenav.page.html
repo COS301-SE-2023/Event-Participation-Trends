@@ -5,20 +5,21 @@
     class="bg-black bg-opacity-90 backdrop-blur-md drop-shadow-lg text-ept-off-white grid grid-cols-4 px-4"
   >
     <div class="main-title flex justify-self-start col-span-2">
-      <ion-back-button
+      <ion-button
         slot="start"
-        text="Back"
         color="none"
         fill="clear"
         ngClass="back-button"
-        defaultHref="{{ prevPage }}"
+        (click)="goBack()"
         routerDirection="back"
+        class="text-ept-off-white text-1xl"
       >
         <ion-icon name="arrow-back-outline"></ion-icon>
-      </ion-back-button>
+        <ion-text>Back</ion-text>
+      </ion-button>
       <ion-label
         ngClass="title-text"
-        class="sm:text-lg md:text-xl font-semibold"
+        class="sm:text-lg md:text-xl font-semibold pt-2"
         [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
         >Event Participation Trends
         <sub
