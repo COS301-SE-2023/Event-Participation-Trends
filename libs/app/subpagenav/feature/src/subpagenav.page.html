@@ -32,13 +32,12 @@
       class="flex justify-center items-center bg-transparent text-inherit text-md h-full col-span-1"
     >
       <ion-tab-button
-      tab="eventdetails"
+      tab="dashboard"
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
-        (click)="selectTab('Event Details')"
-        (selected)="detailsSelected"
+        (click)="selectTab('Dashboard')"
       >
-        <ion-label ngClass="tab-text">Event Details</ion-label>
+        <ion-label>Dashboard</ion-label>
       </ion-tab-button>
 
       <div
@@ -46,12 +45,13 @@
       ></div>
 
       <ion-tab-button
-      tab="dashboard"
-        ngClass="tab-button"
-        class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
-        (click)="selectTab('Dashboard')"
-      >
-        <ion-label>Dashboard</ion-label>
+        tab="eventdetails"
+          ngClass="tab-button"
+          class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
+          (click)="selectTab('Event Details')"
+          (selected)="detailsSelected"
+        >
+          <ion-label ngClass="tab-text">Event Details</ion-label>
       </ion-tab-button>
     </div>
 

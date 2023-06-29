@@ -17,6 +17,11 @@ export class SubPageNavPage implements OnInit{
   detailsSelected = false;
   dashboardSelected = true;
   showTabs = false;
+  params: {
+    m: string,
+    id: string,
+    queryParamsHandling: string
+  } | null = null;
 
   constructor(appApiService: AppApiService, private readonly route: ActivatedRoute, private router: Router, private navController: NavController) {
     this.appApiService = appApiService;
@@ -28,6 +33,14 @@ export class SubPageNavPage implements OnInit{
     this.route.queryParams.subscribe((params) => {
       this.showTabs = params['m'] === 'true';
     });
+
+    this.params = {
+      m: this.route.snapshot.queryParams['m'],
+      id: this.route.snapshot.queryParams['id'],
+      queryParamsHandling: this.route.snapshot.queryParams['queryParamsHandling']
+    };
+
+    console.log(this.params);
   }
 
   getRole(): Role {
@@ -41,14 +54,14 @@ export class SubPageNavPage implements OnInit{
       this.detailsSelected = true;
       this.dashboardSelected = false;
       // forward params to event details page
-      this.navController.navigateForward(['/event/eventdetails'], { queryParams: {m: this.route.snapshot.queryParams['m'], id: this.route.snapshot.queryParams['id'] } });
+      this.navController.navigateForward(['/event/eventdetails'], { queryParams: this.params});
       console.log(this.route.snapshot.queryParams['m']);
     }
     else if (option === 'Dashboard') {
       this.detailsSelected = false;
       this.dashboardSelected = true;
       // forward params to event details page
-      this.navController.navigateForward(['/event/dashboard'], { queryParams: {m: this.route.snapshot.queryParams['m'], id: this.route.snapshot.queryParams['id'] } });
+      this.navController.navigateForward(['/event/dashboard'], { queryParams: this.params});
       console.log(this.route.snapshot.queryParams['m']);
 
     }
