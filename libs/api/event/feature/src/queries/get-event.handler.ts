@@ -19,7 +19,7 @@ export class GetEventHandler implements IQueryHandler<GetEventQuery, IGetEventRe
 
         const eventDocs = await this.eventRepository.getPopulatedEvent(objEventId);
         
-        return {event: eventDocs[0]};
+        return <any> {event: eventDocs[0]};
     }
 
 }
