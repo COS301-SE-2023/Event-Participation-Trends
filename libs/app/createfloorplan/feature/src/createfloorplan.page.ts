@@ -225,6 +225,11 @@ export class CreateFloorPlanPage {
       // Clicked on an existing line, do nothing
       return;
     }
+    else if (target && target instanceof fabric.Text) {
+      // Clicked on an existing textbox, do nothing
+      return;
+    }
+
     const canvas = this.canvas;
     const pointer = canvas.getPointer(event.e);
     const grid = 10;
