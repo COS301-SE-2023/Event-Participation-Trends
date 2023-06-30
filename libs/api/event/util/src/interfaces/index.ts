@@ -13,3 +13,5 @@ export * from './eventID.interface';
 export * from './view-request.interface';
 export * from './remove-viewer.interface';
 export * from './update-event-details.interface';
+export * from './wall.interface';
+export * from './create-wall.interface';
