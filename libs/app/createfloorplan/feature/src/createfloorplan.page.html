@@ -140,20 +140,20 @@
         #canvasElement
         class="border-ept-off-white border-4 rounded-lg md:rounded-xl"
       ></canvas>
+      <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+        <img
+          #dustbin
+          *ngIf="!noItemsAdded()"
+          class="dustbin"
+          (dragover)="onDustbinDragOver($event)"
+          (dragleave)="onDustbinDragLeave($event)"
+          (mouseup)="onDustbinMouseUp($event)"
+          [ngClass]="{'drag-over': openDustbin}"
+          [src]="openDustbin ? 'assets/trash-open.svg' : 'assets/trash-svgrepo-com.svg'"
+          alt="trash"
+          class="bg-white h-10 transition-all duration-300"
+        />
+      </div>
     </div>
-    <!-- <div
-      #canvasParent
-      class="relative col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2"
-      (drop)="onDrop($event)"
-      (dragover)="onDragOver($event)"
-    >
-      <p
-        *ngIf="noItemsAdded()"
-        class="z-50 text-center text-2xl text-ept-deep-grey opacity-30 font-semibold absolute top-1/2 left-1/4"
-      >
-        Drag & Drop components
-      </p>
-      <canvas #canvasElement></canvas>
-    </div> -->
   </div>
 </ion-content>
