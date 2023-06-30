@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails, IEventLocation } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventLocation, IWall } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
@@ -9,8 +9,10 @@ import { Event,
          EventLocation,
          Sensor,
          Stall,
+         Wall,
          TEMP_DEVICE_BUFFER,
          TEMP_DEVICE_TO_DT,
+         WallSchema
 } from '../schemas';
 import { Types } from 'mongoose';
 
@@ -19,6 +21,7 @@ export class EventRepository {
     constructor(
         @InjectModel(Event.name) private eventModel: mongoose.Model<Event>,
         @InjectModel(Device.name) private deviceModel: mongoose.Model<Device>,
+        @InjectModel(Wall.name) private wallModel: mongoose.Model<Wall>,
         //@InjectModel(FloorLayout.name) private floorLayoutModel: mongoose.Model<FloorLayout>,
         @InjectModel(DeviceLocation.name) private deviceLocationModel: mongoose.Model<DeviceLocation>,
         @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
@@ -31,6 +34,24 @@ export class EventRepository {
     async createEvent(event: IEventDetails){
         await this.eventModel.create(event);
     }   
+
+    async createWall(eventID: Types.ObjectId, wall: Wall){
+
+        const event = await this.eventModel.findById(eventID);
+        const newWall = new this.wallModel(wall);
+        newWall.save();
+
+        newWall.wallId = newWall._id;
+        if(event != undefined && event != null){
+            if(event.Walls!= undefined && event.Walls != null){
+                event.Walls.push(newWall._id);
+                await event.save();
+                return event;
+            }
+        }
+
+        return []; 
+    }
 
     async getAllEvents(){
         return await this.eventModel.find();
@@ -49,7 +70,6 @@ export class EventRepository {
     }
 
     async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
-        console.log("Unga Bunga");
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
             { $push: { Requesters: userID } });
