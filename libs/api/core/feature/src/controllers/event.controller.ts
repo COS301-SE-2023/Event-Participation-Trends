@@ -22,6 +22,8 @@ import {
     IUpdateEventDetailsResponse,
     IGetEventRequest,
     IGetEventResponse,
+    ICreateWallRequest,
+    ICreateWallResponse
 } from '@event-participation-trends/api/event/util';
 import { Body, Controller, Post, Get, UseGuards, Req, Query, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
@@ -253,6 +255,25 @@ export class EventController {
         }
 
         return <IGetEventResponse> <unknown> this.eventService.getEvent(extractRequest);
+    }
+
+    @Post('createWall')
+    @SetMetadata('role',Role.MANAGER)
+    async createWall(
+        @Req() req: Request,
+        @Body() requestBody: ICreateWallRequest,
+    ): Promise<IGetEventResponse> {
+        const request: any =req;
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
+        const extractRequest: ICreateWallRequest = {
+            eventId: requestBody.eventId,
+            Wall: requestBody.Wall
+        }
+
+        return <any> <unknown> this.eventService.createWall(extractRequest);
     }
 
 }
