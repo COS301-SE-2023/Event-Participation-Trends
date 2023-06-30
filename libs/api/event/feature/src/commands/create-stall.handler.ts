@@ -5,6 +5,7 @@ import { CommandHandler, EventPublisher, ICommandHandler } from "@nestjs/cqrs";
 import { Types } from "mongoose";
 import { Stall } from "../models";
 import { Status } from "@event-participation-trends/api/user/util";
+import { HttpException } from "@nestjs/common";
 
 @CommandHandler(CreateStallCommand)
 export class CreateStallHandler implements ICommandHandler<CreateStallCommand, ICreateStallResponse>{
@@ -22,30 +23,37 @@ export class CreateStallHandler implements ICommandHandler<CreateStallCommand, I
             //check if event exists
             const eventIdObj = <Types.ObjectId> <unknown> request.EventId;
 
-            let eventExists = false;
             const eventDoc = await this.eventRepository.getEventById(eventIdObj);
-            if(eventDoc.length != 0) {
-                eventExists = true;
-            }
+            if(eventDoc.length == 0)
+                throw new HttpException(`Bad Request: Event with id ${request.EventId} does not exist`, 400);
+            
+            //check if stall already exists
+            let stallExists =false;
+            const checkDoc = await this.eventRepository.getStallByName(eventIdObj, request.Stall.Name || "");
 
-            if(eventExists){
+            if(checkDoc.length != 0)
+                stallExists =true;
+
+            if(!stallExists){
                 const data: IStall = {
+                    EventId: request.EventId,
                     Name: request.Stall.Name,
                     x_coordinate: request.Stall.x_coordinate,
                     y_coordinate: request.Stall.y_coordinate,
                     width: request.Stall.width,
-                    height: request.Stall.height                    
-                };
-
+                    height: request.Stall.height
+                }
+                
                 const stall = this.publisher.mergeObjectContext(Stall.fromData(data));
                 stall.create();
                 stall.commit();
-
+        
                 return { status : Status.SUCCESS };
-            } else {
+            }
+            else{
                 return { status : Status.FAILURE };
             }
-        } else {
+        }else{
             return { status : Status.FAILURE };
         }
     }

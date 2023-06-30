@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails, IEventLocation } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventLocation, IStall } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
@@ -122,5 +122,37 @@ export class EventRepository {
 
     async getPopulatedEvent(eventID: Types.ObjectId){
         return await this.eventModel.find({_id :{$eq: eventID}});
+    }
+
+    async createStall(stall: IStall){
+        await this.stallModel.create(stall);
+        return await this.eventModel.updateOne(
+            {_id :{$eq: stall.EventId}},
+            { $push: { Stalls: stall } });
+    }
+
+    async getAllStalls(eventID: Types.ObjectId){
+        return await this.stallModel.find({Event: {$eq: eventID}});
+    }
+
+    async getStallByName(eventID: Types.ObjectId, stallName: string){
+        return await this.stallModel.find({Event: {$eq: eventID}, Name: {$eq: stallName}});
+    }
+
+    async updateStallXYCoordinates(eventID: Types.ObjectId, stallName: string, x: number, y: number){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stallName}},
+            {$set: {x_coordinate: x, y_coordinate: y}});
+    }
+
+    async updateStallWidthHeight(eventID: Types.ObjectId, stallName: string, width: number, height: number){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stallName}},
+            {$set: {width: width, height: height}});
+    }
+
+    async removeStall(eventID: Types.ObjectId, stallName: string){
+        return await this.stallModel.deleteOne(
+            {Event: {$eq: eventID}, Name: {$eq: stallName}});
     }
 }
