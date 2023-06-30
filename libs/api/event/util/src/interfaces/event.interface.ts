@@ -7,6 +7,7 @@ import { ITEMP_DEVICE_TO_DT } from "./TEMP_DEVICE_TO_DT.interface";
 import { ITEMP_DEVICE_BUFFER } from "./TEMP_DEVICE_BUFFER.interface";
 import { IUser } from '@event-participation-trends/api/user/util'
 import { Types } from 'mongoose';
+import { IWall } from "./wall.interface";
 
 export interface IEvent {
     StartDate?: Date | undefined | null;
@@ -15,6 +16,7 @@ export interface IEvent {
     Category?: string | undefined | null;
     Location?: IEventLocation | undefined | null;
     //thisFloorLayout?: IFloorLayout | undefined | null;
+    Walls?: IWall[] | undefined | null;
     Stalls?: IStall[] | undefined | null;
     Sensors?: ISensor[] | undefined | null;
     Devices?: IDevice[] | undefined | null;
