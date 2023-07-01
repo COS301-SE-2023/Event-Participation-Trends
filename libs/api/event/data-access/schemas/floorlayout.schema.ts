@@ -6,7 +6,7 @@ export type FloorLayoutDocument = HydratedDocument<FloorLayout>;
 @Schema({timestamps: true, collection: 'FloorLayout' })
 export class FloorLayout{
     
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     JSON_DATA: string | undefined | null;
 }
 

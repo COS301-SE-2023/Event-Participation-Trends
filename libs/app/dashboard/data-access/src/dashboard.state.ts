@@ -3,6 +3,7 @@ import { Action, Select, Selector, State, StateContext } from '@ngxs/store';
 import { GetDashboardStatistics, SetDashboardState, SetEventData } from '@event-participation-trends/app/dashboard/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { DashboardApi } from './dashboard.api';
+import { IUser } from '@event-participation-trends/api/user/util';
 
 // Once we know the interface for the dashboard page we can remove the comment from the line below
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -12,7 +13,7 @@ export interface DashboardStateModel {
             eventId: string;
             eventName: string | undefined;
         }
-        accessRequests: any[] | null | undefined;
+        accessRequests: IUser[] | null | undefined;
         dashboardStatistics: any[] | null | undefined;
     }
 }

@@ -1,4 +1,4 @@
-.nav-bar {
+/* .nav-bar {
     background-color: #212121;
     height: 49px;
     display: flex;
@@ -26,9 +26,9 @@ ion-icon {
 
 ion-button {
     text-transform: none;
-}
+} */
 
-.profile-section {
+/* .profile-section {
     float: right;
     right: 20px;
     font-size: 15px;
@@ -38,4 +38,4 @@ ion-button {
 .profile-icon {
     width: 30px;
     height: 30px;
-}
+} */

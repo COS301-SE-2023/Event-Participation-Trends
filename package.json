@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start:dev": "yarn concurrently \"yarn nx serve app\" \"yarn nx serve api\""
+    "start:dev": "yarn concurrently \"yarn nx serve app\" \"yarn nx serve api\"",
+    "test":"jest"
   },
   "private": true,
   "dependencies": {
@@ -31,16 +32,18 @@
     "@types/fabric": "^5.3.3",
     "@types/passport-google-oauth20": "^2.0.10",
     "@types/passport-local": "^1.0.35",
+    "@types/wait-on": "^5.3.1",
     "angularx-social-login": "^4.1.0",
     "axios": "^1.0.0",
     "cookie-parser": "^1.4.6",
     "fabric": "^5.3.0",
-    "immer": "^10.0.2",
-    "moment": "^2.29.4",
     "helmet": "^7.0.0",
     "immer": "^10.0.2",
+    "moment": "^2.29.4",
     "mongoose": "^7.2.1",
     "mqtt": "^4.3.7",
+    "ngx-cookie-service": "^16.0.0",
+    "object-hash": "^3.0.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",

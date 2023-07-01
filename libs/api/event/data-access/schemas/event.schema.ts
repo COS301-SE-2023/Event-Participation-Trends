@@ -14,19 +14,19 @@ export type EventDocument = HydratedDocument<Event>;
 @Schema({timestamps: true, collection: 'Event' })
 export class Event{
 
-    @Prop({ required: true })
+    @Prop({ type: Date, required: true })
     StartDate: Date | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: Date, required: true })
     EndDate: Date | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     Name: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     Category: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: EventLocation, required: true })
     Location: EventLocation | undefined | null;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })

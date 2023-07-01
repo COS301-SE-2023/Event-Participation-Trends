@@ -1,19 +1,23 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
-    IGetUsersRequest,
-    IGetUsersResponse,
-    IUpdateRoleRequest,
-    IupdateRoleResponse,
-    Role,
+    IGetUserRoleResponse,
+  IGetUsersRequest,
+  IGetUsersResponse,
+  IUpdateRoleRequest,
+  IupdateRoleResponse,
+  Role,
 } from '@event-participation-trends/api/user/util';
-import { Body, Controller, Post, Get, UseGuards, Req, SetMetadata } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req, SetMetadata, HttpException } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
+import {
+  JwtGuard,
+  RbacGuard,
+  CsrfGuard,
+} from '@event-participation-trends/api/guards';
 
 @Controller('user')
 export class UserController {
-    constructor(private userService: UserService){}
-
+  constructor(private userService: UserService) {}
     @Get('getAllUsers')
     @SetMetadata('role',Role.ADMIN)
     @UseGuards(JwtGuard, RbacGuard)
@@ -21,6 +25,10 @@ export class UserController {
         @Req() req: Request,
     ): Promise<IGetUsersResponse> {
         const request: any =req;
+
+        if(request.user["email"]==undefined || request.user["email"]==null)
+            throw new HttpException("Bad Request: admin email not provided", 400);
+
         const extractRequest: IGetUsersRequest = {
             AdminEmail: request.user["email"]
         }
@@ -35,6 +43,16 @@ export class UserController {
         @Body() requestBody: IUpdateRoleRequest,
     ): Promise<IupdateRoleResponse> {
         const request: any =req;
+        
+        if(request.user["email"]==undefined || request.user["email"]==null)
+            throw new HttpException("Bad Request: Admin email not provided", 400);
+
+        if(requestBody.update.UserEmail==undefined || requestBody.update.UserEmail ==null)
+            throw new HttpException("Bad Request: User email not provided", 400);
+
+        if(requestBody.update.UpdateRole==undefined || requestBody.update.UpdateRole ==null)
+            throw new HttpException("Bad Request: role not provided", 400);
+
         console.log(request.user["email"])
         const extractRequest: IUpdateRoleRequest = {
             update: {
@@ -46,4 +64,13 @@ export class UserController {
         return this.userService.updateUserRole(extractRequest);
     }
 
+  @Get('getRole')
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async getRole(@Req() req: Request): Promise<IGetUserRoleResponse> {
+    const request: any = req;
+    return {
+        userRole: request.user['role'],
+    };
+    }
 }

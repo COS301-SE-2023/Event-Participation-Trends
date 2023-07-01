@@ -6,16 +6,16 @@ export type TEMP_DEVICE_BUFFERocument = HydratedDocument<TEMP_DEVICE_BUFFER>;
 
 @Schema({timestamps: true, collection: 'TEMP_DEVICE_BUFFER' })
 export class TEMP_DEVICE_BUFFER{
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     DeviceId: string | undefined | null;
 
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Sensor' })
     SensorId: Types.ObjectId[] | undefined | null;
 
-    @Prop({ required: true})
+    @Prop({ type: Date, required: true})
     TimeStamp: Date | undefined | null;
 
-    @Prop({ required: true})
+    @Prop({ type: Number, required: true})
     SignalStrenght: number | undefined | null;
 }
 

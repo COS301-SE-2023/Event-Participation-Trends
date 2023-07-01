@@ -11,47 +11,42 @@
         <ion-searchbar
           ngClass="sidebar-searchbar"
           placeholder="Search"
+          [(ngModel)]="searchValue"
         ></ion-searchbar>
         <ion-icon
           ngClass="search-filter"
-          class="h-10 w-10 self-center hover:opacity-50 p-2"
+          class="h-10 w-10 self-center hover:opacity-50 p-2 cursor-pointer"
           name="options-outline"
         ></ion-icon>
       </span>
     </div>
-    <div class="grid grid-cols-3 p-6 px-7" *ngIf="hasEvents()">
-      <div class="col-span-1 flex items-center">
+    <div class="grid grid-cols-3 p-6 px-7" *ngIf="myEventsTitle()">
+      <div class="col-span-1 flex items-center" *ngIf="myEventsTitle()">
         <p class="text-2xl">My Events</p>
       </div>
     </div>
     <div
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:gird-cols-5 col-auto duration-300 transition-all"
-      *ngIf="hasEvents()"
+      *ngIf="managerUp()"
     >
       <ion-card
-        *ngFor="let event of my_events"
+        *ngFor="let event of managedEvents()"
         class="h-56 m-8 rounded-lg md:rounded-xl bg-white bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:scale-105 hover:cursor-pointer hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]"
-        [routerLink]="['/eventdetails']" [queryParams]="{id: event._id}" queryParamsHandling="merge"
-        (click)="event.hasAccess ? showPopupMenu(event.name, event.eventId) : showRequestAccessMenu(event.name, event.eventId)"
-        >
+        (click)="showPopupMenu(event)"
+      >
         <ion-card-content
-          class="flex flex-col h-full duration-300 transition-all"
+          class="flex flex-col h-full duration-300 transition-all bg-transparent"
         >
-          <ion-icon
-            class="h-6 w-6 p-4 duration-300 transition-all absolute self-end text-ept-bumble-yellow"
-            name="settings-outline"
-          >
-          </ion-icon>
           <p
-            class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
+            class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium bg-transparent"
           >
             {{event.Name}}
           </p>
           <div
-            class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
+            class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all bg-transparent"
           >
             <p class="px-4 py-2 self-start duration-300 transition-all">
-              Location: {{event.Location}}
+              Location: {{getLocation(event)}}
             </p>
             <p class="px-4 py-2 self-start duration-300 transition-all">
               Category: {{event.Category}}
@@ -64,6 +59,7 @@
       >
         <ion-card-content
           class="flex items-center justify-center h-full duration-300 transition-all"
+          routerLink="/addevent"
         >
           <ion-icon
             class="h-16 w-16 duration-300 transition-all"
@@ -72,7 +68,7 @@
         </ion-card-content>
       </ion-card>
     </div>
-    <div class="grid grid-cols-3 p-6 px-7">
+    <div class="grid grid-cols-3 p-6 px-7" *ngIf="allEventsTitle()">
       <div class="col-span-1 flex items-center">
         <p class="text-2xl">All Events</p>
       </div>
@@ -81,11 +77,11 @@
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:gird-cols-5 col-auto duration-300 transition-all"
     >
       <ion-card
-        *ngFor="let event of all_events"
+        *ngFor="let event of subscribedEvents()"
         class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:cursor-pointer"
         [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : hasAccess(event), 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !hasAccess(event)}"
-        [routerLink]="['/dashboard']" [queryParams]="{id: event._id}" queryParamsHandling="merge"
-        >
+        (click)="openEventScreenView(event)"
+      >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all"
         >
@@ -104,7 +100,39 @@
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
           >
             <p class="px-4 py-2 self-start duration-300 transition-all">
-              Location: {{event.Location}}
+              Location: {{getLocation(event)}}
+            </p>
+            <p class="px-4 py-2 self-start duration-300 transition-all">
+              Category: {{event.Category}}
+            </p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+      <ion-card
+        *ngFor="let event of unsubscribedEvents()"
+        class="h-56 m-8 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:cursor-pointer"
+        [ngClass]="{'bg-white bg-opacity-[85%] hover:scale-105 hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]' : hasAccess(event), 'bg-ept-deep-grey bg-opacity-[40%] text-ept-off-white hover:bg-opacity-60' : !hasAccess(event)}"
+        (click)="showRequestAccessMenu(event)"
+      >
+        <ion-card-content
+          class="flex flex-col h-full duration-300 transition-all"
+        >
+          <ion-icon
+            *ngIf="!hasAccess(event)"
+            class="h-6 w-6 p-4 duration-300 transition-all absolute self-end text-ept-off-white font-lg"
+            name="lock-closed-outline"
+          >
+          </ion-icon>
+          <p
+            class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
+          >
+            {{event.Name}}
+          </p>
+          <div
+            class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
+          >
+            <p class="px-4 py-2 self-start duration-300 transition-all">
+              Location: {{getLocation(event)}}
             </p>
             <p class="px-4 py-2 self-start duration-300 transition-all">
               Category: {{event.Category}}
@@ -113,19 +141,5 @@
         </ion-card-content>
       </ion-card>
     </div>
-    <ion-buttons>
-      <ion-button routerLink="/eventdetails">
-        <ion-text color="danger">Event Details</ion-text>
-      </ion-button>
-      <ion-button routerLink="/addevent">
-        <ion-text color="danger">Create event</ion-text>
-      </ion-button>
-      <ion-button routerLink="/flooreditor">
-        <ion-text color="danger">Floor Editor</ion-text>
-      </ion-button>
-      <ion-button routerLink="/createfloorplan">
-        <ion-text color="danger">Create Floor Plan</ion-text>
-      </ion-button>
-    </ion-buttons>
   </div>
 </ion-content>

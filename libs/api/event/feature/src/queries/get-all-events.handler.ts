@@ -14,10 +14,6 @@ export class GetAllEventsHandler implements IQueryHandler<GetAllEventsQuery, IGe
 
     async execute(query: GetAllEventsQuery) {
         console.log(`${GetAllEventsHandler.name}`);
-        const request = query.request;
-
-        if (!request.AdminEmail)
-            throw new Error('Missing required field: AdminEmail');
         
         const eventDocs = await this.eventRepository.getAllEvents();
         return {events: <IEvent[]>eventDocs};

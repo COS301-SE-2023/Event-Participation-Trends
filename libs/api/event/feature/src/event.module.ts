@@ -9,18 +9,26 @@ import {
     SendViewRequestHandler,
     DeclineViewRequestHandler,
     AcceptViewRequestHandler,
+    RemoveViewerFromEventHandler,
+    RemoveEventFromViewerHandler,
+    UpdateEventDetailsHandler,
 } from './commands';
 
 import { 
     GetAllEventsHandler,
     GetManagedEventsHandler,
+    GetUserViewingEventsHandler,
+    GetEventHandler,
  } from './queries';
 
 import {
     CreateEventEventHandler,
     SendViewRequestEventHandler,
     DeclineViewRequestEventHandler,
-    AcceptViewRequestEventHandler
+    AcceptViewRequestEventHandler,
+    RemoveViewerFromEventEventHandler,
+    RemoveEventFromViewerEventHandler,
+    UpdateEventDetialsEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -32,6 +40,9 @@ export const CommandHandlers = [
     SendViewRequestHandler,
     DeclineViewRequestHandler,
     AcceptViewRequestHandler,
+    RemoveViewerFromEventHandler,
+    RemoveEventFromViewerHandler,
+    UpdateEventDetailsHandler,
 ]
 
 export const EventHandlers = [
@@ -39,12 +50,17 @@ export const EventHandlers = [
     SendViewRequestEventHandler,
     DeclineViewRequestEventHandler,
     AcceptViewRequestEventHandler,
+    RemoveViewerFromEventEventHandler,
+    RemoveEventFromViewerEventHandler,
+    UpdateEventDetialsEventHandler,
 ];
 
 export const QueryHandlers = [
     GetAllEventsHandler,
     GetManagedEventsHandler,
     GetAllViewRequestsHandler,
+    GetUserViewingEventsHandler,
+    GetEventHandler,
 ];
 
 @Module({

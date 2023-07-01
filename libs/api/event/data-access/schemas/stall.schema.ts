@@ -6,13 +6,13 @@ export type StallDocument = HydratedDocument<Stall>;
 @Schema({timestamps: true, collection: 'Stall' })
 export class Stall{
     
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     Name: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: Number, required: true })
     x_coordinate: number | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: Number, required: true })
     y_coordinate: number | undefined | null;
 
 }

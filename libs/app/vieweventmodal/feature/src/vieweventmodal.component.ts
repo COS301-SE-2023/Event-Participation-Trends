@@ -8,8 +8,7 @@ import { Store } from '@ngxs/store';
   styleUrls: ['./vieweventmodal.component.css'],
 })
 export class ViewEventModalComponent {
-  @Input() eventName: string | undefined;
-  @Input() eventId: string | undefined;
+  @Input() event: any | undefined;
 
   handlerMessage = '';
 
@@ -19,8 +18,13 @@ export class ViewEventModalComponent {
     await this.modalController.dismiss();
   }
 
-  openDashboard() {
+  openEventDetails() {
     this.closeModal();
-    this.navController.navigateForward('/dashboard', { queryParams: { eventId: this.eventId , eventName: this.eventName } });
+    this.navController.navigateForward('/eventdetails', { queryParams: {id: this.event._id, queryParamsHandling: 'merge' } });
+  }
+
+  openEventScreenView() {
+    this.closeModal();
+    this.navController.navigateForward('/eventscreenview', { queryParams: {id: this.event._id, queryParamsHandling: 'merge' } });
   }
 }

@@ -6,13 +6,13 @@ export type DeviceLocationDocument = HydratedDocument<DeviceLocation>;
 @Schema({timestamps: true, collection: 'DeviceLocation' })
 export class DeviceLocation{
 
-    @Prop({ required: true })
+    @Prop({ type: Number, required: true })
     x_coordinate: number | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: Number, required: true })
     y_coordinate: number | undefined | null;
     
-    @Prop({ required: true })
+    @Prop({ type: Date, required: true })
     Timestamp: Date | undefined | null;
 }
     

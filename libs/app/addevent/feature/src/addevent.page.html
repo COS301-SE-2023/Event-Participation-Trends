@@ -108,8 +108,9 @@
           <!-- Ionic save button -->
           <ion-button
             class="m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
-            type="submit"
+            id="create-event-button"
             [disabled]="eventForm.invalid"
+            (click)="createEvent()"
             >Create</ion-button
           >
         </div>

@@ -5,6 +5,7 @@ import { VieweventsRoutingModule } from './viewevents.routing';
 import { VieweventsPage } from './viewevents.page';
 import { VieweventsModule as VieweventsDataAccessModule } from '@event-participation-trends/app/viewevents/data-access';
 import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [VieweventsPage],
@@ -12,7 +13,8 @@ import { IonicModule } from '@ionic/angular';
     CommonModule,
     IonicModule,
     VieweventsRoutingModule,
-    VieweventsDataAccessModule
+    VieweventsDataAccessModule,
+    FormsModule
   ]
 })
 export class VieweventsModule { }

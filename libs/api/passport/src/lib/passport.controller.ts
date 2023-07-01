@@ -21,8 +21,9 @@ export class PassportController {
     @Get('google/callback')
     @UseGuards(GoogleOAuthGuard)
     async googleAuthRedirect(@Req() req: Request, @Res() res: express_response) {
-        this.passportService.generateJWT(req).then((token) => {
-            res.cookie('jwt', token, { httpOnly: true });
+        this.passportService.generateJWT(req).then((token: any) => {
+            res.cookie('jwt', token.jwt, { httpOnly: true });
+            res.cookie('csrf', token.hash);
             res.redirect(process.env['FRONTEND_URL'] || "");
         });
         const newUser:IUser = await this.passportService.getUser(req);

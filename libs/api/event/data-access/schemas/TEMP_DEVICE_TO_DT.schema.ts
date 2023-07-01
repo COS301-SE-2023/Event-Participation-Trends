@@ -5,10 +5,10 @@ export type TEMP_DEVICE_TO_DTDocument = HydratedDocument<TEMP_DEVICE_TO_DT>;
 
 @Schema({timestamps: true, collection: 'TEMP_DEVICE_TO_DT' })
 export class TEMP_DEVICE_TO_DT{
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     BTID: string | undefined | null;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     DeviceId: string | undefined | null;
 }
 

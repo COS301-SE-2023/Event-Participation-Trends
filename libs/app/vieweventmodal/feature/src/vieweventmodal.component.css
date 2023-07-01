@@ -5,3 +5,17 @@ ion-button {
     background-color: rgb(16 16 16 / var(--tw-bg-opacity));
     text-transform: none;
 }
+
+.parent-for-icon {
+    position: relative;
+    /* Add other styles for the parent element as needed */
+  }
+  
+  .div-icon{
+    transition: transform 0.65s ease;
+    /* Add other styles for the div as needed */
+  }
+  
+  .parent-for-icon:hover .div-icon{
+    transform: translateY(-30px);
+  }
