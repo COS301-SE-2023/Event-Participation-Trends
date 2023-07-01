@@ -53,67 +53,6 @@ impl TranslationMatrix {
     }
 }
 
-//
-// The Rotation matrix is a 2x2 matrix that is used to rotate a vector in a 2D plane.
-// The matrix is defined as:
-//
-// | xx xy |
-// | yx yy |
-//
-
-#[wasm_bindgen]
-struct RotationMatrix {
-    xx: f64,
-    xy: f64,
-    yx: f64,
-    yy: f64,
-}
-
-#[wasm_bindgen]
-impl RotationMatrix {
-    fn new(xx: f64, xy: f64, yx: f64, yy: f64) -> RotationMatrix {
-        RotationMatrix { xx, xy, yx, yy }
-    }
-
-    fn get_xx(&self) -> f64 {
-        self.xx
-    }
-
-    fn get_xy(&self) -> f64 {
-        self.xy
-    }
-
-    fn get_yx(&self) -> f64 {
-        self.yx
-    }
-
-    fn get_yy(&self) -> f64 {
-        self.yy
-    }
-}
-
-//
-// The Point struct is one used to represent the coordinates of a point.
-//
-
-#[wasm_bindgen]
-struct Point {
-    x: f64,
-    y: f64,
-}
-
-// 
-// The Transformation struct is one used to return the Translation and Rotation matrices,
-// as well as the transformed sensors to the JavaScript caller.
-//
-
-#[wasm_bindgen]
-struct Transformation {
-    translation: TranslationMatrix,
-    rotation: RotationMatrix,
-    sensor_matrix: Array,
-}
-
 #[wasm_bindgen]
 struct SensorReading {
     x: f64,
@@ -124,13 +63,47 @@ struct SensorReading {
 
 //
 // Main function that is called from Typescript to transform the sensor matrices.
-// The function takes an array of floats that represent the sensor readings.
+// The function takes an array of floats that represent the sensor readings
+// and returns an array of floats that represent the transformed sensor readings.
+//
+// The array is structured as follows:
+// [btId, signal_strength_1, signal_strength_2, signal_strength_3, x_1, y_1, x_2, y_2, x_3, y_3, translation_x, translation_y ...]
+// Each 12 elements represent one bluetooth device's tracking data to be fed into a neural network.
 //
 
 #[wasm_bindgen]
-pub fn transform_sensor_matrices(array: Array) {
+pub fn transform_sensor_matrices(array: Array) -> Array{
+    let return_array = Array::new();
 
-    
+    let sensor_readings = transform_to_sensor_readings(array);
+
+    let grouped_sensor_readings = group_bId(sensor_readings);
+
+    for (key, value) in grouped_sensor_readings {
+        let usable_readings = get_usable_readings(value);
+
+        // transform data and add to array
+        let translation_matrix = get_translation_matrix(&usable_readings);
+        let translated_sensor_readings = translate_sensors(&usable_readings, &translation_matrix);
+
+        return_array.push(&JsValue::from(key));
+
+        return_array.push(&JsValue::from(translated_sensor_readings[0].signal_strength));
+        return_array.push(&JsValue::from(translated_sensor_readings[1].signal_strength));
+        return_array.push(&JsValue::from(translated_sensor_readings[2].signal_strength));
+
+        return_array.push(&JsValue::from(translated_sensor_readings[0].x));
+        return_array.push(&JsValue::from(translated_sensor_readings[0].y));
+        return_array.push(&JsValue::from(translated_sensor_readings[1].x));
+        return_array.push(&JsValue::from(translated_sensor_readings[1].y));
+        return_array.push(&JsValue::from(translated_sensor_readings[2].x));
+        return_array.push(&JsValue::from(translated_sensor_readings[2].y));
+
+        return_array.push(&JsValue::from(translation_matrix.x));
+        return_array.push(&JsValue::from(translation_matrix.y));
+    }
+
+    return_array
 
 }
 
@@ -181,12 +154,55 @@ fn group_bId(sensors_readings: Vec<SensorReading>) -> HashMap<i32, Vec<SensorRea
     map
 }
 
+fn get_usable_readings(mut sensors_readings: Vec<SensorReading>) -> Vec<SensorReading> {
+    // sort by signal strength
+    sensors_readings.sort_by(|a, b| b.signal_strength.partial_cmp(&a.signal_strength).unwrap());
+
+    // pop elements until only 3 are left
+
+    while sensors_readings.len() > 3 {
+        sensors_readings.pop();
+    }
+
+    sensors_readings
+}
+
+fn get_translation_matrix(sensor_readings: &Vec<SensorReading>) -> TranslationMatrix {
+    
+    // get the average x and y values
+    let mut x_sum = 0.0;
+    let mut y_sum = 0.0;
+
+    for sensor_reading in sensor_readings {
+        x_sum += sensor_reading.x;
+        y_sum += sensor_reading.y;
+    }
+
+    let x_avg = x_sum / 3 as f64;
+    let y_avg = y_sum / 3 as f64;
+
+    TranslationMatrix::new(x_avg, y_avg)
+}
+
+fn translate_sensors(sensor_readings: &Vec<SensorReading>, translation_matrix: &TranslationMatrix) -> Vec<SensorReading> {
+    let mut translated_sensor_readings: Vec<SensorReading> = Vec::new();
+
+    for sensor_reading in sensor_readings {
+        let x = sensor_reading.x - translation_matrix.x;
+        let y = sensor_reading.y - translation_matrix.y;
+
+        translated_sensor_readings.push(SensorReading { x, y, signal_strength: sensor_reading.signal_strength, bt_id: sensor_reading.bt_id });
+    }
+
+    translated_sensor_readings
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    pub fn group_sensor_readings_by_bId() {
+    pub fn test_group_bId() {
         let mut sensor_readings: Vec<SensorReading> = Vec::new();
 
         sensor_readings.push(SensorReading { x: 1.0, y: 8.0, signal_strength: 0.0, bt_id: 1 });
@@ -220,5 +236,42 @@ mod tests {
         assert_eq!(map.get(&3).unwrap()[1].y, 13.0);
         assert_eq!(map.get(&3).unwrap()[2].x, 7.0);
         assert_eq!(map.get(&3).unwrap()[2].y, 14.0);
+    }
+
+    #[test]
+    pub fn test_get_usable_readings() {
+        let mut sensor_readings: Vec<SensorReading> = Vec::new();
+
+        sensor_readings.push(SensorReading { x: 1.0, y: 8.0, signal_strength: 1.0, bt_id: 1 });
+        sensor_readings.push(SensorReading { x: 2.0, y: 9.0, signal_strength: 2.0, bt_id: 1 });
+        sensor_readings.push(SensorReading { x: 3.0, y: 10.0, signal_strength: 7.0, bt_id: 1 });
+        sensor_readings.push(SensorReading { x: 4.0, y: 11.0, signal_strength: 5.0, bt_id: 1 });
+        sensor_readings.push(SensorReading { x: 5.0, y: 12.0, signal_strength: 3.0, bt_id: 1 });
+        sensor_readings.push(SensorReading { x: 6.0, y: 13.0, signal_strength: 6.0, bt_id: 1 });
+        sensor_readings.push(SensorReading { x: 7.0, y: 14.0, signal_strength: 4.0, bt_id: 1 });
+
+        let usable_readings = get_usable_readings(sensor_readings);
+
+        assert_eq!(usable_readings.len(), 3);
+        assert_eq!(usable_readings[0].x, 3.0);
+        assert_eq!(usable_readings[0].y, 10.0);
+        assert_eq!(usable_readings[1].x, 6.0);
+        assert_eq!(usable_readings[1].y, 13.0);
+        assert_eq!(usable_readings[2].x, 4.0);
+        assert_eq!(usable_readings[2].y, 11.0);
+    }
+
+    #[test]
+    pub fn test_get_translation_matrix() {
+        let mut sensor_readings: Vec<SensorReading> = Vec::new();
+
+        sensor_readings.push(SensorReading { x: 1.0, y: 2.0, signal_strength: 0.0, bt_id: 1 });
+        sensor_readings.push(SensorReading { x: 4.0, y: 3.0, signal_strength: 0.0, bt_id: 1 });
+        sensor_readings.push(SensorReading { x: 3.0, y: 5.0, signal_strength: 0.0, bt_id: 1 });
+
+        let translation_matrix = get_translation_matrix(&sensor_readings);
+
+        assert_eq!(translation_matrix.x, 8.0/3.0);
+        assert_eq!(translation_matrix.y, 10.0/3.0);
     }
 }
