@@ -61,7 +61,7 @@ The system uses Google Authentication to ensure security and privacy of the data
 | System Requirements Specification v1 | [Link](https://docs.google.com/document/d/1Doeb5QJNxG2spNTYSLdacT7NHsnLVPAS4rcuX1nRqrY/edit?usp=sharing) |
 | System Requirements Specification v2 | [Link](https://docs.google.com/document/d/1iHdudGcnUYoy227o1OgBhCBoATmbfdSvOFCusW7_F54/edit?usp=sharing) |
 | Architecture Requirements Document | [Link](https://docs.google.com/document/d/1DCmlr6tthxqHlV5Asj0hk7cu2i9cDNINY6NU2OYsUmg/edit?usp=sharing)
-| Notion | [Link](https://lukasanthonissen.notion.site/Indlovu-Event-Participant-Trends-ffbc614bd9444ad2a031b2d77ae02324) |
-| Coding Standards Document | [Link](https://lukasanthonissen.notion.site/Coding-Standards-16e0f2ae0b7444d2aaea57c899e761e6?pvs=4) |
-| Documentation Contributions | [Link](https://lukasanthonissen.notion.site/List-of-Contributions-4138b8e2291c4ac5aee4b98d20c515b6?pvs=4) |
+| Notion | [Link](https://tricky-cylinder-c7d.notion.site/Indlovu-Event-Participant-Trends-c0a953a23efe4de1969fc2a8a46cb7e5?pvs=4) |
+| Coding Standards Document | [Link](https://www.notion.so/Coding-Standards-7b82311f246d445c835abcd739321909?pvs=4) |
+| Documentation Contributions | [Link](https://www.notion.so/List-of-Contributions-1c60a373935440e383232a35eac06898?pvs=4) |
 | User Manual | [Link](https://docs.google.com/document/d/1_cKCrhkL_yB80d10c_E82UGZVLFnSZI2S8DJMGUVsJ0/edit?usp=sharing)
