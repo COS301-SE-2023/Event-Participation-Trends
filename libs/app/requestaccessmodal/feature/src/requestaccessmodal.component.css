@@ -1,0 +1,7 @@
+ion-button {
+    --font-weight: bold;
+    border-radius: 10px;
+    --tw-bg-opacity: 1; 
+    background-color: rgb(16 16 16 / var(--tw-bg-opacity));
+    margin: 2rem 4.5rem;
+}

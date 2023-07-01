@@ -1,0 +1,41 @@
+<ion-content
+  class="text-center bg-[url('assets/hexagons3.svg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+>
+  <div class="backdrop-blur-[7px] h-full">
+    <ion-icon
+      name="close-outline"
+      class="z-50 absolute top-0 right-0 text-5xl cursor-pointer"
+      (click)="closeModal()"
+    ></ion-icon>
+    <ion-grid class="h-full grid-cols-2 grid-rows-2 backdrop-blur-[5px]">
+      <ion-row class="h-full">
+        <ion-col
+          class="col-span-1 transition hover:shadow-black hover:shadow-md cursor-pointer shadow-black shadow-md"
+          (click)="openEventScreenView()"
+          ngClass="parent-for-icon"
+        >
+          <div
+            class="text-center bg-[url('assets/data-analytics.png')] bg-cover bg-no-repeat bg-center bg-fixed w-44 h-44 mt-36 ml-12 z-10"
+            ngClass="div-icon"
+          ></div>
+          <ion-button class="bg-ept-deep-grey mt-10 opacity-100">
+            <ion-text class="text-center text-xl">View Event Activity</ion-text>
+          </ion-button>
+        </ion-col>
+        <ion-col
+          class="col-span-2 transition hover:shadow-black hover:shadow-md cursor-pointer shadow-black shadow-md"
+          (click)="openEventDetails()"
+          ngClass="parent-for-icon"
+        >
+          <div
+            class="text-center bg-[url('assets/organizer.png')] bg-cover bg-no-repeat bg-center bg-fixed w-44 h-44 mt-36 ml-12"
+            ngClass="div-icon"
+          ></div>
+          <ion-button class="bg-ept-deep-grey mt-10 opacity-100">
+            <ion-text class="text-center text-xl">View Event Details</ion-text>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

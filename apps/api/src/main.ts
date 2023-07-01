@@ -8,14 +8,35 @@ import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices'
 import { AppModule } from './app/app.module';
 import cookieParser = require('cookie-parser');
-import * as dotenv from 'dotenv';
+import helmet from 'helmet';
 
 async function bootstrap() {
-  dotenv.config();
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   app.use(cookieParser());
+  // app.use(helmet({
+  //   contentSecurityPolicy: {
+  //     directives: {
+  //       defaultSrc: ["'self'"],
+  //       scriptSrc: ["'self'"],
+  //       styleSrc: ["'self'"],
+  //       imgSrc: ["'self'"],
+  //       connectSrc: ["'self'"],
+  //       fontSrc: ["'self'"],
+  //       objectSrc: ["'none'"],
+  //       mediaSrc: ["'self'"],
+  //       frameSrc: ["'none'"],
+  //       childSrc: ["'none'"],
+  //       formAction: ["'self'"],
+  //     },
+  //   },
+  //   frameguard: { action: 'deny' },
+  //   hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+  //   ieNoOpen: true,
+  //   noSniff: true,
+  //   xssFilter: true,
+  // }));
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
@@ -30,7 +51,7 @@ async function bootstrap() {
       password: process.env.MQTT_PASSWORD,
     },
   });
-  mqtt_app.listen();
+ // mqtt_app.listen();
   Logger.log("💥 MQTT Microservice is listening");
 }
 
