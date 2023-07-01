@@ -271,7 +271,6 @@ export class EventController {
       (<unknown>this.eventService.getEvent(extractRequest))
     );
   }
-}
 
     @Post('createWall')
     @SetMetadata('role',Role.MANAGER)
