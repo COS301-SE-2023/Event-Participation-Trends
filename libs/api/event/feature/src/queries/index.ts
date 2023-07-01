@@ -3,3 +3,4 @@ export * from './get-managed-events.handler';
 export * from './get-managed-events.handler';
 export * from './get-all-viewer-events.handler';
 export * from './get-event.handler';
+export * from './get-all-event-walls.handler';

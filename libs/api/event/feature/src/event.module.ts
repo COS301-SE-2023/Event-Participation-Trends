@@ -12,6 +12,7 @@ import {
     RemoveViewerFromEventHandler,
     RemoveEventFromViewerHandler,
     UpdateEventDetailsHandler,
+    CreateWallHandler,
 } from './commands';
 
 import { 
@@ -19,6 +20,7 @@ import {
     GetManagedEventsHandler,
     GetUserViewingEventsHandler,
     GetEventHandler,
+    GetEventWallsHandler,
  } from './queries';
 
 import {
@@ -29,6 +31,7 @@ import {
     RemoveViewerFromEventEventHandler,
     RemoveEventFromViewerEventHandler,
     UpdateEventDetialsEventHandler,
+    CreateWallEventandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -43,6 +46,7 @@ export const CommandHandlers = [
     RemoveViewerFromEventHandler,
     RemoveEventFromViewerHandler,
     UpdateEventDetailsHandler,
+    CreateWallHandler,
 ]
 
 export const EventHandlers = [
@@ -53,6 +57,7 @@ export const EventHandlers = [
     RemoveViewerFromEventEventHandler,
     RemoveEventFromViewerEventHandler,
     UpdateEventDetialsEventHandler,
+    CreateWallEventandler,
 ];
 
 export const QueryHandlers = [
@@ -61,6 +66,7 @@ export const QueryHandlers = [
     GetAllViewRequestsHandler,
     GetUserViewingEventsHandler,
     GetEventHandler,
+    GetEventWallsHandler,
 ];
 
 @Module({

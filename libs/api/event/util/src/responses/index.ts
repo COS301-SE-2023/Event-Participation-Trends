@@ -9,3 +9,5 @@ export * from './get-all-viewer-events.response';
 export * from './remove-viewer.response';
 export * from './update-event-details.response';
 export * from './get-event.response';
+export * from './create-wall.response';
+export * from './get-all-event-walls.response';

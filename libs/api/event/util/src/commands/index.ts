@@ -5,3 +5,4 @@ export * from './accept-view-request.command';
 export * from './remove-viewer-from-event.command';
 export * from './remove-event-from-viewer.command';
 export * from './update-event-detials.command';
+export * from './create-wall.command';

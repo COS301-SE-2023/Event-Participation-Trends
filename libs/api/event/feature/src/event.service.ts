@@ -32,6 +32,12 @@ import {
     IGetEventRequest,
     IGetEventResponse,
     GetEventQuery,
+    ICreateWallRequest,
+    ICreateWallResponse,
+    CreateWallCommand,
+    IGetAllEventWallsRequest,
+    IGetAllEventWallsResponse,
+    GetEventWallsQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -82,5 +88,13 @@ export class EventService {
 
     async getEvent(request: IGetEventRequest) {
         return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    async createWall(request: ICreateWallRequest) {
+        return await this.commandBus.execute<CreateWallCommand, ICreateWallResponse>(new CreateWallCommand(request));
+    }
+
+    async getAllEventWalls(request: IGetAllEventWallsRequest) {
+        return await this.queryBus.execute<GetEventWallsQuery, IGetAllEventWallsResponse>(new GetEventWallsQuery(request));
     }
 }

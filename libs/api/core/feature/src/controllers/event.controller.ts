@@ -1,27 +1,31 @@
 import { EventService } from '@event-participation-trends/api/event/feature';
 import {
-  ICreateEventRequest,
-  ICreateEventResponse,
-  IGetAllEventsRequest,
-  IGetAllEventsResponse,
-  IGetManagedEventsRequest,
-  IGetManagedEventsResponse,
-  ISendViewRequestRequest,
-  ISendViewRequestResponse,
-  IGetAllViewRequestsRequest,
-  IGetAllViewRequestsResponse,
-  IDeclineViewRequestRequest,
-  IDeclineViewRequestResponse,
-  IAcceptViewRequestRequest,
-  IAcceptViewRequestResponse,
-  IGetUserViewingEventsRequest,
-  IGetUserViewingEventsResponse,
-  IRemoveViewerRequest,
-  IRemoveViewerResponse,
-  IUpdateEventDetailsRequest,
-  IUpdateEventDetailsResponse,
-  IGetEventRequest,
-  IGetEventResponse,
+    ICreateEventRequest,
+    ICreateEventResponse,
+    IGetAllEventsRequest,
+    IGetAllEventsResponse,
+    IGetManagedEventsRequest,
+    IGetManagedEventsResponse,
+    ISendViewRequestRequest,
+    ISendViewRequestResponse,
+    IGetAllViewRequestsRequest,
+    IGetAllViewRequestsResponse,
+    IDeclineViewRequestRequest,
+    IDeclineViewRequestResponse,
+    IAcceptViewRequestRequest,
+    IAcceptViewRequestResponse,
+    IGetUserViewingEventsRequest,
+    IGetUserViewingEventsResponse,
+    IRemoveViewerRequest,
+    IRemoveViewerResponse,
+    IUpdateEventDetailsRequest,
+    IUpdateEventDetailsResponse,
+    IGetEventRequest,
+    IGetEventResponse,
+    ICreateWallRequest,
+    ICreateWallResponse,
+    IGetAllEventWallsRequest,
+    IGetAllEventWallsResponse
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -198,13 +202,13 @@ export class EventController {
     return this.eventService.acceptViewRequest(extractRequest);
   }
 
-  @Get('getAllViewingEvents')
-  @SetMetadata('role', Role.VIEWER)
-  @UseGuards(JwtGuard, RbacGuard)
-  async getAllViewingEvents(
-    @Req() req: Request
-  ): Promise<IGetUserViewingEventsResponse> {
-    const request: any = req;
+    @Get('getAllViewingEvents')
+    @SetMetadata('role',Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getAllViewingEvents(
+        @Req() req: Request,
+    ): Promise<IGetUserViewingEventsResponse> {
+        const request: any =req;
 
     if (request.user['email'] == undefined || request.user['email'] == null)
       throw new HttpException('Bad Request: viewer email not provided', 400);
@@ -215,13 +219,12 @@ export class EventController {
     return this.eventService.getUserViewingEvents(extractRequest);
   }
 
-  @Post('removeViewerFromEvent')
-  @SetMetadata('role', Role.MANAGER)
-  async removeViewerFromEvent(
-    @Body() requestBody: IRemoveViewerRequest
-  ): Promise<IRemoveViewerResponse> {
-    if (requestBody.userEmail == undefined || requestBody.userEmail == null)
-      throw new HttpException('Bad Request: viewer email not provided', 400);
+    @Post('removeViewerFromEvent')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async removeViewerFromEvent(
+        @Body() requestBody: IRemoveViewerRequest,
+    ): Promise<IRemoveViewerResponse> {
 
     if (requestBody.eventId == undefined || requestBody.eventId == null)
       throw new HttpException('Bad Request: eventId not provided', 400);
@@ -233,13 +236,15 @@ export class EventController {
     return this.eventService.removeViewerFromEvent(extractRequest);
   }
 
-  @Post('updateEventDetails')
-  @SetMetadata('role', Role.MANAGER)
-  async updateEventDetails(
-    @Body() requestBody: IUpdateEventDetailsRequest
-  ): Promise<IUpdateEventDetailsResponse> {
-    if (requestBody.eventId == undefined || requestBody.eventId == null)
-      throw new HttpException('Bad Request: eventId not provided', 400);
+    @Post('updateEventDetails')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async updateEventDetails(
+        @Body() requestBody: IUpdateEventDetailsRequest,
+    ): Promise<IUpdateEventDetailsResponse> {
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
 
     const extractRequest: IUpdateEventDetailsRequest = {
       eventId: requestBody.eventId,
@@ -248,11 +253,15 @@ export class EventController {
     return this.eventService.updateEventDetails(extractRequest);
   }
 
-  @Get('getEvent')
-  @SetMetadata('role', Role.MANAGER)
-  async getEvent(@Query() query: any): Promise<IGetEventResponse> {
-    if (query.eventId == undefined || query.eventId == null)
-      throw new HttpException('Bad Request: eventId not provided', 400);
+    @Get('getEvent')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getEvent(
+        @Query() query: any
+    ): Promise<IGetEventResponse> {
+
+        if(query.eventId==undefined || query.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
 
     const extractRequest: IGetEventRequest = {
       eventId: query.eventId,
@@ -262,4 +271,45 @@ export class EventController {
       (<unknown>this.eventService.getEvent(extractRequest))
     );
   }
+}
+
+    @Post('createWall')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async createWall(
+        @Req() req: Request,
+        @Body() requestBody: ICreateWallRequest,
+    ): Promise<ICreateWallResponse> {
+        const request: any =req;
+
+        if(requestBody.eventId==undefined || requestBody.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
+        const extractRequest: ICreateWallRequest = {
+            eventId: requestBody.eventId,
+            Wall: requestBody.Wall
+        }
+
+        return <any> <unknown> this.eventService.createWall(extractRequest);
+    }
+
+    
+    @Get('getAllWalls')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getAllWalls(
+        @Query() query: any
+    ): Promise<IGetAllEventWallsResponse> {
+
+        if(query.eventId==undefined || query.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+
+        const extractRequest: IGetAllEventWallsRequest = {
+            eventId: query.eventId,
+        }
+
+        return this.eventService.getAllEventWalls(extractRequest);
+    }
+
+
 }
