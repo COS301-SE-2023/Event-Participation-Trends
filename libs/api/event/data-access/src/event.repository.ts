@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails, IEventLocation, IStall } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventId, IEventLocation, IStall } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
@@ -124,6 +124,7 @@ export class EventRepository {
         return await this.eventModel.find({_id :{$eq: eventID}});
     }
 
+    // Stall
     async createStall(stall: IStall){
         await this.stallModel.create(stall);
         return await this.eventModel.updateOne(
@@ -139,19 +140,41 @@ export class EventRepository {
         return await this.stallModel.find({Event: {$eq: eventID}, Name: {$eq: stallName}});
     }
 
-    async updateStallXYCoordinates(eventID: Types.ObjectId, stallName: string, x: number, y: number){
-        return await this.stallModel.updateOne(
-            {Event: {$eq: eventID}, Name: {$eq: stallName}},
-            {$set: {x_coordinate: x, y_coordinate: y}});
+    async getAllStallNames(eventID: IEventId){
+        return await this.stallModel.find({Event: {$eq: eventID}}, {Name: 1});
     }
 
-    async updateStallWidthHeight(eventID: Types.ObjectId, stallName: string, width: number, height: number){
+    async updateStallName(eventID: IEventId, stall: IStall){
         return await this.stallModel.updateOne(
-            {Event: {$eq: eventID}, Name: {$eq: stallName}},
-            {$set: {width: width, height: height}});
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { Name: stall.Name } });
     }
 
-    async removeStall(eventID: Types.ObjectId, stallName: string){
+    async updateStallXCoordinate(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { XCoordinate: stall.x_coordinate } });
+    }
+
+    async updateStallYCoordinate(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { YCoordinate: stall.y_coordinate } });
+    }
+
+    async updateStallWidth(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { Width: stall.width } });
+    }
+
+    async updateStallHeight(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { Height: stall.height } });
+    }
+
+    async removeStall(eventID: IEventId, stallName: string){
         return await this.stallModel.deleteOne(
             {Event: {$eq: eventID}, Name: {$eq: stallName}});
     }
