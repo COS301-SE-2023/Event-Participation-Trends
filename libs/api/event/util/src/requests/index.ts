@@ -11,3 +11,4 @@ export * from './update-event-details.request';
 export * from './get-event.request';
 export * from './create-stall.request';
 export * from './update-stall.request';
+export * from './get-all-event-stalls.request';
