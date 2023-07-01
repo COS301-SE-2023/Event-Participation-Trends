@@ -6,3 +6,4 @@ export * from './remove-viewer-from-event.event';
 export * from './remove-event-from-viewer.event';
 export * from './update-event-details-event';
 export * from './create-stall.event';
+export * from './update-stall.event';
