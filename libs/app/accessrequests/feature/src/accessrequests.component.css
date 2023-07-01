@@ -1,0 +1,95 @@
+ion-button {
+    text-transform: none;
+}
+
+ion-content {
+    --background: #e1e1e1;
+}
+
+.title-event-name {
+    font-size: 1.5rem;
+    font-weight: 500;
+    padding: 10px 0 0 20px;
+}
+
+.main-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-decoration: underline;
+    padding: 10px 0 0 20px;
+}
+
+.main-title-event-name {
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 10px 0 0 20px;
+    opacity: 0.7;
+}
+
+.close-btn-icon {
+    float: right;
+    font-size: 2.5rem;
+    margin: 5px 10px 0 0;
+}
+.close-btn-icon:hover {
+    cursor: pointer;
+    color: #ff0000;
+}
+
+.title-close-btn {
+    display: flex;
+    justify-content: space-between;
+}
+
+.access-request-card {
+    background-color: #212121;
+    height: 8rem;
+}
+
+.card-content {
+    font-size: 18px;
+    display: flex;
+    color: rgba(255, 255, 255, 0.8);
+    justify-content: space-between;
+}
+
+.card-label {
+    color:rgba(255, 255, 255, 0.95);
+    font-size: 1.2rem;
+    margin-right: 20px;
+}
+
+.card-username,
+.card-email,
+.card-role {
+    font-style: italic;
+}
+
+.card-email {
+    padding-left: 16px;
+}
+.card-role {
+    padding-left: 23px;
+}
+
+.accept-reject-btns {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.accept-btn,
+.reject-btn {
+    font-size: 15px;
+    border-radius: 5px;
+    width: 100px;
+}
+
+.accept-btn {
+    background-color: #4caf50;
+}
+.reject-btn {
+    background-color: #f44336;
+}
+

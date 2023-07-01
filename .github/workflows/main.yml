@@ -1,15 +1,19 @@
 name: Deploys, everything has already been tested
 on:
-    pull_request:
-      types: [closed]
-      branches:
-        - main
-
+  push:
+    branches:
+      - main
 jobs:
-  main_deploy:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: 'yarn install'
-    # This will still be added, we need to add steps for deployment here
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v2
+            - name: Connect to server and trigger update
+              uses: appleboy/ssh-action@master
+              with:
+                host:   ${{ secrets.HOST}}
+                username: ${{ secrets.USERNAME }}
+                key: ${{ secrets.KEY }}
+                script: |
+                    sudo /root/main.sh
