@@ -193,7 +193,7 @@ export class EventController {
 
     @Get('getAllViewingEvents')
     @SetMetadata('role',Role.VIEWER)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getAllViewingEvents(
         @Req() req: Request,
     ): Promise<IGetUserViewingEventsResponse> {
@@ -210,6 +210,7 @@ export class EventController {
 
     @Post('removeViewerFromEvent')
     @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async removeViewerFromEvent(
         @Body() requestBody: IRemoveViewerRequest,
     ): Promise<IRemoveViewerResponse> {
@@ -229,6 +230,7 @@ export class EventController {
 
     @Post('updateEventDetails')
     @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async updateEventDetails(
         @Body() requestBody: IUpdateEventDetailsRequest,
     ): Promise<IUpdateEventDetailsResponse> {
@@ -245,6 +247,7 @@ export class EventController {
 
     @Get('getEvent')
     @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getEvent(
         @Query() query: any
     ): Promise<IGetEventResponse> {
@@ -261,6 +264,7 @@ export class EventController {
 
     @Post('createWall')
     @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async createWall(
         @Req() req: Request,
         @Body() requestBody: ICreateWallRequest,
@@ -281,6 +285,7 @@ export class EventController {
     
     @Get('getAllWalls')
     @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getAllWalls(
         @Query() query: any
     ): Promise<IGetAllEventWallsResponse> {
