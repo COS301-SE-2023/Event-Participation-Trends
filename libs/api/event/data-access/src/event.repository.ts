@@ -125,15 +125,15 @@ export class EventRepository {
     }
 
     // Stall
+    async getAllEventStalls(eventID: IEventId){
+        return await this.eventModel.find({_id :{$eq: eventID}}, {Stalls: 1});
+    }
+
     async createStall(stall: IStall){
         await this.stallModel.create(stall);
         return await this.eventModel.updateOne(
             {_id :{$eq: stall.EventId}},
             { $push: { Stalls: stall } });
-    }
-
-    async getAllStalls(eventID: Types.ObjectId){
-        return await this.stallModel.find({Event: {$eq: eventID}});
     }
 
     async getStallByName(eventID: Types.ObjectId, stallName: string){

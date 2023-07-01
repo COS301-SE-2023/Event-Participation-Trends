@@ -1,5 +1,5 @@
 import { IGetAllEventStallsRequest } from "../requests";
 
-export class GetAllEventStalls {
+export class GetAllEventStallsQuery {
     constructor(public readonly request: IGetAllEventStallsRequest) {}
 }
