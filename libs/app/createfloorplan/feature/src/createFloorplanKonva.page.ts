@@ -23,6 +23,7 @@ export class CreateFloorPlanPageKonva {
     isDraggingLine = false;
     lineType: 'vertical' | 'horizontal' = 'vertical';
     activeLine: Konva.Line | null = null;
+    activeItem: any = null;
 
     toggleDropdown(): void {
         this.isDropdownOpen = !this.isDropdownOpen;
@@ -151,13 +152,26 @@ export class CreateFloorPlanPageKonva {
     //     target.y(snappedY);
     // }
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
+        // check if prev active item and new active item are same
+        // if so do nothing
+        if (this.activeItem === event.target) {
+            return;
+        }
+        else {
+            //remove class from prev active item
+            if (this.activeItem) {
+                this.activeItem.setAttr('customClass', '');
+            }
+            //set new active item
+            this.activeItem = event.target;
+            this.activeItem.setAttr('customClass', 'active');
+        }
         const movedObject = event.currentTarget as Konva.Node;
         const droppedItem = this.canvasItems.find(
             (item) => item.konvaObject === movedObject
         );
             
         if (droppedItem) {
-            console.log(movedObject)
             const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
             const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
             const objectWidth = movedObject.width() * movedObject.scaleX();
@@ -228,16 +242,13 @@ export class CreateFloorPlanPageKonva {
           mouseY >= boundingRect.top &&
           mouseY <= boundingRect.bottom
         ) {
-          const activeObject = this.canvas.findOne('.active');
-          if (activeObject) {
-            activeObject.remove();
-            const droppedItemIndex = this.canvasItems.findIndex(
-                (item) => item.konvaObject === activeObject
-            );
-            if (droppedItemIndex > -1) {
-              this.canvasItems.splice(droppedItemIndex, 1);
+            //find specific object with customClass attribute set to 'active'
+            const selectedObject = this.canvas.findOne((obj: any) => obj.getAttr('customClass') === 'active');
+            if (selectedObject) {
+                selectedObject.remove();
+                this.canvas.batchDraw();
             }
-          }
+
         }
       }
       
@@ -270,9 +281,8 @@ export class CreateFloorPlanPageKonva {
           // Clicked on an existing textbox, do nothing
           return;
         }
-      
-        const stage = this.canvasContainer;
-        const pointer = stage.getPointerPosition();
+
+        const pointer = this.canvas.getPosition();
         const grid = 10;
         const xValue = pointer ? pointer.x : 0;
         const yValue = pointer ? pointer.y : 0;
@@ -292,15 +302,14 @@ export class CreateFloorPlanPageKonva {
         this.isDraggingLine = true;
       
         // Attach the mouse move event listener
-        stage.on('mousemove', this.onMouseMove.bind(this));
+        this.canvas.on('mousemove', this.onMouseMove.bind(this));
       
         // Attach the mouse up event listener to finish dragging lines
-        stage.on('mouseup', this.onMouseUp.bind(this));
+        this.canvas.on('mouseup', this.onMouseUp.bind(this));
       }
       
       onMouseMove(): void {
-        const stage = this.canvasContainer;
-        const pointer = stage.getPointerPosition();
+        const pointer = this.canvas.getPosition();
         if (this.activeLine) {
             const grid = 10;
             const xValue = pointer ? pointer.x : 0;
@@ -319,9 +328,8 @@ export class CreateFloorPlanPageKonva {
       
       onMouseUp(): void {
         this.openDustbin = false;
-      
-        const stage = this.canvasContainer;
-        const pointer = stage.getPointerPosition();
+
+        const pointer = this.canvas.getPosition();
         if (this.activeLine) {
             const grid = 10;
             const xValue = pointer ? pointer.x : 0;
@@ -340,10 +348,10 @@ export class CreateFloorPlanPageKonva {
         this.isDraggingLine = false;
       
         // Remove the mouse move event listener
-        stage.off('mousemove', this.onMouseMove.bind(this));
+        this.canvas.off('mousemove', this.onMouseMove.bind(this));
       
         // Remove the mouse up event listener
-        stage.off('mouseup', this.onMouseUp.bind(this));
+        this.canvas.off('mouseup', this.onMouseUp.bind(this));
       }
       
       createGridLines() {
