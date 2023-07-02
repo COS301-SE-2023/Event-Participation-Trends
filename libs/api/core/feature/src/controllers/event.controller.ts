@@ -50,8 +50,6 @@ import {
 } from '@event-participation-trends/api/guards';
 import { Role } from '@event-participation-trends/api/user/util';
 
-//import {transform_sensor_matrices, reverse_transform_devices} from 'rust-lib';
-
 @Controller('event')
 export class EventController {
   constructor(private eventService: EventService) {}
