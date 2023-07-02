@@ -66,7 +66,7 @@ export class CreateFloorPlanPageKonva {
           height: 50,
           fill: 'blue',
           draggable: true,
-          name: droppedItem.name,
+          text: droppedItem.name,
         });
       
         droppedItem.konvaObject = element;
