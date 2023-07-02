@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start:dev": "yarn concurrently \"yarn nx serve app\" \"yarn nx serve api\"",
-    "test":"jest"
+    "test": "jest"
   },
   "private": true,
   "dependencies": {
@@ -39,6 +39,7 @@
     "fabric": "^5.3.0",
     "helmet": "^7.0.0",
     "immer": "^10.0.2",
+    "konva": "^9.2.0",
     "moment": "^2.29.4",
     "mongoose": "^7.2.1",
     "mqtt": "^4.3.7",
