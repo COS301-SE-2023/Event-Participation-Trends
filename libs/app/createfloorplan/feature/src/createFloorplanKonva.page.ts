@@ -246,6 +246,11 @@ export class CreateFloorPlanPageKonva {
             const selectedObject = this.canvas.findOne((obj: any) => obj.getAttr('customClass') === 'active');
             if (selectedObject) {
                 selectedObject.remove();
+                // remove item from canvasItems array
+                const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
+                if (index > -1) {
+                    this.canvasItems.splice(index, 1);
+                }
                 this.canvas.batchDraw();
             }
 
