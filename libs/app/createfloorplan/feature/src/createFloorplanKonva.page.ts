@@ -60,20 +60,24 @@ export class CreateFloorPlanPageKonva {
 
     addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
         const element = new Konva.Text({
-          x: positionX,
-          y: positionY,
-          width: 100,
-          height: 50,
-          fill: 'blue',
-          draggable: true,
-          name: droppedItem.name,
+            id: 'text',
+            x: positionX,
+            y: positionY,
+            width: 100,
+            height: 50,
+            fill: 'blue',
+            draggable: true,
+            text: droppedItem.name,
+            cursor: 'pointer',
         });
       
-        droppedItem.konvaObject = element;
-        this.canvas.add(element);
+        // add dragmove event listener
+        element.on('dragmove', this.onObjectMoving.bind(this));
 
-        // print canvas items
-        console.log(this.canvas.hasChildren());
+        droppedItem.konvaObject = element;
+
+        this.canvas.add(element);
+        this.canvas.draw();
       }
 
     ngAfterViewInit(): void {
@@ -88,7 +92,7 @@ export class CreateFloorPlanPageKonva {
             this.canvasContainer = new Konva.Stage({
                 container: '#canvasElement',
                 width: width*0.965,
-                height: height*0.965,
+                height: height*0.965                
             });
 
             this.canvas = new Konva.Layer();
@@ -97,7 +101,7 @@ export class CreateFloorPlanPageKonva {
             this.canvasContainer.draw();
 
             //set object moving
-            this.canvas.on('dragmove', this.onObjectMoving.bind(this));
+            // this.canvas.on('dragmove', this.onObjectMoving.bind(this));
 
             // Attach the mouse down event listener to start dragging lines
             this.canvas.on('mousedown', this.onMouseDown.bind(this));
@@ -149,53 +153,54 @@ export class CreateFloorPlanPageKonva {
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
         const movedObject = event.currentTarget as Konva.Node;
         const droppedItem = this.canvasItems.find(
-          (item) => item.konvaObject === movedObject
+            (item) => item.konvaObject === movedObject
         );
-      
+            
         if (droppedItem) {
-          const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
-          const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
-          const objectWidth = movedObject.width() * movedObject.scaleX();
-          const objectHeight = movedObject.height() * movedObject.scaleY();
-          const positionX = movedObject.x() || 0;
-          const positionY = movedObject.y() || 0;
-      
-          const gridSize = 20;
-          const minX = 0;
-          const minY = 0;
-          const maxX = canvasWidth - objectWidth;
-          const maxY = canvasHeight - objectHeight;
-      
-          const snappedX = Math.round(positionX / gridSize) * gridSize;
-          const snappedY = Math.round(positionY / gridSize) * gridSize;
-      
-          const limitedX = Math.max(minX, Math.min(maxX, snappedX));
-          const limitedY = Math.max(minY, Math.min(maxY, snappedY));
-      
-          movedObject.setAttrs({
-            x: limitedX,
-            y: limitedY
-          });
-      
-          if (positionX < minX) {
-            movedObject.setAttr('x', minX);
-          } else if (positionX > maxX) {
-            movedObject.setAttr('x', maxX);
-          }
-      
-          if (positionY < minY) {
-            movedObject.setAttr('y', minY);
-          } else if (positionY > maxY) {
-            movedObject.setAttr('y', maxY);
-          }
-      
-          droppedItem.konvaObject?.setAttrs({
-            draggable: false
-          });
-      
-          this.canvas.batchDraw();
-      
-          this.openDustbin = true;
+            console.log(movedObject)
+            const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
+            const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
+            const objectWidth = movedObject.width() * movedObject.scaleX();
+            const objectHeight = movedObject.height() * movedObject.scaleY();
+            const positionX = movedObject.x() || 0;
+            const positionY = movedObject.y() || 0;
+        
+            const gridSize = 20;
+            const minX = 0;
+            const minY = 0;
+            const maxX = canvasWidth - objectWidth;
+            const maxY = canvasHeight - objectHeight;
+        
+            const snappedX = Math.round(positionX / gridSize) * gridSize;
+            const snappedY = Math.round(positionY / gridSize) * gridSize;
+        
+            const limitedX = Math.max(minX, Math.min(maxX, snappedX));
+            const limitedY = Math.max(minY, Math.min(maxY, snappedY));
+        
+            movedObject.setAttrs({
+                x: limitedX,
+                y: limitedY
+            });
+        
+            if (positionX < minX) {
+                movedObject.setAttr('x', minX);
+            } else if (positionX > maxX) {
+                movedObject.setAttr('x', maxX);
+            }
+        
+            if (positionY < minY) {
+                movedObject.setAttr('y', minY);
+            } else if (positionY > maxY) {
+                movedObject.setAttr('y', maxY);
+            }
+        
+            // droppedItem.konvaObject?.setAttrs({
+            //     draggable: false
+            // });
+        
+            this.canvas.batchDraw();
+        
+            this.openDustbin = true;
         }
     }          
     
