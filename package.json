@@ -52,7 +52,6 @@
     "ref-napi": "^3.0.3",
     "ref-struct-napi": "^1.1.1",
     "reflect-metadata": "^0.1.13",
-    "rust-lib": "file:./rust-lib/pkg",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "wait-on": "^7.0.1",
