@@ -154,10 +154,7 @@ export class CreateFloorPlanPageKonva {
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
         // check if prev active item and new active item are same
         // if so do nothing
-        if (this.activeItem === event.target) {
-            return;
-        }
-        else {
+        if (this.activeItem != event.target) {
             //remove class from prev active item
             if (this.activeItem) {
                 this.activeItem.setAttr('customClass', '');
@@ -166,6 +163,7 @@ export class CreateFloorPlanPageKonva {
             this.activeItem = event.target;
             this.activeItem.setAttr('customClass', 'active');
         }
+        
         const movedObject = event.currentTarget as Konva.Node;
         const droppedItem = this.canvasItems.find(
             (item) => item.konvaObject === movedObject
@@ -179,7 +177,7 @@ export class CreateFloorPlanPageKonva {
             const positionX = movedObject.x() || 0;
             const positionY = movedObject.y() || 0;
         
-            const gridSize = 20;
+            const gridSize = 10;
             const minX = 0;
             const minY = 0;
             const maxX = canvasWidth - objectWidth;
