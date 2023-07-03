@@ -24,6 +24,9 @@ export class CreateFloorPlanPageKonva {
     lineType: 'vertical' | 'horizontal' = 'vertical';
     activeLine: Konva.Line | null = null;
     activeItem: any = null;
+    lines: Konva.Line[] = [];
+    // Define the fill color for the closed shapes
+    fillColor = 'rgba(255, 0, 0, 0.5)'; // Example color
 
     toggleDropdown(): void {
         this.isDropdownOpen = !this.isDropdownOpen;
@@ -112,109 +115,66 @@ export class CreateFloorPlanPageKonva {
             this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
 
         }, 6);
-        // const parentWidth = this.canvasParentElement.nativeElement.offsetWidth;
-        // const parentHeight = this.canvasParentElement.nativeElement.offsetHeight;
-
-        // this.canvasContainer = new Konva.Stage({
-        //     container: '#canvasElement',
-        //     width: parentWidth * 0.95,
-        //     height: parentHeight * 0.95,
-        // });
-
-        // this.canvas = new Konva.Layer({
-        //     width: 800,
-        //     height: 600,
-        //     stroke: 'black',
-        //     strokeWidth: 2,
-        // });
-
-        // this.canvasContainer.add(this.canvas);
-        // this.canvasContainer.draw();
-
-
     }
 
-    // onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
-    //     const target = event.target;
-    //     const targetName = target.name();
-
-    //     if (targetName === 'gridLine') {
-    //         return;
-    //     }
-
-    //     const targetX = target.x();
-    //     const targetY = target.y();
-
-    //     const snappedX = Math.round(targetX / 50) * 50;
-    //     const snappedY = Math.round(targetY / 50) * 50;
-
-    //     target.x(snappedX);
-    //     target.y(snappedY);
-    // }
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
-        // check if prev active item and new active item are same
-        // if so do nothing
-        if (this.activeItem != event.target) {
-            //remove class from prev active item
-            if (this.activeItem) {
-                this.activeItem.setAttr('customClass', '');
-            }
-            //set new active item
-            this.activeItem = event.target;
-            this.activeItem.setAttr('customClass', 'active');
+        if (this.activeItem !== event.target) {
+          if (this.activeItem) {
+            this.activeItem.setAttr('customClass', '');
+          }
+          this.activeItem = event.target;
+          this.activeItem.setAttr('customClass', 'active');
         }
-
+      
         const movedObject = event.currentTarget as Konva.Node;
         const droppedItem = this.canvasItems.find(
-            (item) => item.konvaObject === movedObject
+          (item) => item.konvaObject === movedObject
         );
-            
+      
         if (droppedItem) {
-            const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
-            const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
-            const objectWidth = movedObject.width() * movedObject.scaleX();
-            const objectHeight = movedObject.height() * movedObject.scaleY();
-            const positionX = movedObject.x() || 0;
-            const positionY = movedObject.y() || 0;
-        
-            const gridSize = 10;
-            const minX = 0;
-            const minY = 0;
-            const maxX = canvasWidth - objectWidth;
-            const maxY = canvasHeight - objectHeight;
-        
-            const snappedX = Math.round(positionX / gridSize) * gridSize;
-            const snappedY = Math.round(positionY / gridSize) * gridSize;
-        
-            const limitedX = Math.max(minX, Math.min(maxX, snappedX));
-            const limitedY = Math.max(minY, Math.min(maxY, snappedY));
-        
-            movedObject.setAttrs({
-                x: limitedX,
-                y: limitedY
-            });
-        
-            if (positionX < minX) {
-                movedObject.setAttr('x', minX);
-            } else if (positionX > maxX) {
-                movedObject.setAttr('x', maxX);
-            }
-        
-            if (positionY < minY) {
-                movedObject.setAttr('y', minY);
-            } else if (positionY > maxY) {
-                movedObject.setAttr('y', maxY);
-            }
-        
-            // droppedItem.konvaObject?.setAttrs({
-            //     draggable: false
-            // });
-        
-            this.canvas.batchDraw();
-        
-            this.openDustbin = true;
+          const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
+          const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
+          const objectWidth = movedObject.width() * movedObject.scaleX();
+          const objectHeight = movedObject.height() * movedObject.scaleY();
+          const positionX = event.target.x() || 0; // Use event.target.x() to get the current position
+          const positionY = event.target.y() || 0; // Use event.target.y() to get the current position
+      
+          const gridSize = 10;
+          const minX = 0;
+          const minY = 0;
+          const maxX = canvasWidth - objectWidth;
+          const maxY = canvasHeight - objectHeight;
+      
+          const snappedX = Math.round(positionX / gridSize) * gridSize;
+          const snappedY = Math.round(positionY / gridSize) * gridSize;
+      
+          const limitedX = Math.max(minX, Math.min(maxX, snappedX));
+          const limitedY = Math.max(minY, Math.min(maxY, snappedY));
+      
+          movedObject.setAttrs({
+            x: limitedX,
+            y: limitedY,
+          });
+      
+          // Update the limits check to use limitedX and limitedY
+          if (limitedX < minX) {
+            movedObject.setAttr('x', minX);
+          } else if (limitedX > maxX) {
+            movedObject.setAttr('x', maxX);
+          }
+      
+          if (limitedY < minY) {
+            movedObject.setAttr('y', minY);
+          } else if (limitedY > maxY) {
+            movedObject.setAttr('y', maxY);
+          }
+      
+          this.canvas.batchDraw();
+      
+          this.openDustbin = true;
         }
-    }          
+      }
+        
     
     onDustbinDragOver(event: DragEvent): void {
         event.preventDefault();
@@ -297,21 +257,24 @@ export class CreateFloorPlanPageKonva {
         const line = new Konva.Line({
           points: [snapPoint.x, snapPoint.y, snapPoint.x, snapPoint.y],
           stroke: '#000',
-          strokeWidth: 2,
+          strokeWidth: 5,
           draggable: true,
-          
         });
 
         this.activeLine = line;
+        // Attach the drag move event listener to finish dragging lines
+        line.on('dragmove', this.onObjectMoving.bind(this));
         this.canvas.add(line);
         this.canvas.draw();
+        this.lines.push(line);
         this.isDraggingLine = true;
       
         // Attach the mouse move event listener
         this.canvasContainer.on('mousemove', this.onMouseMove.bind(this));
       
         // Attach the mouse up event listener to finish dragging lines
-        this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
+        this.canvasContainer.on('mouseup', this.onMouseUp.bind(this))
+
       }
       
       onMouseMove(): void {
@@ -437,7 +400,11 @@ export class CreateFloorPlanPageKonva {
       
         // Remove the mouse up event listener
         this.canvas.off('mouseup', this.onMouseUp.bind(this));
+
+        this.isClosedShape();
+        
       }
+
       
       createGridLines() {
         const grid = 10;
@@ -485,4 +452,70 @@ export class CreateFloorPlanPageKonva {
       checkScreenWidth() {
         this.shouldStackVertically = window.innerWidth < 1421;
       }
+
+      isClosedShape(): boolean {
+        let closedPathPoints: {
+            startX: number,
+            startY: number,
+            endX: number,
+            endY: number,
+        }[] = [];
+        // Check if the shape is closed
+        const lines = this.lines;
+        const points: {
+            startX: number,
+            startY: number,
+            endX: number,
+            endY: number,
+        }[] = [];
+        lines.forEach((line: any) => {
+            points.push({
+                startX: line.points()[0],
+                startY: line.points()[1],
+                endX: line.points()[2],
+                endY: line.points()[3],
+            });
+        });
+
+        for (let i = 0; i < points.length - 3; i++) {
+            for (let j = i+1; j < points.length - 2; j++) {
+                for (let k = j+1; k < points.length - 1; k++) {
+                    for (let l = k+1; l < points.length; l++) {
+                        // see if the first line's endpoint is the same as the next point's start point and so on
+                        if (points[i].endX === points[j].startX && points[i].endY === points[j].startY &&
+                            points[j].endX === points[k].startX && points[j].endY === points[k].startY &&
+                            points[k].endX === points[l].startX && points[k].endY === points[l].startY &&
+                            points[l].endX === points[i].startX && points[l].endY === points[i].startY) {
+                                closedPathPoints = [points[i], points[j], points[k], points[l]];
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        if (closedPathPoints.length > 0) {
+            // Create the SVG path commands based on the points in the closedPathPoints array
+            const pathData = `M${closedPathPoints[0].startX} ${closedPathPoints[0].startY} L${closedPathPoints[1].startX} ${closedPathPoints[1].startY} L${closedPathPoints[2].startX} ${closedPathPoints[2].startY} L${closedPathPoints[3].startX} ${closedPathPoints[3].startY} Z`;
+          
+            // Create a Konva.Path object
+            const path = new Konva.Path({
+              x: 0,
+              y: 0,
+              data: pathData,
+              fill: '#00D2FF',
+              stroke: 'black',
+              strokeWidth: 2,
+            });
+          
+            // Add the path to the layer or stage for rendering
+            this.canvas.add(path);
+
+            return true;
+          }
+
+        return false;
+      }
+
+      
 }
