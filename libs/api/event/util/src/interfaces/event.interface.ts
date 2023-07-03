@@ -8,6 +8,8 @@ import { ITEMP_DEVICE_BUFFER } from "./TEMP_DEVICE_BUFFER.interface";
 import { IUser } from '@event-participation-trends/api/user/util'
 import { Types } from 'mongoose';
 import { IWall } from "./wall.interface";
+import { MqttData } from "./mqtt-data.interface";
+import { IMacToId } from "./mac-to-id.interface";
 
 export interface IEvent {
     StartDate?: Date | undefined | null;
@@ -20,8 +22,8 @@ export interface IEvent {
     Stalls?: IStall[] | undefined | null;
     Sensors?: ISensor[] | undefined | null;
     Devices?: IDevice[] | undefined | null;
-    BTIDtoDeviceBuffer?: ITEMP_DEVICE_TO_DT[] | undefined | null;
-    TEMPBuffer?: ITEMP_DEVICE_BUFFER[] | undefined | null;
+    BTIDtoDeviceBuffer?: IMacToId[] | undefined | null;
+    TEMPBuffer?: MqttData[] | undefined | null;
     Manager?: Types.ObjectId | undefined | null;
     Requesters?: Types.ObjectId[] | undefined | null;
     Viewers?: Types.ObjectId[] | undefined | null;
