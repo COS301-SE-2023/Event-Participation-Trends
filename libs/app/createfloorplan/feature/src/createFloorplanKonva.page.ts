@@ -105,11 +105,11 @@ export class CreateFloorPlanPageKonva {
             // this.canvas.on('dragmove', this.onObjectMoving.bind(this));
 
             // Attach the mouse down event listener to start dragging lines
-            this.canvas.on('mousedown', this.onMouseDown.bind(this));
+            this.canvasContainer.on('mousedown', this.onMouseDown.bind(this));
 
             this.createGridLines();
 
-            this.canvas.on('mouseup', this.onMouseUp.bind(this));
+            this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
 
         }, 6);
         // const parentWidth = this.canvasParentElement.nativeElement.offsetWidth;
@@ -278,14 +278,14 @@ export class CreateFloorPlanPageKonva {
       onMouseDown(event: Konva.KonvaEventObject<MouseEvent>): void {
         const target = event.target;
         if (target && target instanceof Konva.Line) {
-          // Clicked on an existing line, do nothing
-          return;
+            // Clicked on an existing line, do nothing
+            return;
         } else if (target && target instanceof Konva.Text) {
-          // Clicked on an existing textbox, do nothing
-          return;
+            // Clicked on an existing textbox, do nothing
+            return;
         }
-
-        const pointer = this.canvas.getPosition();
+        
+        const pointer = this.canvasContainer.getPointerPosition();
         const grid = 10;
         const xValue = pointer ? pointer.x : 0;
         const yValue = pointer ? pointer.y : 0;
@@ -293,6 +293,7 @@ export class CreateFloorPlanPageKonva {
             x: Math.round(xValue / grid) * grid,
             y: Math.round(yValue / grid) * grid,
         };
+        
         const line = new Konva.Line({
           points: [snapPoint.x, snapPoint.y, snapPoint.x, snapPoint.y],
           stroke: '#000',
@@ -305,14 +306,14 @@ export class CreateFloorPlanPageKonva {
         this.isDraggingLine = true;
       
         // Attach the mouse move event listener
-        this.canvas.on('mousemove', this.onMouseMove.bind(this));
+        this.canvasContainer.on('mousemove', this.onMouseMove.bind(this));
       
         // Attach the mouse up event listener to finish dragging lines
-        this.canvas.on('mouseup', this.onMouseUp.bind(this));
+        this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
       }
       
       onMouseMove(): void {
-        const pointer = this.canvas.getPosition();
+        const pointer = this.canvasContainer.getPointerPosition();
         if (this.activeLine) {
             const grid = 10;
             const xValue = pointer ? pointer.x : 0;
@@ -332,7 +333,7 @@ export class CreateFloorPlanPageKonva {
       onMouseUp(): void {
         this.openDustbin = false;
 
-        const pointer = this.canvas.getPosition();
+        const pointer = this.canvasContainer.getPointerPosition();
         if (this.activeLine) {
             const grid = 10;
             const xValue = pointer ? pointer.x : 0;
@@ -346,6 +347,12 @@ export class CreateFloorPlanPageKonva {
             points[3] = snapPoint.y;
             this.activeLine.points(points);
             this.canvas.batchDraw();
+            //add line to canvasItems array
+            this.canvasItems.push({
+                name: 'line',
+                konvaObject: this.activeLine,
+            });
+
             this.activeLine = null;
         }
         this.isDraggingLine = false;
