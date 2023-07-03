@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import Konva from 'konva';
+import { KonvaEventObject } from 'konva/lib/Node';
 
 interface DroppedItem {
   name: string;
@@ -24,6 +25,7 @@ export class CreateFloorPlanPageKonva {
     lineType: 'vertical' | 'horizontal' = 'vertical';
     activeLine: Konva.Line | null = null;
     activeItem: any = null;
+    transformer = new Konva.Transformer();
 
     toggleDropdown(): void {
         this.isDropdownOpen = !this.isDropdownOpen;
@@ -64,8 +66,8 @@ export class CreateFloorPlanPageKonva {
             id: 'text',
             x: positionX,
             y: positionY,
-            width: 100,
-            height: 50,
+            // width: 100,
+            // height: 50,
             fill: 'blue',
             draggable: true,
             text: droppedItem.name,
@@ -73,7 +75,21 @@ export class CreateFloorPlanPageKonva {
         });
       
         // add dragmove event listener
-        element.on('dragmove', this.onObjectMoving.bind(this));
+        element.on('dragmove', () => {
+          this.activeItem = element;
+          this.setTransformer();
+          this.onObjectMoving.bind(this)
+        });
+        element.on('click', () => {
+            this.activeItem = element;
+            this.setTransformer();
+        });
+        element.on('mouseenter', () => {
+            document.body.style.cursor = 'move';
+        })
+        element.on('mouseleave', () => {
+          document.body.style.cursor = 'default';
+        })
 
         droppedItem.konvaObject = element;
 
@@ -151,6 +167,12 @@ export class CreateFloorPlanPageKonva {
     //     target.x(snappedX);
     //     target.y(snappedY);
     // }
+    setTransformer(): void {
+      this.transformer.detach();
+      this.canvas.add(this.transformer);
+      this.transformer.attachTo(this.activeItem);
+    }
+
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
         // check if prev active item and new active item are same
         // if so do nothing
@@ -158,6 +180,7 @@ export class CreateFloorPlanPageKonva {
             //remove class from prev active item
             if (this.activeItem) {
                 this.activeItem.setAttr('customClass', '');
+                this.transformer.detach();
             }
             //set new active item
             this.activeItem = event.target;
@@ -241,8 +264,11 @@ export class CreateFloorPlanPageKonva {
           mouseY <= boundingRect.bottom
         ) {
             //find specific object with customClass attribute set to 'active'
-            const selectedObject = this.canvas.findOne((obj: any) => obj.getAttr('customClass') === 'active');
+            // const selectedObject = this.canvas.findOne((obj: any) => obj.getAttr('customClass') === 'active');
+            const selectedObject = this.activeItem;
             if (selectedObject) {
+                this.transformer.detach();
+                document.body.style.cursor = 'default';
                 selectedObject.remove();
                 // remove item from canvasItems array
                 const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
