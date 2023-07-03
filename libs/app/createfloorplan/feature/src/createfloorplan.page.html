@@ -1,6 +1,6 @@
 <!-- <subpagenav [currentPage]="'/home/createfloorplan'"></subpagenav> -->
 
-<!-- <ion-content [fullscreen]="true" class="overflow-y-scroll">
+<ion-content [fullscreen]="true" class="overflow-y-scroll">
   <div class="grid grid-cols-12 gap-3 p-3 h-full">
     <div
       class="tool-menu col-span-2 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative"
@@ -26,21 +26,21 @@
       >
         <div class="overflow-y-auto max-h-52">
           <p
-            class="border-2 rounded-lg p-1 w-20 mt-2 cursor-grab"
+            class="border-2 rounded-lg p-1 w-24 mt-2 cursor-grab"
             draggable="true"
             (dragstart)="onDragStart($event)"
           >
             Sensor 1
           </p>
           <p
-            class="border-2 rounded-lg p-1 w-20 mt-2 cursor-grab"
+            class="border-2 rounded-lg p-1 w-24 mt-2 cursor-grab"
             draggable="true"
             (dragstart)="onDragStart($event)"
           >
             Sensor 2
           </p>
           <p
-            class="border-2 rounded-lg p-1 w-20 mt-2 cursor-grab"
+            class="border-2 rounded-lg p-1 w-24 mt-2 cursor-grab"
             draggable="true"
             (dragstart)="onDragStart($event)"
           >
@@ -125,6 +125,7 @@
       >
     </div>
     <div
+      id="canvasParent"
       #canvasParent
       class="relative col-span-10 border-4 border-black rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2"
       (drop)="onDrop($event)"
@@ -136,10 +137,11 @@
       >
         Drag a component to the canvas
       </p>
-      <canvas
+      <div
+        id="canvasElement"
         #canvasElement
         class="border-ept-off-white border-4 rounded-lg md:rounded-xl"
-      ></canvas>
+      ></div>
       <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
         <img
           #dustbin
@@ -156,4 +158,4 @@
       </div>
     </div>
   </div>
-</ion-content> -->
+</ion-content>
