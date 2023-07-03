@@ -163,7 +163,7 @@ export class CreateFloorPlanPageKonva {
             this.activeItem = event.target;
             this.activeItem.setAttr('customClass', 'active');
         }
-        
+
         const movedObject = event.currentTarget as Konva.Node;
         const droppedItem = this.canvasItems.find(
             (item) => item.konvaObject === movedObject
