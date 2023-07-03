@@ -4,7 +4,6 @@ export * from './floorlayout.schema';
 export * from './Devicelocation.schema';
 export * from './sensor.schema';
 export * from './stall.schema';
-export * from './TEMP_DEVICE_BUFFER.schema';
 export * from './TEMP_DEVICE_TO_DT.schema';
 export * from './Devicelocation.schema';
 export * from './Eventlocation.schema';
