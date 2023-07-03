@@ -299,7 +299,9 @@ export class CreateFloorPlanPageKonva {
           stroke: '#000',
           strokeWidth: 2,
           draggable: true,
+          
         });
+
         this.activeLine = line;
         this.canvas.add(line);
         this.canvas.draw();
@@ -353,8 +355,81 @@ export class CreateFloorPlanPageKonva {
                 konvaObject: this.activeLine,
             });
 
-            this.activeLine = null;
+            // check if the line being dragged can join with another line if the end points are close enough
+            let joined = false;
+            const lines = this.canvas.find('Line');
+            const activeLinePoints = this.activeLine.points();
+            const activeLineStartPoint = {
+                x: activeLinePoints[0],
+                y: activeLinePoints[1],
+            };
+
+            const activeLineEndPoint = {
+                x: activeLinePoints[2],
+                y: activeLinePoints[3],
+            };
+
+            lines.forEach((line: any) => {
+                if (line !== this.activeLine && line.getAttr('customClass') !== 'grid-line') {
+                    const points = line.points();
+                    const startPoint = {
+                        x: points[0],
+                        y: points[1],
+                    };
+                    const endPoint = {
+                        x: points[2],
+                        y: points[3],
+                    };
+
+                    const distanceBetweenStartPoints = Math.sqrt(
+                        Math.pow(activeLineStartPoint.x - startPoint.x, 2) +
+                        Math.pow(activeLineStartPoint.y - startPoint.y, 2)
+                    );
+
+                    const distanceBetweenEndPoints = Math.sqrt(
+                        Math.pow(activeLineEndPoint.x - endPoint.x, 2) +
+                        Math.pow(activeLineEndPoint.y - endPoint.y, 2)
+                    );
+
+                    const distanceBetweenStartAndEndPoints = Math.sqrt(
+                        Math.pow(activeLineStartPoint.x - endPoint.x, 2) +
+                        Math.pow(activeLineStartPoint.y - endPoint.y, 2)
+                    );
+
+                    const distanceBetweenEndAndStartPoints = Math.sqrt(
+                        Math.pow(activeLineEndPoint.x - startPoint.x, 2) +
+                        Math.pow(activeLineEndPoint.y - startPoint.y, 2)
+                    );
+
+                    if (distanceBetweenStartPoints < 10) {
+                        // Snap to the start point of the line
+                        this.activeLine?.points([startPoint.x, startPoint.y, activeLineEndPoint.x, activeLineEndPoint.y]);
+                        this.canvas.batchDraw();
+                        joined = true;
+                    } else if (distanceBetweenEndPoints < 10) {
+                        // Snap to the end point of the line
+                        this.activeLine?.points([activeLineStartPoint.x, activeLineStartPoint.y, endPoint.x, endPoint.y]);
+                        this.canvas.batchDraw();
+                        joined = true;
+                    } else if (distanceBetweenStartAndEndPoints < 10) {
+                        // Snap to the end point of the line
+                        this.activeLine?.points([endPoint.x, endPoint.y, activeLineEndPoint.x, activeLineEndPoint.y]);
+                        this.canvas.batchDraw();
+                        joined = true;
+                    } else if (distanceBetweenEndAndStartPoints < 10) {
+                        // Snap to the end point of the line
+                        this.activeLine?.points([activeLineStartPoint.x, activeLineStartPoint.y, startPoint.x, startPoint.y]);
+                        this.canvas.batchDraw();
+                        joined = true;
+                    }
+
+                    console.log(joined);
+                }
+            });
+
+            this.activeLine = null;                      
         }
+
         this.isDraggingLine = false;
       
         // Remove the mouse move event listener
@@ -379,12 +454,14 @@ export class CreateFloorPlanPageKonva {
             stroke: '#ccc',
             strokeWidth: 1,
             draggable: false,
+            customClass: 'grid-line',
           });
           const verticalLine = new Konva.Line({
             points: [0, distance, width, distance],
             stroke: '#ccc',
             strokeWidth: 1,
             draggable: false,
+            customClass: 'grid-line',
           });
           gridGroup.add(horizontalLine);
           gridGroup.add(verticalLine);
