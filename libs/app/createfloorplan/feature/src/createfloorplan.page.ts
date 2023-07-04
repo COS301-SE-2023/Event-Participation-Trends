@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { get } from 'http';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 
@@ -29,13 +30,17 @@ export class CreateFloorPlanPage {
     // Define the fill color for the closed shapes
     fillColor = 'rgba(255, 0, 0, 0.5)'; // Example color
     transformer = new Konva.Transformer();
-    isEditing = false; // to prevent creating walls
+    isEditing = true; // to prevent creating walls
+    transformers: Konva.Transformer[] = [this.transformer];
+    sensors: Konva.Image[] = [];
 
     toggleEditing(): void {
       this.isEditing = !this.isEditing;
 
       //remove all selected items
-      this.transformer.nodes([]);
+      this.transformers.forEach(transformer => {
+        transformer.nodes([]);
+      });
     }
 
     toggleDropdown(): void {
@@ -76,6 +81,7 @@ export class CreateFloorPlanPage {
       if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
         Konva.Image.fromURL(droppedItem.name, (image) => {
           this.setupElement(image, positionX, positionY);
+          this.sensors.push(image);
           this.canvas.add(image);
           this.canvas.draw();
 
@@ -108,6 +114,8 @@ export class CreateFloorPlanPage {
         height: 100,
         cursor: 'move',
         draggable: true,
+        name: 'sensor',
+        customId: this.getUniqueId(),
       });
     
       // element.on('dragmove', () => {
@@ -221,17 +229,45 @@ export class CreateFloorPlanPage {
 
       if (target && target instanceof Konva.Line) {
         if (line) {
-          this.transformer.nodes([line]);
+          // this.transformer.nodes([line]);
           return;
         }
       } else if (target && target instanceof Konva.Image) {
         // Clicked on an existing textbox, do nothing  
-        this.transformer.nodes([this.activeItem]);
+        // this.transformer.nodes([this.activeItem]);
         return;
       }
     }
 
     createSelectionBox(): void {
+      const  rect1 = new Konva.Rect({
+        x: 60,
+        y: 60,
+        width: 100,
+        height: 90,
+        fill: 'red',
+        name: 'rect',
+        draggable: true,
+      });
+      this.canvas.add(rect1);
+
+      const  rect2 = new Konva.Rect({
+        x: 250,
+        y: 100,
+        width: 150,
+        height: 90,
+        fill: 'green',
+        name: 'rect',
+        draggable: true,
+      });
+      this.canvas.add(rect2);
+
+      const tr = new Konva.Transformer();
+      this.transformers.push(tr);
+      this.canvas.add(tr);
+
+      tr.nodes([rect1, rect2]);
+
       const selectionBox = new Konva.Rect({
         fill: 'rgba(0,0,255,0.2)',
         visible: false,
@@ -253,6 +289,8 @@ export class CreateFloorPlanPage {
         if (e.target !== this.canvasContainer) {
           return;
         }
+
+        e.evt.preventDefault();
         const points = this.canvasContainer.getPointerPosition();
         x1 = points ? points.x : 0;
         y1 = points ? points.y : 0;
@@ -264,7 +302,7 @@ export class CreateFloorPlanPage {
         selectionBox.height(0);
       });
 
-      this.canvasContainer.on('mousemove', () => {
+      this.canvasContainer.on('mousemove', (e) => {
         if (!this.isEditing) {
           return;
         }
@@ -273,6 +311,8 @@ export class CreateFloorPlanPage {
         if (!selectionBox.visible()) {
           return;
         }
+        e.evt.preventDefault();
+
         const points = this.canvasContainer.getPointerPosition();
         x2 = points ? points.x : 0;
         y2 = points ? points.y : 0;
@@ -285,7 +325,7 @@ export class CreateFloorPlanPage {
         });
       });
 
-      this.canvasContainer.on('mouseup', () => {
+      this.canvasContainer.on('mouseup', (e) => {
         if (!this.isEditing) {
           return;
         }
@@ -294,22 +334,31 @@ export class CreateFloorPlanPage {
         if (!selectionBox.visible()) {
           return;
         }
+        e.evt.preventDefault();
+        
         // update visibility in timeout, so we can check it in click event
         setTimeout(() => {
           selectionBox.visible(false);
         });
 
         //find any this related to lines and images and text
-        const shapes = this.canvas.find('.rect, .line, .text');
+        const shapes = this.canvasContainer.find('.rect, .wall, .sensor');
         const box = selectionBox.getClientRect();
-        const selected: any = [];
-
-        shapes.forEach((shape) => {
-          const intersected = Konva.Util.haveIntersection(box, shape.getClientRect());
-          if (intersected) {
-            selected.push(shape);
-          }
+        const selected = shapes.filter((shape) => {
+          return Konva.Util.haveIntersection(box, shape.getClientRect());
         });
+        
+        //remove all previous selections
+        this.transformers.forEach((tr) => {
+          tr.nodes([]);
+        });
+
+        //add new selections
+        if (selected.length) {
+          this.transformers.forEach((tr) => {
+            tr.nodes(selected);
+          });
+        }
       });
 
       // clicks should select/deselect shapes
@@ -325,34 +374,36 @@ export class CreateFloorPlanPage {
 
         // if click on empty area - remove all selections
         if (e.target === this.canvasContainer) {
-          this.transformer.nodes([]);
+          this.transformers.forEach((tr) => {
+            tr.nodes([]);
+          });
           return;
         }
 
         // do nothing if clicked NOT on our lines or images or text
-        if (!e.target.hasName('rect') && !e.target.hasName('line') && !e.target.hasName('text')) {
+        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor')) {
           return;
         }
 
         // check to see if we pressed ctrl or shift
         const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-        const isSelected = this.transformer.nodes().indexOf(e.target) >= 0;
+        const isSelected = tr.nodes().indexOf(e.target) >= 0;
 
         if (!metaPressed && !isSelected) {
           // if no key pressed and the node is not selected
           // select just one
-          this.transformer.nodes([e.target]);
+          tr.nodes([e.target]);
         } else if (metaPressed && isSelected) {
           // if we pressed keys and node was selected
           // we need to remove it from selection:
-          const nodes = this.transformer.nodes().slice(); // use slice to have new copy of array
+          const nodes = tr.nodes().slice(); // use slice to have new copy of array
           // remove node from array
           nodes.splice(nodes.indexOf(e.target), 1);
-          this.transformer.nodes(nodes);
+          tr.nodes(nodes);
         } else if (metaPressed && !isSelected) {
           // add the node into selection
-          const nodes = this.transformer.nodes().concat([e.target]);
-          this.transformer.nodes(nodes);
+          const nodes = tr.nodes().concat([e.target]);
+          tr.nodes(nodes);
         }
       });
     }
@@ -467,6 +518,13 @@ export class CreateFloorPlanPage {
                 const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
                 if (index > -1) {
                     this.canvasItems.splice(index, 1);
+
+                    // remove item from sensors array if it is a sensor
+                    const sensorIndex = this.sensors.findIndex((item) => item === selectedObject);
+                    if (sensorIndex > -1) {
+                        this.sensors.splice(sensorIndex, 1);
+                        console.log('sensor removed');
+                    }
                 }
                 this.canvas.batchDraw();
             }
@@ -522,6 +580,7 @@ export class CreateFloorPlanPage {
           stroke: '#000',
           strokeWidth: 5,
           draggable: true,
+          name: 'wall',
         });
 
         this.activeLine = line;
@@ -795,7 +854,31 @@ export class CreateFloorPlanPage {
       }
 
       testJSON(): void {
-        const json = this.canvas.toJSON();
+        // remove grid lines from the JSON data
+        const json = this.canvas.toObject();
+
+        // remove the grid lines, transformers and groups from the JSON data
+        json.children = json.children.filter((child: any) => {
+          return child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor';
+        });
+
         console.log(json);
+      }
+
+      getUniqueId(): string {
+        // find latest id from sensor customId attribute first character
+        const sensors = this.sensors;
+        let latestId = 0;
+        sensors.forEach((sensor: any) => {
+            const id = parseInt(sensor.attrs.customId[1]);
+            if (id > latestId) {
+                latestId = id;
+            }
+        });
+
+        // generate random string for the id
+        const randomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+        return `s${(latestId + 1).toString() + randomString}`;
       }
 }
