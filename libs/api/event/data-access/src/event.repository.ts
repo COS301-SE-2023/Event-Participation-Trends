@@ -7,7 +7,6 @@ import { Event,
          EventLocation,
          Sensor,
          Stall,
-         Wall,
          TEMP_DEVICE_TO_DT,
 } from '../schemas';
 import { Types } from 'mongoose';
@@ -18,7 +17,6 @@ export class EventRepository {
     constructor(
         @InjectModel(Event.name) private eventModel: mongoose.Model<Event>,
         @InjectModel(Device.name) private deviceModel: mongoose.Model<Device>,
-        @InjectModel(Wall.name) private wallModel: mongoose.Model<Wall>,
         //@InjectModel(FloorLayout.name) private floorLayoutModel: mongoose.Model<FloorLayout>,
         @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
@@ -30,24 +28,6 @@ export class EventRepository {
         await this.eventModel.create(event);
     }   
 
-    async createWall(eventID: Types.ObjectId, wall: Wall){
-
-        const event = await this.eventModel.findById(eventID);
-        const newWall = new this.wallModel(wall);
-        newWall.save();
-
-        newWall.wallId = newWall._id;
-        if(event != undefined && event != null){
-            if(event.Walls!= undefined && event.Walls != null){
-                event.Walls.push(newWall._id);
-                await event.save();
-                return event;
-            }
-        }
-
-        return []; 
-    }
-
     async getAllEventWalls(eventID: Types.ObjectId){
         return await this.eventModel.find(
             {_id :{$eq: eventID}},
@@ -55,19 +35,19 @@ export class EventRepository {
     }
 
     async getAllEvents(){
-        return await this.eventModel.find().select("-TEMPBuffer -BTIDtoDeviceBuffer");;
+        return await this.eventModel.find();
     }
 
     async getEventByName(eventName: string){
-        return await this.eventModel.find({Name: {$eq: eventName}}).select("-TEMPBuffer -BTIDtoDeviceBuffer");;
+        return await this.eventModel.find({Name: {$eq: eventName}});
     }
 
     async getEventById(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id: {$eq: eventID}}).select("-TEMPBuffer -BTIDtoDeviceBuffer");
+        return await this.eventModel.find({_id: {$eq: eventID}});
     }
 
     async getManagedEvents(managerID: Types.ObjectId){
-        return await this.eventModel.find({Manager: {$eq: managerID}}).select("-TEMPBuffer -BTIDtoDeviceBuffer");;
+        return await this.eventModel.find({Manager: {$eq: managerID}});
     }
 
     async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
@@ -142,7 +122,7 @@ export class EventRepository {
     }
 
     async getPopulatedEvent(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id :{$eq: eventID}}).select("-TEMPBuffer -BTIDtoDeviceBuffer");
+        return await this.eventModel.find({_id :{$eq: eventID}});
     }
 
     async insertSensorData(eventID: Types.ObjectId, data: MqttData){
