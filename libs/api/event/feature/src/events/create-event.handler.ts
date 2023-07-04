@@ -1,15 +1,13 @@
-import { CreateEventEvent, IWall } from '@event-participation-trends/api/event/util';
+import { CreateEventEvent, IWall, MqttData } from '@event-participation-trends/api/event/util';
 import { IEventHandler, EventsHandler } from '@nestjs/cqrs';
 import { IEvent } from "@event-participation-trends/api/event/util";
-import { EventRepository } from '@event-participation-trends/api/event/data-access';
-import { UserRepository } from '@event-participation-trends/api/user/data-access';
+import { EventRepository, MacToId } from '@event-participation-trends/api/event/data-access';
 import { Types } from 'mongoose';
 
 @EventsHandler(CreateEventEvent)
 export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> {
   constructor(
     private readonly eventRepository: EventRepository,
-    private readonly userRepository: UserRepository,
     ) {}
 
   async handle(event: CreateEventEvent) {
@@ -29,8 +27,8 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             Stalls: null,
             Sensors: null,
             Devices: null,
-            BTIDtoDeviceBuffer: null,
-            TEMPBuffer: null,
+            BTIDtoDeviceBuffer: Array<MacToId>(),
+            TEMPBuffer: Array<MqttData>(),
             Manager: event.event.Manager,
             Requesters: new Array<Types.ObjectId>(), 
             Viewers: ViewersArr,

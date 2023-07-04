@@ -7,13 +7,12 @@ import {
     IEventLocation,
     IStall,
     ISensor,
-    ITEMP_DEVICE_TO_DT,
-    ITEMP_DEVICE_BUFFER,
-    IWall
+    IWall,
+    IMqttDataInterface
 } from '@event-participation-trends/api/event/util';
 import {Types } from 'mongoose';
-import { IUser } from '@event-participation-trends/api/user/util';
 import { AggregateRoot } from '@nestjs/cqrs';
+import { IMacToId } from '@event-participation-trends/api/event/data-access';
 
 export class Event extends AggregateRoot implements IEvent {
     constructor(
@@ -27,8 +26,8 @@ export class Event extends AggregateRoot implements IEvent {
         public Stalls?: IStall[] | undefined | null,
         public Sensors?: ISensor[] | undefined | null,
         public Devices?: IDevice[] | undefined | null,
-        public BTIDtoDeviceBuffer?: ITEMP_DEVICE_TO_DT[] | undefined | null,
-        public TEMPBuffer?: ITEMP_DEVICE_BUFFER[] | undefined | null,
+        public BTIDtoDeviceBuffer?: IMacToId[] | undefined | null,
+        public TEMPBuffer?: IMqttDataInterface[] | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
         public Requesters?: Types.ObjectId[] | undefined | null,
         public Viewers?: Types.ObjectId[] | undefined | null,

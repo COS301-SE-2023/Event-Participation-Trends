@@ -4,9 +4,8 @@ import { Stall } from './stall.schema';
 import { Sensor } from './sensor.schema';
 import { Device } from './device.schema';
 import { TEMP_DEVICE_TO_DT } from './TEMP_DEVICE_TO_DT.schema';
-import { TEMP_DEVICE_BUFFER } from './TEMP_DEVICE_BUFFER.schema';
 import { EventLocation } from './Eventlocation.schema';
-import { Wall } from './walls.schema';
+import { MqttData, MacToId } from '../src/interfaces';
 
 export type EventDocument = HydratedDocument<Event>;
 
@@ -43,11 +42,11 @@ export class Event{
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Device' })
     Devices: Device[] | undefined | null;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_TO_DT' })
-    BTIDtoDeviceBuffer: TEMP_DEVICE_TO_DT[] | undefined | null;
+    @Prop([MacToId])
+    BTIDtoDeviceBuffer: MacToId[] | undefined | null;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'TEMP_DEVICE_BUFFER' })
-    TEMPBuffer: TEMP_DEVICE_BUFFER[] | undefined | null;
+    @Prop([MqttData])
+    TEMPBuffer: MqttData[] | undefined | null;
     
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     Manager: Types.ObjectId | undefined | null;

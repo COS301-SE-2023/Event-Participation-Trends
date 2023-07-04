@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails, IEventLocation, IWall } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventLocation, ITEMP_DEVICE_TO_DT } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
          Device,
-         FloorLayout,
          DeviceLocation,
          EventLocation,
          Sensor,
          Stall,
          Wall,
-         TEMP_DEVICE_BUFFER,
          TEMP_DEVICE_TO_DT,
-         WallSchema
 } from '../schemas';
 import { Types } from 'mongoose';
+import { MacToId, MqttData } from '../src/interfaces';
 
 @Injectable()
 export class EventRepository {
@@ -27,7 +25,6 @@ export class EventRepository {
         @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
         @InjectModel(Stall.name) private stallModel: mongoose.Model<Stall>,
-        @InjectModel(TEMP_DEVICE_BUFFER.name) private TEMP_DEVICE_BUFFERModel: mongoose.Model<TEMP_DEVICE_BUFFER>,
         @InjectModel(TEMP_DEVICE_TO_DT.name) private TEMP_DEVICE_TO_DTModel: mongoose.Model<TEMP_DEVICE_TO_DT>,
     ){}
 
@@ -60,19 +57,19 @@ export class EventRepository {
     }
 
     async getAllEvents(){
-        return await this.eventModel.find();
+        return await this.eventModel.find().select("-TEMPBuffer -BTIDtoDeviceBuffer");;
     }
 
     async getEventByName(eventName: string){
-        return await this.eventModel.find({Name: {$eq: eventName}});
+        return await this.eventModel.find({Name: {$eq: eventName}}).select("-TEMPBuffer -BTIDtoDeviceBuffer");;
     }
 
     async getEventById(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id: {$eq: eventID}});
+        return await this.eventModel.find({_id: {$eq: eventID}}).select("-TEMPBuffer -BTIDtoDeviceBuffer");
     }
 
     async getManagedEvents(managerID: Types.ObjectId){
-        return await this.eventModel.find({Manager: {$eq: managerID}});
+        return await this.eventModel.find({Manager: {$eq: managerID}}).select("-TEMPBuffer -BTIDtoDeviceBuffer");;
     }
 
     async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
@@ -147,6 +144,24 @@ export class EventRepository {
     }
 
     async getPopulatedEvent(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id :{$eq: eventID}});
+        return await this.eventModel.find({_id :{$eq: eventID}}).select("-TEMPBuffer -BTIDtoDeviceBuffer");
+    }
+
+    async insertSensorData(eventID: Types.ObjectId, data: MqttData){
+        return await this.eventModel.updateOne(
+            {_id :{$eq: eventID}},
+            {$push: { TEMPBuffer: data } })
+    } 
+
+    async insertBTIDtoDeviceBuffer(eventID: Types.ObjectId, data: MacToId){
+        return await this.eventModel.updateOne(
+            {_id :{$eq: eventID}},
+            {$push: { BTIDtoDeviceBuffer: data } })
+    } 
+
+    async getBTIDtoDeviceBuffer(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}}, 
+            { BTIDtoDeviceBuffer: 1});
     }
 }
