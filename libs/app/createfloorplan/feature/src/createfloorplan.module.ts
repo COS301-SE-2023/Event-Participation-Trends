@@ -5,11 +5,10 @@ import { CreateFloorPlanRoutingModule } from './createfloorplan.routing';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '@event-participation-trends/app/shared/feature';
 import { CreateFloorPlanPage } from './createfloorplan.page';
-import { CreateFloorPlanPageKonva } from './createFloorplanKonva.page';
 
 
 @NgModule({
-  declarations: [CreateFloorPlanPageKonva],
+  declarations: [CreateFloorPlanPage],
   imports: [
     CommonModule,
     IonicModule,
