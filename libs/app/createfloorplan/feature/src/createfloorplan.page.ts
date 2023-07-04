@@ -28,10 +28,13 @@ export class CreateFloorPlanPage {
     // Define the fill color for the closed shapes
     fillColor = 'rgba(255, 0, 0, 0.5)'; // Example color
     transformer = new Konva.Transformer();
-    isEditing = true;
+    isEditing = false; // to prevent creating walls
 
     toggleEditing(): void {
       this.isEditing = !this.isEditing;
+
+      //remove all selected items
+      this.transformer.nodes([]);
     }
 
     toggleDropdown(): void {
@@ -167,7 +170,7 @@ export class CreateFloorPlanPage {
 
     createSelectionBox(): void {
       const selectionBox = new Konva.Rect({
-        fill: 'rgba(0,0,255,0.5)',
+        fill: 'rgba(0,0,255,0.2)',
         visible: false,
       });
 
@@ -233,12 +236,17 @@ export class CreateFloorPlanPage {
           selectionBox.visible(false);
         });
 
-        const shapes = this.canvas.find('.rect');
+        //find any this related to lines and images and text
+        const shapes = this.canvas.find('.rect, .line, .text');
         const box = selectionBox.getClientRect();
-        const selected = shapes.filter((shape) =>
-          Konva.Util.haveIntersection(box, shape.getClientRect())
-        );
-        this.transformer.nodes(selected);
+        const selected: any = [];
+
+        shapes.forEach((shape) => {
+          const intersected = Konva.Util.haveIntersection(box, shape.getClientRect());
+          if (intersected) {
+            selected.push(shape);
+          }
+        });
       });
 
       // clicks should select/deselect shapes
@@ -258,8 +266,8 @@ export class CreateFloorPlanPage {
           return;
         }
 
-        // do nothing if clicked NOT on our rectangles
-        if (!e.target.hasName('rect')) {
+        // do nothing if clicked NOT on our lines or images or text
+        if (!e.target.hasName('rect') && !e.target.hasName('line') && !e.target.hasName('text')) {
           return;
         }
 

@@ -109,15 +109,15 @@
 
       <div class="mt-14 text-center">
         <div class="flex flex-row justify-evenly mb-4">
-          <ion-label>Edit/Drag Mode</ion-label>
+          <ion-label>Creating walls</ion-label>
           <ion-toggle
               aria-label="Warning toggle"
-              [checked]="isEditing"
+              [checked]="!isEditing"
               class="col-span-1"
               (ionChange)="toggleEditing()"
             ></ion-toggle>
         </div>
-        <ion-text class="text-ept-deep-grey opacity-40">Toggle to prevent creating walls</ion-text>
+        <ion-text class="text-ept-deep-grey opacity-40 pl-2 pr-2">Switch on to allow for creating walls</ion-text>
       </div>
 
       <ion-button
