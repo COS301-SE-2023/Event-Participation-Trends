@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import Konva from 'konva';
+import { Line } from 'konva/lib/shapes/Line';
 
 interface DroppedItem {
   name: string;
@@ -101,21 +102,66 @@ export class CreateFloorPlanPage {
         draggable: true,
       });
     
-      element.on('dragmove', () => {
-        this.activeItem = element;
-        this.setTransformer();
-      });
-      element.on('dragmove', this.onObjectMoving.bind(this));
-      element.on('click', () => {
-        this.activeItem = element;
-        this.setTransformer();
-      });
-      element.on('mouseenter', () => {
-        document.body.style.cursor = 'move';
-      });
-      element.on('mouseleave', () => {
-        document.body.style.cursor = 'default';
-      });
+      // element.on('dragmove', () => {
+      //   this.activeItem = element;
+      //   this.setTransformer(this.activeItem, undefined);
+      // });
+      // element.on('dragmove', this.onObjectMoving.bind(this));
+      // element.on('click', () => {
+      //   this.activeItem = element;
+      //   this.setTransformer(this.activeItem, undefined);
+      // });
+      // element.on('dragend', () => {
+      //   this.openDustbin = false;
+      // });
+      // element.on('mouseenter', () => {
+      //   document.body.style.cursor = 'move';
+      // });
+      // element.on('mouseleave', () => {
+      //   document.body.style.cursor = 'default';
+      // });
+      this.setMouseEvents(element);
+    }
+
+    setMouseEvents(element: Konva.Line | Konva.Image): void {
+      if (element instanceof Konva.Line) {
+        element.on('dragmove', () => {
+          this.setTransformer(undefined, element);
+        });
+        element.on('dragend', () => {
+          this.openDustbin = false;
+        });
+        element.on('dragmove', this.onObjectMoving.bind(this));
+        element.on('click', () => {
+          this.setTransformer(undefined, element);
+        });
+        element.on('mouseenter', () => {
+          document.body.style.cursor = 'move';
+        });
+        element.on('mouseleave', () => {
+          document.body.style.cursor = 'default';
+        });
+      }
+      else {
+        element.on('dragmove', () => {
+          this.activeItem = element;
+          this.setTransformer(this.activeItem, undefined);
+        });
+        element.on('dragmove', this.onObjectMoving.bind(this));
+        element.on('click', () => {
+          this.activeItem = element;
+          this.setTransformer(this.activeItem, undefined);
+        });
+        element.on('dragend', () => {
+          this.openDustbin = false;
+        });
+        element.on('mouseenter', () => {
+          document.body.style.cursor = 'move';
+        });
+        element.on('mouseleave', () => {
+          document.body.style.cursor = 'default';
+        });
+      }
     }
         
 
@@ -152,10 +198,27 @@ export class CreateFloorPlanPage {
         }, 6);
     }
 
-    setTransformer(): void {
+    setTransformer(mouseEvent?: Konva.Image, line?: Konva.Line): void {
       this.transformer.detach();
       this.canvas.add(this.transformer);
-      this.transformer.nodes([this.activeItem]);
+      let target = null;
+      if (mouseEvent) {
+        target = mouseEvent;
+      }
+      else if (line) {
+        target = line;
+      }
+
+      if (target && target instanceof Konva.Line) {
+        if (line) {
+          this.transformer.nodes([line]);
+          return;
+        }
+      } else if (target && target instanceof Konva.Image) {
+        // Clicked on an existing textbox, do nothing  
+        this.transformer.nodes([this.activeItem]);
+        return;
+      }
     }
 
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
@@ -250,11 +313,20 @@ export class CreateFloorPlanPage {
         ) {
             //find specific object with customClass attribute set to 'active'
             // const selectedObject = this.canvas.findOne((obj: any) => obj.getAttr('customClass') === 'active');
-            const selectedObject = this.activeItem;
+            let selectedObject: any = null;
+
+            if (this.activeItem) {
+                selectedObject = this.activeItem;
+            }
+            else {
+                selectedObject = this.activeLine;
+            }
+            
             if (selectedObject) {
                 this.transformer.detach();
                 document.body.style.cursor = 'default';
                 selectedObject.remove();
+                this.openDustbin = false;
                 // remove item from canvasItems array
                 const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
                 if (index > -1) {
@@ -290,11 +362,13 @@ export class CreateFloorPlanPage {
         const target = event.target;
         if (target && target instanceof Konva.Line) {
             // Clicked on an existing line, do nothing
+            this.transformer.detach();
             return;
         } else if (target && target instanceof Konva.Image) {
             // Clicked on an existing textbox, do nothing
             return;
         }
+        else this.transformer.detach();
         
         const pointer = this.canvasContainer.getPointerPosition();
         const grid = 10;
@@ -363,11 +437,27 @@ export class CreateFloorPlanPage {
             points[3] = snapPoint.y;
             this.activeLine.points(points);
             this.canvas.batchDraw();
+
+            // test if the line is more than a certain length
+            const length = Math.sqrt(Math.pow(points[2] - points[0], 2) + Math.pow(points[3] - points[1], 2));
+            if (length < 1) {               
+                this.activeLine.remove();
+                this.transformer.detach();
+                this.canvas.batchDraw();
+                this.isDraggingLine = false;
+                this.canvasContainer.off('mousemove');
+                this.canvasContainer.off('mouseup');
+                return;
+            }
+
             //add line to canvasItems array
             this.canvasItems.push({
                 name: 'line',
                 konvaObject: this.activeLine,
             });
+            this.setMouseEvents(this.activeLine);
+
+            this.setTransformer(undefined,this.activeLine);
 
             // check if the line being dragged can join with another line if the end points are close enough
             let joined = false;
