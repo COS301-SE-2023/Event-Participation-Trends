@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
-import { DeviceLocation } from './Devicelocation.schema'
+import { HydratedDocument } from 'mongoose';
 
 export type DeviceDocument = HydratedDocument<Device>;
 
@@ -9,8 +8,14 @@ export class Device{
     @Prop({ type: String, required: true })
     DeviceId: string | undefined | null;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Location' })
-    Locations: DeviceLocation[] | undefined | null;
+    @Prop({ type: Number, required: true })
+    x_coordinate: number | undefined | null;
+
+    @Prop({ type: Number, required: true })
+    y_coordinate: number | undefined | null;
+    
+    @Prop({ type: Date, required: true })
+    Timestamp: Date | undefined | null;
 }
 
 export const DeviceSchema = SchemaFactory.createForClass(Device);
