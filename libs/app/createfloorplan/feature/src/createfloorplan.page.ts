@@ -61,41 +61,111 @@ export class CreateFloorPlanPage {
         }
     }
 
+    // addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
+    //   // test if droppedItem is an image or text
+    //   if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
+    //     Konva.Image.fromURL(droppedItem.name, (image) => {
+    //       image.setAttrs({
+    //         x: positionX,
+    //         y: positionY,
+    //         cursor: 'move',
+    //         draggable: true,
+    //       });
+      
+    //       this.canvas.add(image);
+    //       this.canvas.draw();
+    //     });
+    //   }
+
+    //     const element = new Konva.Text({
+    //         id: 'text',
+    //         x: positionX,
+    //         y: positionY,
+    //         // width: 100,
+    //         // height: 50,
+    //         fill: 'blue',
+    //         draggable: true,
+    //         text: droppedItem.name,
+    //         cursor: 'pointer',
+    //     });
+      
+    //     // add dragmove event listener
+    //     element.on('dragmove', () => {
+    //       this.activeItem = element;
+    //       this.setTransformer();
+    //     });
+    //     element.on('dragmove', this.onObjectMoving.bind(this));
+    //     element.on('click', () => {
+    //         this.activeItem = element;
+    //         this.setTransformer();
+    //     });
+    //     element.on('mouseenter', () => {
+    //         document.body.style.cursor = 'move';
+    //     })
+    //     element.on('mouseleave', () => {
+    //       document.body.style.cursor = 'default';
+    //     })
+
+    //     droppedItem.konvaObject = element;
+
+    //     this.canvas.add(element);
+    //     this.canvas.draw();
+    //   }
     addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
-        const element = new Konva.Text({
-            id: 'text',
-            x: positionX,
-            y: positionY,
-            // width: 100,
-            // height: 50,
-            fill: 'blue',
-            draggable: true,
-            text: droppedItem.name,
-            cursor: 'pointer',
+      if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
+        Konva.Image.fromURL(droppedItem.name, (image) => {
+          this.setupElement(image, positionX, positionY);
+          this.canvas.add(image);
+          this.canvas.draw();
+
+          droppedItem.konvaObject = image;
+        });
+      } else {
+        const textElement = new Konva.Text({
+          id: 'text',
+          x: positionX,
+          y: positionY,
+          fill: 'blue',
+          draggable: true,
+          text: droppedItem.name,
+          cursor: 'pointer',
         });
       
-        // add dragmove event listener
-        element.on('dragmove', () => {
-          this.activeItem = element;
-          this.setTransformer();
-        });
-        element.on('dragmove', this.onObjectMoving.bind(this));
-        element.on('click', () => {
-            this.activeItem = element;
-            this.setTransformer();
-        });
-        element.on('mouseenter', () => {
-            document.body.style.cursor = 'move';
-        })
-        element.on('mouseleave', () => {
-          document.body.style.cursor = 'default';
-        })
-
-        droppedItem.konvaObject = element;
-
-        this.canvas.add(element);
+        this.setupElement(textElement, positionX, positionY);
+        this.canvas.add(textElement);
         this.canvas.draw();
+      
+        droppedItem.konvaObject = textElement;
       }
+    }
+    
+    setupElement(element: any, positionX: number, positionY: number): void {
+      element.setAttrs({
+        x: positionX,
+        y: positionY,
+        width: 100,
+        height: 100,
+        cursor: 'move',
+        draggable: true,
+      });
+    
+      element.on('dragmove', () => {
+        this.activeItem = element;
+        this.setTransformer();
+      });
+      element.on('dragmove', this.onObjectMoving.bind(this));
+      element.on('click', () => {
+        this.activeItem = element;
+        this.setTransformer();
+      });
+      element.on('mouseenter', () => {
+        document.body.style.cursor = 'move';
+      });
+      element.on('mouseleave', () => {
+        document.body.style.cursor = 'default';
+      });
+    }
+        
 
     ngAfterViewInit(): void {
         // wait for elements to render before initializing fabric canvas
@@ -426,5 +496,10 @@ export class CreateFloorPlanPage {
     
       checkScreenWidth() {
         this.shouldStackVertically = window.innerWidth < 1421;
+      }
+
+      testJSON(): void {
+        const json = this.canvas.toJSON();
+        console.log(json);
       }
 }

@@ -25,27 +25,9 @@
         [class.show]="isDropdownOpen"
       >
         <div class="overflow-y-auto max-h-52">
-          <p
-            class="border-2 rounded-lg p-1 w-24 mt-2 cursor-grab"
-            draggable="true"
-            (dragstart)="onDragStart($event)"
-          >
-            Sensor 1
-          </p>
-          <p
-            class="border-2 rounded-lg p-1 w-24 mt-2 cursor-grab"
-            draggable="true"
-            (dragstart)="onDragStart($event)"
-          >
-            Sensor 2
-          </p>
-          <p
-            class="border-2 rounded-lg p-1 w-24 mt-2 cursor-grab"
-            draggable="true"
-            (dragstart)="onDragStart($event)"
-          >
-            Sensor 3
-          </p>
+          <img class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
+          draggable="true"
+          (dragstart)="onDragStart($event)" src="assets/sensor.png" alt="sensor">
         </div>
       </div>
       <h3 class="attributes-heading mt-3 ml-2">Component Attributes</h3>
@@ -126,6 +108,7 @@
       </div>
 
       <ion-button
+        (click)="testJSON()"
         class="create-event mt-20 ml-20 right-2.5 h-40px text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg absolute bottom-0 mb-10 hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
         >Create Event</ion-button
       >
