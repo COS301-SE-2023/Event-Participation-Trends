@@ -1,4 +1,4 @@
-import { CreateEventEvent, IWall, MqttData } from '@event-participation-trends/api/event/util';
+import { CreateEventEvent, MqttData } from '@event-participation-trends/api/event/util';
 import { IEventHandler, EventsHandler } from '@nestjs/cqrs';
 import { IEvent } from "@event-participation-trends/api/event/util";
 import { EventRepository, MacToId } from '@event-participation-trends/api/event/data-access';
@@ -23,7 +23,6 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             Category: event.event.Category,
             Location: event.event.Location,  
             //thisFloorLayout: null,
-            Walls: new Array<IWall>(),
             Stalls: null,
             Sensors: null,
             Devices: null,
