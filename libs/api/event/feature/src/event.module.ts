@@ -12,6 +12,7 @@ import {
     RemoveViewerFromEventHandler,
     RemoveEventFromViewerHandler,
     UpdateEventDetailsHandler,
+    UpdateFloorlayoutHandler,
 } from './commands';
 
 import { 
@@ -29,6 +30,7 @@ import {
     RemoveViewerFromEventEventHandler,
     RemoveEventFromViewerEventHandler,
     UpdateEventDetialsEventHandler,
+    UpdateFloorlayoutEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -43,6 +45,7 @@ export const CommandHandlers = [
     RemoveViewerFromEventHandler,
     RemoveEventFromViewerHandler,
     UpdateEventDetailsHandler,
+    UpdateFloorlayoutHandler,
 ]
 
 export const EventHandlers = [
@@ -53,6 +56,7 @@ export const EventHandlers = [
     RemoveViewerFromEventEventHandler,
     RemoveEventFromViewerEventHandler,
     UpdateEventDetialsEventHandler,
+    UpdateFloorlayoutEventHandler,
 ];
 
 export const QueryHandlers = [
