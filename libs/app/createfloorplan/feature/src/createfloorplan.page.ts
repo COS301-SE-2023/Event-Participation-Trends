@@ -28,6 +28,11 @@ export class CreateFloorPlanPage {
     // Define the fill color for the closed shapes
     fillColor = 'rgba(255, 0, 0, 0.5)'; // Example color
     transformer = new Konva.Transformer();
+    isEditing = true;
+
+    toggleEditing(): void {
+      this.isEditing = !this.isEditing;
+    }
 
     toggleDropdown(): void {
         this.isDropdownOpen = !this.isDropdownOpen;
@@ -149,6 +154,11 @@ export class CreateFloorPlanPage {
 
             this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
 
+            // create selection box to select different components on the canvas
+            // this.createSelectionBox();
+
+
+
         }, 6);
     }
 
@@ -157,6 +167,18 @@ export class CreateFloorPlanPage {
       this.canvas.add(this.transformer);
       this.transformer.nodes([this.activeItem]);
     }
+
+    // createSelectionBox(): void {
+    //   let selectionBox = new Konva.Rect({
+    //     fill: 'rgba(0,0,255,0.5)',
+    //     visible: false,
+    //   });
+
+    //   this.canvas.add(selectionBox);
+
+    //   let x1, y1, x2, y2;
+    //   this.canvasContainer.on('mousedown', this.onMouseDown.bind(this));
+    // }
 
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
         // check if prev active item and new active item are same

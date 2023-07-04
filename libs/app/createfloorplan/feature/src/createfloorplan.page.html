@@ -107,6 +107,19 @@
         </div>
       </div>
 
+      <div class="mt-14 text-center">
+        <div class="flex flex-row justify-evenly mb-4">
+          <ion-label>Edit/Drag Mode</ion-label>
+          <ion-toggle
+              aria-label="Warning toggle"
+              [checked]="isEditing"
+              class="col-span-1"
+              (ionChange)="toggleEditing()"
+            ></ion-toggle>
+        </div>
+        <ion-text class="text-ept-deep-grey opacity-40">Toggle to switch between creating walls or selecting objects</ion-text>
+      </div>
+
       <ion-button
         (click)="testJSON()"
         class="create-event mt-20 ml-20 right-2.5 h-40px text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg absolute bottom-0 mb-10 hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
