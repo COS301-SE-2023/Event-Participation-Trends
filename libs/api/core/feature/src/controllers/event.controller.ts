@@ -86,7 +86,8 @@ export class EventController {
   }
 
   @Get('getAllEvents')
-  @UseGuards(JwtGuard, CsrfGuard)
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
   async getAllEvents(@Req() req: Request): Promise<IGetAllEventsResponse> {
     const request: any = req;
 
