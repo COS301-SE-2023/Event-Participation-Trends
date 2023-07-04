@@ -95,7 +95,6 @@ export class SubPageNavPage implements OnInit{
 
   private checkScreenSize() {
     this.isLargeScreen = window.innerWidth >= 1310;
-    console.log(window.innerWidth);
   }
 
   getPrevPage() {

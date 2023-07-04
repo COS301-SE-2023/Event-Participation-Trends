@@ -27,6 +27,7 @@ export class CreateFloorPlanPage {
     lines: Konva.Line[] = [];
     // Define the fill color for the closed shapes
     fillColor = 'rgba(255, 0, 0, 0.5)'; // Example color
+    transformer = new Konva.Transformer();
 
     toggleDropdown(): void {
         this.isDropdownOpen = !this.isDropdownOpen;
@@ -62,27 +63,111 @@ export class CreateFloorPlanPage {
         }
     }
 
+    // addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
+    //   // test if droppedItem is an image or text
+    //   if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
+    //     Konva.Image.fromURL(droppedItem.name, (image) => {
+    //       image.setAttrs({
+    //         x: positionX,
+    //         y: positionY,
+    //         cursor: 'move',
+    //         draggable: true,
+    //       });
+      
+    //       this.canvas.add(image);
+    //       this.canvas.draw();
+    //     });
+    //   }
+
+    //     const element = new Konva.Text({
+    //         id: 'text',
+    //         x: positionX,
+    //         y: positionY,
+    //         // width: 100,
+    //         // height: 50,
+    //         fill: 'blue',
+    //         draggable: true,
+    //         text: droppedItem.name,
+    //         cursor: 'pointer',
+    //     });
+      
+    //     // add dragmove event listener
+    //     element.on('dragmove', () => {
+    //       this.activeItem = element;
+    //       this.setTransformer();
+    //     });
+    //     element.on('dragmove', this.onObjectMoving.bind(this));
+    //     element.on('click', () => {
+    //         this.activeItem = element;
+    //         this.setTransformer();
+    //     });
+    //     element.on('mouseenter', () => {
+    //         document.body.style.cursor = 'move';
+    //     })
+    //     element.on('mouseleave', () => {
+    //       document.body.style.cursor = 'default';
+    //     })
+
+    //     droppedItem.konvaObject = element;
+
+    //     this.canvas.add(element);
+    //     this.canvas.draw();
+    //   }
     addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
-        const element = new Konva.Text({
-            id: 'text',
-            x: positionX,
-            y: positionY,
-            width: 100,
-            height: 50,
-            fill: 'blue',
-            draggable: true,
-            text: droppedItem.name,
-            cursor: 'pointer',
+      if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
+        Konva.Image.fromURL(droppedItem.name, (image) => {
+          this.setupElement(image, positionX, positionY);
+          this.canvas.add(image);
+          this.canvas.draw();
+
+          droppedItem.konvaObject = image;
+        });
+      } else {
+        const textElement = new Konva.Text({
+          id: 'text',
+          x: positionX,
+          y: positionY,
+          fill: 'blue',
+          draggable: true,
+          text: droppedItem.name,
+          cursor: 'pointer',
         });
       
-        // add dragmove event listener
-        element.on('dragmove', this.onObjectMoving.bind(this));
-
-        droppedItem.konvaObject = element;
-
-        this.canvas.add(element);
+        this.setupElement(textElement, positionX, positionY);
+        this.canvas.add(textElement);
         this.canvas.draw();
+      
+        droppedItem.konvaObject = textElement;
       }
+    }
+    
+    setupElement(element: any, positionX: number, positionY: number): void {
+      element.setAttrs({
+        x: positionX,
+        y: positionY,
+        width: 100,
+        height: 100,
+        cursor: 'move',
+        draggable: true,
+      });
+    
+      element.on('dragmove', () => {
+        this.activeItem = element;
+        this.setTransformer();
+      });
+      element.on('dragmove', this.onObjectMoving.bind(this));
+      element.on('click', () => {
+        this.activeItem = element;
+        this.setTransformer();
+      });
+      element.on('mouseenter', () => {
+        document.body.style.cursor = 'move';
+      });
+      element.on('mouseleave', () => {
+        document.body.style.cursor = 'default';
+      });
+    }
+        
 
     ngAfterViewInit(): void {
         // wait for elements to render before initializing fabric canvas
@@ -115,66 +200,116 @@ export class CreateFloorPlanPage {
             this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
 
         }, 6);
+        // const parentWidth = this.canvasParentElement.nativeElement.offsetWidth;
+        // const parentHeight = this.canvasParentElement.nativeElement.offsetHeight;
+
+        // this.canvasContainer = new Konva.Stage({
+        //     container: '#canvasElement',
+        //     width: parentWidth * 0.95,
+        //     height: parentHeight * 0.95,
+        // });
+
+        // this.canvas = new Konva.Layer({
+        //     width: 800,
+        //     height: 600,
+        //     stroke: 'black',
+        //     strokeWidth: 2,
+        // });
+
+        // this.canvasContainer.add(this.canvas);
+        // this.canvasContainer.draw();
+
+
+    }
+
+    // onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
+    //     const target = event.target;
+    //     const targetName = target.name();
+
+    //     if (targetName === 'gridLine') {
+    //         return;
+    //     }
+
+    //     const targetX = target.x();
+    //     const targetY = target.y();
+
+    //     const snappedX = Math.round(targetX / 50) * 50;
+    //     const snappedY = Math.round(targetY / 50) * 50;
+
+    //     target.x(snappedX);
+    //     target.y(snappedY);
+    // }
+    setTransformer(): void {
+      this.transformer.detach();
+      this.canvas.add(this.transformer);
+      this.transformer.nodes([this.activeItem]);
     }
 
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
-        if (this.activeItem !== event.target) {
-          if (this.activeItem) {
-            this.activeItem.setAttr('customClass', '');
-          }
-          this.activeItem = event.target;
-          this.activeItem.setAttr('customClass', 'active');
+        // check if prev active item and new active item are same
+        // if so do nothing
+        if (this.activeItem != event.target) {
+            //remove class from prev active item
+            if (this.activeItem) {
+                this.activeItem.setAttr('customClass', '');
+                this.transformer.detach();
+            }
+            //set new active item
+            this.activeItem = event.target;
+            this.activeItem.setAttr('customClass', 'active');
         }
-      
+
         const movedObject = event.currentTarget as Konva.Node;
         const droppedItem = this.canvasItems.find(
-          (item) => item.konvaObject === movedObject
+            (item) => item.konvaObject === movedObject
         );
-      
+            
         if (droppedItem) {
-          const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
-          const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
-          const objectWidth = movedObject.width() * movedObject.scaleX();
-          const objectHeight = movedObject.height() * movedObject.scaleY();
-          const positionX = event.target.x() || 0; // Use event.target.x() to get the current position
-          const positionY = event.target.y() || 0; // Use event.target.y() to get the current position
-      
-          const gridSize = 10;
-          const minX = 0;
-          const minY = 0;
-          const maxX = canvasWidth - objectWidth;
-          const maxY = canvasHeight - objectHeight;
-      
-          const snappedX = Math.round(positionX / gridSize) * gridSize;
-          const snappedY = Math.round(positionY / gridSize) * gridSize;
-      
-          const limitedX = Math.max(minX, Math.min(maxX, snappedX));
-          const limitedY = Math.max(minY, Math.min(maxY, snappedY));
-      
-          movedObject.setAttrs({
-            x: limitedX,
-            y: limitedY,
-          });
-      
-          // Update the limits check to use limitedX and limitedY
-          if (limitedX < minX) {
-            movedObject.setAttr('x', minX);
-          } else if (limitedX > maxX) {
-            movedObject.setAttr('x', maxX);
-          }
-      
-          if (limitedY < minY) {
-            movedObject.setAttr('y', minY);
-          } else if (limitedY > maxY) {
-            movedObject.setAttr('y', maxY);
-          }
-      
-          this.canvas.batchDraw();
-      
-          this.openDustbin = true;
-        }
-      }
+            const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
+            const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
+            const objectWidth = movedObject.width() * movedObject.scaleX();
+            const objectHeight = movedObject.height() * movedObject.scaleY();
+            const positionX = movedObject.x() || 0;
+            const positionY = movedObject.y() || 0;
         
+            const gridSize = 10;
+            const minX = 0;
+            const minY = 0;
+            const maxX = canvasWidth - objectWidth;
+            const maxY = canvasHeight - objectHeight;
+        
+            const snappedX = Math.round(positionX / gridSize) * gridSize;
+            const snappedY = Math.round(positionY / gridSize) * gridSize;
+        
+            const limitedX = Math.max(minX, Math.min(maxX, snappedX));
+            const limitedY = Math.max(minY, Math.min(maxY, snappedY));
+        
+            movedObject.setAttrs({
+                x: limitedX,
+                y: limitedY
+            });
+        
+            if (positionX < minX) {
+                movedObject.setAttr('x', minX);
+            } else if (positionX > maxX) {
+                movedObject.setAttr('x', maxX);
+            }
+        
+            if (positionY < minY) {
+                movedObject.setAttr('y', minY);
+            } else if (positionY > maxY) {
+                movedObject.setAttr('y', maxY);
+            }
+        
+            // droppedItem.konvaObject?.setAttrs({
+            //     draggable: false
+            // });
+        
+            this.canvas.batchDraw();
+        
+            this.openDustbin = true;
+        }
+    }          
     
     onDustbinDragOver(event: DragEvent): void {
         event.preventDefault();
@@ -201,8 +336,11 @@ export class CreateFloorPlanPage {
           mouseY <= boundingRect.bottom
         ) {
             //find specific object with customClass attribute set to 'active'
-            const selectedObject = this.canvas.findOne((obj: any) => obj.getAttr('customClass') === 'active');
+            // const selectedObject = this.canvas.findOne((obj: any) => obj.getAttr('customClass') === 'active');
+            const selectedObject = this.activeItem;
             if (selectedObject) {
+                this.transformer.detach();
+                document.body.style.cursor = 'default';
                 selectedObject.remove();
                 // remove item from canvasItems array
                 const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
@@ -517,5 +655,8 @@ export class CreateFloorPlanPage {
         return false;
       }
 
-      
+      testJSON(): void {
+        const json = this.canvas.toJSON();
+        console.log(json);
+      }
 }
