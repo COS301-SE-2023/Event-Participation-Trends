@@ -45,48 +45,7 @@ import {
   RbacGuard,
 } from '@event-participation-trends/api/guards';
 import { Role } from '@event-participation-trends/api/user/util';
-import { PositioningService } from '@event-participation-trends/api/positioning';
 
-const positioning = new PositioningService();
-
-const start_time = new Date();
-
-const positioning_sets = [
-  {
-    id: 1,
-    Ax: 1,
-    Ay: 6,
-    Bx: 4,
-    By: 10,
-    Cx: 6,
-    Cy: 6,
-    As: 6,
-    Bs: 8,
-    Cs: 4,
-    timestamp: new Date(),
-  },
-  {
-    id: 2,
-    Ax: 1,
-    Ay: 6,
-    Bx: 2,
-    By: 10,
-    Cx: 4,
-    Cy: 5,
-    As: Math.sqrt(5),
-    Bs: Math.sqrt(10),
-    Cs: Math.sqrt(5),
-    timestamp: new Date(),
-  },
-];
-
-const position = positioning.findPositions(positioning_sets);
-
-const end_time = new Date();
-
-console.log('position', position);
-
-console.log('time taken', end_time.getTime() - start_time.getTime());
 
 @Controller('event')
 export class EventController {
