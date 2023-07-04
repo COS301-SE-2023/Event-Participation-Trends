@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { PositioningService } from './api-positioning.service';
 
 @Module({
   controllers: [],
-  providers: [],
-  exports: [],
+  providers: [PositioningService],
+  exports: [PositioningService],
 })
 export class ApiPositioningModule {}
