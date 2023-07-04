@@ -13,7 +13,5 @@ export * from './eventID.interface';
 export * from './view-request.interface';
 export * from './remove-viewer.interface';
 export * from './update-event-details.interface';
-export * from './wall.interface';
-export * from './create-wall.interface';
 export * from './device.data.interface';
 export * from './mqtt-data.interface'
