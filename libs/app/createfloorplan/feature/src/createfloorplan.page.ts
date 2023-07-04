@@ -155,10 +155,7 @@ export class CreateFloorPlanPage {
             this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
 
             // create selection box to select different components on the canvas
-            // this.createSelectionBox();
-
-
-
+            this.createSelectionBox();
         }, 6);
     }
 
@@ -168,17 +165,126 @@ export class CreateFloorPlanPage {
       this.transformer.nodes([this.activeItem]);
     }
 
-    // createSelectionBox(): void {
-    //   let selectionBox = new Konva.Rect({
-    //     fill: 'rgba(0,0,255,0.5)',
-    //     visible: false,
-    //   });
+    createSelectionBox(): void {
+      const selectionBox = new Konva.Rect({
+        fill: 'rgba(0,0,255,0.5)',
+        visible: false,
+      });
 
-    //   this.canvas.add(selectionBox);
+      this.canvas.add(selectionBox);
 
-    //   let x1, y1, x2, y2;
-    //   this.canvasContainer.on('mousedown', this.onMouseDown.bind(this));
-    // }
+      let x1: number;
+      let y1: number;
+      let x2: number;
+      let y2: number;
+
+      this.canvasContainer.on('mousedown', (e) => {
+        if (!this.isEditing) {
+          return;
+        }
+
+        // do nothing if we mousedown on any shape
+        if (e.target !== this.canvasContainer) {
+          return;
+        }
+        const points = this.canvasContainer.getPointerPosition();
+        x1 = points ? points.x : 0;
+        y1 = points ? points.y : 0;
+        x2 = points ? points.x : 0;
+        y2 = points ? points.y : 0;
+
+        selectionBox.visible(true);
+        selectionBox.width(0);
+        selectionBox.height(0);
+      });
+
+      this.canvasContainer.on('mousemove', () => {
+        if (!this.isEditing) {
+          return;
+        }
+        
+        // do nothing if we didn't start selection
+        if (!selectionBox.visible()) {
+          return;
+        }
+        const points = this.canvasContainer.getPointerPosition();
+        x2 = points ? points.x : 0;
+        y2 = points ? points.y : 0;
+
+        selectionBox.setAttrs({
+          x: Math.min(x1, x2),
+          y: Math.min(y1, y2),
+          width: Math.abs(x2 - x1),
+          height: Math.abs(y2 - y1),
+        });
+      });
+
+      this.canvasContainer.on('mouseup', () => {
+        if (!this.isEditing) {
+          return;
+        }
+        
+        // do nothing if we didn't start selection
+        if (!selectionBox.visible()) {
+          return;
+        }
+        // update visibility in timeout, so we can check it in click event
+        setTimeout(() => {
+          selectionBox.visible(false);
+        });
+
+        const shapes = this.canvas.find('.rect');
+        const box = selectionBox.getClientRect();
+        const selected = shapes.filter((shape) =>
+          Konva.Util.haveIntersection(box, shape.getClientRect())
+        );
+        this.transformer.nodes(selected);
+      });
+
+      // clicks should select/deselect shapes
+      this.canvasContainer.on('click', (e) => {
+        if (!this.isEditing) {
+          return;
+        }
+        
+        // if we are selecting with rect, do nothing
+        if (selectionBox.visible()) {
+          return;
+        }
+
+        // if click on empty area - remove all selections
+        if (e.target === this.canvasContainer) {
+          this.transformer.nodes([]);
+          return;
+        }
+
+        // do nothing if clicked NOT on our rectangles
+        if (!e.target.hasName('rect')) {
+          return;
+        }
+
+        // check to see if we pressed ctrl or shift
+        const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+        const isSelected = this.transformer.nodes().indexOf(e.target) >= 0;
+
+        if (!metaPressed && !isSelected) {
+          // if no key pressed and the node is not selected
+          // select just one
+          this.transformer.nodes([e.target]);
+        } else if (metaPressed && isSelected) {
+          // if we pressed keys and node was selected
+          // we need to remove it from selection:
+          const nodes = this.transformer.nodes().slice(); // use slice to have new copy of array
+          // remove node from array
+          nodes.splice(nodes.indexOf(e.target), 1);
+          this.transformer.nodes(nodes);
+        } else if (metaPressed && !isSelected) {
+          // add the node into selection
+          const nodes = this.transformer.nodes().concat([e.target]);
+          this.transformer.nodes(nodes);
+        }
+      });
+    }
 
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
         // check if prev active item and new active item are same
@@ -316,6 +422,8 @@ export class CreateFloorPlanPage {
         } else if (target && target instanceof Konva.Image) {
             // Clicked on an existing textbox, do nothing
             return;
+        } else if (this.isEditing) {
+          return;
         }
         
         const pointer = this.canvasContainer.getPointerPosition();
