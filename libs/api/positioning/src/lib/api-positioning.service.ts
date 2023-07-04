@@ -236,10 +236,8 @@ export class PositioningService {
     return [closest_x, closest_y];
   }
 
-  public transformToSensorMatrices(array: number[]): PositioningSet[] {
+  public transformToSensorMatrices(sensor_readings: SensorReading[]): PositioningSet[] {
     const return_array: PositioningSet[] = [];
-  
-    const sensor_readings = this.transformToSensorReadings(array);
   
     const grouped_sensor_readings = this.groupByID(sensor_readings);
   
