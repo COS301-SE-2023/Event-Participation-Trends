@@ -1,7 +1,7 @@
-import { CreateEventEvent, MqttData } from '@event-participation-trends/api/event/util';
+import { CreateEventEvent } from '@event-participation-trends/api/event/util';
 import { IEventHandler, EventsHandler } from '@nestjs/cqrs';
 import { IEvent } from "@event-participation-trends/api/event/util";
-import { EventRepository, MacToId } from '@event-participation-trends/api/event/data-access';
+import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { Types } from 'mongoose';
 
 @EventsHandler(CreateEventEvent)
@@ -26,8 +26,6 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             Stalls: null,
             Sensors: null,
             Devices: null,
-            BTIDtoDeviceBuffer: Array<MacToId>(),
-            TEMPBuffer: Array<MqttData>(),
             Manager: event.event.Manager,
             Requesters: new Array<Types.ObjectId>(), 
             Viewers: ViewersArr,
