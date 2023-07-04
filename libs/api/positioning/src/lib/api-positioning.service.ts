@@ -29,6 +29,7 @@ export interface PositioningSet {
 }
 
 export interface Position {
+  id: number;
   x: number;
   y: number;
   timestamp: Date;
@@ -55,6 +56,7 @@ export class PositioningService {
     const [x, y] = this.calculateP(Ax, Ay, Bx, By, Cx, Cy, As, Bs, Cs);
 
     return {
+      id,
       x,
       y,
       timestamp
