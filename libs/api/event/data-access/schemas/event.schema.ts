@@ -3,9 +3,7 @@ import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { Stall } from './stall.schema';
 import { Sensor } from './sensor.schema';
 import { Device } from './device.schema';
-import { TEMP_DEVICE_TO_DT } from './TEMP_DEVICE_TO_DT.schema';
 import { EventLocation } from './Eventlocation.schema';
-import { MqttData, MacToId } from '../src/interfaces';
 
 export type EventDocument = HydratedDocument<Event>;
 
@@ -30,9 +28,6 @@ export class Event{
     //@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })
     //thisFloorLayout: FloorLayout | undefined | null;
 
-    @Prop({ type: [{ type: Types.ObjectId, ref: 'Wall' }] })
-    Walls: Types.ObjectId[] | undefined | null;
-
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
     Stalls: Stall[] | undefined | null;
 
@@ -41,12 +36,6 @@ export class Event{
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Device' })
     Devices: Device[] | undefined | null;
-
-    @Prop([MacToId])
-    BTIDtoDeviceBuffer: MacToId[] | undefined | null;
-
-    @Prop([MqttData])
-    TEMPBuffer: MqttData[] | undefined | null;
     
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     Manager: Types.ObjectId | undefined | null;

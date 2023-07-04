@@ -7,12 +7,9 @@ import {
     IEventLocation,
     IStall,
     ISensor,
-    IWall,
-    IMqttDataInterface
 } from '@event-participation-trends/api/event/util';
 import {Types } from 'mongoose';
 import { AggregateRoot } from '@nestjs/cqrs';
-import { IMacToId } from '@event-participation-trends/api/event/data-access';
 
 export class Event extends AggregateRoot implements IEvent {
     constructor(
@@ -22,12 +19,9 @@ export class Event extends AggregateRoot implements IEvent {
         public Category?: string | undefined | null,
         public Location?: IEventLocation | undefined | null,
         //public thisFloorLayout?: IFloorLayout | undefined | null,
-        public Walls?: IWall[] | undefined | null,
         public Stalls?: IStall[] | undefined | null,
         public Sensors?: ISensor[] | undefined | null,
         public Devices?: IDevice[] | undefined | null,
-        public BTIDtoDeviceBuffer?: IMacToId[] | undefined | null,
-        public TEMPBuffer?: IMqttDataInterface[] | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
         public Requesters?: Types.ObjectId[] | undefined | null,
         public Viewers?: Types.ObjectId[] | undefined | null,
@@ -47,12 +41,9 @@ export class Event extends AggregateRoot implements IEvent {
             event.Category,
             event.Location,
             //event.thisFloorLayout,
-            event.Walls,
             event.Stalls,
             event.Sensors,
             event.Devices,
-            event.BTIDtoDeviceBuffer,
-            event.TEMPBuffer,
             event.Manager,
             event.Requesters,
             event.Viewers,
@@ -68,12 +59,9 @@ export class Event extends AggregateRoot implements IEvent {
             Category: this.Category,
             Location: this.Location,
            // thisFloorLayout: this.thisFloorLayout,
-            Walls: this.Walls,
             Stalls: this.Stalls,
             Sensors: this.Sensors,
             Devices: this.Devices,
-            BTIDtoDeviceBuffer: this.BTIDtoDeviceBuffer,
-            TEMPBuffer: this.TEMPBuffer,
             Manager: this.Manager,
             Requesters: this.Requesters,
             Viewers: this.Viewers,

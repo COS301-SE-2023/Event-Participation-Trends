@@ -1,7 +1,6 @@
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { GetEventQuery, IGetEventResponse } from '@event-participation-trends/api/event/util';
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { IEvent } from '@event-participation-trends/api/event/util';
 import { Types } from 'mongoose';
 
 

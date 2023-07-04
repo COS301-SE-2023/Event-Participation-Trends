@@ -22,10 +22,6 @@ import {
     IUpdateEventDetailsResponse,
     IGetEventRequest,
     IGetEventResponse,
-    ICreateWallRequest,
-    ICreateWallResponse,
-    IGetAllEventWallsRequest,
-    IGetAllEventWallsResponse
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -272,44 +268,5 @@ export class EventController {
       (<unknown>this.eventService.getEvent(extractRequest))
     );
   }
-
-    @Post('createWall')
-    @SetMetadata('role',Role.MANAGER)
-    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
-    async createWall(
-        @Req() req: Request,
-        @Body() requestBody: ICreateWallRequest,
-    ): Promise<ICreateWallResponse> {
-        const request: any =req;
-
-        if(requestBody.eventId==undefined || requestBody.eventId ==null)
-            throw new HttpException("Bad Request: eventId not provided", 400);
-
-        const extractRequest: ICreateWallRequest = {
-            eventId: requestBody.eventId,
-            Wall: requestBody.Wall
-        }
-
-        return <any> <unknown> this.eventService.createWall(extractRequest);
-    }
-
-    
-    @Get('getAllWalls')
-    @SetMetadata('role',Role.MANAGER)
-    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
-    async getAllWalls(
-        @Query() query: any
-    ): Promise<IGetAllEventWallsResponse> {
-
-        if(query.eventId==undefined || query.eventId ==null)
-            throw new HttpException("Bad Request: eventId not provided", 400);
-
-        const extractRequest: IGetAllEventWallsRequest = {
-            eventId: query.eventId,
-        }
-
-        return this.eventService.getAllEventWalls(extractRequest);
-    }
-
 
 }
