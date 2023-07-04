@@ -104,10 +104,13 @@ export class CreateFloorPlanPage {
       element.setAttrs({
         x: positionX,
         y: positionY,
-        width: 100,
-        height: 100,
+        width: 50,
+        height: 50,
         cursor: 'move',
         draggable: true,
+        cornerRadius: 10,
+        padding: 20,
+        fill: 'white'
       });
     
       // element.on('dragmove', () => {
@@ -806,6 +809,16 @@ export class CreateFloorPlanPage {
 
       testJSON(): void {
         const json = this.canvas.toJSON();
-        console.log(json);
+
+        const json2 = this.canvas.getChildren().filter((child: any) => {
+            return child.getAttr('customClass') !== 'grid-line';
+        });
+
+        // return a JSON string of the canvas without any 'grid-line' objects
+        const jsonString = JSON.stringify(json2);
+
+        // remove '\' in jsonString
+        const jsonString2 = jsonString.replace(/\\/g, '');
+        console.log(jsonString2);
       }
 }
