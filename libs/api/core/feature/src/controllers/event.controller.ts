@@ -22,6 +22,8 @@ import {
     IUpdateEventDetailsResponse,
     IGetEventRequest,
     IGetEventResponse,
+    IUpdateFloorlayoutRequest,
+    IUpdateFloorlayoutResponse
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -263,6 +265,29 @@ export class EventController {
 
     return <IGetEventResponse>(
       (<unknown>this.eventService.getEvent(extractRequest))
+    );
+  }
+
+  @Post('updateEventFloorlayout')
+  @SetMetadata('role',Role.MANAGER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async updateEventFloorlayout(
+    @Body() requestBody: IUpdateFloorlayoutRequest
+  ): Promise<IGetEventResponse> {
+
+    if(requestBody.eventId==undefined || requestBody.eventId ==null)
+        throw new HttpException("Bad Request: eventId not provided", 400);
+
+    if(requestBody.floorlayout==undefined || requestBody.floorlayout ==null)
+        throw new HttpException("Bad Request: floorlayout not provided", 400);
+
+    const extractRequest: IUpdateFloorlayoutRequest = {
+        eventId: requestBody.eventId,
+        floorlayout: requestBody.floorlayout,
+    };
+
+    return <IGetEventResponse>(
+        (<unknown>this.eventService.updateEventFloorLayout(extractRequest))
     );
   }
 
