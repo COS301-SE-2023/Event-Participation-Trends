@@ -23,7 +23,9 @@ import {
     IGetEventRequest,
     IGetEventResponse,
     IUpdateFloorlayoutRequest,
-    IUpdateFloorlayoutResponse
+    IUpdateFloorlayoutResponse,
+    IGetEventFloorlayoutRequest,
+    IGetEventFloorlayoutResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -273,7 +275,7 @@ export class EventController {
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
   async updateEventFloorlayout(
     @Body() requestBody: IUpdateFloorlayoutRequest
-  ): Promise<IGetEventResponse> {
+  ): Promise<IUpdateFloorlayoutResponse> {
 
     if(requestBody.eventId==undefined || requestBody.eventId ==null)
         throw new HttpException("Bad Request: eventId not provided", 400);
@@ -286,9 +288,28 @@ export class EventController {
         floorlayout: requestBody.floorlayout,
     };
 
-    return <IGetEventResponse>(
+    return <IUpdateFloorlayoutResponse>(
         (<unknown>this.eventService.updateEventFloorLayout(extractRequest))
     );
   }
+
+  @Get('getEventFloorLayout')
+  @SetMetadata('role',Role.VIEWER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async getEventFloorLayout(
+      @Query() query: any
+  ): Promise<IGetEventFloorlayoutResponse> {
+
+    if(query.eventId==undefined || query.eventId ==null)
+          throw new HttpException("Bad Request: eventId not provided", 400);
+
+  const extractRequest: IGetEventFloorlayoutRequest = {
+    eventId: query.eventId,
+  };
+
+  return <IGetEventFloorlayoutResponse>(
+    (<unknown>this.eventService.getEventFloorLayout(extractRequest))
+  );
+}
 
 }
