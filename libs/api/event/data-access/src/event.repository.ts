@@ -7,10 +7,8 @@ import { Event,
          EventLocation,
          Sensor,
          Stall,
-         TEMP_DEVICE_TO_DT,
 } from '../schemas';
 import { Types } from 'mongoose';
-import { MacToId, MqttData } from '../src/interfaces';
 
 @Injectable()
 export class EventRepository {
@@ -21,7 +19,6 @@ export class EventRepository {
         @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
         @InjectModel(Stall.name) private stallModel: mongoose.Model<Stall>,
-        @InjectModel(TEMP_DEVICE_TO_DT.name) private TEMP_DEVICE_TO_DTModel: mongoose.Model<TEMP_DEVICE_TO_DT>,
     ){}
 
     async createEvent(event: IEventDetails){
@@ -124,11 +121,5 @@ export class EventRepository {
     async getPopulatedEvent(eventID: Types.ObjectId){
         return await this.eventModel.find({_id :{$eq: eventID}});
     }
-
-    async insertSensorData(eventID: Types.ObjectId, data: MqttData){
-        return await this.eventModel.updateOne(
-            {_id :{$eq: eventID}},
-            {$push: { TEMPBuffer: data } })
-    } 
 
 }
