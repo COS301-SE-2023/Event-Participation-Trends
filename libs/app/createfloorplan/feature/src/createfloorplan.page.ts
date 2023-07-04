@@ -63,56 +63,6 @@ export class CreateFloorPlanPage {
         }
     }
 
-    // addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
-    //   // test if droppedItem is an image or text
-    //   if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
-    //     Konva.Image.fromURL(droppedItem.name, (image) => {
-    //       image.setAttrs({
-    //         x: positionX,
-    //         y: positionY,
-    //         cursor: 'move',
-    //         draggable: true,
-    //       });
-      
-    //       this.canvas.add(image);
-    //       this.canvas.draw();
-    //     });
-    //   }
-
-    //     const element = new Konva.Text({
-    //         id: 'text',
-    //         x: positionX,
-    //         y: positionY,
-    //         // width: 100,
-    //         // height: 50,
-    //         fill: 'blue',
-    //         draggable: true,
-    //         text: droppedItem.name,
-    //         cursor: 'pointer',
-    //     });
-      
-    //     // add dragmove event listener
-    //     element.on('dragmove', () => {
-    //       this.activeItem = element;
-    //       this.setTransformer();
-    //     });
-    //     element.on('dragmove', this.onObjectMoving.bind(this));
-    //     element.on('click', () => {
-    //         this.activeItem = element;
-    //         this.setTransformer();
-    //     });
-    //     element.on('mouseenter', () => {
-    //         document.body.style.cursor = 'move';
-    //     })
-    //     element.on('mouseleave', () => {
-    //       document.body.style.cursor = 'default';
-    //     })
-
-    //     droppedItem.konvaObject = element;
-
-    //     this.canvas.add(element);
-    //     this.canvas.draw();
-    //   }
     addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
       if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
         Konva.Image.fromURL(droppedItem.name, (image) => {
@@ -200,45 +150,8 @@ export class CreateFloorPlanPage {
             this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
 
         }, 6);
-        // const parentWidth = this.canvasParentElement.nativeElement.offsetWidth;
-        // const parentHeight = this.canvasParentElement.nativeElement.offsetHeight;
-
-        // this.canvasContainer = new Konva.Stage({
-        //     container: '#canvasElement',
-        //     width: parentWidth * 0.95,
-        //     height: parentHeight * 0.95,
-        // });
-
-        // this.canvas = new Konva.Layer({
-        //     width: 800,
-        //     height: 600,
-        //     stroke: 'black',
-        //     strokeWidth: 2,
-        // });
-
-        // this.canvasContainer.add(this.canvas);
-        // this.canvasContainer.draw();
-
-
     }
 
-    // onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
-    //     const target = event.target;
-    //     const targetName = target.name();
-
-    //     if (targetName === 'gridLine') {
-    //         return;
-    //     }
-
-    //     const targetX = target.x();
-    //     const targetY = target.y();
-
-    //     const snappedX = Math.round(targetX / 50) * 50;
-    //     const snappedY = Math.round(targetY / 50) * 50;
-
-    //     target.x(snappedX);
-    //     target.y(snappedY);
-    // }
     setTransformer(): void {
       this.transformer.detach();
       this.canvas.add(this.transformer);
@@ -378,7 +291,7 @@ export class CreateFloorPlanPage {
         if (target && target instanceof Konva.Line) {
             // Clicked on an existing line, do nothing
             return;
-        } else if (target && target instanceof Konva.Text) {
+        } else if (target && target instanceof Konva.Image) {
             // Clicked on an existing textbox, do nothing
             return;
         }
@@ -523,8 +436,6 @@ export class CreateFloorPlanPage {
                         this.canvas.batchDraw();
                         joined = true;
                     }
-
-                    console.log(joined);
                 }
             });
 
