@@ -25,8 +25,8 @@ export class Event{
     @Prop({ type: EventLocation, required: true })
     Location: EventLocation | undefined | null;
 
-    //@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FloorLayout' })
-    //thisFloorLayout: FloorLayout | undefined | null;
+    @Prop({ type: String })
+    FloorLayout: string | undefined | null;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
     Stalls: Stall[] | undefined | null;
