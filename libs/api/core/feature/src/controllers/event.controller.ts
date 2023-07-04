@@ -86,13 +86,9 @@ export class EventController {
   }
 
   @Get('getAllEvents')
-  @SetMetadata('role', Role.VIEWER)
-  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  @UseGuards(JwtGuard, CsrfGuard)
   async getAllEvents(@Req() req: Request): Promise<IGetAllEventsResponse> {
     const request: any = req;
-
-    if (request.user['email'] == undefined || request.user['email'] == null)
-      throw new HttpException('Bad Request: Admin email not provided', 400);
 
     const extractRequest: IGetAllEventsRequest = {
       AdminEmail: request.user['email'],
