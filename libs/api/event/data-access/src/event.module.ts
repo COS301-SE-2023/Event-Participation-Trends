@@ -8,8 +8,7 @@ import { EventSchema,
          SensorSchema,
          StallSchema,
          TEMP_DEVICE_TO_DTSchema,
-         WallSchema,
-   } from '../schemas';
+} from '../schemas';
 @Module({
     imports: [MongooseModule.forFeature([
         {name: 'Device', schema: DeviceSchema },
@@ -18,8 +17,7 @@ import { EventSchema,
         {name: 'Sensor', schema: SensorSchema },
         {name: 'Stall', schema: StallSchema },
         {name: 'TEMP_DEVICE_TO_DT', schema: TEMP_DEVICE_TO_DTSchema },
-        {name: 'Event', schema: EventSchema },
-        {name: 'Wall', schema: WallSchema },
+        {name: 'Event', schema: EventSchema }
         ])],
   providers: [EventRepository],
   exports: [EventRepository],
