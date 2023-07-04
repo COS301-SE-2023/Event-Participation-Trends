@@ -342,4 +342,10 @@ export class PositioningService {
 
     return sensor_readings;
   }
+
+  public rssiToDistance(rssi: number, measured_power = 46.4, environmental_factor = 3.05): number {
+    const distance = Math.pow(10, (measured_power + rssi) / (10 * environmental_factor));
+
+    return distance;
+  }
 }
