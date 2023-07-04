@@ -10,3 +10,4 @@ export * from './remove-viewer.response';
 export * from './update-event-details.response';
 export * from './get-event.response';
 export * from './update-floorlayout.response';
+export * from './get-event-floorlayout.response';
