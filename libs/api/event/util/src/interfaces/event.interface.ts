@@ -11,7 +11,7 @@ export interface IEvent {
     Name?: string | undefined | null;
     Category?: string | undefined | null;
     Location?: IEventLocation | undefined | null;
-    //thisFloorLayout?: IFloorLayout | undefined | null;
+    FloorLayout?: IFloorLayout | undefined | null;
     Stalls?: IStall[] | undefined | null;
     Sensors?: ISensor[] | undefined | null;
     Devices?: IDevice[] | undefined | null;
