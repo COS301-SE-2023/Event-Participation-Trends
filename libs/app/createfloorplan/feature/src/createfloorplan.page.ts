@@ -205,6 +205,16 @@ export class CreateFloorPlanPage {
 
             // create selection box to select different components on the canvas
             this.createSelectionBox();
+
+            this.canvasContainer.on('click', () => {
+              const position = this.canvasContainer.getRelativePointerPosition();
+
+              const component = this.canvas.getIntersection(position);
+
+              if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image)) {
+                this.transformer.detach();
+              }
+            });
         }, 6);
     }
 
