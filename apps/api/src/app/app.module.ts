@@ -40,7 +40,7 @@ import { ConfigModule } from '@nestjs/config';
     EventModule,
     CqrsModule,
     CoreModule,
-    ApiGuardsModule
+    ApiGuardsModule,
   ],
   controllers: [AppController, MqttController, PassportController],
   providers: [AppService, MqttService, PassportService, UserService, EventService],

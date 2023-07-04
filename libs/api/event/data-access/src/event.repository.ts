@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails, IEventLocation, ITEMP_DEVICE_TO_DT } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventLocation } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
          Device,
-         DeviceLocation,
          EventLocation,
          Sensor,
          Stall,
@@ -21,7 +20,6 @@ export class EventRepository {
         @InjectModel(Device.name) private deviceModel: mongoose.Model<Device>,
         @InjectModel(Wall.name) private wallModel: mongoose.Model<Wall>,
         //@InjectModel(FloorLayout.name) private floorLayoutModel: mongoose.Model<FloorLayout>,
-        @InjectModel(DeviceLocation.name) private deviceLocationModel: mongoose.Model<DeviceLocation>,
         @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
         @InjectModel(Stall.name) private stallModel: mongoose.Model<Stall>,
@@ -153,15 +151,4 @@ export class EventRepository {
             {$push: { TEMPBuffer: data } })
     } 
 
-    async insertBTIDtoDeviceBuffer(eventID: Types.ObjectId, data: MacToId){
-        return await this.eventModel.updateOne(
-            {_id :{$eq: eventID}},
-            {$push: { BTIDtoDeviceBuffer: data } })
-    } 
-
-    async getBTIDtoDeviceBuffer(eventID: Types.ObjectId){
-        return await this.eventModel.find(
-            {_id :{$eq: eventID}}, 
-            { BTIDtoDeviceBuffer: 1});
-    }
 }
