@@ -113,6 +113,11 @@ export class EventRepository {
         return await this.eventModel.updateOne(
         {_id :{$eq: eventID}},{$set: {Location :location}})
     }
+    
+    async updateEventFloorlayout(eventID: Types.ObjectId, floorlayout: string){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {FloorLayout :floorlayout}})
+    }
 
     async getALLEventNames(){
         return await this.eventModel.find({ Name: 1 });
