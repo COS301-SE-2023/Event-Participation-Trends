@@ -7,7 +7,6 @@ import {
     IEventLocation,
     IStall,
     ISensor,
-    IWall,
     IMqttDataInterface
 } from '@event-participation-trends/api/event/util';
 import {Types } from 'mongoose';
@@ -22,7 +21,6 @@ export class Event extends AggregateRoot implements IEvent {
         public Category?: string | undefined | null,
         public Location?: IEventLocation | undefined | null,
         //public thisFloorLayout?: IFloorLayout | undefined | null,
-        public Walls?: IWall[] | undefined | null,
         public Stalls?: IStall[] | undefined | null,
         public Sensors?: ISensor[] | undefined | null,
         public Devices?: IDevice[] | undefined | null,
@@ -47,7 +45,6 @@ export class Event extends AggregateRoot implements IEvent {
             event.Category,
             event.Location,
             //event.thisFloorLayout,
-            event.Walls,
             event.Stalls,
             event.Sensors,
             event.Devices,
@@ -68,7 +65,6 @@ export class Event extends AggregateRoot implements IEvent {
             Category: this.Category,
             Location: this.Location,
            // thisFloorLayout: this.thisFloorLayout,
-            Walls: this.Walls,
             Stalls: this.Stalls,
             Sensors: this.Sensors,
             Devices: this.Devices,
