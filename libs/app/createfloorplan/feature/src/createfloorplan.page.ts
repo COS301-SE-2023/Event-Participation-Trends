@@ -395,6 +395,7 @@ export class CreateFloorPlanPage {
           this.transformers.forEach((tr) => {
             tr.nodes([]);
           });
+          this.activeItem = null;
           return;
         }
 
@@ -899,5 +900,19 @@ export class CreateFloorPlanPage {
         const randomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
         return `s${(latestId + 1).toString() + randomString}`;
+      }
+
+      updateWidth(event: any) {
+        this.activeItem?.width(parseInt(event.target.value));
+        this.activeItem?.scaleX(1);
+      }
+    
+      updateHeight(event: any) {
+        this.activeItem?.height(parseInt(event.target.value));
+        this.activeItem?.scaleY(1);
+      }
+
+      updateRotation(event: any) {
+        this.activeItem?.rotation(parseInt(event.target.value));
       }
 }

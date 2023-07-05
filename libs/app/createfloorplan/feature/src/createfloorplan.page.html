@@ -42,8 +42,9 @@
             aria-label=""
             class="ion-col-8 input-field ml-auto input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
             type="number"
-            step="0.01"
-            value="0"
+            step="1"
+            [value]="activeItem ? activeItem.width() * activeItem.scaleX() : 0"
+            (input)="updateWidth($event)"
             min="0"
           ></ion-input>
         </ion-item>
@@ -53,8 +54,9 @@
             aria-label=""
             class="ion-col-8 input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
             type="number"
-            step="0.01"
-            value="0"
+            step="1"
+            [value]="activeItem ? activeItem.height() * activeItem.scaleY() : 0"
+            (input)="updateHeight($event)"
             min="0"
           ></ion-input>
         </ion-item>
@@ -64,8 +66,9 @@
             aria-label=""
             class="ion-col-8 input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
             type="number"
-            step="0.01"
-            value="0"
+            step="1"
+            [value]="activeItem ? activeItem.rotation() : 0"
+            (input)="updateRotation($event)"
             min="0"
           ></ion-input>
         </ion-item>
