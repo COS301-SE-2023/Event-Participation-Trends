@@ -6,3 +6,4 @@ export * from './remove-viewer-from-event.command';
 export * from './remove-event-from-viewer.command';
 export * from './update-event-detials.command';
 export * from './update-floorlayout.command';
+export * from './add-device-position.command';

@@ -11,3 +11,4 @@ export * from './update-event-details.response';
 export * from './get-event.response';
 export * from './update-floorlayout.response';
 export * from './get-event-floorlayout.response';
+export * from './add-device-position.response';

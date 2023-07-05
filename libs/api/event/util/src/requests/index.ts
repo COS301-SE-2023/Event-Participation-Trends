@@ -11,3 +11,4 @@ export * from './update-event-details.request';
 export * from './get-event.request';
 export * from './update-floorlayout.request';
 export * from './get-event-floorlayout.request';
+export * from './add-device-postion.request';
