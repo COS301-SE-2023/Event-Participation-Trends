@@ -46,6 +46,7 @@
             [value]="activeItem ? activeItem.width() * activeItem.scaleX() : 0"
             (input)="updateWidth($event)"
             min="0"
+            [disabled]="!isEditing || activeItem == null"
           ></ion-input>
         </ion-item>
         <ion-item class="attributes-list flex mt-2" lines="none">
@@ -58,6 +59,7 @@
             [value]="activeItem ? activeItem.height() * activeItem.scaleY() : 0"
             (input)="updateHeight($event)"
             min="0"
+            [disabled]="!isEditing || activeItem == null"
           ></ion-input>
         </ion-item>
         <ion-item class="attributes-list flex mt-2" lines="none">
@@ -70,6 +72,7 @@
             [value]="activeItem ? activeItem.rotation() : 0"
             (input)="updateRotation($event)"
             min="0"
+            [disabled]="!isEditing || activeItem == null"
           ></ion-input>
         </ion-item>
       </div>

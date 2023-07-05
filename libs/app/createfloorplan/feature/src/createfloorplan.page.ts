@@ -33,9 +33,11 @@ export class CreateFloorPlanPage {
     isEditing = true; // to prevent creating walls
     transformers: Konva.Transformer[] = [this.transformer];
     sensors: Konva.Image[] = [];
+    gridSize = 10;
 
     toggleEditing(): void {
       this.isEditing = !this.isEditing;
+      this.activeItem = null;
 
       //remove all selected items
       this.transformers.forEach(transformer => {
@@ -300,6 +302,7 @@ export class CreateFloorPlanPage {
 
       this.canvasContainer.on('mousedown', (e) => {
         if (!this.isEditing) {
+          this.activeItem = null;
           return;
         }
 
@@ -377,6 +380,10 @@ export class CreateFloorPlanPage {
             tr.nodes(selected);
           });
         }
+
+        if (tr.nodes().length === 1) {
+          this.activeItem = tr.nodes()[0];
+        }
       });
 
       // clicks should select/deselect shapes
@@ -385,11 +392,6 @@ export class CreateFloorPlanPage {
           return;
         }
         
-        // if we are selecting with rect, do nothing
-        if (selectionBox.visible()) {
-          return;
-        }
-
         // if click on empty area - remove all selections
         if (e.target === this.canvasContainer) {
           this.transformers.forEach((tr) => {
@@ -399,8 +401,18 @@ export class CreateFloorPlanPage {
           return;
         }
 
+        if (tr.nodes().length > 1){
+          this.activeItem = null;
+        }
+
+        // if we are selecting with rect, do nothing
+        if (selectionBox.visible()) {
+          return;
+        }
+
         // do nothing if clicked NOT on our lines or images or text
         if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor')) {
+          this.activeItem = null;
           return;
         }
 
@@ -419,10 +431,21 @@ export class CreateFloorPlanPage {
           // remove node from array
           nodes.splice(nodes.indexOf(e.target), 1);
           tr.nodes(nodes);
+
+          if (tr.nodes().length > 1){
+            this.activeItem = null;
+          } else if (tr.nodes().length === 1) {
+            this.activeItem = tr.nodes()[0];
+          }
+          
         } else if (metaPressed && !isSelected) {
           // add the node into selection
           const nodes = tr.nodes().concat([e.target]);
           tr.nodes(nodes);
+
+          if (tr.nodes().length > 1){
+            this.activeItem = null;
+          }
         }
       });
     }
@@ -454,7 +477,7 @@ export class CreateFloorPlanPage {
             const positionX = movedObject.x() || 0;
             const positionY = movedObject.y() || 0;
         
-            const gridSize = 10;
+            const gridSize = this.gridSize;
             const minX = 0;
             const minY = 0;
             const maxX = canvasWidth - objectWidth;
@@ -558,7 +581,7 @@ export class CreateFloorPlanPage {
           this.canvas.batchDraw();
         }
         // Snap any moving object to the grid
-        const gridSize = 10; // Adjust this value according to your needs
+        const gridSize = this.gridSize; // Adjust this value according to your needs
         const target = event.target;
         if (target) {
           const position = target.position();
@@ -760,7 +783,6 @@ export class CreateFloorPlanPage {
         this.isClosedShape();
         
       }
-
       
       createGridLines() {
         const grid = 10;
