@@ -56,6 +56,14 @@ export class CreateFloorPlanPage {
           this.setMouseEvents(item.konvaObject);
         } else {
           this.removeMouseEvents(item.konvaObject);
+
+          // set mouse enter and mouse leave events
+          item.konvaObject?.on('mouseenter', () => {
+            document.body.style.cursor = 'not-allowed';
+          });
+          item.konvaObject?.on('mouseleave', () => {
+            document.body.style.cursor = 'default';
+          });
         }
       });
     }
@@ -98,6 +106,7 @@ export class CreateFloorPlanPage {
       if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
         Konva.Image.fromURL(droppedItem.name, (image) => {
           this.setupElement(image, positionX, positionY);
+          image.setAttr('name', 'stall');
 
           if (droppedItem.name.includes('stall')) {
             const group = new Konva.Group({
@@ -110,17 +119,7 @@ export class CreateFloorPlanPage {
               cursor: 'move',
               fill: 'white',
             });
-
-            // const rect = new Konva.Rect({
-            //   id: 'stallRect',
-            //   x: positionX,
-            //   y: positionY,
-            //   width: 50,
-            //   height: 50,
-            //   fillPatternImage: this.stallElement.nativeElement,
-            //   fillPatternRepeat: 'no-repeat',
-            // });
-
+            
             const text = new Konva.Text({
               id: 'stallName',
               x: positionX,
@@ -144,6 +143,7 @@ export class CreateFloorPlanPage {
             droppedItem.konvaObject = group;
           } 
           else {
+            image.setAttr('name', 'sensor');
             this.sensors.push(image);
             this.canvas.add(image);
             this.canvas.draw();
@@ -164,7 +164,6 @@ export class CreateFloorPlanPage {
         cornerRadius: 2,
         padding: 20,
         fill: 'white',
-        name: 'sensor',
         customId: this.getUniqueId(),
         opacity: 1,
       });
@@ -220,7 +219,8 @@ export class CreateFloorPlanPage {
         });
         element.on('dragmove', this.onObjectMoving.bind(this));
         element.on('click', () => {
-          this.setTransformer(element, undefined);
+          this.activeItem = element;
+          this.setTransformer(this.activeItem, undefined);
         });
         element.on('mouseenter', () => {
           document.body.style.cursor = 'move';
@@ -292,7 +292,7 @@ export class CreateFloorPlanPage {
 
               const component = this.canvas.getIntersection(position);
 
-              if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image)) {
+              if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image) && !(component instanceof Konva.Group)) {
                 this.transformer.detach();
               }
             });
@@ -321,7 +321,7 @@ export class CreateFloorPlanPage {
         return;
       }
       else if (target && target instanceof Konva.Group) {
-        this.transformer.nodes([target]);
+        // this.transformer.nodes([target]);
         return;
       }
     }
@@ -430,7 +430,7 @@ export class CreateFloorPlanPage {
         });
 
         //find any this related to lines and images and text
-        const shapes = this.canvasContainer.find('.rect, .wall, .sensor');
+        const shapes = this.canvasContainer.find('.rect, .wall, .sensor, .stall');
         const box = selectionBox.getClientRect();
         const selected = shapes.filter((shape) => {
           return Konva.Util.haveIntersection(box, shape.getClientRect());
@@ -478,7 +478,7 @@ export class CreateFloorPlanPage {
         }
 
         // do nothing if clicked NOT on our lines or images or text
-        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor')) {
+        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall')) {
           this.activeItem = null;
           return;
         }
