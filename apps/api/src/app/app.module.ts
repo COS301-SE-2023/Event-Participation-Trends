@@ -19,6 +19,9 @@ import { EventModule } from '@event-participation-trends/api/event/data-access';
 import { ApiGuardsModule } from '@event-participation-trends/api/guards';
 import { ConfigModule } from '@nestjs/config';
 
+import { SensorlinkingModule, SensorlinkingService } from '@event-participation-trends/sensorlinking';
+import { ScheduleModule } from '@nestjs/schedule';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -41,8 +44,10 @@ import { ConfigModule } from '@nestjs/config';
     CqrsModule,
     CoreModule,
     ApiGuardsModule,
+    SensorlinkingModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController, MqttController, PassportController],
-  providers: [AppService, MqttService, PassportService, UserService, EventService],
+  providers: [AppService, MqttService, PassportService, UserService, EventService, SensorlinkingService],
 })
 export class AppModule {}
