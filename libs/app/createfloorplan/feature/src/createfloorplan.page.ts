@@ -265,7 +265,7 @@ export class CreateFloorPlanPage {
 
             this.canvasContainer = new Konva.Stage({
                 container: '#canvasElement',
-                width: width*0.965,
+                width: width*0.9783,
                 height: height*0.965                
             });
 
@@ -889,6 +889,26 @@ export class CreateFloorPlanPage {
       onWindowResize() {
         this.checkScreenWidth();
       }
+
+      // set the grid lines when the window is resized
+    @HostListener('window:resize', ['$event'])
+    onResize(event: any) {
+      // remove gridlines and then add them again
+      this.removeGridLines();
+      this.createGridLines();
+    }
+
+    removeGridLines(): void {
+      this.lines.forEach(line => {
+        line.destroy();
+      });
+      
+      const width = this.canvasParent.nativeElement.offsetWidth;
+      const height = this.canvasParent.nativeElement.offsetHeight;
+
+      this.canvasContainer.setAttr('width', width*0.9783);
+      this.canvasContainer.setAttr('height', height*0.965);
+    }
     
       ngOnInit() {
         this.checkScreenWidth();
