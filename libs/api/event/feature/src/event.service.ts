@@ -1,3 +1,4 @@
+import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import {
     ICreateEventRequest,
     ICreateEventResponse,
@@ -38,13 +39,19 @@ import {
     IGetEventFloorlayoutRequest,
     IGetEventFloorlayoutResponse,
     GetEventFloorlayoutQuery,
+    IAddDevicePositionRequest,
+    IAddDevicePositionResponse,
+    AddDevicePositionCommand,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 @Injectable()
 export class EventService {
-    constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
+    constructor(
+        private readonly commandBus: CommandBus, 
+        private readonly queryBus: QueryBus
+    ) {}
 
     async createEvent(request: ICreateEventRequest) {
         return await this.commandBus.execute<CreateEventCommand, ICreateEventResponse>(new CreateEventCommand(request));
@@ -98,4 +105,7 @@ export class EventService {
         return await this.queryBus.execute<GetEventFloorlayoutQuery, IGetEventFloorlayoutResponse>(new GetEventFloorlayoutQuery(request));
     }
 
+    async addDevicePosition(request: IAddDevicePositionRequest){
+        return await this.commandBus.execute<AddDevicePositionCommand, IAddDevicePositionResponse>(new AddDevicePositionCommand(request));
+    }
 }
