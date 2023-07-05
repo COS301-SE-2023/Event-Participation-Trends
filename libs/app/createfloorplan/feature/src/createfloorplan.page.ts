@@ -645,7 +645,7 @@ export class CreateFloorPlanPage {
       onMouseMove(): void {
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activeLine) {
-            const grid = 10;
+            const grid = this.gridSize;
             const xValue = pointer ? pointer.x : 0;
             const yValue = pointer ? pointer.y : 0;
             const snapPoint = {
