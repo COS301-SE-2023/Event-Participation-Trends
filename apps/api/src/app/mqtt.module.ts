@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MqttController } from './mqtt.controller';
@@ -26,6 +27,17 @@ import { ScheduleModule } from '@nestjs/schedule';
     ConfigModule.forRoot(),
     Wow,
     JwtModule.register({}),
+    ClientsModule.register([
+      {
+        name: 'MQTT_SERVICE',
+        transport: Transport.MQTT,
+        options: {
+          url: process.env.MQTT_URL,
+          username: process.env.MQTT_USERNAME,
+          password: process.env.MQTT_PASSWORD,
+        },
+      },
+    ]),
     MongooseModule.forRoot(process.env['MONGO_ALTALS_CONNECTION_URL']),
     UserModule,
     EventModule,
@@ -35,7 +47,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     SensorlinkingModule,
     ScheduleModule.forRoot(),
   ],
-  controllers: [AppController, PassportController],
-  providers: [AppService, PassportService, UserService, EventService, SensorlinkingService],
+  controllers: [MqttController],
+  providers: [AppService, MqttService, PassportService, UserService, EventService, SensorlinkingService],
 })
-export class AppModule {}
+export class MqttModule {}
