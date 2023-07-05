@@ -16,6 +16,7 @@ export class CreateFloorPlanPage {
     @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLDivElement>;
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
+    @ViewChild('stall', {static: false}) stallElement!: ElementRef<HTMLImageElement>;
     isDropdownOpen = false;
     openDustbin = false;
     canvasItems: DroppedItem[] = [];
@@ -76,9 +77,56 @@ export class CreateFloorPlanPage {
       if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
         Konva.Image.fromURL(droppedItem.name, (image) => {
           this.setupElement(image, positionX, positionY);
-          this.canvas.add(image);
-          this.canvas.draw();
 
+          if (droppedItem.name.includes('stall')) {
+            const group = new Konva.Group({
+              id: 'stall',
+              x: positionX,
+              y: positionY,
+              width: 50,
+              height: 50,
+              draggable: true,
+              cursor: 'move',
+              fill: 'white',
+            });
+
+            // const rect = new Konva.Rect({
+            //   id: 'stallRect',
+            //   x: positionX,
+            //   y: positionY,
+            //   width: 50,
+            //   height: 50,
+            //   fillPatternImage: this.stallElement.nativeElement,
+            //   fillPatternRepeat: 'no-repeat',
+            // });
+
+            const text = new Konva.Text({
+              id: 'stallName',
+              x: positionX,
+              y: positionY,
+              text: 'Stall',
+              fontSize: 11,
+              fontFamily: 'Calibri',
+              fill: 'black',
+              width: 50,
+              height: 50,
+              align: 'center',
+              verticalAlign: 'middle',
+              padding: 3,
+            });
+
+            group.add(image);
+            group.add(text);
+            this.setMouseEvents(group);
+            this.canvas.add(group);
+            this.canvas.draw();
+            droppedItem.konvaObject = group;
+            return;
+          } 
+          else {
+            this.canvas.add(image);
+            this.canvas.draw();
+          }
           droppedItem.konvaObject = image;
         });
       } else {
@@ -108,7 +156,7 @@ export class CreateFloorPlanPage {
         height: 50,
         cursor: 'move',
         draggable: true,
-        cornerRadius: 10,
+        cornerRadius: 2,
         padding: 20,
         fill: 'white'
       });
@@ -134,7 +182,7 @@ export class CreateFloorPlanPage {
       this.setMouseEvents(element);
     }
 
-    setMouseEvents(element: Konva.Line | Konva.Image): void {
+    setMouseEvents(element: Konva.Line | Konva.Image | Konva.Group): void {
       if (element instanceof Konva.Line) {
         element.on('dragmove', () => {
           this.setTransformer(undefined, element);
@@ -153,7 +201,7 @@ export class CreateFloorPlanPage {
           document.body.style.cursor = 'default';
         });
       }
-      else {
+      else if (element instanceof Konva.Image) {
         element.on('dragmove', () => {
           this.activeItem = element;
           this.setTransformer(this.activeItem, undefined);
@@ -165,6 +213,24 @@ export class CreateFloorPlanPage {
         });
         element.on('dragend', () => {
           this.openDustbin = false;
+        });
+        element.on('mouseenter', () => {
+          document.body.style.cursor = 'move';
+        });
+        element.on('mouseleave', () => {
+          document.body.style.cursor = 'default';
+        });
+      }
+      else if (element instanceof Konva.Group) {
+        element.on('dragmove', () => {
+          this.setTransformer(element, undefined);
+        });
+        element.on('dragend', () => {
+          this.openDustbin = false;
+        });
+        element.on('dragmove', this.onObjectMoving.bind(this));
+        element.on('click', () => {
+          this.setTransformer(element, undefined);
         });
         element.on('mouseenter', () => {
           document.body.style.cursor = 'move';
@@ -221,7 +287,7 @@ export class CreateFloorPlanPage {
         }, 6);
     }
 
-    setTransformer(mouseEvent?: Konva.Image, line?: Konva.Line): void {
+    setTransformer(mouseEvent?: Konva.Image | Konva.Group, line?: Konva.Line): void {
       this.transformer.detach();
       this.canvas.add(this.transformer);
       let target = null;
@@ -240,6 +306,10 @@ export class CreateFloorPlanPage {
       } else if (target && target instanceof Konva.Image) {
         // Clicked on an existing textbox, do nothing  
         this.transformer.nodes([this.activeItem]);
+        return;
+      }
+      else if (target && target instanceof Konva.Group) {
+        this.transformer.nodes([target]);
         return;
       }
     }
