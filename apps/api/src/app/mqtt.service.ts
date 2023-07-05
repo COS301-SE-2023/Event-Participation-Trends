@@ -47,7 +47,6 @@ export class MqttService {
 
   @Interval(5000)
   async processBuffer() {
-    if(this.buffer.length < 2) return;
     const extractRequest: IGetAllEventsRequest = {
       AdminEmail: '',
     };
@@ -67,7 +66,6 @@ export class MqttService {
       sensors.forEach((sensor) => {
         const id = sensor.id;
         const sensorMac = this.sensorLinkingService.getMacAddress(id);
-        //////////////////////////////////////////////////////////////////////////////
         this.buffer
           .filter((data) => data.sensorMac === sensorMac)
           .forEach((data) => {
@@ -79,10 +77,8 @@ export class MqttService {
                 x: sensor.x,
                 y: sensor.y,
               });
-              console.log(tempBuffer);
             });
           });
-        ///////////////////////////////////////////////////////////////////////////////
       });
     });
     this.buffer = new Array<any>();
