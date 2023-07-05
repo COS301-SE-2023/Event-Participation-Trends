@@ -121,13 +121,12 @@ export class CreateFloorPlanPage {
             this.canvas.add(group);
             this.canvas.draw();
             droppedItem.konvaObject = group;
-            return;
           } 
           else {
             this.canvas.add(image);
             this.canvas.draw();
+            droppedItem.konvaObject = image;
           }
-          droppedItem.konvaObject = image;
         });
       } else {
         const textElement = new Konva.Text({
@@ -161,24 +160,6 @@ export class CreateFloorPlanPage {
         fill: 'white'
       });
     
-      // element.on('dragmove', () => {
-      //   this.activeItem = element;
-      //   this.setTransformer(this.activeItem, undefined);
-      // });
-      // element.on('dragmove', this.onObjectMoving.bind(this));
-      // element.on('click', () => {
-      //   this.activeItem = element;
-      //   this.setTransformer(this.activeItem, undefined);
-      // });
-      // element.on('dragend', () => {
-      //   this.openDustbin = false;
-      // });
-      // element.on('mouseenter', () => {
-      //   document.body.style.cursor = 'move';
-      // });
-      // element.on('mouseleave', () => {
-      //   document.body.style.cursor = 'default';
-      // });
       this.setMouseEvents(element);
     }
 
@@ -248,6 +229,9 @@ export class CreateFloorPlanPage {
             const canvasParent = this.canvasParent;
 
             // get width and height of the parent element
+            const position = this.canvasElement.nativeElement.getBoundingClientRect();
+            const positionX = position.x;
+            const positionY = position.y;
             const width = canvasParent.nativeElement.offsetWidth;
             const height = canvasParent.nativeElement.offsetHeight;
 
