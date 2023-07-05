@@ -1,7 +1,6 @@
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { GetEventQuery, IGetEventResponse } from '@event-participation-trends/api/event/util';
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { IEvent } from '@event-participation-trends/api/event/util';
 import { Types } from 'mongoose';
 
 
@@ -19,7 +18,7 @@ export class GetEventHandler implements IQueryHandler<GetEventQuery, IGetEventRe
 
         const eventDocs = await this.eventRepository.getPopulatedEvent(objEventId);
         
-        return {event: eventDocs[0]};
+        return <any>  {event: eventDocs[0]};
     }
 
 }

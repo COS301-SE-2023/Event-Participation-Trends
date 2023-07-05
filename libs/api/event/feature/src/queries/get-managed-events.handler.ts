@@ -26,7 +26,7 @@ export class GetManagedEventsHandler implements IQueryHandler<GetManagedEventsQu
                     if(eventDocs.length == 0)
                         return {events: <IEvent[]>[]};
                     else
-                        return {events: <IEvent[]>eventDocs};
+                        return {events: <IEvent[]> <any> eventDocs};
                 }else{
                     return {events: <IEvent[]>[]};
                 }
