@@ -762,7 +762,10 @@ export class CreateFloorPlanPage {
                 name: 'line',
                 konvaObject: this.activeLine,
             });
-            this.setMouseEvents(this.activeLine);
+            // this.setMouseEvents(this.activeLine);
+            this.activeLine.setAttr('draggable', false);
+            this.activeLine.setAttr('opacity', 0.5);
+            this.removeMouseEvents(this.activeLine);
 
             this.setTransformer(undefined,this.activeLine);
 
