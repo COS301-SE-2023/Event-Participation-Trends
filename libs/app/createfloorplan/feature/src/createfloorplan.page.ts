@@ -437,7 +437,7 @@ export class CreateFloorPlanPage {
           } else if (tr.nodes().length === 1) {
             this.activeItem = tr.nodes()[0];
           }
-          
+
         } else if (metaPressed && !isSelected) {
           // add the node into selection
           const nodes = tr.nodes().concat([e.target]);
@@ -936,5 +936,17 @@ export class CreateFloorPlanPage {
 
       updateRotation(event: any) {
         this.activeItem?.rotation(parseInt(event.target.value));
+      }
+
+      getActiveItemWidth(): number {
+        return Math.round(this.activeItem?.width() * this.activeItem?.scaleX());
+      }
+
+      getActiveItemHeight(): number {
+        return Math.round(this.activeItem?.height() * this.activeItem?.scaleY());
+      }
+
+      getActiveItemRotation(): number {
+        return Math.round(this.activeItem?.rotation());
       }
 }
