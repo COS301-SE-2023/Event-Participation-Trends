@@ -5,7 +5,7 @@ import { Line } from 'konva/lib/shapes/Line';
 
 interface DroppedItem {
   name: string;
-  konvaObject?: Konva.Node;
+  konvaObject?: Konva.Line | Konva.Image | Konva.Group;
 }
 @Component({
   selector: 'event-participation-trends-createfloorplan',
@@ -40,6 +40,20 @@ export class CreateFloorPlanPage {
       //remove all selected items
       this.transformers.forEach(transformer => {
         transformer.nodes([]);
+      });
+
+      // modify all elements such that they cannot be dragged when creating walls
+      this.canvasItems.forEach(item => {
+        if (!item.konvaObject) return;
+
+        item.konvaObject?.setAttr('draggable', this.isEditing);
+        item.konvaObject?.setAttr('opacity', this.isEditing ? 1 : 0.5);
+        
+        if (this.isEditing){
+          this.setMouseEvents(item.konvaObject);
+        } else {
+          this.removeMouseEvents(item.konvaObject);
+        }
       });
     }
 
@@ -87,26 +101,10 @@ export class CreateFloorPlanPage {
 
           droppedItem.konvaObject = image;
         });
-      } else {
-        const textElement = new Konva.Text({
-          id: 'text',
-          x: positionX,
-          y: positionY,
-          fill: 'blue',
-          draggable: true,
-          text: droppedItem.name,
-          cursor: 'pointer',
-        });
-      
-        this.setupElement(textElement, positionX, positionY);
-        this.canvas.add(textElement);
-        this.canvas.draw();
-      
-        droppedItem.konvaObject = textElement;
       }
     }
     
-    setupElement(element: any, positionX: number, positionY: number): void {
+    setupElement(element: Konva.Line | Konva.Image | Konva.Group, positionX: number, positionY: number): void {
       element.setAttrs({
         x: positionX,
         y: positionY,
@@ -116,6 +114,7 @@ export class CreateFloorPlanPage {
         draggable: true,
         name: 'sensor',
         customId: this.getUniqueId(),
+        opacity: 1,
       });
     
       // element.on('dragmove', () => {
@@ -139,7 +138,7 @@ export class CreateFloorPlanPage {
       this.setMouseEvents(element);
     }
 
-    setMouseEvents(element: Konva.Line | Konva.Image): void {
+    setMouseEvents(element: Konva.Line | Konva.Image | Konva.Group): void {
       if (element instanceof Konva.Line) {
         element.on('dragmove', () => {
           this.setTransformer(undefined, element);
@@ -177,6 +176,25 @@ export class CreateFloorPlanPage {
         element.on('mouseleave', () => {
           document.body.style.cursor = 'default';
         });
+      }
+    }
+
+    removeMouseEvents(element: Konva.Line | Konva.Image | Konva.Group): void {
+      if (element instanceof Konva.Line) {
+        element.off('dragmove');
+        element.off('dragend');
+        element.off('dragmove');
+        element.off('click');
+        element.off('mouseenter');
+        element.off('mouseleave');
+      }
+      else {
+        element.off('dragmove');
+        element.off('dragmove');
+        element.off('click');
+        element.off('dragend');
+        element.off('mouseenter');
+        element.off('mouseleave');
       }
     }
         
@@ -240,33 +258,33 @@ export class CreateFloorPlanPage {
     }
 
     createSelectionBox(): void {
-      const  rect1 = new Konva.Rect({
-        x: 60,
-        y: 60,
-        width: 100,
-        height: 90,
-        fill: 'red',
-        name: 'rect',
-        draggable: true,
-      });
-      this.canvas.add(rect1);
+      // const  rect1 = new Konva.Rect({
+      //   x: 60,
+      //   y: 60,
+      //   width: 100,
+      //   height: 90,
+      //   fill: 'red',
+      //   name: 'rect',
+      //   draggable: true,
+      // });
+      // this.canvas.add(rect1);
 
-      const  rect2 = new Konva.Rect({
-        x: 250,
-        y: 100,
-        width: 150,
-        height: 90,
-        fill: 'green',
-        name: 'rect',
-        draggable: true,
-      });
-      this.canvas.add(rect2);
+      // const  rect2 = new Konva.Rect({
+      //   x: 250,
+      //   y: 100,
+      //   width: 150,
+      //   height: 90,
+      //   fill: 'green',
+      //   name: 'rect',
+      //   draggable: true,
+      // });
+      // this.canvas.add(rect2);
 
       const tr = new Konva.Transformer();
       this.transformers.push(tr);
       this.canvas.add(tr);
 
-      tr.nodes([rect1, rect2]);
+      // tr.nodes([rect1, rect2]);
 
       const selectionBox = new Konva.Rect({
         fill: 'rgba(0,0,255,0.2)',
@@ -581,6 +599,7 @@ export class CreateFloorPlanPage {
           strokeWidth: 5,
           draggable: true,
           name: 'wall',
+          opacity: 1,
         });
 
         this.activeLine = line;
