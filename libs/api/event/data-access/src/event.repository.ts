@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails, IEventLocation } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventLocation, Position } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
@@ -128,5 +128,11 @@ export class EventRepository {
         return await this.eventModel.find(
             {_id :{$eq: eventID}},
             { FloorLayout: 1 })
+    }
+
+    async addDevicePosition(eventID: Types.ObjectId, position: Position){
+        return await this.eventModel.updateOne(
+            { _id: {$eq: eventID}},
+            { $push: { Devices: position } });
     }
 }
