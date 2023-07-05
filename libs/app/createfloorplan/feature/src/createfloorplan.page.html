@@ -7,33 +7,25 @@
     >
       <h1 class="text-lg font-semibold text-center mt-5">Tools</h1>
       <h3
-        class="components-heading flex justify-between items-center mt-6 ml-2 cursor-pointer"
-        (click)="toggleDropdown()"
+        class="components-heading flex justify-between items-center mt-6 ml-2"
       >
         Components
-        <button class="dropdown-toggle" class="mr-3" (click)="toggleDropdown()">
-          <ion-icon
-            [class.dropdown-icon]="true"
-            [class.rotated]="isDropdownOpen"
-            name="chevron-down-outline"
-            (click)="toggleDropdown()"
-          ></ion-icon>
-        </button>
       </h3>
       <div
         class="components-list mb-1 overflow-hidden"
-        [class.show]="isDropdownOpen"
       >
-        <div class="overflow-y-auto max-h-52">
+        <div class="overflow-y-auto max-h-52 flex">
           <img class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
           draggable="true"
           (dragstart)="onDragStart($event)" src="assets/sensor.png" alt="sensor">
+          <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4">Sensor</ion-text>
         </div>
-        <div class="overflow-y-auto max-h-52">
+        <div class="overflow-y-auto max-h-52 flex">
           <img class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
           #stall
           draggable="true"
           (dragstart)="onDragStart($event)" src="assets/stall-icon.png" alt="stall">
+          <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4">Stall</ion-text>
         </div>
       </div>
       <h3 class="attributes-heading mt-3 ml-2">Component Attributes</h3>
