@@ -47,7 +47,6 @@ export class MqttService {
 
   @Interval(5000)
   async processBuffer() {
-    console.log('processBuffer');
     if(this.buffer.length < 2) return;
     const extractRequest: IGetAllEventsRequest = {
       AdminEmail: '',
