@@ -138,6 +138,7 @@ export class CreateFloorPlanPage {
               align: 'center',
               verticalAlign: 'middle',
               padding: 3,
+              cursor: 'move',
             });
 
             group.add(image);
@@ -294,7 +295,9 @@ export class CreateFloorPlanPage {
 
     createSelectionBox(): void {
 
-      const tr = new Konva.Transformer();
+      const tr = new Konva.Transformer({
+        enabledAnchors: []
+      });
       this.transformers.push(tr);
       this.canvas.add(tr);
 
@@ -630,8 +633,6 @@ export class CreateFloorPlanPage {
             x: Math.round(xValue / grid) * grid,
             y: Math.round(yValue / grid) * grid,
         };
-
-        console.log('snapPoint', snapPoint);
         
         const path = new Konva.Path({
             x: snapPoint.x,
@@ -671,12 +672,11 @@ export class CreateFloorPlanPage {
                 y: Math.round(yValue / grid) * grid,
             };
             const data = this.activePath.data();
-            // const newData = data.replace(/L(\d+),(\d+)/, `L${snapPoint.x},${snapPoint.y}`);
-            // points[2] = snapPoint.x - this.activeLine.x();
-            // points[3] = snapPoint.y - this.activeLine.y();
+            const startPointX = data.split(' ')[0].split(',')[0].replace('M', '');
+            const startPointY = data.split(' ')[0].split(',')[1];
             const endPointX = snapPoint.x - this.activePath.x();
             const endPointY = snapPoint.y - this.activePath.y();
-            const newData = data.replace(/L(\d+),(\d+)/, `L${endPointX},${endPointY}`);
+            const newData = `M${startPointX},${startPointY} L${endPointX},${endPointY}`;
             this.activePath.data(newData);
             this.canvas.batchDraw();
         }
@@ -687,7 +687,7 @@ export class CreateFloorPlanPage {
 
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
-          const grid = 10;
+          const grid = this.gridSize;
           const xValue = pointer ? pointer.x : 0;
           const yValue = pointer ? pointer.y : 0;
           const snapPoint = {
@@ -695,15 +695,16 @@ export class CreateFloorPlanPage {
               y: Math.round(yValue / grid) * grid,
           };
           const data = this.activePath.data();
-          // const newData = data.replace(/L(\d+),(\d+)/, `L${snapPoint.x},${snapPoint.y}`);
+          const startPointX = data.split(' ')[0].split(',')[0].replace('M', '');
+          const startPointY = data.split(' ')[0].split(',')[1];
           const endPointX = snapPoint.x - this.activePath.x();
           const endPointY = snapPoint.y - this.activePath.y();
-          const newData = data.replace(/L(\d+),(\d+)/, `L${endPointX},${endPointY}`);
+          const newData = `M${startPointX},${startPointY} L${endPointX},${endPointY}`;
           this.activePath.data(newData);
           this.canvas.batchDraw();
 
           // test if the line is more than a certain length
-          const length = Math.sqrt(Math.pow(snapPoint.x - this.activePath.attrs.data.split(' ')[0].split(',')[0].slice(1), 2) + Math.pow(snapPoint.y - this.activePath.attrs.data.split(' ')[0].split(',')[1], 2));
+          const length = Math.sqrt(Math.pow(endPointX, 2) + Math.pow(endPointY, 2));
           if (length < 1) {
               this.activePath.remove();
               this.transformer.detach();
