@@ -1,5 +1,6 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
+    IGetUserNameResponse,
     IGetUserRoleResponse,
   IGetUsersRequest,
   IGetUsersResponse,
@@ -72,5 +73,16 @@ export class UserController {
     return {
         userRole: request.user['role'],
     };
+    }
+
+    @Get('getUserName')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getUserName(@Req() req: Request): Promise<IGetUserNameResponse> {
+        const request: any = req;
+        console.log('request.user', request.user);
+        return {
+            username: request.user['firstName'],
+        };
     }
 }
