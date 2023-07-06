@@ -7,6 +7,10 @@ import {
     CreateGlobalHandler,
 } from './commands';
 
+import { 
+    GetGlobalHandler,
+} from './queries';
+
 import {
     CreateGlobalEventHandler,
 } from './events';
@@ -15,13 +19,17 @@ export const CommandHandlers = [
     CreateGlobalHandler,
 ];
 
+export const QueryHandlers = [
+    GetGlobalHandler,
+];
+
 export const EventHandlers = [
     CreateGlobalEventHandler,
 ];
 
 @Module({
     imports: [CqrsModule, GlobalDataAccessModule],
-    providers: [GlobalService, ...CommandHandlers, ...EventHandlers],
+    providers: [GlobalService, ...CommandHandlers, ...EventHandlers, ...QueryHandlers],
     exports: [GlobalService],
 })
 export class GlobalModule {}
