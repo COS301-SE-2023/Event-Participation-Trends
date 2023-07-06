@@ -20,7 +20,7 @@ export class UserController {
   constructor(private userService: UserService) {}
     @Get('getAllUsers')
     @SetMetadata('role',Role.ADMIN)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getAllUsers(
         @Req() req: Request,
     ): Promise<IGetUsersResponse> {
@@ -37,7 +37,7 @@ export class UserController {
 
     @Post('updateUserRole')
     @SetMetadata('role',Role.ADMIN)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async updateUserRole(
         @Req() req: Request,
         @Body() requestBody: IUpdateRoleRequest,

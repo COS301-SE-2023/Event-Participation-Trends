@@ -1,6 +1,7 @@
 import { 
     IAddViewEvent, 
     AddViewingEventEvent, 
+    AddEventToAdminEvent,
     } from '@event-participation-trends/api/user/util';
 import { AggregateRoot } from '@nestjs/cqrs';
 
@@ -14,6 +15,10 @@ export class AddViewEvent extends AggregateRoot implements IAddViewEvent {
 
     add() {
         this.apply(new AddViewingEventEvent(this.toJSON()));
+    }
+
+    addToAdmin(){
+        this.apply(new AddEventToAdminEvent(this.toJSON()));
     }
 
     static fromData(event: IAddViewEvent): AddViewEvent {

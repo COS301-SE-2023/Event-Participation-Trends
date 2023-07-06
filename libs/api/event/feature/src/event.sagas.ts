@@ -1,16 +1,19 @@
 import { 
     AcceptViewRequestEvent, 
     RemoveViewerFromEventEvent,
+    CreateEventEvent
 } from '@event-participation-trends/api/event/util';
 import {
-    AddViewingEventCommand
+    AddViewingEventCommand,
+    AddViewingEventByNameCommand,
+    AddEventToAdminCommand,
 } from '@event-participation-trends/api/user/util';
 import{
-    RemoveEventFromViewerCommand
+    RemoveEventFromViewerCommand,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { ICommand, ofType, Saga } from '@nestjs/cqrs';
-import { map, Observable } from 'rxjs';
+import { from, map, mergeMap, Observable } from 'rxjs';
 
 @Injectable()
 export class EventsSagas {
@@ -29,4 +32,21 @@ export class EventsSagas {
         map((event: RemoveViewerFromEventEvent) => new RemoveEventFromViewerCommand({userEmail: event.event.userEmail, eventId: <string> <unknown> event.event.eventId})),
       );
     };
+
+    @Saga()
+    onCreateEventEvent = (events$: Observable<any>): Observable<ICommand> => {
+        return events$.pipe(
+            ofType(CreateEventEvent),
+            mergeMap((event: CreateEventEvent) => {
+              const commands: ICommand[] = [];
+    
+              commands.push(new AddViewingEventByNameCommand({ eventName: event.event.Name || "" }));
+        
+              commands.push(new AddEventToAdminCommand({ eventName: event.event.Name || "" }));
+
+              return from(commands);
+            })
+          );
+    };
+
 }

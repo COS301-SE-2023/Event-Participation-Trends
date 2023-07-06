@@ -16,6 +16,6 @@ export class GetAllEventsHandler implements IQueryHandler<GetAllEventsQuery, IGe
         console.log(`${GetAllEventsHandler.name}`);
         
         const eventDocs = await this.eventRepository.getAllEvents();
-        return {events: <IEvent[]>eventDocs};
+        return {events: <IEvent[]> <any>eventDocs};
     } 
 }

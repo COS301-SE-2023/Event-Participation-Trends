@@ -5,7 +5,7 @@ import { Line } from 'konva/lib/shapes/Line';
 
 interface DroppedItem {
   name: string;
-  konvaObject?: Konva.Line | Konva.Image | Konva.Group | Konva.Text;
+  konvaObject?: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path;
 }
 @Component({
   selector: 'event-participation-trends-createfloorplan',
@@ -25,16 +25,16 @@ export class CreateFloorPlanPage {
     canvas!: Konva.Layer;
     isDraggingLine = false;
     lineType: 'vertical' | 'horizontal' = 'vertical';
-    activeLine: Konva.Line | null = null;
+    // activeLine: Konva.Line | null = null;
     activeItem: any = null;
-    lines: Konva.Line[] = [];
-    // Define the fill color for the closed shapes
-    fillColor = 'rgba(255, 0, 0, 0.5)'; // Example color
+    // lines: Konva.Line[] = [];
     transformer = new Konva.Transformer();
     isEditing = true; // to prevent creating walls
     transformers: Konva.Transformer[] = [this.transformer];
     sensors: Konva.Image[] = [];
     gridSize = 10;
+    paths: Konva.Path[] = [];
+    activePath: Konva.Path | null = null;
 
     toggleEditing(): void {
       this.isEditing = !this.isEditing;
@@ -158,7 +158,7 @@ export class CreateFloorPlanPage {
       }
     }
     
-    setupElement(element: Konva.Line | Konva.Image | Konva.Group, positionX: number, positionY: number): void {
+    setupElement(element: Konva.Line | Konva.Image | Konva.Group | Konva.Path, positionX: number, positionY: number): void {
       element.setAttrs({
         x: positionX,
         y: positionY,
@@ -176,84 +176,34 @@ export class CreateFloorPlanPage {
       this.setMouseEvents(element);
     }
 
-    setMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text): void {
-      if (element instanceof Konva.Line) {
-        element.on('dragmove', () => {
-          this.setTransformer(undefined, element);
-        });
-        element.on('dragend', () => {
-          this.openDustbin = false;
-        });
-        element.on('dragmove', this.onObjectMoving.bind(this));
-        element.on('click', () => {
-          this.setTransformer(undefined, element);
-        });
-        element.on('mouseenter', () => {
-          document.body.style.cursor = 'move';
-        });
-        element.on('mouseleave', () => {
-          document.body.style.cursor = 'default';
-        });
-      }
-      else if (element instanceof Konva.Image || element instanceof Konva.Text) {
-        element.on('dragmove', () => {
-          this.activeItem = element;
-          this.setTransformer(this.activeItem, undefined);
-        });
-        element.on('dragmove', this.onObjectMoving.bind(this));
-        element.on('click', () => {
-          this.activeItem = element;
-          this.setTransformer(this.activeItem, undefined);
-        });
-        element.on('dragend', () => {
-          this.openDustbin = false;
-        });
-        element.on('mouseenter', () => {
-          document.body.style.cursor = 'move';
-        });
-        element.on('mouseleave', () => {
-          document.body.style.cursor = 'default';
-        });
-      }
-      else if (element instanceof Konva.Group) {
-        element.on('dragmove', () => {
-          this.activeItem = element;
-          this.setTransformer(this.activeItem, undefined);
-        });
-        element.on('dragend', () => {
-          this.openDustbin = false;
-        });
-        element.on('dragmove', this.onObjectMoving.bind(this));
-        element.on('click', () => {
-          this.activeItem = element;
-          this.setTransformer(this.activeItem, undefined);
-        });
-        element.on('mouseenter', () => {
-          document.body.style.cursor = 'move';
-        });
-        element.on('mouseleave', () => {
-          document.body.style.cursor = 'default';
-        });
-      }
+    setMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path): void {
+      element.on('dragmove', () => {
+        this.activeItem = element;
+        this.setTransformer(this.activeItem, undefined);
+      });
+      element.on('dragmove', this.onObjectMoving.bind(this));
+      element.on('click', () => {
+        this.activeItem = element;
+        this.setTransformer(this.activeItem, undefined);
+      });
+      element.on('dragend', () => {
+        this.openDustbin = false;
+      });
+      element.on('mouseenter', () => {
+        document.body.style.cursor = 'move';
+      });
+      element.on('mouseleave', () => {
+        document.body.style.cursor = 'default';
+      });
     }
 
-    removeMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text): void {
-      if (element instanceof Konva.Line) {
-        element.off('dragmove');
-        element.off('dragend');
-        element.off('dragmove');
-        element.off('click');
-        element.off('mouseenter');
-        element.off('mouseleave');
-      }
-      else {
-        element.off('dragmove');
-        element.off('dragmove');
-        element.off('click');
-        element.off('dragend');
-        element.off('mouseenter');
-        element.off('mouseleave');
-      }
+    removeMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path): void {
+      element.off('dragmove');
+      element.off('dragmove');
+      element.off('click');
+      element.off('dragend');
+      element.off('mouseenter');
+      element.off('mouseleave');
     }
         
 
@@ -315,7 +265,7 @@ export class CreateFloorPlanPage {
         }, 6);
     }
 
-    setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line): void {
+    setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line | Konva.Path): void {
       this.transformer.detach();
       this.canvas.add(this.transformer);
       let target = null;
@@ -326,7 +276,7 @@ export class CreateFloorPlanPage {
         target = line;
       }
 
-      if (target && target instanceof Konva.Line) {
+      if (target && target instanceof Konva.Line || target instanceof Konva.Path) {
         if (line) {
           // this.transformer.nodes([line]);
           return;
@@ -343,27 +293,6 @@ export class CreateFloorPlanPage {
     }
 
     createSelectionBox(): void {
-      // const  rect1 = new Konva.Rect({
-      //   x: 60,
-      //   y: 60,
-      //   width: 100,
-      //   height: 90,
-      //   fill: 'red',
-      //   name: 'rect',
-      //   draggable: true,
-      // });
-      // this.canvas.add(rect1);
-
-      // const  rect2 = new Konva.Rect({
-      //   x: 250,
-      //   y: 100,
-      //   width: 150,
-      //   height: 90,
-      //   fill: 'green',
-      //   name: 'rect',
-      //   draggable: true,
-      // });
-      // this.canvas.add(rect2);
 
       const tr = new Konva.Transformer();
       this.transformers.push(tr);
@@ -547,10 +476,13 @@ export class CreateFloorPlanPage {
             this.activeItem.setAttr('customClass', 'active');
         }
 
-        const movedObject = event.currentTarget as Konva.Node;
+        const movedObject = event.currentTarget;
         const droppedItem = this.canvasItems.find(
             (item) => item.konvaObject === movedObject
         );
+
+        // set bounderies for the object such that the object cannot be move beyond the borders of the canvas
+        
             
         if (droppedItem) {
             const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
@@ -631,7 +563,7 @@ export class CreateFloorPlanPage {
                 selectedObject = this.activeItem;
             }
             else {
-                selectedObject = this.activeLine;
+                selectedObject = this.activePath;
             }
             
             if (selectedObject) {
@@ -679,12 +611,11 @@ export class CreateFloorPlanPage {
       
       onMouseDown(event: Konva.KonvaEventObject<MouseEvent>): void {
         const target = event.target;
-        if (target && target instanceof Konva.Line) {
-            // Clicked on an existing line, do nothing
-            this.transformer.detach();
-            return;
-        } else if (target && target instanceof Konva.Image) {
-            // Clicked on an existing textbox, do nothing
+        if (target && target instanceof Konva.Line
+          || target instanceof Konva.Path
+          || target instanceof Konva.Image
+          || target instanceof Konva.Group) {
+            // Clicking on a line or path or image or group will not do anything
             return;
         } else if (this.isEditing) {
           return;
@@ -692,42 +623,46 @@ export class CreateFloorPlanPage {
         else this.transformer.detach();
         
         const pointer = this.canvasContainer.getPointerPosition();
-        const grid = 10;
+        const grid = this.gridSize;
         const xValue = pointer ? pointer.x : 0;
         const yValue = pointer ? pointer.y : 0;
         const snapPoint = {
             x: Math.round(xValue / grid) * grid,
             y: Math.round(yValue / grid) * grid,
         };
+
+        console.log('snapPoint', snapPoint);
         
-        const line = new Konva.Line({
-          points: [snapPoint.x, snapPoint.y, snapPoint.x, snapPoint.y],
-          stroke: '#000',
-          strokeWidth: 5,
-          draggable: true,
-          name: 'wall',
-          opacity: 1,
+        const path = new Konva.Path({
+            x: snapPoint.x,
+            y: snapPoint.y,
+            data: 'M0,0 L0,0',
+            stroke: 'black',
+            strokeWidth: 5,
+            lineCap: 'round',
+            lineJoin: 'round',
+            draggable: true,
+            name: 'wall'
         });
 
-        this.activeLine = line;
-        // Attach the drag move event listener to finish dragging lines
-        line.on('dragmove', this.onObjectMoving.bind(this));
-        this.canvas.add(line);
-        this.canvas.draw();
-        this.lines.push(line);
+        this.activePath = path;
+        path.on('dragmove', this.onObjectMoving.bind(this));
+        this.canvas.add(path);
+        this.canvas.batchDraw();
+
+        this.paths.push(path);
         this.isDraggingLine = true;
-      
+
         // Attach the mouse move event listener
         this.canvasContainer.on('mousemove', this.onMouseMove.bind(this));
-      
-        // Attach the mouse up event listener to finish dragging lines
-        this.canvasContainer.on('mouseup', this.onMouseUp.bind(this))
 
+        // Attach the mouse up event listener
+        this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
       }
       
       onMouseMove(): void {
         const pointer = this.canvasContainer.getPointerPosition();
-        if (this.activeLine) {
+        if (this.activePath) {
             const grid = this.gridSize;
             const xValue = pointer ? pointer.x : 0;
             const yValue = pointer ? pointer.y : 0;
@@ -735,10 +670,14 @@ export class CreateFloorPlanPage {
                 x: Math.round(xValue / grid) * grid,
                 y: Math.round(yValue / grid) * grid,
             };
-            const points = this.activeLine.points();
-            points[2] = snapPoint.x;
-            points[3] = snapPoint.y;
-            this.activeLine.points(points);
+            const data = this.activePath.data();
+            // const newData = data.replace(/L(\d+),(\d+)/, `L${snapPoint.x},${snapPoint.y}`);
+            // points[2] = snapPoint.x - this.activeLine.x();
+            // points[3] = snapPoint.y - this.activeLine.y();
+            const endPointX = snapPoint.x - this.activePath.x();
+            const endPointY = snapPoint.y - this.activePath.y();
+            const newData = data.replace(/L(\d+),(\d+)/, `L${endPointX},${endPointY}`);
+            this.activePath.data(newData);
             this.canvas.batchDraw();
         }
       }
@@ -747,124 +686,65 @@ export class CreateFloorPlanPage {
         this.openDustbin = false;
 
         const pointer = this.canvasContainer.getPointerPosition();
-        if (this.activeLine) {
-            const grid = 10;
-            const xValue = pointer ? pointer.x : 0;
-            const yValue = pointer ? pointer.y : 0;
-            const snapPoint = {
-                x: Math.round(xValue / grid) * grid,
-                y: Math.round(yValue / grid) * grid,
-            };
-            const points = this.activeLine.points();
-            points[2] = snapPoint.x;
-            points[3] = snapPoint.y;
-            this.activeLine.points(points);
-            this.canvas.batchDraw();
+        if (this.activePath) {
+          const grid = 10;
+          const xValue = pointer ? pointer.x : 0;
+          const yValue = pointer ? pointer.y : 0;
+          const snapPoint = {
+              x: Math.round(xValue / grid) * grid,
+              y: Math.round(yValue / grid) * grid,
+          };
+          const data = this.activePath.data();
+          // const newData = data.replace(/L(\d+),(\d+)/, `L${snapPoint.x},${snapPoint.y}`);
+          const endPointX = snapPoint.x - this.activePath.x();
+          const endPointY = snapPoint.y - this.activePath.y();
+          const newData = data.replace(/L(\d+),(\d+)/, `L${endPointX},${endPointY}`);
+          this.activePath.data(newData);
+          this.canvas.batchDraw();
 
-            // test if the line is more than a certain length
-            const length = Math.sqrt(Math.pow(points[2] - points[0], 2) + Math.pow(points[3] - points[1], 2));
-            if (length < 1) {               
-                this.activeLine.remove();
-                this.transformer.detach();
-                this.canvas.batchDraw();
-                this.isDraggingLine = false;
-                this.canvasContainer.off('mousemove');
-                this.canvasContainer.off('mouseup');
-                return;
-            }
+          // test if the line is more than a certain length
+          const length = Math.sqrt(Math.pow(snapPoint.x - this.activePath.attrs.data.split(' ')[0].split(',')[0].slice(1), 2) + Math.pow(snapPoint.y - this.activePath.attrs.data.split(' ')[0].split(',')[1], 2));
+          if (length < 1) {
+              this.activePath.remove();
+              this.transformer.detach();
+              this.canvas.batchDraw();
+              this.isDraggingLine = false;
+              this.canvasContainer.off('mousemove');
+              this.canvasContainer.off('mouseup');
+              return;
+          }
 
-            //add line to canvasItems array
-            this.canvasItems.push({
-                name: 'line',
-                konvaObject: this.activeLine,
-            });
-            this.setMouseEvents(this.activeLine);
+          //add line to canvasItems array
+          this.canvasItems.push({
+            name: 'path',
+            konvaObject: this.activePath,
+          });
 
-            this.setTransformer(undefined,this.activeLine);
+          // set the width a.k.a length of the wall
+          const width = Math.abs(snapPoint.x - this.activePath.x());
+          this.activePath.setAttr('width', width); // this acts as the length of the wall (vertically or horizontally)
 
-            // check if the line being dragged can join with another line if the end points are close enough
-            let joined = false;
-            const lines = this.canvas.find('Line');
-            const activeLinePoints = this.activeLine.points();
-            const activeLineStartPoint = {
-                x: activeLinePoints[0],
-                y: activeLinePoints[1],
-            };
+          // set the height of the wall
+          const height = Math.abs(snapPoint.y - this.activePath.y());
+          this.activePath.setAttr('height', height); 
 
-            const activeLineEndPoint = {
-                x: activeLinePoints[2],
-                y: activeLinePoints[3],
-            };
+          // this.setMouseEvents(this.activeLine);
+          this.activePath.setAttr('draggable', false);
+          this.activePath.setAttr('opacity', 0.5);
+          this.removeMouseEvents(this.activePath);
 
-            lines.forEach((line: any) => {
-                if (line !== this.activeLine && line.getAttr('customClass') !== 'grid-line') {
-                    const points = line.points();
-                    const startPoint = {
-                        x: points[0],
-                        y: points[1],
-                    };
-                    const endPoint = {
-                        x: points[2],
-                        y: points[3],
-                    };
+          this.setTransformer(undefined,this.activePath);
 
-                    const distanceBetweenStartPoints = Math.sqrt(
-                        Math.pow(activeLineStartPoint.x - startPoint.x, 2) +
-                        Math.pow(activeLineStartPoint.y - startPoint.y, 2)
-                    );
-
-                    const distanceBetweenEndPoints = Math.sqrt(
-                        Math.pow(activeLineEndPoint.x - endPoint.x, 2) +
-                        Math.pow(activeLineEndPoint.y - endPoint.y, 2)
-                    );
-
-                    const distanceBetweenStartAndEndPoints = Math.sqrt(
-                        Math.pow(activeLineStartPoint.x - endPoint.x, 2) +
-                        Math.pow(activeLineStartPoint.y - endPoint.y, 2)
-                    );
-
-                    const distanceBetweenEndAndStartPoints = Math.sqrt(
-                        Math.pow(activeLineEndPoint.x - startPoint.x, 2) +
-                        Math.pow(activeLineEndPoint.y - startPoint.y, 2)
-                    );
-
-                    if (distanceBetweenStartPoints < 10) {
-                        // Snap to the start point of the line
-                        this.activeLine?.points([startPoint.x, startPoint.y, activeLineEndPoint.x, activeLineEndPoint.y]);
-                        this.canvas.batchDraw();
-                        joined = true;
-                    } else if (distanceBetweenEndPoints < 10) {
-                        // Snap to the end point of the line
-                        this.activeLine?.points([activeLineStartPoint.x, activeLineStartPoint.y, endPoint.x, endPoint.y]);
-                        this.canvas.batchDraw();
-                        joined = true;
-                    } else if (distanceBetweenStartAndEndPoints < 10) {
-                        // Snap to the end point of the line
-                        this.activeLine?.points([endPoint.x, endPoint.y, activeLineEndPoint.x, activeLineEndPoint.y]);
-                        this.canvas.batchDraw();
-                        joined = true;
-                    } else if (distanceBetweenEndAndStartPoints < 10) {
-                        // Snap to the end point of the line
-                        this.activeLine?.points([activeLineStartPoint.x, activeLineStartPoint.y, startPoint.x, startPoint.y]);
-                        this.canvas.batchDraw();
-                        joined = true;
-                    }
-                }
-            });
-
-            this.activeLine = null;                      
+          this.activePath = null;             
         }
 
         this.isDraggingLine = false;
       
         // Remove the mouse move event listener
-        this.canvas.off('mousemove', this.onMouseMove.bind(this));
+        this.canvasContainer.off('mousemove', this.onMouseMove.bind(this));
       
         // Remove the mouse up event listener
-        this.canvas.off('mouseup', this.onMouseUp.bind(this));
-
-        this.isClosedShape();
-        
+        this.canvasContainer.off('mouseup', this.onMouseUp.bind(this));        
       }
       
       createGridLines() {
@@ -915,9 +795,12 @@ export class CreateFloorPlanPage {
     }
 
     removeGridLines(): void {
-      this.lines.forEach(line => {
-        line.destroy();
+      this.canvas?.children?.forEach((child: any) => {
+        if (child.attrs.customClass === 'grid-line') {
+          child.remove();
+        }
       });
+
       
       const width = this.canvasParent.nativeElement.offsetWidth;
       const height = this.canvasParent.nativeElement.offsetHeight;
@@ -932,70 +815,6 @@ export class CreateFloorPlanPage {
     
       checkScreenWidth() {
         this.shouldStackVertically = window.innerWidth < 1421;
-      }
-
-      isClosedShape(): boolean {
-        let closedPathPoints: {
-            startX: number,
-            startY: number,
-            endX: number,
-            endY: number,
-        }[] = [];
-        // Check if the shape is closed
-        const lines = this.lines;
-        const points: {
-            startX: number,
-            startY: number,
-            endX: number,
-            endY: number,
-        }[] = [];
-        lines.forEach((line: any) => {
-            points.push({
-                startX: line.points()[0],
-                startY: line.points()[1],
-                endX: line.points()[2],
-                endY: line.points()[3],
-            });
-        });
-
-        for (let i = 0; i < points.length - 3; i++) {
-            for (let j = i+1; j < points.length - 2; j++) {
-                for (let k = j+1; k < points.length - 1; k++) {
-                    for (let l = k+1; l < points.length; l++) {
-                        // see if the first line's endpoint is the same as the next point's start point and so on
-                        if (points[i].endX === points[j].startX && points[i].endY === points[j].startY &&
-                            points[j].endX === points[k].startX && points[j].endY === points[k].startY &&
-                            points[k].endX === points[l].startX && points[k].endY === points[l].startY &&
-                            points[l].endX === points[i].startX && points[l].endY === points[i].startY) {
-                                closedPathPoints = [points[i], points[j], points[k], points[l]];
-                        }
-                        
-                    }
-                }
-            }
-        }
-
-        if (closedPathPoints.length > 0) {
-            // Create the SVG path commands based on the points in the closedPathPoints array
-            const pathData = `M${closedPathPoints[0].startX} ${closedPathPoints[0].startY} L${closedPathPoints[1].startX} ${closedPathPoints[1].startY} L${closedPathPoints[2].startX} ${closedPathPoints[2].startY} L${closedPathPoints[3].startX} ${closedPathPoints[3].startY} Z`;
-          
-            // Create a Konva.Path object
-            const path = new Konva.Path({
-              x: 0,
-              y: 0,
-              data: pathData,
-              fill: '#00D2FF',
-              stroke: 'black',
-              strokeWidth: 2,
-            });
-          
-            // Add the path to the layer or stage for rendering
-            this.canvas.add(path);
-
-            return true;
-          }
-
-        return false;
       }
 
       testJSON(): void {

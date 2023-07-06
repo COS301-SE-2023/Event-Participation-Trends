@@ -15,6 +15,12 @@ export class Stall{
     @Prop({ type: Number, required: true })
     y_coordinate: number | undefined | null;
 
+    @Prop({ type: Number, required: true })
+    width: number | undefined | null;
+
+    @Prop({ type: Number, required: true })
+    height: number | undefined | null;
+
 }
 
 export const StallSchema = SchemaFactory.createForClass(Stall);

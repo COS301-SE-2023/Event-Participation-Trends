@@ -3,3 +3,5 @@ export * from './create-user.response';
 export * from './update-role.response';
 export * from './get-user-role.response';
 export * from './add-viewing-event.response';
+export * from './add-viewing-event-by-name.response';
+export * from './add-event-to-admin.response';
