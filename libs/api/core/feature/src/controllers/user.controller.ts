@@ -1,5 +1,6 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
+    IGetProfilePicUrlResponse,
     IGetUserNameResponse,
     IGetUserRoleResponse,
   IGetUsersRequest,
@@ -80,9 +81,18 @@ export class UserController {
     @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getUserName(@Req() req: Request): Promise<IGetUserNameResponse> {
         const request: any = req;
-        console.log('request.user', request.user);
         return {
             username: request.user['firstName'],
+        };
+    }
+
+    @Get('getProfilePicUrl')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getProfilePhotoLink(@Req() req: Request): Promise<IGetProfilePicUrlResponse> {
+        const request: any = req;
+        return {
+            url: request.user['picture'],
         };
     }
 }
