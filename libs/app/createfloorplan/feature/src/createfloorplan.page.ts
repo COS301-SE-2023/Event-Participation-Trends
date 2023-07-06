@@ -287,7 +287,7 @@ export class CreateFloorPlanPage {
         return;
       }
       else if (target && target instanceof Konva.Group) {
-        // this.transformer.nodes([target]);
+        this.transformer.nodes([target]);
         return;
       }
     }
