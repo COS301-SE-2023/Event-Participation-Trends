@@ -196,6 +196,9 @@
       "@event-participation-trends/app/modals/util": [
         "libs/app/modals/util/src/index.ts"
       ],
+      "@event-participation-trends/app/profile/feature": [
+        "libs/app/profile/feature/src/index.ts"
+      ],
       "@event-participation-trends/app/requestaccessmodal/feature": [
         "libs/app/requestaccessmodal/feature/src/index.ts"
       ],
