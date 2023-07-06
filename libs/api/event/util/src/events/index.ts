@@ -7,3 +7,4 @@ export * from './remove-event-from-viewer.event';
 export * from './update-event-details-event';
 export * from './create-stall.event';
 export * from './update-stall.event';
+export * from './update-floorlayout.event';

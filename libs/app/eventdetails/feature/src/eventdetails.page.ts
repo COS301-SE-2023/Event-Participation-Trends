@@ -27,7 +27,7 @@ export class EventDetailsPage {
   public location = '';
   public category = '';
   public name = '';
-  constructor(appApiService: AppApiService, private route: ActivatedRoute, private router: Router) {
+  constructor(appApiService: AppApiService, private readonly route: ActivatedRoute, private router: Router) {
     this.initialText = 'Initial text value';
     this.inviteEmail = '';
     this.appApiService = appApiService;

@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "compile": "cd rust-lib && wasm-pack build --target nodejs && cd .. && yarn install --force",
     "start:dev": "yarn concurrently \"yarn nx serve app\" \"yarn nx serve api\"",
-    "test":"jest"
+    "test": "jest"
   },
   "private": true,
   "dependencies": {
@@ -26,12 +27,14 @@
     "@nestjs/mongoose": "^9.2.2",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.1.1",
+    "@nestjs/schedule": "^3.0.1",
     "@ngxs/router-plugin": "^3.8.1",
     "@ngxs/store": "^3.8.1",
     "@nx/angular": "16.1.0",
     "@types/fabric": "^5.3.3",
     "@types/passport-google-oauth20": "^2.0.10",
     "@types/passport-local": "^1.0.35",
+    "@types/wait-on": "^5.3.1",
     "angularx-social-login": "^4.1.0",
     "axios": "^1.0.0",
     "cookie-parser": "^1.4.6",
@@ -68,7 +71,7 @@
     "@nrwl/nest": "^16.1.0",
     "@nx/cypress": "16.1.0",
     "@nx/eslint-plugin": "16.1.0",
-    "@nx/jest": "16.1.0",
+    "@nx/jest": "16.2.1",
     "@nx/js": "16.2.1",
     "@nx/linter": "16.1.0",
     "@nx/nest": "16.2.1",

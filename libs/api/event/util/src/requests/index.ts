@@ -12,3 +12,5 @@ export * from './get-event.request';
 export * from './create-stall.request';
 export * from './update-stall.request';
 export * from './get-all-event-stalls.request';
+export * from './update-floorlayout.request';
+export * from './get-event-floorlayout.request';

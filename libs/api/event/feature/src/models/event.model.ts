@@ -1,18 +1,16 @@
 import { 
     IEvent, 
-    CreateEventEvent, 
+    CreateEventEvent,
+    IFloorLayout, 
     } from '@event-participation-trends/api/event/util';
 import {
-    IDevice,
     IEventLocation,
     IStall,
     ISensor,
-    ITEMP_DEVICE_TO_DT,
-    ITEMP_DEVICE_BUFFER,
 } from '@event-participation-trends/api/event/util';
 import {Types } from 'mongoose';
-import { IUser } from '@event-participation-trends/api/user/util';
 import { AggregateRoot } from '@nestjs/cqrs';
+import { IPosition } from '@event-participation-trends/api/event/data-access';
 
 export class Event extends AggregateRoot implements IEvent {
     constructor(
@@ -21,12 +19,10 @@ export class Event extends AggregateRoot implements IEvent {
         public Name?: string | undefined | null,
         public Category?: string | undefined | null,
         public Location?: IEventLocation | undefined | null,
-        //public thisFloorLayout?: IFloorLayout | undefined | null,
+        public FloorLayout?: IFloorLayout | undefined | null,
         public Stalls?: IStall[] | undefined | null,
         public Sensors?: ISensor[] | undefined | null,
-        public Devices?: IDevice[] | undefined | null,
-        public BTIDtoDeviceBuffer?: ITEMP_DEVICE_TO_DT[] | undefined | null,
-        public TEMPBuffer?: ITEMP_DEVICE_BUFFER[] | undefined | null,
+        public Devices?: IPosition[] | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
         public Requesters?: Types.ObjectId[] | undefined | null,
         public Viewers?: Types.ObjectId[] | undefined | null,
@@ -45,12 +41,10 @@ export class Event extends AggregateRoot implements IEvent {
             event.Name,
             event.Category,
             event.Location,
-            //event.thisFloorLayout,
+            event.FloorLayout,
             event.Stalls,
             event.Sensors,
             event.Devices,
-            event.BTIDtoDeviceBuffer,
-            event.TEMPBuffer,
             event.Manager,
             event.Requesters,
             event.Viewers,
@@ -65,12 +59,10 @@ export class Event extends AggregateRoot implements IEvent {
             Name: this.Name,
             Category: this.Category,
             Location: this.Location,
-           // thisFloorLayout: this.thisFloorLayout,
+            FloorLayout: this.FloorLayout,
             Stalls: this.Stalls,
             Sensors: this.Sensors,
             Devices: this.Devices,
-            BTIDtoDeviceBuffer: this.BTIDtoDeviceBuffer,
-            TEMPBuffer: this.TEMPBuffer,
             Manager: this.Manager,
             Requesters: this.Requesters,
             Viewers: this.Viewers,

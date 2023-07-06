@@ -12,3 +12,5 @@ export * from './get-event.response';
 export * from './create-stall.response';
 export * from './update-stall.response';
 export * from './get-all-event-stalls.response';
+export * from './update-floorlayout.response';
+export * from './get-event-floorlayout.response';

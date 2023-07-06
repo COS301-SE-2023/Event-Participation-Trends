@@ -86,10 +86,10 @@ export class RequestAccessModalComponent {
 
   requestAccess(event: any) {
     this.appApiService.sendViewRequest({ eventId: event._id }).subscribe((response) => {
-      if (response.status === 'success') {
+      if (response && response.status) {
         this.presentToastSuccess('bottom', 'Access request sent.');
       } else {
-        this.presentToastFailure('bottom', 'Access request failed. Please try again later.');
+        this.presentToastFailure('bottom', 'Access request failed.');
       }
     });
   }

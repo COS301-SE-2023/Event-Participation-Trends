@@ -85,6 +85,7 @@ export class UsermanagementPage {
             UpdateRole: this.users[i].Role,
           },
         });
+        this.old_users[i].Role = this.users[i].Role;
       }
     }
 

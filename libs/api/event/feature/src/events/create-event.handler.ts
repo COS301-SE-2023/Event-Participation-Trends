@@ -1,15 +1,13 @@
-import { CreateEventEvent } from '@event-participation-trends/api/event/util';
+import { CreateEventEvent, Position } from '@event-participation-trends/api/event/util';
 import { IEventHandler, EventsHandler } from '@nestjs/cqrs';
 import { IEvent } from "@event-participation-trends/api/event/util";
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
-import { UserRepository } from '@event-participation-trends/api/user/data-access';
 import { Types } from 'mongoose';
 
 @EventsHandler(CreateEventEvent)
 export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> {
   constructor(
     private readonly eventRepository: EventRepository,
-    private readonly userRepository: UserRepository,
     ) {}
 
   async handle(event: CreateEventEvent) {
@@ -24,12 +22,10 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             Name: event.event.Name,
             Category: event.event.Category,
             Location: event.event.Location,  
-            //thisFloorLayout: null,
+            FloorLayout: null,
             Stalls: null,
             Sensors: null,
-            Devices: null,
-            BTIDtoDeviceBuffer: null,
-            TEMPBuffer: null,
+            Devices: Array<Position>(),
             Manager: event.event.Manager,
             Requesters: new Array<Types.ObjectId>(), 
             Viewers: ViewersArr,

@@ -12,9 +12,10 @@ import {
 } from '@event-participation-trends/api/event/feature';
 import { JwtModule } from '@nestjs/jwt';
 import { ApiGuardsModule } from '@event-participation-trends/api/guards';
+import { SensorlinkingModule } from '@event-participation-trends/sensorlinking';
 
 @Module({
-    imports: [CqrsModule, UserModule, EventModule, JwtModule, ApiGuardsModule],
+    imports: [CqrsModule, UserModule, EventModule, JwtModule, ApiGuardsModule, SensorlinkingModule],
     controllers: [UserController, EventController],
     providers: [UserService, EventService],
     exports: [UserService ,EventService],
