@@ -21,6 +21,10 @@ export class UserRepository {
         return await this.userModel.find({Email: userEmail});
     }
 
+    async getUserById(userID: Types.ObjectId){
+        return await this.userModel.find({ _id: {$eq: userID}},);
+    }
+
     //refactor
     async getUsersByRole(userRole: string){
         return await this.userModel.find({Role: userRole});
@@ -40,6 +44,12 @@ export class UserRepository {
             { $push: { Viewing: eventID } });
     }
 
+    async addEventToAdmin(eventID: Types.ObjectId){
+        return await this.userModel.updateMany(
+            { Role: {$eq: "admin"}},
+            { $push: { Viewing: eventID } });
+    }
+
     async getPopulatedViewingEvents(userId: Types.ObjectId){
         return await this.userModel.find(
             {_id :{$eq: userId}},
@@ -51,4 +61,5 @@ export class UserRepository {
             {_id :{$eq: userID}},
             { $pull: { Viewing: eventID } });
     }
+
 }

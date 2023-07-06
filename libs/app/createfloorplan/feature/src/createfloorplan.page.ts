@@ -56,6 +56,14 @@ export class CreateFloorPlanPage {
           this.setMouseEvents(item.konvaObject);
         } else {
           this.removeMouseEvents(item.konvaObject);
+
+          // set mouse enter and mouse leave events
+          item.konvaObject?.on('mouseenter', () => {
+            document.body.style.cursor = 'not-allowed';
+          });
+          item.konvaObject?.on('mouseleave', () => {
+            document.body.style.cursor = 'default';
+          });
         }
       });
     }
@@ -98,6 +106,7 @@ export class CreateFloorPlanPage {
       if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
         Konva.Image.fromURL(droppedItem.name, (image) => {
           this.setupElement(image, positionX, positionY);
+          image.setAttr('name', 'stall');
 
           if (droppedItem.name.includes('stall')) {
             const group = new Konva.Group({
@@ -111,17 +120,7 @@ export class CreateFloorPlanPage {
               fill: 'white',
               name: 'stall',
             });
-
-            // const rect = new Konva.Rect({
-            //   id: 'stallRect',
-            //   x: positionX,
-            //   y: positionY,
-            //   width: 50,
-            //   height: 50,
-            //   fillPatternImage: this.stallElement.nativeElement,
-            //   fillPatternRepeat: 'no-repeat',
-            // });
-
+            
             const text = new Konva.Text({
               id: 'stallName',
               x: positionX,
@@ -145,6 +144,7 @@ export class CreateFloorPlanPage {
             droppedItem.konvaObject = group;
           } 
           else {
+            image.setAttr('name', 'sensor');
             this.sensors.push(image);
             this.canvas.add(image);
             this.canvas.draw();
@@ -165,7 +165,6 @@ export class CreateFloorPlanPage {
         cornerRadius: 2,
         padding: 20,
         fill: 'white',
-        name: 'sensor',
         customId: this.getUniqueId(),
         opacity: 1,
       });
@@ -218,7 +217,7 @@ export class CreateFloorPlanPage {
 
             this.canvasContainer = new Konva.Stage({
                 container: '#canvasElement',
-                width: width*0.965,
+                width: width*0.9783,
                 height: height*0.965                
             });
 
@@ -410,7 +409,7 @@ export class CreateFloorPlanPage {
         }
 
         // do nothing if clicked NOT on our lines or images or text
-        if (!e.target.hasName('stall') && !e.target.hasName('wall') && !e.target.hasName('sensor')) {
+        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall')) {
           this.activeItem = null;
           return;
         }
@@ -772,6 +771,29 @@ export class CreateFloorPlanPage {
       onWindowResize() {
         this.checkScreenWidth();
       }
+
+      // set the grid lines when the window is resized
+    @HostListener('window:resize', ['$event'])
+    onResize(event: any) {
+      // remove gridlines and then add them again
+      this.removeGridLines();
+      this.createGridLines();
+    }
+
+    removeGridLines(): void {
+      this.canvas?.children?.forEach((child: any) => {
+        if (child.attrs.customClass === 'grid-line') {
+          child.remove();
+        }
+      });
+
+      
+      const width = this.canvasParent.nativeElement.offsetWidth;
+      const height = this.canvasParent.nativeElement.offsetHeight;
+
+      this.canvasContainer.setAttr('width', width*0.9783);
+      this.canvasContainer.setAttr('height', height*0.965);
+    }
     
       ngOnInit() {
         this.checkScreenWidth();

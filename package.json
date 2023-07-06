@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "compile": "cd rust-lib && wasm-pack build --target nodejs && cd .. && yarn install --force",
     "start:dev": "yarn concurrently \"yarn nx serve app\" \"yarn nx serve api\"",
     "test": "jest"
   },
@@ -37,6 +38,7 @@
     "axios": "^1.0.0",
     "cookie-parser": "^1.4.6",
     "fabric": "^5.3.0",
+    "ffi-napi": "^4.0.3",
     "helmet": "^7.0.0",
     "immer": "^10.0.2",
     "konva": "^9.2.0",
@@ -48,6 +50,8 @@
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
+    "ref-napi": "^3.0.3",
+    "ref-struct-napi": "^1.1.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -70,7 +74,7 @@
     "@nrwl/nest": "^16.1.0",
     "@nx/cypress": "16.1.0",
     "@nx/eslint-plugin": "16.1.0",
-    "@nx/jest": "16.1.0",
+    "@nx/jest": "16.2.1",
     "@nx/js": "16.2.1",
     "@nx/linter": "16.1.0",
     "@nx/nest": "16.2.1",
