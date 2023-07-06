@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
+  IGetUserNameResponse,
   IGetUserRoleResponse,
   IGetUsersResponse,
   IUpdateRoleRequest,
@@ -69,6 +70,14 @@ export class AppApiService {
 
   getRole(): Observable<IGetUserRoleResponse> {
     return this.http.get<IGetUserRoleResponse>('/api/user/getRole', {
+      headers: {
+        'x-csrf-token': this.cookieService.get('csrf'),
+      },
+    });
+  }
+
+  getUserName(): Observable<IGetUserNameResponse> {
+    return this.http.get<IGetUserNameResponse>('/api/user/getUserName', {
       headers: {
         'x-csrf-token': this.cookieService.get('csrf'),
       },
