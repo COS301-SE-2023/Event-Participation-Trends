@@ -240,6 +240,9 @@
       ],
       "@event-participation-trends/app/viewevents/util": [
         "libs/app/viewevents/util/src/index.ts"
+      ],
+      "@event-participation-trends/sensorlinking": [
+        "libs/sensorlinking/src/index.ts"
       ]
     }
   },

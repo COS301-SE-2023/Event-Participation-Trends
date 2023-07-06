@@ -272,7 +272,12 @@ export class PositioningService {
       const id = sensor_reading.id;
 
       if (map.has(id)) {
-        const sensor_readings = map.get(id)!;
+        const sensor_readings = map.get(id);
+
+        if (sensor_readings === undefined) {
+          throw new Error('sensor_readings is undefined');
+        }
+
         sensor_readings.push(sensor_reading);
       } else {
         const sensor_readings: SensorReading[] = [sensor_reading];

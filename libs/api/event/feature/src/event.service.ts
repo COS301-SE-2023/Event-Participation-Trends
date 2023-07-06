@@ -96,6 +96,22 @@ export class EventService {
         return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
     }
 
+    // Stalls
+    async getAllEventStalls(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    async getEventStall(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    async createEventStall(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    async updateEventStall(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
     async updateEventFloorLayout(request: IUpdateFloorlayoutRequest){
         return await this.commandBus.execute<UpdateFloorlayoutCommand, IUpdateFloorlayoutResponse>(new UpdateFloorlayoutCommand(request));
     }

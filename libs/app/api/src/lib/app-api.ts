@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
+  IGetProfilePicUrlResponse,
+  IGetUserNameResponse,
   IGetUserRoleResponse,
   IGetUsersResponse,
   IUpdateRoleRequest,
@@ -69,6 +71,14 @@ export class AppApiService {
 
   getRole(): Observable<IGetUserRoleResponse> {
     return this.http.get<IGetUserRoleResponse>('/api/user/getRole', {
+      headers: {
+        'x-csrf-token': this.cookieService.get('csrf'),
+      },
+    });
+  }
+
+  getUserName(): Observable<IGetUserNameResponse> {
+    return this.http.get<IGetUserNameResponse>('/api/user/getUserName', {
       headers: {
         'x-csrf-token': this.cookieService.get('csrf'),
       },
@@ -197,6 +207,14 @@ export class AppApiService {
       )
     ).then((response) => {
       return response.status;
+    });
+  }
+
+  async getProfilePicUrl(){
+    this.http.get<IGetProfilePicUrlResponse>('/api/user/getProfilePicUrl', {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
     });
   }
 }

@@ -7,3 +7,5 @@ export * from './remove-event-from-viewer.handler';
 export * from './update-event-detials.handler';
 export * from './update-floorlayout.handler';
 export * from './add-device-position.handler';
+export * from './create-stall.handler';
+export * from './update-stall.handler';

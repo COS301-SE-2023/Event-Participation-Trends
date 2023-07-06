@@ -9,6 +9,10 @@ export * from './get-all-viewer-events.response';
 export * from './remove-viewer.response';
 export * from './update-event-details.response';
 export * from './get-event.response';
+export * from './create-stall.response';
+export * from './update-stall.response';
+export * from './get-all-event-stalls.response';
 export * from './update-floorlayout.response';
 export * from './get-event-floorlayout.response';
+
 export * from './add-device-position.response';

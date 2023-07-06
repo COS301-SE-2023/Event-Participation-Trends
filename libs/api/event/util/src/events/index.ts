@@ -5,5 +5,8 @@ export * from './accept-view-request.event';
 export * from './remove-viewer-from-event.event';
 export * from './remove-event-from-viewer.event';
 export * from './update-event-details-event';
+export * from './create-stall.event';
+export * from './update-stall.event';
 export * from './update-floorlayout.event';
+
 export * from './add-device-position.event';
