@@ -32,6 +32,12 @@ import {
     IGetEventRequest,
     IGetEventResponse,
     GetEventQuery,
+    IUpdateFloorlayoutRequest,
+    IUpdateFloorlayoutResponse,
+    UpdateFloorlayoutCommand,
+    IGetEventFloorlayoutRequest,
+    IGetEventFloorlayoutResponse,
+    GetEventFloorlayoutQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -82,6 +88,14 @@ export class EventService {
 
     async getEvent(request: IGetEventRequest) {
         return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    async updateEventFloorLayout(request: IUpdateFloorlayoutRequest){
+        return await this.commandBus.execute<UpdateFloorlayoutCommand, IUpdateFloorlayoutResponse>(new UpdateFloorlayoutCommand(request));
+    }
+
+    async getEventFloorLayout(request: IGetEventFloorlayoutRequest) {
+        return await this.queryBus.execute<GetEventFloorlayoutQuery, IGetEventFloorlayoutResponse>(new GetEventFloorlayoutQuery(request));
     }
 
 }

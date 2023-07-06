@@ -1,4 +1,4 @@
-import { CreateEventEvent } from '@event-participation-trends/api/event/util';
+import { CreateEventEvent, Position } from '@event-participation-trends/api/event/util';
 import { IEventHandler, EventsHandler } from '@nestjs/cqrs';
 import { IEvent } from "@event-participation-trends/api/event/util";
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
@@ -22,10 +22,10 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             Name: event.event.Name,
             Category: event.event.Category,
             Location: event.event.Location,  
-            //thisFloorLayout: null,
+            FloorLayout: null,
             Stalls: null,
             Sensors: null,
-            Devices: null,
+            Devices: Array<Position>(),
             Manager: event.event.Manager,
             Requesters: new Array<Types.ObjectId>(), 
             Viewers: ViewersArr,

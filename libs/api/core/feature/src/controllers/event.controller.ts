@@ -22,6 +22,10 @@ import {
     IUpdateEventDetailsResponse,
     IGetEventRequest,
     IGetEventResponse,
+    IUpdateFloorlayoutRequest,
+    IUpdateFloorlayoutResponse,
+    IGetEventFloorlayoutRequest,
+    IGetEventFloorlayoutResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -87,12 +91,9 @@ export class EventController {
 
   @Get('getAllEvents')
   @SetMetadata('role', Role.VIEWER)
-  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
   async getAllEvents(@Req() req: Request): Promise<IGetAllEventsResponse> {
     const request: any = req;
-
-    if (request.user['email'] == undefined || request.user['email'] == null)
-      throw new HttpException('Bad Request: Admin email not provided', 400);
 
     const extractRequest: IGetAllEventsRequest = {
       AdminEmail: request.user['email'],
@@ -268,5 +269,47 @@ export class EventController {
       (<unknown>this.eventService.getEvent(extractRequest))
     );
   }
+
+  @Post('updateEventFloorlayout')
+  @SetMetadata('role',Role.MANAGER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async updateEventFloorlayout(
+    @Body() requestBody: IUpdateFloorlayoutRequest
+  ): Promise<IUpdateFloorlayoutResponse> {
+
+    if(requestBody.eventId==undefined || requestBody.eventId ==null)
+        throw new HttpException("Bad Request: eventId not provided", 400);
+
+    if(requestBody.floorlayout==undefined || requestBody.floorlayout ==null)
+        throw new HttpException("Bad Request: floorlayout not provided", 400);
+
+    const extractRequest: IUpdateFloorlayoutRequest = {
+        eventId: requestBody.eventId,
+        floorlayout: requestBody.floorlayout,
+    };
+
+    return <IUpdateFloorlayoutResponse>(
+        (<unknown>this.eventService.updateEventFloorLayout(extractRequest))
+    );
+  }
+
+  @Get('getEventFloorLayout')
+  @SetMetadata('role',Role.VIEWER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async getEventFloorLayout(
+      @Query() query: any
+  ): Promise<IGetEventFloorlayoutResponse> {
+
+    if(query.eventId==undefined || query.eventId ==null)
+          throw new HttpException("Bad Request: eventId not provided", 400);
+
+  const extractRequest: IGetEventFloorlayoutRequest = {
+    eventId: query.eventId,
+  };
+
+  return <IGetEventFloorlayoutResponse>(
+    (<unknown>this.eventService.getEventFloorLayout(extractRequest))
+  );
+}
 
 }

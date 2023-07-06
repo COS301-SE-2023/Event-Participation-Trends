@@ -1,15 +1,16 @@
 import { 
     IEvent, 
-    CreateEventEvent, 
+    CreateEventEvent,
+    IFloorLayout, 
     } from '@event-participation-trends/api/event/util';
 import {
-    IDevice,
     IEventLocation,
     IStall,
     ISensor,
 } from '@event-participation-trends/api/event/util';
 import {Types } from 'mongoose';
 import { AggregateRoot } from '@nestjs/cqrs';
+import { IPosition } from '@event-participation-trends/api/event/data-access';
 
 export class Event extends AggregateRoot implements IEvent {
     constructor(
@@ -18,10 +19,10 @@ export class Event extends AggregateRoot implements IEvent {
         public Name?: string | undefined | null,
         public Category?: string | undefined | null,
         public Location?: IEventLocation | undefined | null,
-        //public thisFloorLayout?: IFloorLayout | undefined | null,
+        public FloorLayout?: IFloorLayout | undefined | null,
         public Stalls?: IStall[] | undefined | null,
         public Sensors?: ISensor[] | undefined | null,
-        public Devices?: IDevice[] | undefined | null,
+        public Devices?: IPosition[] | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
         public Requesters?: Types.ObjectId[] | undefined | null,
         public Viewers?: Types.ObjectId[] | undefined | null,
@@ -40,7 +41,7 @@ export class Event extends AggregateRoot implements IEvent {
             event.Name,
             event.Category,
             event.Location,
-            //event.thisFloorLayout,
+            event.FloorLayout,
             event.Stalls,
             event.Sensors,
             event.Devices,
@@ -58,7 +59,7 @@ export class Event extends AggregateRoot implements IEvent {
             Name: this.Name,
             Category: this.Category,
             Location: this.Location,
-           // thisFloorLayout: this.thisFloorLayout,
+            FloorLayout: this.FloorLayout,
             Stalls: this.Stalls,
             Sensors: this.Sensors,
             Devices: this.Devices,

@@ -3,7 +3,6 @@ import { IEventDetails, IEventLocation } from '@event-participation-trends/api/e
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
-         Device,
          EventLocation,
          Sensor,
          Stall,
@@ -14,8 +13,6 @@ import { Types } from 'mongoose';
 export class EventRepository {
     constructor(
         @InjectModel(Event.name) private eventModel: mongoose.Model<Event>,
-        @InjectModel(Device.name) private deviceModel: mongoose.Model<Device>,
-        //@InjectModel(FloorLayout.name) private floorLayoutModel: mongoose.Model<FloorLayout>,
         @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
         @InjectModel(Stall.name) private stallModel: mongoose.Model<Stall>,
@@ -113,6 +110,11 @@ export class EventRepository {
         return await this.eventModel.updateOne(
         {_id :{$eq: eventID}},{$set: {Location :location}})
     }
+    
+    async updateEventFloorlayout(eventID: Types.ObjectId, floorlayout: string){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {FloorLayout :floorlayout}})
+    }
 
     async getALLEventNames(){
         return await this.eventModel.find({ Name: 1 });
@@ -122,4 +124,9 @@ export class EventRepository {
         return await this.eventModel.find({_id :{$eq: eventID}});
     }
 
+    async getEventFloorlayout(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { FloorLayout: 1 })
+    }
 }
