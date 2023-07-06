@@ -36,6 +36,15 @@
       "@event-participation-trends/api/event/util": [
         "libs/api/event/util/src/index.ts"
       ],
+      "@event-participation-trends/api/global/data-access": [
+        "libs/api/global/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/api/global/feature": [
+        "libs/api/global/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/global/util": [
+        "libs/api/global/util/src/index.ts"
+      ],
       "@event-participation-trends/api/guards": [
         "libs/api/guards/src/index.ts"
       ],
