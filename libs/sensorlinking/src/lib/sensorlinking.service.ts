@@ -1,17 +1,24 @@
+import { EventService } from '@event-participation-trends/api/event/feature';
 import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { promisify } from 'util';
+import { Interval } from '@nestjs/schedule';
+import { IEvent } from '@event-participation-trends/api/event/util';
 const randomBytesP = promisify(randomBytes);
 
 @Injectable()
 export class SensorlinkingService {
   private eventSensorIdToMacAddressMap: Map<string, string>;
-  constructor() {
+  public events: Array<IEvent>;
+  public shouldUpdate: boolean;
+  constructor(private readonly eventService: EventService) {
     this.eventSensorIdToMacAddressMap = new Map<string, string>();
+    this.events = new Array<IEvent>();
+    this.shouldUpdate = false;
   }
   async linkSensorToEventSensor(mac: string, eventSensorId: string) {
-    console.log(this.save());
     this.eventSensorIdToMacAddressMap.set(eventSensorId, mac);
+    this.save();
   }
   async getNewEventSensorId(): Promise<string> {
     // Generate a random 4 character ascii string
@@ -38,5 +45,16 @@ export class SensorlinkingService {
   }
   async getMacAddress(eventSensorId: string): Promise<string> {
     return this.eventSensorIdToMacAddressMap.get(eventSensorId) || "";
+  }
+  @Interval(10000)
+  async refreshEvents() {
+    if(!this.shouldUpdate)
+      return;
+    this.eventService.getAllEvent({
+      AdminEmail: '',
+    }).then((events) => {
+      this.events = events.events;
+    }
+    );
   }
 }

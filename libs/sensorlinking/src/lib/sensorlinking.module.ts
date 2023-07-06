@@ -1,20 +1,27 @@
 import { Module } from '@nestjs/common';
 import { SensorlinkingController } from './sensorlinking.controller';
-import { ApiGuardsModule } from '@event-participation-trends/api/guards';
-import { JwtService } from '@nestjs/jwt';
-import { UserService } from '@event-participation-trends/api/user/feature';
-import { UserModule } from '@event-participation-trends/api/user/data-access';
+import { UserService, UserModule } from '@event-participation-trends/api/user/feature';
 import { CqrsModule } from '@nestjs/cqrs';
+import { EventService } from '@event-participation-trends/api/event/feature';
+import { EventModule } from '@event-participation-trends/api/event/data-access';
+import { ApiGuardsModule } from '@event-participation-trends/api/guards';
+import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { JwtService } from '@nestjs/jwt';
 import { SensorlinkingService } from './sensorlinking.service';
+
 
 @Module({
   imports: [
-    ApiGuardsModule,
+    ConfigModule.forRoot(),
     UserModule,
-    CqrsModule
+    EventModule,
+    CqrsModule,
+    ApiGuardsModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [SensorlinkingController],
-  providers: [JwtService, UserService, SensorlinkingService],
+  providers: [UserService, EventService, JwtService, SensorlinkingService],
   exports: [],
 })
 export class SensorlinkingModule {}

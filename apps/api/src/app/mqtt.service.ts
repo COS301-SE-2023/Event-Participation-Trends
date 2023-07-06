@@ -41,46 +41,50 @@ export class MqttService {
         tempSensors.devices.push(device);
       }
     });
-    // console.log(tempSensors);
     this.buffer.push(tempSensors);
   }
 
   @Interval(5000)
   async processBuffer() {
-    const extractRequest: IGetAllEventsRequest = {
-      AdminEmail: '',
-    };
-    const events = []; //(await this.eventService.getAllEvent(extractRequest)).events;
-    events.forEach((event) => {
-      const sensors = new Set<any>();
-      (event as any).thisFloorLayout?.children?.forEach((child: any) => {
-        if (child.className === 'Image') {
-          sensors.add({
-            x: child.attrs.x,
-            y: child.attrs.y,
-            id: child.attrs.customId,
-          });
-        }
-      });
-      const tempBuffer: SensorReading[] = new Array<SensorReading>();
-      sensors.forEach((sensor) => {
-        const id = sensor.id;
-        const sensorMac = this.sensorLinkingService.getMacAddress(id);
-        this.buffer
-          .filter((data) => data.sensorMac === sensorMac)
-          .forEach((data) => {
-            data.devices.forEach((device: any) => {
-              tempBuffer.push({
-                id: device.mac,
-                signal_strength: device.rssi,
-                timestamp: data.time,
-                x: sensor.x,
-                y: sensor.y,
+    const events = this.sensorLinkingService.events;
+    this.sensorLinkingService.shouldUpdate = true;
+    events
+      ?.filter(
+        (event) => event.StartDate < new Date() && event.EndDate > new Date()
+      )
+      .forEach((event) => {
+        const sensors = new Set<any>();
+        if(!event.FloorLayout) return;
+        const thisFloorLayout = JSON.parse(event.FloorLayout as unknown as string);
+        if(thisFloorLayout?.children === undefined) return;
+        thisFloorLayout?.children?.forEach((child: any) => {
+          if (child.className === 'Image') {
+            sensors.add({
+              x: child.attrs.x,
+              y: child.attrs.y,
+              id: child.attrs.customId,
+            });
+          }
+        });
+        const tempBuffer: SensorReading[] = new Array<SensorReading>();
+        sensors.forEach(async (sensor) => {
+          const id = sensor.id;
+          const sensorMac = await this.sensorLinkingService.getMacAddress(id);
+          this.buffer
+            .filter((data) => data.sensorMac === sensorMac)
+            .forEach((data) => {
+              data.devices.forEach((device: any) => {
+                tempBuffer.push({
+                  id: device.mac,
+                  signal_strength: device.rssi,
+                  timestamp: data.time,
+                  x: sensor.x,
+                  y: sensor.y,
+                });
               });
             });
-          });
+        });
       });
-    });
     this.buffer = new Array<any>();
   }
 }
