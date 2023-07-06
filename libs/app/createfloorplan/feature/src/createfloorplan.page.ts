@@ -5,7 +5,7 @@ import { Line } from 'konva/lib/shapes/Line';
 
 interface DroppedItem {
   name: string;
-  konvaObject?: Konva.Line | Konva.Image | Konva.Group;
+  konvaObject?: Konva.Line | Konva.Image | Konva.Group | Konva.Text;
 }
 @Component({
   selector: 'event-participation-trends-createfloorplan',
@@ -92,10 +92,11 @@ export class CreateFloorPlanPage {
 
     onDrop(event: DragEvent): void {
         event.preventDefault();
+        this.canvasContainer.setPointersPositions(event);
         const name = event.dataTransfer?.getData('text/plain');
         if (name) {
-            const positionX = event.clientX - this.canvasElement.nativeElement.offsetLeft;
-            const positionY = event.clientY - this.canvasElement.nativeElement.offsetTop;
+            const positionX = this.canvasContainer.getPointerPosition()?.x || 0;
+            const positionY = this.canvasContainer.getPointerPosition()?.y || 0;
             const droppedItem: DroppedItem = { name };
             this.canvasItems.push(droppedItem);
             this.addKonvaObject(droppedItem, positionX, positionY);
@@ -106,11 +107,14 @@ export class CreateFloorPlanPage {
       if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
         Konva.Image.fromURL(droppedItem.name, (image) => {
           this.setupElement(image, positionX, positionY);
-          image.setAttr('name', 'stall');
-
+          
           if (droppedItem.name.includes('stall')) {
+            image.setAttr('name', 'stall');
+            image.setAttr('x', 0);
+            image.setAttr('y', 0);
             const group = new Konva.Group({
               id: 'stall',
+              name: 'stall',
               x: positionX,
               y: positionY,
               width: 50,
@@ -122,8 +126,9 @@ export class CreateFloorPlanPage {
             
             const text = new Konva.Text({
               id: 'stallName',
-              x: positionX,
-              y: positionY,
+              name: 'stallName',
+              x: 0,
+              y: 0,
               text: 'Stall',
               fontSize: 11,
               fontFamily: 'Calibri',
@@ -171,7 +176,7 @@ export class CreateFloorPlanPage {
       this.setMouseEvents(element);
     }
 
-    setMouseEvents(element: Konva.Line | Konva.Image | Konva.Group): void {
+    setMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text): void {
       if (element instanceof Konva.Line) {
         element.on('dragmove', () => {
           this.setTransformer(undefined, element);
@@ -190,7 +195,7 @@ export class CreateFloorPlanPage {
           document.body.style.cursor = 'default';
         });
       }
-      else if (element instanceof Konva.Image) {
+      else if (element instanceof Konva.Image || element instanceof Konva.Text) {
         element.on('dragmove', () => {
           this.activeItem = element;
           this.setTransformer(this.activeItem, undefined);
@@ -212,7 +217,8 @@ export class CreateFloorPlanPage {
       }
       else if (element instanceof Konva.Group) {
         element.on('dragmove', () => {
-          this.setTransformer(element, undefined);
+          this.activeItem = element;
+          this.setTransformer(this.activeItem, undefined);
         });
         element.on('dragend', () => {
           this.openDustbin = false;
@@ -231,7 +237,7 @@ export class CreateFloorPlanPage {
       }
     }
 
-    removeMouseEvents(element: Konva.Line | Konva.Image | Konva.Group): void {
+    removeMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text): void {
       if (element instanceof Konva.Line) {
         element.off('dragmove');
         element.off('dragend');
@@ -295,11 +301,21 @@ export class CreateFloorPlanPage {
               if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image) && !(component instanceof Konva.Group)) {
                 this.transformer.detach();
               }
+
+              if (component && component instanceof Konva.Text) {
+                const selectedText = component;
+                const group = selectedText.getAncestors()[0] as Konva.Group;
+                
+                if (group) {
+                  this.activeItem = group;
+                  this.setTransformer(group, undefined);
+                }
+              }
             });
         }, 6);
     }
 
-    setTransformer(mouseEvent?: Konva.Image | Konva.Group, line?: Konva.Line): void {
+    setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line): void {
       this.transformer.detach();
       this.canvas.add(this.transformer);
       let target = null;
@@ -430,7 +446,7 @@ export class CreateFloorPlanPage {
         });
 
         //find any this related to lines and images and text
-        const shapes = this.canvasContainer.find('.rect, .wall, .sensor, .stall');
+        const shapes = this.canvasContainer.find('.rect, .wall, .sensor, .stall, .stallName');
         const box = selectionBox.getClientRect();
         const selected = shapes.filter((shape) => {
           return Konva.Util.haveIntersection(box, shape.getClientRect());
@@ -478,7 +494,7 @@ export class CreateFloorPlanPage {
         }
 
         // do nothing if clicked NOT on our lines or images or text
-        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall')) {
+        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall') && !e.target.hasName('stallName')) {
           this.activeItem = null;
           return;
         }
