@@ -1,4 +1,3 @@
-import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import {
     ICreateEventRequest,
     ICreateEventResponse,
