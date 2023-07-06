@@ -22,12 +22,6 @@ export class EventRepository {
         await this.eventModel.create(event);
     }   
 
-    async getAllEventWalls(eventID: Types.ObjectId){
-        return await this.eventModel.find(
-            {_id :{$eq: eventID}},
-            { Walls: 1 }).populate('Walls');
-    }
-
     async getAllEvents(){
         return await this.eventModel.find();
     }
