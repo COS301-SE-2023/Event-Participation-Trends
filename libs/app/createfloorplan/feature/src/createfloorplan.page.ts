@@ -29,7 +29,7 @@ export class CreateFloorPlanPage {
     activeItem: any = null;
     // lines: Konva.Line[] = [];
     transformer = new Konva.Transformer();
-    isEditing = true; // to prevent creating walls
+    preventCreatingWalls = true; // to prevent creating walls
     transformers: Konva.Transformer[] = [this.transformer];
     sensors: Konva.Image[] = [];
     gridSize = 10;
@@ -37,7 +37,7 @@ export class CreateFloorPlanPage {
     activePath: Konva.Path | null = null;
 
     toggleEditing(): void {
-      this.isEditing = !this.isEditing;
+      this.preventCreatingWalls = !this.preventCreatingWalls;
       this.activeItem = null;
 
       //remove all selected items
@@ -49,10 +49,10 @@ export class CreateFloorPlanPage {
       this.canvasItems.forEach(item => {
         if (!item.konvaObject) return;
 
-        item.konvaObject?.setAttr('draggable', this.isEditing);
-        item.konvaObject?.setAttr('opacity', this.isEditing ? 1 : 0.5);
+        item.konvaObject?.setAttr('draggable', this.preventCreatingWalls);
+        item.konvaObject?.setAttr('opacity', this.preventCreatingWalls ? 1 : 0.5);
         
-        if (this.isEditing){
+        if (this.preventCreatingWalls){
           this.setMouseEvents(item.konvaObject);
         } else {
           this.removeMouseEvents(item.konvaObject);
@@ -223,7 +223,7 @@ export class CreateFloorPlanPage {
             this.canvasContainer = new Konva.Stage({
                 container: '#canvasElement',
                 width: width*0.9783,
-                height: height*0.965                
+                height: height*0.92               
             });
 
             this.canvas = new Konva.Layer();
@@ -316,7 +316,7 @@ export class CreateFloorPlanPage {
       let y2: number;
 
       this.canvasContainer.on('mousedown', (e) => {
-        if (!this.isEditing) {
+        if (!this.preventCreatingWalls) {
           this.activeItem = null;
           return;
         }
@@ -339,7 +339,7 @@ export class CreateFloorPlanPage {
       });
 
       this.canvasContainer.on('mousemove', (e) => {
-        if (!this.isEditing) {
+        if (!this.preventCreatingWalls) {
           return;
         }
         
@@ -362,7 +362,7 @@ export class CreateFloorPlanPage {
       });
 
       this.canvasContainer.on('mouseup', (e) => {
-        if (!this.isEditing) {
+        if (!this.preventCreatingWalls) {
           return;
         }
         
@@ -403,7 +403,7 @@ export class CreateFloorPlanPage {
 
       // clicks should select/deselect shapes
       this.canvasContainer.on('click', (e) => {
-        if (!this.isEditing) {
+        if (!this.preventCreatingWalls) {
           return;
         }
         
@@ -620,7 +620,7 @@ export class CreateFloorPlanPage {
           || target instanceof Konva.Group) {
             // Clicking on a line or path or image or group will not do anything
             return;
-        } else if (this.isEditing) {
+        } else if (this.preventCreatingWalls) {
           return;
         }
         else this.transformer.detach();
