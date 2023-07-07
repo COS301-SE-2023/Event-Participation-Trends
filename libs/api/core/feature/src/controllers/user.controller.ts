@@ -101,17 +101,6 @@ export class UserController {
     @Get('getFullName')
     @SetMetadata('role', Role.VIEWER)
     @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
-    async getFirstAndLastName(@Req() req: Request): Promise<IGetFullNameResponse> {
-        const request: any = req;
-        console.log(request.user['firstName'] + ' ' + request.user['lastName'])
-        return {
-            fullName: request.user['firstName'] + ' ' + request.user['lastName'],
-        };
-    }
-
-    @Get('getFullName')
-    @SetMetadata('role', Role.VIEWER)
-    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getFullName(@Req() req: Request): Promise<IGetFullNameResponse> {
         const request: any = req;
         return {
