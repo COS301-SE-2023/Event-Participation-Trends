@@ -140,7 +140,7 @@ export class SubPageNavPage implements OnInit{
     // navigate back preserving the query params
     const queryParams : NavigationExtras = {
       queryParams: {
-        m: this.currentPage === '/event/createfloorplan' ? 'true' : 'false',
+        m: this.currentPage === '/event/createfloorplan' && this.prevPage === '/event/eventdetails' ? 'true' : 'false',
         id: this.params?.id,
         queryParamsHandling: 'merge',
       },
