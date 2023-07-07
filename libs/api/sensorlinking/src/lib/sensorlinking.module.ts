@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SensorlinkingController } from './sensorlinking.controller';
-import { UserService, UserModule } from '@event-participation-trends/api/user/feature';
+import {
+  UserService,
+  UserModule,
+} from '@event-participation-trends/api/user/feature';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EventService } from '@event-participation-trends/api/event/feature';
 import { EventModule } from '@event-participation-trends/api/event/data-access';
@@ -9,8 +12,10 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JwtService } from '@nestjs/jwt';
 import { SensorlinkingService } from './sensorlinking.service';
-import { GlobalModule, GlobalService } from '@event-participation-trends/api/global/feature';
-
+import {
+  GlobalModule,
+  GlobalService,
+} from '@event-participation-trends/api/global/feature';
 
 @Module({
   imports: [
@@ -20,10 +25,16 @@ import { GlobalModule, GlobalService } from '@event-participation-trends/api/glo
     CqrsModule,
     ApiGuardsModule,
     ScheduleModule.forRoot(),
-    GlobalModule
+    GlobalModule,
   ],
   controllers: [SensorlinkingController],
-  providers: [UserService, EventService, JwtService, SensorlinkingService, GlobalService],
+  providers: [
+    UserService,
+    EventService,
+    JwtService,
+    SensorlinkingService,
+    GlobalService,
+  ],
   exports: [],
 })
 export class SensorlinkingModule {}
