@@ -30,6 +30,12 @@ export class SubPageNavPage implements OnInit{
     id: string,
     queryParamsHandling: string
   } | null = null;
+  
+  public username = '';
+  public fullName = '';
+  public profilePicUrl = '';
+  public email = '';
+  public faultyImage = false;
 
   constructor(
     appApiService: AppApiService, 
@@ -54,6 +60,16 @@ export class SubPageNavPage implements OnInit{
       id: this.route.snapshot.queryParams['id'],
       queryParamsHandling: this.route.snapshot.queryParams['queryParamsHandling']
     };
+
+    this.appApiService.getUserName().subscribe((response)=>{
+      this.username = response.username || '';
+    });    
+    this.appApiService.getProfilePicUrl().subscribe((response)=>{
+      this.profilePicUrl = response.url || '';
+      if (this.profilePicUrl === '') {
+        this.faultyImage = true;
+      }
+    });
   }
 
   getRole(): Role {
