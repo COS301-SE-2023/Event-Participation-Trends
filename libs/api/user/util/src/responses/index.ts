@@ -8,3 +8,4 @@ export * from './add-event-to-admin.response';
 export * from './getUserName.response';
 export * from './getProfilePicUrl.response';
 export * from './getFullName.response';
+export * from './getEmail.response';

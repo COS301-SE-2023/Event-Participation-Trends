@@ -17,13 +17,21 @@ export class HomePage {
 
   public role = Role.VIEWER;
   public username = '';
+  public profilePicUrl = '';
+  public faultyImage = false;
+
   constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
     this.appApiService.getRole().subscribe((response)=>{
       this.role = (response.userRole as Role) || Role.VIEWER;
     });
     this.appApiService.getUserName().subscribe((response)=>{
       this.username = response.username || '';
-      console.log(this.username)
+    });    
+    this.appApiService.getProfilePicUrl().subscribe((response)=>{
+      this.profilePicUrl = response.url || '';
+      if (this.profilePicUrl === '') {
+        this.faultyImage = true;
+      }
     });
   }
 

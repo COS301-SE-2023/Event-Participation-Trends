@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
+  IGetEmailResponse,
+  IGetFullNameResponse,
   IGetProfilePicUrlResponse,
   IGetUserNameResponse,
   IGetUserRoleResponse,
@@ -80,6 +82,22 @@ export class AppApiService {
 
   getUserName(): Observable<IGetUserNameResponse> {
     return this.http.get<IGetUserNameResponse>('/api/user/getUserName', {
+      headers: {
+        'x-csrf-token': this.cookieService.get('csrf'),
+      },
+    });
+  }
+
+  getFullName(): Observable<IGetFullNameResponse> {
+      return this.http.get<IGetFullNameResponse>('/api/user/getFullName', {
+        headers: {
+          'x-csrf-token': this.cookieService.get('csrf'),
+        },
+      });
+    }
+
+  getEmail(): Observable<IGetEmailResponse> {
+    return this.http.get<IGetEmailResponse>('/api/user/getEmail', {
       headers: {
         'x-csrf-token': this.cookieService.get('csrf'),
       },
@@ -211,8 +229,8 @@ export class AppApiService {
     });
   }
 
-  async getProfilePicUrl(){
-    this.http.get<IGetProfilePicUrlResponse>('/api/user/getProfilePicUrl', {
+  getProfilePicUrl(): Observable<IGetProfilePicUrlResponse>{
+    return this.http.get<IGetProfilePicUrlResponse>('/api/user/getProfilePicUrl', {
       headers:{
         'x-csrf-token': this.cookieService.get('csrf'),
       }

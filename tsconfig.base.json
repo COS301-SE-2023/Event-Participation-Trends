@@ -63,6 +63,9 @@
       "@event-participation-trends/api/positioning": [
         "libs/api/positioning/src/index.ts"
       ],
+      "@event-participation-trends/api/sensorlinking": [
+        "libs/api/sensorlinking/src/index.ts"
+      ],
       "@event-participation-trends/api/user/data-access": [
         "libs/api/user/data-access/src/index.ts"
       ],
@@ -249,9 +252,6 @@
       ],
       "@event-participation-trends/app/viewevents/util": [
         "libs/app/viewevents/util/src/index.ts"
-      ],
-      "@event-participation-trends/sensorlinking": [
-        "libs/sensorlinking/src/index.ts"
       ]
     }
   },
