@@ -56,7 +56,8 @@
     </div>
 
     <ion-button (click)="openProfile($event)" ngClass="profile-section" class="flex justify-self-end">
-      <img slot="end" src="{{profilePicUrl}}" class="w-[35px] h-[35px] rounded-full ml-2" alt="profile picture">
+      <ion-icon *ngIf="faultyImage" slot="end" name="person-circle-outline" class="w-[40px] h-[40px] rounded-full" alt="profile picture"></ion-icon>
+      <img *ngIf="!faultyImage" slot="end" src="{{profilePicUrl}}" class="w-[35px] h-[35px] rounded-full ml-2" alt="profile picture">
       <ion-label ngClass="profile-name">{{username}}</ion-label>
     </ion-button>
   </ion-tab-bar>
