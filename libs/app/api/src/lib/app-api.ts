@@ -88,12 +88,12 @@ export class AppApiService {
   }
 
   getFullName(): Observable<IGetFullNameResponse> {
-    return this.http.get<IGetFullNameResponse>('/api/user/getFullName', {
-      headers: {
-        'x-csrf-token': this.cookieService.get('csrf'),
-      },
-    });
-  }
+      return this.http.get<IGetFullNameResponse>('/api/user/getFullName', {
+        headers: {
+          'x-csrf-token': this.cookieService.get('csrf'),
+        },
+      });
+    }
 
   getEmail(): Observable<IGetEmailResponse> {
     return this.http.get<IGetEmailResponse>('/api/user/getEmail', {
@@ -102,7 +102,7 @@ export class AppApiService {
       },
     });
   }
-  
+
   // EVENTS //
   createEvent(event: IEventDetails): Observable<ICreateEventResponse> {
     return this.http.post<ICreateEventResponse>(

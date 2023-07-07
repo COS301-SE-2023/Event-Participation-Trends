@@ -3,7 +3,7 @@ import { IGetAllEventsRequest } from '@event-participation-trends/api/event/util
 import { SensorReading } from '@event-participation-trends/api/positioning';
 import { Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
-import { SensorlinkingService } from '@event-participation-trends/sensorlinking';
+import { SensorlinkingService } from '@event-participation-trends/api/sensorlinking';
 
 @Injectable()
 export class MqttService {
@@ -12,10 +12,7 @@ export class MqttService {
   private buffer: Array<any>;
   private idNum: number;
 
-  constructor(
-    private readonly eventService: EventService,
-    private readonly sensorLinkingService: SensorlinkingService
-  ) {
+  constructor(private readonly sensorLinkingService: SensorlinkingService) {
     this.sensors = new Array<string>();
     this.macToId = new Map<string, number>();
     this.buffer = new Array<any>();
@@ -54,9 +51,11 @@ export class MqttService {
       )
       .forEach((event) => {
         const sensors = new Set<any>();
-        if(!event.FloorLayout) return;
-        const thisFloorLayout = JSON.parse(event.FloorLayout as unknown as string);
-        if(thisFloorLayout?.children === undefined) return;
+        if (!event.FloorLayout) return;
+        const thisFloorLayout = JSON.parse(
+          event.FloorLayout as unknown as string
+        );
+        if (thisFloorLayout?.children === undefined) return;
         thisFloorLayout?.children?.forEach((child: any) => {
           if (child.className === 'Image') {
             sensors.add({
