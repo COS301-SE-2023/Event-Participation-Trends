@@ -197,4 +197,15 @@ export class VieweventsPage {
 
     this.router.navigate(['/event/dashboard'], queryParams);
   }
+
+  openAddEventPage() {
+    const queryParams: NavigationExtras = {
+      queryParams: {
+        // id: this.
+        queryParamsHandling: 'merge',
+      },
+    };
+
+    this.router.navigate(['/event/addevent'], queryParams);
+  }
 }

@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { get } from 'http';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
+import { AppApiService } from '@event-participation-trends/app/api';
 
 interface DroppedItem {
   name: string;
@@ -35,6 +36,10 @@ export class CreateFloorPlanPage {
     gridSize = 10;
     paths: Konva.Path[] = [];
     activePath: Konva.Path | null = null;
+
+    constructor(
+      private readonly appApiService: AppApiService
+    ) {}
 
     toggleEditing(): void {
       this.preventCreatingWalls = !this.preventCreatingWalls;
@@ -223,7 +228,7 @@ export class CreateFloorPlanPage {
             this.canvasContainer = new Konva.Stage({
                 container: '#canvasElement',
                 width: width*0.9783,
-                height: height*0.92               
+                height: height*0.925               
             });
 
             this.canvas = new Konva.Layer();
@@ -295,9 +300,7 @@ export class CreateFloorPlanPage {
 
     createSelectionBox(): void {
 
-      const tr = new Konva.Transformer({
-        enabledAnchors: []
-      });
+      const tr = new Konva.Transformer();
       this.transformers.push(tr);
       this.canvas.add(tr);
 
@@ -818,7 +821,7 @@ export class CreateFloorPlanPage {
         this.shouldStackVertically = window.innerWidth < 1421;
       }
 
-      testJSON(): void {
+      saveFloorLayout(): void {
         // remove grid lines from the JSON data
         const json = this.canvas.toObject();
 
@@ -828,6 +831,12 @@ export class CreateFloorPlanPage {
         });
 
         console.log(json);
+
+        //stringify the JSON data
+        const jsonString = JSON.stringify(json);
+
+        // save the JSON data to the database
+        // this.appApiService.updateFloorLayout(jsonString)
       }
 
       getUniqueId(): string {

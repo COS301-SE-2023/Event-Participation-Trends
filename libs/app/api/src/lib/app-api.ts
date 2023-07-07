@@ -25,6 +25,7 @@ import {
   ISendViewRequestResponse,
   IUpdateEventDetailsRequest,
   IUpdateEventDetailsResponse,
+  IUpdateFloorlayoutResponse
 } from '@event-participation-trends/api/event/util';
 import { Observable, firstValueFrom } from 'rxjs';
 import { Status } from '@event-participation-trends/api/user/util';
@@ -217,4 +218,16 @@ export class AppApiService {
       }
     });
   }
+
+  async updateFloorLayout(eventId: IEventId, floorLayout: string) {
+    this.http.post<IUpdateFloorlayoutResponse>('/api/event/updateEventFloorLayout', {
+      eventId: eventId.eventId,
+      floorLayout: floorLayout
+    }, {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
+    });
+  }
+
 }

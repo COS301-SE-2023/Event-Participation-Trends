@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ModalController, NavController } from '@ionic/angular';
@@ -37,7 +37,7 @@ export class SubPageNavPage implements OnInit{
     private router: Router, 
     private navController: NavController, 
     private readonly store: Store,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
     ) {
     this.appApiService = appApiService;
 
@@ -91,8 +91,16 @@ export class SubPageNavPage implements OnInit{
     // get path from router
     this.router.events.subscribe((val) => {
       this.currentPage = this.router.url.split('?')[0];
-      this.prevPage = this.currentPage === '/event/createfloorplan' ? '/event/addevent' : '/home';
-      this.store.dispatch(new SetSubPageNav(this.currentPage, this.prevPage));
+
+      //check if url contains 'm=true'
+      if (this.router.url.includes('m=')) {
+        this.prevPage = this.currentPage === '/event/createfloorplan' ? '/event/eventdetails' : '/home';
+      }
+      else {
+        this.prevPage = this.currentPage === '/event/createfloorplan' ? '/event/addevent' : '/home';
+      }
+        
+        this.store.dispatch(new SetSubPageNav(this.currentPage, this.prevPage));
     });
   }
 
@@ -113,7 +121,15 @@ export class SubPageNavPage implements OnInit{
   }
 
   goBack() {
-    this.navController.navigateBack([this.getPrevPage()]);
+    // navigate back preserving the query params
+    const queryParams : NavigationExtras = {
+      queryParams: {
+        m: this.currentPage === '/event/createfloorplan' ? 'true' : 'false',
+        id: this.params?.id,
+        queryParamsHandling: 'merge',
+      },
+    };  
+    this.navController.navigateBack(this.prevPage, queryParams);
   }
 
   async openProfile(event: any) {
