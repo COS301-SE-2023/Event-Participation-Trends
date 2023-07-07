@@ -2,11 +2,12 @@ import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { NavController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { SubPageNavState } from '@event-participation-trends/app/subpagenav/data-access';
 import { Observable } from 'rxjs';
 import { SetSubPageNav } from '@event-participation-trends/app/subpagenav/util';
+import { ProfileComponent } from '@event-participation-trends/app/profile/feature';
 
 @Component({
   selector: 'subpagenav',
@@ -30,7 +31,14 @@ export class SubPageNavPage implements OnInit{
     queryParamsHandling: string
   } | null = null;
 
-  constructor(appApiService: AppApiService, private readonly route: ActivatedRoute, private router: Router, private navController: NavController, private readonly store: Store) {
+  constructor(
+    appApiService: AppApiService, 
+    private readonly route: ActivatedRoute, 
+    private router: Router, 
+    private navController: NavController, 
+    private readonly store: Store,
+    private readonly modalController: ModalController
+    ) {
     this.appApiService = appApiService;
 
     this.appApiService.getRole().subscribe((response)=>{
@@ -106,5 +114,18 @@ export class SubPageNavPage implements OnInit{
 
   goBack() {
     this.navController.navigateBack([this.getPrevPage()]);
+  }
+
+  async openProfile(event: any) {
+    const modal = await this.modalController.create({
+      component: ProfileComponent,
+      componentProps: {
+        event: event,
+      },
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onDidDismiss();
   }
 }

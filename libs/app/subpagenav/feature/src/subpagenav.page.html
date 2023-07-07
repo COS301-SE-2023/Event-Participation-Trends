@@ -56,7 +56,7 @@
       </ion-tab-button>
     </div>
 
-    <ion-button ngClass="profile-section" class="flex justify-self-end" [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}">
+    <ion-button (click)="openProfile($event)" ngClass="profile-section" class="flex justify-self-end" [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}">
       <ion-icon
         slot="end"
         name="person-circle"

@@ -1,6 +1,8 @@
 import { Component, HostListener } from '@angular/core';
 import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
+import { ProfileComponent } from '@event-participation-trends/app/profile/feature';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'event-participation-trends-home',
@@ -14,7 +16,7 @@ export class HomePage {
   compareSelected = false;
 
   public role = Role.VIEWER;
-  constructor(private appApiService: AppApiService) {
+  constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
     this.appApiService.getRole().subscribe((response)=>{
       this.role = (response.userRole as Role) || Role.VIEWER;
     });
@@ -67,5 +69,18 @@ export class HomePage {
 
   private checkScreenSize() {
     this.isLargeScreen = window.innerWidth >= 1310;
+  }
+
+  async openProfile(event: any) {
+    const modal = await this.modalController.create({
+      component: ProfileComponent,
+      componentProps: {
+        event: event,
+      },
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onDidDismiss();
   }
 }
