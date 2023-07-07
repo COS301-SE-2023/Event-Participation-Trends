@@ -16,9 +16,14 @@ export class HomePage {
   compareSelected = false;
 
   public role = Role.VIEWER;
+  public username = '';
   constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
     this.appApiService.getRole().subscribe((response)=>{
       this.role = (response.userRole as Role) || Role.VIEWER;
+    });
+    this.appApiService.getUserName().subscribe((response)=>{
+      this.username = response.username || '';
+      console.log(this.username)
     });
   }
 

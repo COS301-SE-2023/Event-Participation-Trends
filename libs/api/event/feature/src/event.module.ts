@@ -13,6 +13,7 @@ import {
     RemoveEventFromViewerHandler,
     UpdateEventDetailsHandler,
     UpdateFloorlayoutHandler,
+    AddDevicePositionHandler,
 } from './commands';
 
 import { 
@@ -32,6 +33,7 @@ import {
     RemoveEventFromViewerEventHandler,
     UpdateEventDetialsEventHandler,
     UpdateFloorlayoutEventHandler,
+    AddDevicePositionEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -47,6 +49,7 @@ export const CommandHandlers = [
     RemoveEventFromViewerHandler,
     UpdateEventDetailsHandler,
     UpdateFloorlayoutHandler,
+    AddDevicePositionHandler,
 ]
 
 export const EventHandlers = [
@@ -58,6 +61,7 @@ export const EventHandlers = [
     RemoveEventFromViewerEventHandler,
     UpdateEventDetialsEventHandler,
     UpdateFloorlayoutEventHandler,
+    AddDevicePositionEventHandler,
 ];
 
 export const QueryHandlers = [
@@ -68,6 +72,7 @@ export const QueryHandlers = [
     GetEventHandler,
     GetEventFloorlayoutHandler,
 ];
+
 
 @Module({
     imports: [CqrsModule, EventDataAccessModule, UserDataAccessModule],
