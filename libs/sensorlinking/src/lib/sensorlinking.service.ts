@@ -4,6 +4,8 @@ import { randomBytes } from 'crypto';
 import { promisify } from 'util';
 import { Interval } from '@nestjs/schedule';
 import { IEvent } from '@event-participation-trends/api/event/util';
+import { GlobalService } from '@event-participation-trends/api/global/feature';
+import { SensorIdToMac } from '@event-participation-trends/api/global/util';
 const randomBytesP = promisify(randomBytes);
 
 @Injectable()
@@ -11,14 +13,15 @@ export class SensorlinkingService {
   private eventSensorIdToMacAddressMap: Map<string, string>;
   public events: Array<IEvent>;
   public shouldUpdate: boolean;
-  constructor(private readonly eventService: EventService) {
+  constructor(private readonly eventService: EventService, private readonly globalService: GlobalService) {
     this.eventSensorIdToMacAddressMap = new Map<string, string>();
     this.events = new Array<IEvent>();
     this.shouldUpdate = false;
   }
   async linkSensorToEventSensor(mac: string, eventSensorId: string) {
+    await this.load();
     this.eventSensorIdToMacAddressMap.set(eventSensorId, mac);
-    this.save();
+    await this.save();
   }
   async getNewEventSensorId(): Promise<string> {
     // Generate a random 4 character ascii string
@@ -28,16 +31,25 @@ export class SensorlinkingService {
     }
     return randomValue;
   }
-  async save(): Promise<Array<any>> {
+  async save(): Promise<Array<SensorIdToMac>> {
     const out = new Array<any>();
     this.eventSensorIdToMacAddressMap.forEach((value, key) => {
       out.push({ eventSensorId: key, mac: value });
     });
+    await this.globalService.createGlobal(
+      {
+        sensorIdToMacs: out
+      }
+    );
     return out;
   }
-  async load(data: Array<any>) {
-    data.forEach((value) => {
-      this.eventSensorIdToMacAddressMap.set(value.eventSensorId, value.mac);
+  async load() {
+    (await this.globalService.getGlobal(
+      {
+        sensorIdToMacs: true
+      }
+    )).sensorIdToMacs?.forEach((value) => {
+      this.eventSensorIdToMacAddressMap.set(value.eventSensorId || "", value.mac || "");
     });
   }
   async isLinked(eventSensorId: string): Promise<boolean> {
@@ -56,5 +68,6 @@ export class SensorlinkingService {
       this.events = events.events;
     }
     );
+    this.load();
   }
 }

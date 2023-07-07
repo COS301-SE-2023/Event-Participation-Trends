@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JwtService } from '@nestjs/jwt';
 import { SensorlinkingService } from './sensorlinking.service';
+import { GlobalModule, GlobalService } from '@event-participation-trends/api/global/feature';
 
 
 @Module({
@@ -19,9 +20,10 @@ import { SensorlinkingService } from './sensorlinking.service';
     CqrsModule,
     ApiGuardsModule,
     ScheduleModule.forRoot(),
+    GlobalModule
   ],
   controllers: [SensorlinkingController],
-  providers: [UserService, EventService, JwtService, SensorlinkingService],
+  providers: [UserService, EventService, JwtService, SensorlinkingService, GlobalService],
   exports: [],
 })
 export class SensorlinkingModule {}

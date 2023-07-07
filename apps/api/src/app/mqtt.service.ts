@@ -13,7 +13,6 @@ export class MqttService {
   private idNum: number;
 
   constructor(
-    private readonly eventService: EventService,
     private readonly sensorLinkingService: SensorlinkingService
   ) {
     this.sensors = new Array<string>();
