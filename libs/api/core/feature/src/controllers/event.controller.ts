@@ -311,5 +311,4 @@ export class EventController {
     (<unknown>this.eventService.getEventFloorLayout(extractRequest))
   );
 }
-
 }

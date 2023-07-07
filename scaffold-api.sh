@@ -29,3 +29,8 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=api/use
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=api/event --no-interactive
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=api/event --no-interactive
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=api/event --no-interactive
+
+#GLOBAL
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=api/global --no-interactive
+yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=api/global --no-interactive
+yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=api/global --no-interactive

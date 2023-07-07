@@ -1,6 +1,7 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
     IGetFullNameResponse,
+    IGetProfilePicUrlResponse,
     IGetUserNameResponse,
     IGetUserRoleResponse,
   IGetUsersRequest,
@@ -86,6 +87,16 @@ export class UserController {
         };
     }
 
+    @Get('getProfilePicUrl')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getProfilePhotoLink(@Req() req: Request): Promise<IGetProfilePicUrlResponse> {
+        const request: any = req;
+        return {
+            url: request.user['picture'],
+        };
+    }
+
     @Get('getFullName')
     @SetMetadata('role', Role.VIEWER)
     @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
@@ -96,5 +107,4 @@ export class UserController {
             fullName: request.user['firstName'] + ' ' + request.user['lastName'],
         };
     }
-
 }
