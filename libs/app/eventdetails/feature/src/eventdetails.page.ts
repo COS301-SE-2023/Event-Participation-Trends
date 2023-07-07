@@ -45,14 +45,12 @@ export class EventDetailsPage {
         }
         this.startDate = this.event.StartDate.split('T')[0];
         this.endDate = this.event.EndDate.split('T')[0];
-        this.startTime = this.event.StartDate.split('T')[1].split('.')[0];
-        this.endTime = this.event.EndDate.split('T')[1].split('.')[0];
+        this.startTime = this.event.StartDate.split('T')[1].substring(0, 5);
+        this.endTime = this.event.EndDate.split('T')[1].substring(0, 5);
         this.location = this.event.Location.StreetName + ', ' + this.event.Location.CityName;
         this.category = this.event.Category;
         this.name = this.event.Name;
-        console.log(this.event)
         appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
-          console.log('users', users);
           this.accessRequests = users;
         });
       })
