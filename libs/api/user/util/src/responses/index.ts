@@ -6,3 +6,4 @@ export * from './add-viewing-event.response';
 export * from './add-viewing-event-by-name.response';
 export * from './add-event-to-admin.response';
 export * from './getUserName.response';
+export * from './getFullName.response';
