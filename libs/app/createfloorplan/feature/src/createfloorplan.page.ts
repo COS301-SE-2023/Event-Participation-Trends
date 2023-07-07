@@ -3,6 +3,7 @@ import { get } from 'http';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { AppApiService } from '@event-participation-trends/app/api';
+import { ActivatedRoute } from '@angular/router';
 
 interface DroppedItem {
   name: string;
@@ -38,7 +39,8 @@ export class CreateFloorPlanPage {
     activePath: Konva.Path | null = null;
 
     constructor(
-      private readonly appApiService: AppApiService
+      private readonly appApiService: AppApiService,
+      private readonly route: ActivatedRoute,
     ) {}
 
     toggleEditing(): void {
@@ -830,13 +832,20 @@ export class CreateFloorPlanPage {
           return child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor';
         });
 
-        console.log(json);
-
         //stringify the JSON data
         const jsonString = JSON.stringify(json);
 
+        // subscribe to params and get the event id
+        let eventId = '';
+        
+        this.route.queryParams.subscribe(params => {
+          eventId = params['id'];
+        });
+
         // save the JSON data to the database
-        // this.appApiService.updateFloorLayout(jsonString)
+        this.appApiService.updateFloorLayout(eventId, jsonString).subscribe((res: any) => {
+          console.log(res);
+        });
       }
 
       getUniqueId(): string {

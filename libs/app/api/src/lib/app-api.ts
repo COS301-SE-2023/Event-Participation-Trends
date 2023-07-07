@@ -237,10 +237,10 @@ export class AppApiService {
     });
   }
 
-  async updateFloorLayout(eventId: IEventId, floorLayout: string) {
-    this.http.post<IUpdateFloorlayoutResponse>('/api/event/updateEventFloorLayout', {
-      eventId: eventId.eventId,
-      floorLayout: floorLayout
+  updateFloorLayout(eventId: string, floorLayout: string): Observable<IUpdateFloorlayoutResponse> {
+    return this.http.post<IUpdateFloorlayoutResponse>('/api/event/updateEventFloorLayout', {
+      eventId: eventId,
+      floorlayout: floorLayout
     }, {
       headers:{
         'x-csrf-token': this.cookieService.get('csrf'),
