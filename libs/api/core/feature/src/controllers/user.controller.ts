@@ -1,5 +1,6 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
+    IGetEmailResponse,
     IGetFullNameResponse,
     IGetProfilePicUrlResponse,
     IGetUserNameResponse,
@@ -105,6 +106,26 @@ export class UserController {
         console.log(request.user['firstName'] + ' ' + request.user['lastName'])
         return {
             fullName: request.user['firstName'] + ' ' + request.user['lastName'],
+        };
+    }
+
+    @Get('getFullName')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getFullName(@Req() req: Request): Promise<IGetFullNameResponse> {
+        const request: any = req;
+        return {
+            fullName: request.user['firstName'] + ' ' + request.user['lastName'],
+        };
+    }
+
+    @Get('getEmail')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getEmail(@Req() req: Request): Promise<IGetEmailResponse> {
+        const request: any = req;
+        return {
+            email: request.user['email'],
         };
     }
 }
