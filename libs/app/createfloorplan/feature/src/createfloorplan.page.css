@@ -1,3 +1,30 @@
+ion-toggle {
+  /* padding: 12px; */
+
+  --track-background: #101010;
+  --track-background-checked: #101010;
+
+  --handle-background: #f5f5f5;
+  --handle-background-checked: #facc15;
+
+  --handle-width: 20px;
+  --handle-height: 20px;
+  --handle-max-height: auto;
+  --handle-spacing: 3px;
+
+  --handle-border-radius: 25px;
+  --handle-box-shadow: none;
+}
+
+ion-toggle::part(track) {
+  height: 25px;
+  width: 50px;
+  border-radius: 25px;
+
+  /* Required for iOS handle to overflow the height of the track */
+  overflow: visible;
+}
+
 .content {
     display: grid;
     grid-template-columns: 2fr 10fr;
@@ -50,9 +77,7 @@ h1 {
 }
 
 .components-list {
-    height: 0;
     width: auto;
-    opacity: 0;
     transition: all 0.75s ease;
     overflow: hidden;
     margin-left: 20px;

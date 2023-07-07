@@ -93,6 +93,10 @@ yarn nx generate @nrwl/angular:component addevent --project=app-addevent-feature
 yarn nx generate @nrwl/angular:module addevent --project=app-addevent-feature --routing
 yarn nx generate @nrwl/angular:module addevent --project=app-addevent-data-access
 
+# Profile
+yarn nx generate @nrwl/angular:component profile --project=app-profile-feature --export --flat --type=component --standalone
+yarn nx generate @nrwl/angular:module profile --project=app-profile-feature
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries
@@ -187,3 +191,6 @@ yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/addevent --no-interactive     # --> feature
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=app/addevent --no-interactive # --> data-access
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=app/addevent --no-interactive        # --> util
+
+# Profile
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=app/profile --no-interactive     # --> feature

@@ -1,3 +1,13 @@
+ion-tab-button {
+    --color-selected: none;
+    --color: none;
+    font-size: inherit;
+  }
+  
+  .tab-button.tab-selected,
+  .tab-button-no-border.tab-selected {
+    color: #facc15;
+  }
 /* .nav-bar {
     background-color: #212121;
     height: 49px;

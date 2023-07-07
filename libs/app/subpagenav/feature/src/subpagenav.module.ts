@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SubPageNavPage } from '@event-participation-trends/app/shared/feature';
+import { SubPageNavPage } from './subpagenav.page';
 import { IonicModule } from '@ionic/angular';
-import { SharedModule } from '@event-participation-trends/app/shared/feature';
-
-
+import { SubPageNavRoutingModule } from './subpagenav.routing';
+import { SubPageNavModule as SubPageNavDataAccessModule } from '@event-participation-trends/app/subpagenav/data-access';
 @NgModule({
-  declarations: [],
+  declarations: [SubPageNavPage],
   imports: [
     CommonModule,
     IonicModule,
-    SharedModule
+    SubPageNavRoutingModule,
+    SubPageNavDataAccessModule
   ]
 })
 export class SubPageNavModule { }
