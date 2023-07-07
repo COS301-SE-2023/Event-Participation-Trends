@@ -66,24 +66,27 @@ export class MqttService {
           }
         });
         const tempBuffer: SensorReading[] = new Array<SensorReading>();
-        sensors.forEach(async (sensor) => {
+        sensors.forEach((sensor) => {
           const id = sensor.id;
-          const sensorMac = await this.sensorLinkingService.getMacAddress(id);
-          this.buffer
-            .filter((data) => data.sensorMac === sensorMac)
-            .forEach((data) => {
-              data.devices.forEach((device: any) => {
-                tempBuffer.push({
-                  id: device.mac,
-                  signal_strength: device.rssi,
-                  timestamp: data.time,
-                  x: sensor.x,
-                  y: sensor.y,
+          this.sensorLinkingService.getMacAddress(id).then((sensorMac)=>{
+            this.buffer
+              .filter((data) => data.sensorMac === sensorMac)
+              .forEach((data) => {
+                data.devices.forEach((device: any) => {
+                  tempBuffer.push({
+                    id: device.mac,
+                    signal_strength: device.rssi,
+                    timestamp: data.time,
+                    x: sensor.x,
+                    y: sensor.y,
+                  });
                 });
               });
-            });
+          }).then(()=>{
+            // console.log(tempBuffer);
+            this.buffer = new Array<any>();
+          });
         });
       });
-    this.buffer = new Array<any>();
   }
 }
