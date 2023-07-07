@@ -27,6 +27,7 @@ import {
   SensorlinkingService,
 } from '@event-participation-trends/api/sensorlinking';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ApiPositioningModule, PositioningService } from '@event-participation-trends/api/positioning';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ApiGuardsModule,
     SensorlinkingModule,
     ScheduleModule.forRoot(),
+    ApiPositioningModule
   ],
   controllers: [MqttController],
   providers: [
@@ -61,6 +63,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     UserService,
     EventService,
     SensorlinkingService,
+    PositioningService
   ],
 })
 export class MqttModule {}
