@@ -25,6 +25,44 @@ ion-toggle::part(track) {
   overflow: visible;
 }
 
+/*
+* The following is used to flip the card on the left side of the screen
+*/
+.card-container {
+  position: relative;
+  perspective: 1000px;
+}
+
+.card {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.front-side,
+.back-side {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  backface-visibility: hidden;
+}
+
+.front-side {
+  z-index: 2;
+}
+
+.back-side {
+  transform: rotateY(180deg);
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+/*///////////////////////////////////////////////*/
+
 .content {
     display: grid;
     grid-template-columns: 2fr 10fr;
