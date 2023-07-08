@@ -14,5 +14,5 @@ export * from './update-stall.response';
 export * from './get-all-event-stalls.response';
 export * from './update-floorlayout.response';
 export * from './get-event-floorlayout.response';
-
+export * from './add-event-viewer.response';
 export * from './add-device-position.response';

@@ -8,5 +8,5 @@ export * from './update-event-detials.command';
 export * from './create-stall.command';
 export * from './update-stall.command';
 export * from './update-floorlayout.command';
-
+export * from './add-event-viewer.command';
 export * from './add-device-position.command';
