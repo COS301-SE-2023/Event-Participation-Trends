@@ -182,8 +182,9 @@
             <ion-label class="text-ept-deep-grey opacity-40">Selected Sensor Id:</ion-label>
             <ion-text class="text-ept-deep-grey font-bold m-auto opacity-1">{{getSelectedSensorId()}}</ion-text>
           </div>
-          <div>
-            <ion-list class="mt-3">
+          <div class="mt-5 text-center">
+            <ion-label class="text-ept-deep-grey opacity-40">Select a sensor to link with:</ion-label>
+            <ion-list>
               <ion-item
                 *ngFor="let sensorId of SensorIds"
               >
@@ -192,6 +193,7 @@
                 </ion-checkbox>
               </ion-item>
             </ion-list>
+            <ion-text class="text-red-500 font-bold m-auto opacity-1" *ngIf="SensorIds.length === 0">No sensors found</ion-text>
           </div>
         </div>
       </div>
