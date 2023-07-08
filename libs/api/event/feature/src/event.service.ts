@@ -41,6 +41,9 @@ import {
     IAddDevicePositionRequest,
     IAddDevicePositionResponse,
     AddDevicePositionCommand,
+    IAddViewerRequest,
+    IAddViewerResponse,
+    AddViewerCommand,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -122,5 +125,9 @@ export class EventService {
 
     async addDevicePosition(request: IAddDevicePositionRequest){
         return await this.commandBus.execute<AddDevicePositionCommand, IAddDevicePositionResponse>(new AddDevicePositionCommand(request));
+    }
+
+    async addEventViewer(request: IAddViewerRequest){
+        return await this.commandBus.execute<AddViewerCommand, IAddViewerResponse>(new AddViewerCommand(request));
     }
 }
