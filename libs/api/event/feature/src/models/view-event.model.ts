@@ -1,6 +1,7 @@
 import { 
     IViewEvent, 
     SendViewRequestEvent, 
+    AddViewerEvent
     } from '@event-participation-trends/api/event/util';
 import { Types } from 'mongoose';
 import { AggregateRoot } from '@nestjs/cqrs';
@@ -15,6 +16,10 @@ export class ViewEvent extends AggregateRoot implements IViewEvent {
 
     create() {
         this.apply(new SendViewRequestEvent(this.toJSON()));
+    }
+
+    add() {
+        this.apply(new AddViewerEvent(this.toJSON()));
     }
 
     static fromData(event: IViewEvent): ViewEvent {
