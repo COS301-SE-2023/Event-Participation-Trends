@@ -918,4 +918,8 @@ export class CreateFloorPlanPage {
     toggleCardFlip() {
       this.isCardFlipped = !this.isCardFlipped;
     }
+
+    getSelectedSensorId() {
+      return this.activeItem?.attrs.customId;
+    }
 }

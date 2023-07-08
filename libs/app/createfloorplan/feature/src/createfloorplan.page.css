@@ -25,6 +25,24 @@ ion-toggle::part(track) {
   overflow: visible;
 }
 
+ion-checkbox {
+  --checkbox-background-checked: #101010;
+  --checkmark-color: #facc15;
+  --checkmark-width: 4px;
+}
+
+ion-checkbox::part(container) {
+  border: 2px solid #101010;
+}
+
+ion-list {
+  background: transparent;
+
+}
+ion-item {
+    --background: inherit;
+}
+
 /*
 * The following is used to flip the card on the left side of the screen
 */
