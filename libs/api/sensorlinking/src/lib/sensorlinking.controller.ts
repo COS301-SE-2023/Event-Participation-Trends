@@ -19,7 +19,7 @@ import { IgetNewEventSensorIdResponse, IisLinkedResponse } from '../interfaces';
 import { IlinkSensorRequest } from '../interfaces/linkSensorRequest.interface';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 
-@Controller('sensorlinking')
+@Controller('sensorLinking')
 export class SensorlinkingController {
   constructor(private readonly sensorLinkingService: SensorlinkingService) {}
 
