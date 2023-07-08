@@ -600,6 +600,8 @@ export class CreateFloorPlanPage {
                 selectedObject.remove();
                 this.openDustbin = false;
                 this.onDustbin = false;
+                this.activeItem = null;
+                
                 // remove item from canvasItems array
                 const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
                 if (index > -1) {
