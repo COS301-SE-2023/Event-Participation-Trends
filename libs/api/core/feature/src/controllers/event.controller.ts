@@ -26,6 +26,8 @@ import {
     IUpdateFloorlayoutResponse,
     IGetEventFloorlayoutRequest,
     IGetEventFloorlayoutResponse,
+    IAddViewerRequest,
+    IAddViewerResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -48,7 +50,7 @@ import {
   JwtGuard,
   RbacGuard,
 } from '@event-participation-trends/api/guards';
-import { Role } from '@event-participation-trends/api/user/util';
+import { IAddEventToAdminRequest, Role } from '@event-participation-trends/api/user/util';
 
 
 @Controller('event')
@@ -310,5 +312,29 @@ export class EventController {
   return <IGetEventFloorlayoutResponse>(
     (<unknown>this.eventService.getEventFloorLayout(extractRequest))
   );
-}
+ }
+ 
+    @Post('addEventViewer')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async addEventViewer(
+    @Body() requestBody: IAddViewerRequest
+    ): Promise<IAddViewerResponse> {
+
+    if(requestBody.eventId==undefined || requestBody.eventId ==null)
+        throw new HttpException("Bad Request: eventId not provided", 400);
+
+    if(requestBody.userEmail==undefined || requestBody.userEmail ==null)
+        throw new HttpException("Bad Request: userEmail not provided", 400);
+
+    const extractRequest: IAddViewerRequest = {
+            userEmail: requestBody.userEmail,
+            eventId: requestBody.eventId,
+    };
+
+    return <IAddViewerResponse>(
+        (<unknown>this.eventService.addEventViewer(extractRequest))
+    );
+    }
+
 }
