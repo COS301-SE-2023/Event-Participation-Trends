@@ -67,7 +67,7 @@ export class MqttService {
           }
         });
         const tempBuffer: SensorReading[] = new Array<SensorReading>();
-        console.log(sensors);
+        // console.log(sensors);
         sensors.forEach((sensor) => {
           const id = sensor.id;
           this.sensorLinkingService.getMacAddress(id).then((sensorMac)=>{
