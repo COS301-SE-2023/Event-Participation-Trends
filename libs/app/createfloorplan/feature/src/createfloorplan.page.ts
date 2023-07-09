@@ -294,6 +294,8 @@ export class CreateFloorPlanPage {
     }
 
     setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line | Konva.Path): void {
+      if(!this.preventCreatingWalls) return;
+      
       this.transformer.detach();
       this.canvas.add(this.transformer);
       let target = null;
