@@ -922,4 +922,8 @@ export class CreateFloorPlanPage {
     getSelectedSensorId() {
       return this.activeItem?.attrs.customId;
     }
+
+    updateLinkedSensors() {
+      console.log('sensors linked');
+    }
 }

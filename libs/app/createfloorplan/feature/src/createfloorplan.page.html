@@ -195,6 +195,10 @@
             </ion-list>
             <ion-text class="text-red-500 font-bold m-auto opacity-1" *ngIf="SensorIds.length === 0">No sensors found</ion-text>
           </div>
+          <ion-button
+            (click)="updateLinkedSensors()"
+            class="create-event mt-20 ml-20 right-2.5 h-40px text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg absolute bottom-0 mb-10 hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
+          >Save changes</ion-button>
         </div>
       </div>
     </div>
