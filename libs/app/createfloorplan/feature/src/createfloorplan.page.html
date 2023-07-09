@@ -25,32 +25,21 @@
           >
             Components
           </h3>
-          <div class="components-list mb-1 overflow-hidden">
-            <div class="overflow-y-auto max-h-52 flex">
-              <img
-                id="sensorImage"
-                class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
-                draggable="true"
-                (dragstart)="onDragStart($event)"
-                src="assets/sensor.png"
-                alt="sensor"
-              />
-              <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4"
-                >Sensor</ion-text
-              >
+          <div
+            class="components-list mb-1 overflow-hidden"
+          >
+            <div class="overflow-y-auto max-h-52 flex" [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}">
+              <img id="sensorImage" class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
+              draggable="true"
+              (dragstart)="onDragStart($event)" src="assets/sensor.png" alt="sensor">
+              <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4">Sensor</ion-text>
             </div>
-            <div class="overflow-y-auto max-h-52 flex">
-              <img
-                class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
-                #stall
-                draggable="true"
-                (dragstart)="onDragStart($event)"
-                src="assets/stall-icon.png"
-                alt="stall"
-              />
-              <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4"
-                >Stall</ion-text
-              >
+            <div class="overflow-y-auto max-h-52 flex" [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}">
+              <img class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
+              #stall
+              draggable="true"
+              (dragstart)="onDragStart($event)" src="assets/stall-icon.png" alt="stall">
+              <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4">Stall</ion-text>
             </div>
           </div>
           <h3 class="attributes-heading mt-3 ml-2">Component Attributes</h3>
@@ -146,15 +135,15 @@
           </div>
     
           <div class="mt-2 text-center">
-            <hr />
-            <div class="flex flex-row justify-evenly mt-4">
-              <ion-label>Creating walls</ion-label>
+            <div class="flex flex-row justify-evenly items-center mb-4">
+              <ion-label>Component Selection</ion-label>
               <ion-toggle
-                aria-label="Warning toggle"
-                [checked]="!preventCreatingWalls"
-                class="col-span-1"
-                (ionChange)="toggleEditing()"
-              ></ion-toggle>
+                  aria-label="Warning toggle"
+                  [checked]="!preventCreatingWalls"
+                  class="col-span-1"
+                  (ionChange)="toggleEditing()"
+                ></ion-toggle>
+                <ion-label>Wall Creation</ion-label>
             </div>
           </div>
     
@@ -201,6 +190,7 @@
           >Save changes</ion-button>
         </div>
       </div>
+
     </div>
     <div
       id="canvasParent"
@@ -211,9 +201,15 @@
     >
       <p
         class="bg-white z-50 rounded-md text-center text-2xl text-ept-deep-grey text-opacity-30 font-semibold mt-10 absolute top-1/2 left-1/3"
-        *ngIf="noItemsAdded()"
+        *ngIf="noItemsAdded() && preventCreatingWalls"
       >
         Drag a component to the canvas
+      </p>
+      <p
+        class="bg-white z-50 rounded-md text-center text-2xl text-ept-deep-grey text-opacity-30 font-semibold mt-10 absolute top-1/2 left-1/3"
+        *ngIf="noItemsAdded() && !preventCreatingWalls"
+      >
+        Click and drag to create walls
       </p>
       <div
         id="canvasElement"
@@ -229,7 +225,7 @@
           (dragleave)="onDustbinDragLeave($event)"
           (mouseup)="onDustbinMouseUp($event)"
           [ngClass]="{'drag-over': openDustbin}"
-          [src]="openDustbin ? 'assets/trash-open.svg' : 'assets/trash-svgrepo-com.svg'"
+          [src]="chooseDustbinImage()"
           alt="trash"
           class="bg-white h-10 transition-all duration-300"
         />

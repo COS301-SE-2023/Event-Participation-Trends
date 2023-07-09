@@ -37,6 +37,7 @@ export class CreateFloorPlanPage {
     gridSize = 10;
     paths: Konva.Path[] = [];
     activePath: Konva.Path | null = null;
+    onDustbin = false;
 
     constructor(
       private readonly appApiService: AppApiService,
@@ -536,6 +537,24 @@ export class CreateFloorPlanPage {
             this.canvas.batchDraw();
         
             this.openDustbin = true;
+
+            // test if the cursor is on the dustbin
+            const dustbinElement = this.dustbinElement.nativeElement;
+            const boundingRect = dustbinElement.getBoundingClientRect();
+            const mouseX = event.evt.clientX;
+            const mouseY = event.evt.clientY;
+
+            if (
+                mouseX >= boundingRect.left &&
+                mouseX <= boundingRect.right &&
+                mouseY >= boundingRect.top &&
+                mouseY <= boundingRect.bottom
+            ) {
+                this.onDustbin = true;
+            }
+            else {
+                this.onDustbin = false;
+            }
         }
     }          
     
@@ -548,6 +567,7 @@ export class CreateFloorPlanPage {
       onDustbinDragLeave(event: DragEvent): void {
         event.preventDefault();
         this.openDustbin = false;
+        this.onDustbin = false;
         this.canvasContainer.container().style.cursor = 'default';
       }
       
@@ -579,6 +599,9 @@ export class CreateFloorPlanPage {
                 document.body.style.cursor = 'default';
                 selectedObject.remove();
                 this.openDustbin = false;
+                this.onDustbin = false;
+                this.activeItem = null;
+                
                 // remove item from canvasItems array
                 const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
                 if (index > -1) {
@@ -925,5 +948,17 @@ export class CreateFloorPlanPage {
 
     updateLinkedSensors() {
       console.log('sensors linked');
+    }
+      chooseDustbinImage(): string {
+        if (this.openDustbin && !this.onDustbin) {
+          return 'assets/trash-open.svg';
+        }
+        else if (!this.openDustbin && !this.onDustbin) {
+          return 'assets/trash-svgrepo-com.svg';
+        }
+        else if (this.openDustbin && this.onDustbin) {
+          return 'assets/trash-delete.svg';
+        }
+        else return '';
     }
 }

@@ -1,9 +1,10 @@
 import { EventService } from '@event-participation-trends/api/event/feature';
 import { IGetAllEventsRequest } from '@event-participation-trends/api/event/util';
-import { SensorReading } from '@event-participation-trends/api/positioning';
+import { PositioningService, PositioningSet, SensorReading } from '@event-participation-trends/api/positioning';
 import { Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { SensorlinkingService } from '@event-participation-trends/api/sensorlinking';
+import { Position } from '@event-participation-trends/api/event/data-access';
 
 @Injectable()
 export class MqttService {
@@ -12,7 +13,7 @@ export class MqttService {
   private buffer: Array<any>;
   private idNum: number;
 
-  constructor(private readonly sensorLinkingService: SensorlinkingService) {
+  constructor(private readonly sensorLinkingService: SensorlinkingService, private readonly positioningService: PositioningService) {
     this.sensors = new Array<string>();
     this.macToId = new Map<string, number>();
     this.buffer = new Array<any>();
@@ -66,24 +67,34 @@ export class MqttService {
           }
         });
         const tempBuffer: SensorReading[] = new Array<SensorReading>();
-        sensors.forEach(async (sensor) => {
+        sensors.forEach((sensor) => {
           const id = sensor.id;
-          const sensorMac = await this.sensorLinkingService.getMacAddress(id);
-          this.buffer
-            .filter((data) => data.sensorMac === sensorMac)
-            .forEach((data) => {
-              data.devices.forEach((device: any) => {
-                tempBuffer.push({
-                  id: device.mac,
-                  signal_strength: device.rssi,
-                  timestamp: data.time,
-                  x: sensor.x,
-                  y: sensor.y,
+          this.sensorLinkingService.getMacAddress(id).then((sensorMac)=>{
+            this.buffer
+              .filter((data) => data.sensorMac === sensorMac)
+              .forEach((data) => {
+                data.devices.forEach((device: any) => {
+                  tempBuffer.push({
+                    id: device.mac,
+                    signal_strength: this.positioningService.rssiToDistance(device.rssi),
+                    timestamp: data.time,
+                    x: sensor.x,
+                    y: sensor.y,
+                  });
                 });
               });
-            });
+          }).then(()=>{
+            this.buffer = new Array<any>();
+          });
         });
+        const positioning_sets : PositioningSet[] = this.positioningService.transformToSensorMatrices(tempBuffer);
+        const positions : Position[] = this.positioningService.findPositions(positioning_sets);  
+        
+        // for devices
+        // find kalmann filter of device
+        // if not found, create new, with the first 2 parameeters being the measured x and y
+        // const estimation = kalman.update(new_time, new Matrix(2, 1, [[position.x], [position.y]]));
+        // kalman.predict();
       });
-    this.buffer = new Array<any>();
   }
 }
