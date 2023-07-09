@@ -32,6 +32,7 @@ import {
 import { Observable, firstValueFrom } from 'rxjs';
 import { Status } from '@event-participation-trends/api/user/util';
 import { CookieService } from 'ngx-cookie-service';
+import { IgetNewEventSensorIdResponse } from '@event-participation-trends/api/sensorlinking';
 
 interface IGetRequestsUsersResponse {
   Requesters: IUser[];
@@ -242,6 +243,14 @@ export class AppApiService {
       eventId: eventId,
       floorlayout: floorLayout
     }, {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
+    });
+  }
+
+  getNewEventSensorId(): Observable<IgetNewEventSensorIdResponse> {
+    return this.http.get<IgetNewEventSensorIdResponse>('/api/sensorlinking/getNewID', {
       headers:{
         'x-csrf-token': this.cookieService.get('csrf'),
       }

@@ -41,7 +41,7 @@ export class CreateFloorPlanPage {
 
     constructor(
       private readonly appApiService: AppApiService,
-      private readonly route: ActivatedRoute,
+      private readonly route: ActivatedRoute
     ) {}
 
     toggleEditing(): void {
@@ -295,7 +295,7 @@ export class CreateFloorPlanPage {
 
     setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line | Konva.Path): void {
       if(!this.preventCreatingWalls) return;
-      
+
       this.transformer.detach();
       this.canvas.add(this.transformer);
       let target = null;
@@ -910,19 +910,26 @@ export class CreateFloorPlanPage {
 
       getUniqueId(): string {
         // find latest id from sensor customId attribute first character
-        const sensors = this.sensors;
-        let latestId = 0;
-        sensors.forEach((sensor: any) => {
-            const id = parseInt(sensor.attrs.customId[1]);
-            if (id > latestId) {
-                latestId = id;
-            }
+        // const sensors = this.sensors;
+        // let latestId = 0;
+        // sensors.forEach((sensor: any) => {
+        //     const id = parseInt(sensor.attrs.customId[1]);
+        //     if (id > latestId) {
+        //         latestId = id;
+        //     }
+        // });
+
+        // // generate random string for the id that is maximum 10 characters long
+        // const randomString = Math.random().toString(36).substring(2, 12);
+
+        // return `s${(latestId + 1).toString() + randomString}`;
+
+        this.appApiService.getNewEventSensorId().subscribe((res: any) => {
+          console.log(res);
+          return res;
         });
 
-        // generate random string for the id that is maximum 10 characters long
-        const randomString = Math.random().toString(36).substring(2, 12);
-
-        return `s${(latestId + 1).toString() + randomString}`;
+        return '';
       }
 
       updateWidth(event: any) {
