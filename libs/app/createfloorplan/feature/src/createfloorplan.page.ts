@@ -4,6 +4,7 @@ import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
+import {Html5QrcodeScanner} from "html5-qrcode";
 
 interface DroppedItem {
   name: string;
@@ -352,6 +353,13 @@ export class CreateFloorPlanPage {
 
         // do nothing if we mousedown on any shape
         if (e.target !== this.canvasContainer) {
+          if (e.target instanceof Konva.Image) {
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+              "reader",
+              { fps: 10, qrbox: {width: 250, height: 250} },
+              /* verbose= */ false);
+            html5QrcodeScanner.render(this.onScanSuccess, this.onScanFailure);
+          }
           return;
         }
 
@@ -909,21 +917,6 @@ export class CreateFloorPlanPage {
       }
 
       getUniqueId(): string {
-        // find latest id from sensor customId attribute first character
-        // const sensors = this.sensors;
-        // let latestId = 0;
-        // sensors.forEach((sensor: any) => {
-        //     const id = parseInt(sensor.attrs.customId[1]);
-        //     if (id > latestId) {
-        //         latestId = id;
-        //     }
-        // });
-
-        // // generate random string for the id that is maximum 10 characters long
-        // const randomString = Math.random().toString(36).substring(2, 12);
-
-        // return `s${(latestId + 1).toString() + randomString}`;
-
         this.appApiService.getNewEventSensorId().subscribe((res: any) => {
           console.log(res);
           return res;
@@ -1004,5 +997,16 @@ export class CreateFloorPlanPage {
           return 'assets/trash-delete.svg';
         }
         else return '';
+    }
+
+    onScanSuccess(decodedText: any, decodedResult: any) {
+      // handle the scanned code as you like, for example:
+      console.log(`Code matched = ${decodedText}`, decodedResult);
+    }
+    
+    onScanFailure(error: any) {
+      // handle scan failure, usually better to ignore and keep scanning.
+      // for example:
+      console.warn(`Code scan error = ${error}`);
     }
 }
