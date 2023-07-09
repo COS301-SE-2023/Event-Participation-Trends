@@ -158,6 +158,7 @@ export class CreateFloorPlanPage {
           } 
           else {
             image.setAttr('name', 'sensor');
+            image.setAttr('customId', this.getUniqueId());
             this.sensors.push(image);
             this.canvas.add(image);
             this.canvas.draw();
@@ -178,7 +179,6 @@ export class CreateFloorPlanPage {
         cornerRadius: 2,
         padding: 20,
         fill: 'white',
-        customId: this.getUniqueId(),
         opacity: 1,
       });
     
@@ -917,8 +917,8 @@ export class CreateFloorPlanPage {
             }
         });
 
-        // generate random string for the id
-        const randomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        // generate random string for the id that is maximum 10 characters long
+        const randomString = Math.random().toString(36).substring(2, 12);
 
         return `s${(latestId + 1).toString() + randomString}`;
       }
@@ -949,6 +949,41 @@ export class CreateFloorPlanPage {
         return Math.round(this.activeItem?.rotation());
       }
 
+    isSensor() : boolean {
+      if (this.activeItem && this.activeItem instanceof Konva.Image) {
+        return true;
+      }
+      this.isCardFlipped = false;
+      return false;
+    }
+
+    get SensorIds(): string[] {
+      // filter out active selected sensor
+      const sensors = this.sensors.filter((sensor: any) => {
+        return sensor.attrs.customId !== this.activeItem?.attrs.customId;
+      });
+
+      // get the ids of the sensors
+      const sensorIds = sensors.map((sensor: any) => {
+        return sensor.attrs.customId;
+      });
+
+      return sensorIds;
+    }
+
+    isCardFlipped = false;
+
+    toggleCardFlip() {
+      this.isCardFlipped = !this.isCardFlipped;
+    }
+
+    getSelectedSensorId() {
+      return this.activeItem?.attrs.customId;
+    }
+
+    updateLinkedSensors() {
+      console.log('sensors linked');
+    }
       chooseDustbinImage(): string {
         if (this.openDustbin && !this.onDustbin) {
           return 'assets/trash-open.svg';
