@@ -25,21 +25,38 @@
           >
             Components
           </h3>
-          <div
-            class="components-list mb-1 overflow-hidden"
-          >
-            <div class="overflow-y-auto max-h-52 flex" [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}">
-              <img id="sensorImage" class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
-              draggable="true"
-              (dragstart)="onDragStart($event)" src="assets/sensor.png" alt="sensor">
-              <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4">Sensor</ion-text>
+          <div class="components-list mb-1 overflow-hidden">
+            <div
+              class="overflow-y-auto max-h-52 flex"
+              [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
+            >
+              <img
+                id="sensorImage"
+                class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
+                draggable="true"
+                (dragstart)="onDragStart($event)"
+                src="assets/sensor.png"
+                alt="sensor"
+              />
+              <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4"
+                >Sensor</ion-text
+              >
             </div>
-            <div class="overflow-y-auto max-h-52 flex" [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}">
-              <img class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
-              #stall
-              draggable="true"
-              (dragstart)="onDragStart($event)" src="assets/stall-icon.png" alt="stall">
-              <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4">Stall</ion-text>
+            <div
+              class="overflow-y-auto max-h-52 flex"
+              [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
+            >
+              <img
+                class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
+                #stall
+                draggable="true"
+                (dragstart)="onDragStart($event)"
+                src="assets/stall-icon.png"
+                alt="stall"
+              />
+              <ion-text class="text-ept-deep-grey opacity-40 mt-4 ml-4"
+                >Stall</ion-text
+              >
             </div>
           </div>
           <h3 class="attributes-heading mt-3 ml-2">Component Attributes</h3>
@@ -133,20 +150,20 @@
               ></ion-input>
             </div>
           </div>
-    
+
           <div class="mt-2 text-center">
             <div class="flex flex-row justify-evenly items-center mb-4">
               <ion-label>Component Selection</ion-label>
               <ion-toggle
-                  aria-label="Warning toggle"
-                  [checked]="!preventCreatingWalls"
-                  class="col-span-1"
-                  (ionChange)="toggleEditing()"
-                ></ion-toggle>
-                <ion-label>Wall Creation</ion-label>
+                aria-label="Warning toggle"
+                [checked]="!preventCreatingWalls"
+                class="col-span-1"
+                (ionChange)="toggleEditing()"
+              ></ion-toggle>
+              <ion-label>Wall Creation</ion-label>
             </div>
           </div>
-    
+
           <ion-button
             (click)="saveFloorLayout()"
             class="create-event mt-20 ml-20 right-2.5 h-40px text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg absolute bottom-0 mb-10 hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
@@ -166,31 +183,39 @@
               <ion-icon name="repeat" class="w-8 h-8"></ion-icon>
             </ion-button>
           </div>
-          <hr class="mt-3 mb-3">
+          <hr class="mt-3 mb-3" />
           <div class="flex flex-col text-center">
-            <ion-label class="text-ept-deep-grey opacity-40">Selected Sensor Id:</ion-label>
-            <ion-text class="text-ept-deep-grey font-bold m-auto opacity-1">{{getSelectedSensorId()}}</ion-text>
+            <ion-label class="text-ept-deep-grey opacity-40"
+              >Selected Sensor Id:</ion-label
+            >
+            <ion-text class="text-ept-deep-grey font-bold m-auto opacity-1"
+              >{{getSelectedSensorId()}}</ion-text
+            >
           </div>
           <div class="mt-5 text-center">
-            <ion-label class="text-ept-deep-grey opacity-40">Select a sensor to link with:</ion-label>
+            <ion-label class="text-ept-deep-grey opacity-40"
+              >Select a sensor to link with:</ion-label
+            >
             <ion-list>
-              <ion-item
-                *ngFor="let sensorId of SensorIds"
-              >
+              <ion-item *ngFor="let sensorId of SensorIds">
                 <ion-checkbox>
                   <ion-label>{{sensorId}}</ion-label>
                 </ion-checkbox>
               </ion-item>
             </ion-list>
-            <ion-text class="text-red-500 font-bold m-auto opacity-1" *ngIf="SensorIds.length === 0">No sensors found</ion-text>
+            <ion-text
+              class="text-red-500 font-bold m-auto opacity-1"
+              *ngIf="SensorIds.length === 0"
+              >No sensors found</ion-text
+            >
           </div>
           <ion-button
             (click)="updateLinkedSensors()"
             class="create-event mt-20 ml-20 right-2.5 h-40px text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg absolute bottom-0 mb-10 hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
-          >Save changes</ion-button>
+            >Save changes</ion-button
+          >
         </div>
       </div>
-
     </div>
     <div
       id="canvasParent"
