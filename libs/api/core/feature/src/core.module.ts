@@ -15,9 +15,9 @@ import {
   GlobalModule,
   GlobalService,
 } from '@event-participation-trends/api/global/feature';
-import { JwtModule } from '@nestjs/jwt';
 import { ApiGuardsModule } from '@event-participation-trends/api/guards';
 import { SensorlinkingModule } from '@event-participation-trends/api/sensorlinking';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -25,12 +25,11 @@ import { SensorlinkingModule } from '@event-participation-trends/api/sensorlinki
     UserModule,
     EventModule,
     GlobalModule,
-    JwtModule,
     ApiGuardsModule,
     SensorlinkingModule,
   ],
   controllers: [UserController, EventController, GlobalController],
-  providers: [UserService, EventService, GlobalService],
+  providers: [UserService, EventService, GlobalService, JwtService],
   exports: [UserService, EventService, GlobalService],
 })
 export class CoreModule {}

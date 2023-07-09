@@ -67,6 +67,7 @@ export class MqttService {
           }
         });
         const tempBuffer: SensorReading[] = new Array<SensorReading>();
+        console.log(sensors);
         sensors.forEach((sensor) => {
           const id = sensor.id;
           this.sensorLinkingService.getMacAddress(id).then((sensorMac)=>{
@@ -85,10 +86,13 @@ export class MqttService {
               });
           }).then(()=>{
             this.buffer = new Array<any>();
+          }).then(()=>{
+            // const positioning_sets : PositioningSet[] = this.positioningService.transformToSensorMatrices(tempBuffer);
+            // console.log(positioning_sets);
+            // const positions : Position[] = this.positioningService.findPositions(positioning_sets);  
+            // console.log(positions);
           });
         });
-        const positioning_sets : PositioningSet[] = this.positioningService.transformToSensorMatrices(tempBuffer);
-        const positions : Position[] = this.positioningService.findPositions(positioning_sets);  
         
         // for devices
         // find kalmann filter of device
