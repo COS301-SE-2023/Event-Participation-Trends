@@ -271,7 +271,26 @@ export class CreateFloorPlanPage {
                 }
               }
             });
+
+            window.addEventListener('keydown', (event: KeyboardEvent) => this.handleKeyDown(event));
         }, 6);
+    }
+
+    handleKeyDown(event: KeyboardEvent): void {
+      event.preventDefault();
+
+      if (this.activeItem) {
+        if (event.code === "Delete") {
+          this.removeObject(this.activeItem);
+          this.canvas.batchDraw();
+        }
+      }
+      else if (this.activePath) {
+        if (event.code === "Delete") {
+          this.removeObject(this.activePath);
+          this.canvas.batchDraw();
+        }
+      }
     }
 
     setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line | Konva.Path): void {
@@ -285,20 +304,22 @@ export class CreateFloorPlanPage {
         target = line;
       }
 
-      if (target && target instanceof Konva.Line || target instanceof Konva.Path) {
-        if (line) {
-          // this.transformer.nodes([line]);
-          return;
-        }
-      } else if (target && target instanceof Konva.Image) {
-        // Clicked on an existing textbox, do nothing  
-        // this.transformer.nodes([this.activeItem]);
-        return;
-      }
-      else if (target && target instanceof Konva.Group) {
-        this.transformer.nodes([target]);
-        return;
-      }
+      const node = target as Konva.Node;
+      this.transformer.nodes([node]);
+      // if (target && target instanceof Konva.Line || target instanceof Konva.Path) {
+      //   if (line) {
+      //     // this.transformer.nodes([line]);
+      //     return;
+      //   }
+      // } else if (target && target instanceof Konva.Image) {
+      //   // Clicked on an existing textbox, do nothing  
+      //   this.transformer.nodes([this.activeItem]);
+      //   return;
+      // }
+      // else if (target && target instanceof Konva.Group) {
+      //   this.transformer.nodes([target]);
+      //   return;
+      // }
     }
 
     createSelectionBox(): void {
@@ -595,29 +616,43 @@ export class CreateFloorPlanPage {
             }
             
             if (selectedObject) {
-                this.transformer.detach();
-                document.body.style.cursor = 'default';
-                selectedObject.remove();
-                this.openDustbin = false;
-                this.onDustbin = false;
-                this.activeItem = null;
-                
-                // remove item from canvasItems array
-                const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
-                if (index > -1) {
-                    this.canvasItems.splice(index, 1);
-
-                    // remove item from sensors array if it is a sensor
-                    const sensorIndex = this.sensors.findIndex((item) => item === selectedObject);
-                    if (sensorIndex > -1) {
-                        this.sensors.splice(sensorIndex, 1);
-                        console.log('sensor removed');
-                    }
-                }
-                this.canvas.batchDraw();
+              this.removeObject(selectedObject);
             }
 
         }
+      }
+
+      removeObject(selectedObject: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path) {
+        if (this.transformer) {
+          this.canvas.find('Transformer').forEach((node) => node.remove());
+
+          // add transformers to existing objects
+          this.canvasItems.forEach((item) => {
+            const transformer = new Konva.Transformer();
+            this.canvas.add(transformer);
+          });
+
+        }
+      
+        document.body.style.cursor = 'default';
+        this.removeMouseEvents(selectedObject);
+        selectedObject.remove();
+        this.openDustbin = false;
+        this.onDustbin = false;
+        this.activeItem = null;
+
+        // remove item from canvasItems array
+        const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
+        if (index > -1) {
+            this.canvasItems.splice(index, 1);
+
+            // remove item from sensors array if it is a sensor
+            const sensorIndex = this.sensors.findIndex((item) => item === selectedObject);
+            if (sensorIndex > -1) {
+                this.sensors.splice(sensorIndex, 1);
+            }
+        }
+        this.canvas.batchDraw();
       }
       
       onDustbinDrop(event: Konva.KonvaEventObject<DragEvent>): void {
