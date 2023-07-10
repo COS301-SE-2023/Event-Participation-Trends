@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { Action, Selector, State, Store } from '@ngxs/store';
+import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors } from '@event-participation-trends/app/createfloorplan/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 
@@ -44,12 +44,12 @@ export class CreateFloorPlanState {
     ) {}
 
     @Action(SetCreateFloorPlanState)
-    setCreateFloorPlanState(ctx: any, { payload }: SetCreateFloorPlanState) {
+    setCreateFloorPlanState(ctx: StateContext<CreateFloorPlanStateModel>, { payload }: SetCreateFloorPlanState) {
         ctx.patchState(payload);
     }
 
     @Action(SetSensors)
-    setSensors(ctx: any, { payload }: SetSensors) {
+    setSensors(ctx: StateContext<CreateFloorPlanStateModel>, { payload }: SetSensors) {
         try {
             const state = ctx.getState();
             const newState = {
@@ -63,7 +63,7 @@ export class CreateFloorPlanState {
     }
 
     @Action(AddSensor)
-    async addSensor(ctx: any, { payload }: AddSensor) {
+    async addSensor(ctx: StateContext<CreateFloorPlanStateModel>, { payload }: AddSensor) {
         try {
             const state = ctx.getState();
             const newState = {
@@ -77,7 +77,7 @@ export class CreateFloorPlanState {
     }
 
     @Action(RemoveSensor)
-    async removeSensor(ctx: any, { sensorId }: RemoveSensor) {
+    async removeSensor(ctx: StateContext<CreateFloorPlanStateModel>, { sensorId }: RemoveSensor) {
         try {
             const state = ctx.getState();
             const newState = {
