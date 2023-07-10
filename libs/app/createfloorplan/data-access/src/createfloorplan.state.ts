@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
+import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import Konva from 'konva';
 
@@ -13,12 +13,14 @@ export interface ISensorState {
 // Once we know the interface for the create floor plan we can remove the comment from the line below
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface CreateFloorPlanStateModel {
+    activeSensor: ISensorState | null,
     sensors: ISensorState[]
 }
 
 @State<CreateFloorPlanStateModel>({
     name: 'createfloorplan',
     defaults: {
+        activeSensor: null,
         sensors: []
     }
 })
@@ -29,6 +31,11 @@ export class CreateFloorPlanState {
     @Selector()
     static getSensors(state: CreateFloorPlanStateModel) {
         return state.sensors;
+    }
+
+    @Selector()
+    static getActiveSensor(state: CreateFloorPlanStateModel) {
+        return state.activeSensor;
     }
 
     constructor(
@@ -110,6 +117,21 @@ export class CreateFloorPlanState {
                     return sensor;
                 })
             };
+            return ctx.dispatch(new SetCreateFloorPlanState(newState));
+        } catch (error) {
+            return ctx.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(UpdateActiveSensor)
+    async updateActiveSensor(ctx: StateContext<CreateFloorPlanStateModel>, { sensorId }: UpdateActiveSensor) {
+        try {
+            const state = ctx.getState();
+            const newState = {
+                ...state,
+                activeSensor: state.sensors.find((sensor: ISensorState) => sensor.object.getAttr('customId') === sensorId) || null
+            };
+
             return ctx.dispatch(new SetCreateFloorPlanState(newState));
         } catch (error) {
             return ctx.dispatch(new SetError((error as Error).message));

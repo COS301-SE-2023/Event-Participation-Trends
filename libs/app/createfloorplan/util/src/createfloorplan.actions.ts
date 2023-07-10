@@ -24,3 +24,8 @@ export class UpdateSensorLinkedStatus {
     static readonly type = '[CreateFloorPlan] UpdateSensorLinkedStatus';
     constructor(public sensorId: string, public isLinked: boolean) {}
 }
+
+export class UpdateActiveSensor {
+    static readonly type = '[CreateFloorPlan] UpdateActiveSensor';
+    constructor(public sensorId: string) {}
+}

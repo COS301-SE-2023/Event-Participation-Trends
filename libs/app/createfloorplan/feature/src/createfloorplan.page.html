@@ -207,10 +207,6 @@
           <ion-label class="text-ept-deep-grey opacity-40"
             >Alternative:</ion-label
           >
-          <ion-badge
-            class="mt-2"
-            color=""
-            >hi</ion-badge>
           <form [formGroup]="macAddressForm">
             <div class="mt-4 flex flex-col items-center justify-evenly">
               <div class="flex items-center">
@@ -306,6 +302,13 @@
               >
             </div>
           </form>
+          <div *ngIf="activeSensor$ | async as sensor" class="mt-3 flex flex-row justify-evenly">
+            <ion-text class="text-ept-deep-grey">Sensor Status:</ion-text>
+            <ion-badge
+            color="{{ sensor['isLinked'] ? 'success' : 'danger' }}"
+            class="text-ept-off-white"
+            >{{ sensor['isLinked'] ? 'Linked' : 'Not Linked' }}</ion-badge>
+          </div>
         </div>
       </div>
     </div>

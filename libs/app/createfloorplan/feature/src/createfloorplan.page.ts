@@ -10,7 +10,7 @@ import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinkin
 import { Select, Store } from '@ngxs/store';
 import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@event-participation-trends/app/createfloorplan/data-access';
 import { Observable } from 'rxjs';
-import { AddSensor, RemoveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
+import { AddSensor, RemoveSensor, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 
 interface DroppedItem {
   name: string;
@@ -23,7 +23,8 @@ interface DroppedItem {
 })
 
 export class CreateFloorPlanPage implements OnInit{
-  @Select(CreateFloorPlanState.getSensors) sensors$!: Observable<CreateFloorPlanStateModel['sensors'] | undefined>; 
+  @Select(CreateFloorPlanState.getSensors) sensors$!: Observable<ISensorState[] | undefined>; 
+  @Select(CreateFloorPlanState.getActiveSensor) activeSensor$!: Observable<ISensorState | null>;
     @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLDivElement>;
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
@@ -62,6 +63,7 @@ export class CreateFloorPlanPage implements OnInit{
     toggleEditing(): void {
       this.preventCreatingWalls = !this.preventCreatingWalls;
       this.activeItem = null;
+      this.store.dispatch(new UpdateActiveSensor(''));
 
       //remove all selected items
       this.transformers.forEach(transformer => {
@@ -208,11 +210,19 @@ export class CreateFloorPlanPage implements OnInit{
       element.on('dragmove', () => {
         this.activeItem = element;
         this.setTransformer(this.activeItem, undefined);
+
+        if (this.activeItem instanceof Konva.Image) {
+          this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+        }
       });
       element.on('dragmove', this.onObjectMoving.bind(this));
       element.on('click', () => {
         this.activeItem = element;
         this.setTransformer(this.activeItem, undefined);
+
+        if (this.activeItem instanceof Konva.Image) {
+          this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+        }
       });
       element.on('dragend', () => {
         this.openDustbin = false;
@@ -378,6 +388,9 @@ export class CreateFloorPlanPage implements OnInit{
       this.canvasContainer.on('mousedown', (e) => {
         if (!this.preventCreatingWalls) {
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
+  
           return;
         }
 
@@ -465,6 +478,10 @@ export class CreateFloorPlanPage implements OnInit{
 
         if (tr.nodes().length === 1) {
           this.activeItem = tr.nodes()[0];
+
+          if (this.activeItem instanceof Konva.Image) {
+            this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+          }
         }
       });
 
@@ -480,11 +497,15 @@ export class CreateFloorPlanPage implements OnInit{
             tr.nodes([]);
           });
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
           return;
         }
 
         if (tr.nodes().length > 1){
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
         }
 
         // if we are selecting with rect, do nothing
@@ -495,6 +516,9 @@ export class CreateFloorPlanPage implements OnInit{
         // do nothing if clicked NOT on our lines or images or text
         if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall') && !e.target.hasName('stallName')) {
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
+          
           return;
         }
 
@@ -516,8 +540,15 @@ export class CreateFloorPlanPage implements OnInit{
 
           if (tr.nodes().length > 1){
             this.activeItem = null;
+
+            this.store.dispatch(new UpdateActiveSensor(''));
+            
           } else if (tr.nodes().length === 1) {
             this.activeItem = tr.nodes()[0];
+
+            if (this.activeItem instanceof Konva.Image) {
+              this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+            }
           }
 
         } else if (metaPressed && !isSelected) {
@@ -527,6 +558,9 @@ export class CreateFloorPlanPage implements OnInit{
 
           if (tr.nodes().length > 1){
             this.activeItem = null;
+
+            this.store.dispatch(new UpdateActiveSensor(''));
+            
           }
         }
       });
@@ -544,6 +578,10 @@ export class CreateFloorPlanPage implements OnInit{
             //set new active item
             this.activeItem = event.target;
             this.activeItem.setAttr('customClass', 'active');
+
+            if (this.activeItem instanceof Konva.Image) {
+              this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+            }
         }
 
         const movedObject = event.currentTarget;
@@ -680,6 +718,8 @@ export class CreateFloorPlanPage implements OnInit{
         this.openDustbin = false;
         this.onDustbin = false;
         this.activeItem = null;
+
+        this.store.dispatch(new UpdateActiveSensor(''));
 
         // remove item from canvasItems array
         const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
@@ -1002,6 +1042,12 @@ export class CreateFloorPlanPage implements OnInit{
         return true;
       }
       this.isCardFlipped = false;
+
+      //clear macAddressBlocks
+      this.macAddressForm.reset();
+
+      this.canLinkSensorWithMacAddress = false;
+
       return false;
     }
 
@@ -1023,6 +1069,11 @@ export class CreateFloorPlanPage implements OnInit{
 
     toggleCardFlip() {
       this.isCardFlipped = !this.isCardFlipped;
+
+      //clear macAddressBlocks
+      this.macAddressForm.reset();
+
+      this.canLinkSensorWithMacAddress = false;
     }
 
     getSelectedSensorId() {
@@ -1038,9 +1089,12 @@ export class CreateFloorPlanPage implements OnInit{
       this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
         if(!res['isLinked']) {
           this.appApiService.linkSensor(request).then((res: any) => {
-            if (res['isLinked']) {
+            if (res['success']) {
               // set the 'isLinked' attribute to true
               this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
+
+              //update active sensor
+              this.store.dispatch(new UpdateActiveSensor(request.id));
             }
           });
         }
