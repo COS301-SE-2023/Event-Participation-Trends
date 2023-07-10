@@ -1,4 +1,4 @@
-import { EventService } from '@event-participation-trends/api/event/feature';
+import { AddDevicePosition, EventService } from '@event-participation-trends/api/event/feature';
 import { IGetAllEventsRequest } from '@event-participation-trends/api/event/util';
 import { PositioningService, SensorReading } from '@event-participation-trends/api/positioning';
 import { Injectable } from '@nestjs/common';
@@ -13,7 +13,7 @@ export class MqttService {
   private buffer: Array<any>;
   private idNum: number;
 
-  constructor(private readonly sensorLinkingService: SensorlinkingService, private readonly positioningService: PositioningService) {
+  constructor(private readonly sensorLinkingService: SensorlinkingService, private readonly positioningService: PositioningService, private readonly eventService: EventService) {
     this.sensors = new Array<string>();
     this.macToId = new Map<string, number>();
     this.buffer = new Array<any>();
@@ -67,9 +67,8 @@ export class MqttService {
           }
         });
         const positions = await this.anotherOne(sensors);
-        // console.log(positions);
         this.buffer = new Array<any>();
-        
+
 
         // for devices
         // find kalmann filter of device
@@ -79,28 +78,26 @@ export class MqttService {
       });
   }
 
-  async anotherOne(sensors: any): Promise<any> {
+  async anotherOne(sensors: any): Promise<Position[]> {
     const tempBuffer = new Array<any>;
-    return new Promise<any>(async (resolve, reject) => {
-      for await (const sensor of sensors) {
-        const id = sensor.id;
-        const sensorMac = await this.sensorLinkingService.getMacAddress(id);
-        this.buffer
-          .filter((data) => data.sensorMac === sensorMac)
-          .forEach((data) => {
-            data.devices.forEach((device: any) => {
-              tempBuffer.push({
-                id: device.mac,
-                distance: this.positioningService.rssiToDistance(device.rssi),
-                timestamp: data.time,
-                x: sensor.x,
-                y: sensor.y,
-              });
+    for await (const sensor of sensors) {
+      const id = sensor.id;
+      const sensorMac = await this.sensorLinkingService.getMacAddress(id);
+      this.buffer
+        .filter((data) => data.sensorMac === sensorMac)
+        .forEach((data) => {
+          data.devices.forEach((device: any) => {
+            tempBuffer.push({
+              id: device.mac,
+              distance: this.positioningService.rssiToDistance(device.rssi),
+              timestamp: data.time,
+              x: sensor.x,
+              y: sensor.y,
             });
           });
-      }
-      const positions = this.positioningService.getPositions(tempBuffer);
-      resolve(positions);
-    });
-  }
+        });
+    }
+    const positions = this.positioningService.getPositions(tempBuffer);
+    return positions;
+  };
 }
