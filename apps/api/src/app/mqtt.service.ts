@@ -1,6 +1,6 @@
 import { EventService } from '@event-participation-trends/api/event/feature';
 import { IGetAllEventsRequest } from '@event-participation-trends/api/event/util';
-import { PositioningService, PositioningSet, SensorReading } from '@event-participation-trends/api/positioning';
+import { PositioningService, SensorReading } from '@event-participation-trends/api/positioning';
 import { Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { SensorlinkingService } from '@event-participation-trends/api/sensorlinking';
@@ -77,7 +77,7 @@ export class MqttService {
                 data.devices.forEach((device: any) => {
                   tempBuffer.push({
                     id: device.mac,
-                    signal_strength: this.positioningService.rssiToDistance(device.rssi),
+                    distance: this.positioningService.rssiToDistance(device.rssi),
                     timestamp: data.time,
                     x: sensor.x,
                     y: sensor.y,
