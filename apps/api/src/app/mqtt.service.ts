@@ -42,7 +42,7 @@ export class MqttService {
     this.buffer.push(tempSensors);
   }
 
-  @Interval(5000)
+  @Interval(1000)
   async processBuffer() {
     const events = this.sensorLinkingService.events;
     this.sensorLinkingService.shouldUpdate = true;
@@ -50,7 +50,7 @@ export class MqttService {
       ?.filter(
         (event) => event.StartDate < new Date() && event.EndDate > new Date()
       )
-      .forEach((event) => {
+      .forEach(async (event) => {
         const sensors = new Set<any>();
         if (!event.FloorLayout) return;
         const thisFloorLayout = JSON.parse(
@@ -66,37 +66,41 @@ export class MqttService {
             });
           }
         });
-        const tempBuffer: SensorReading[] = new Array<SensorReading>();
-        // console.log(sensors);
-        sensors.forEach((sensor) => {
-          const id = sensor.id;
-          this.sensorLinkingService.getMacAddress(id).then((sensorMac)=>{
-            this.buffer
-              .filter((data) => data.sensorMac === sensorMac)
-              .forEach((data) => {
-                data.devices.forEach((device: any) => {
-                  tempBuffer.push({
-                    id: device.mac,
-                    distance: this.positioningService.rssiToDistance(device.rssi),
-                    timestamp: data.time,
-                    x: sensor.x,
-                    y: sensor.y,
-                  });
-                });
-              });
-          }).then(()=>{
-            this.buffer = new Array<any>();
-          }).then(()=>{
-            const positions = this.positioningService.getPositions(tempBuffer);
-            
-            // for devices
-            // find kalmann filter of device
-            // if not found, create new, with the first 2 parameeters being the measured x and y
-            // const estimation = kalman.update(new_time, new Matrix(2, 1, [[position.x], [position.y]]));
-            // kalman.predict();
-          });
-        });
+        const positions = await this.anotherOne(sensors);
+        console.log(positions);
+        this.buffer = new Array<any>();
         
+
+        // for devices
+        // find kalmann filter of device
+        // if not found, create new, with the first 2 parameeters being the measured x and y
+        // const estimation = kalman.update(new_time, new Matrix(2, 1, [[position.x], [position.y]]));
+        // kalman.predict();
       });
+  }
+
+  async anotherOne(sensors: any): Promise<any> {
+    const tempBuffer = new Array<any>;
+    return new Promise<any>(async (resolve, reject) => {
+      for await (const sensor of sensors) {
+        const id = sensor.id;
+        const sensorMac = await this.sensorLinkingService.getMacAddress(id);
+        this.buffer
+          .filter((data) => data.sensorMac === sensorMac)
+          .forEach((data) => {
+            data.devices.forEach((device: any) => {
+              tempBuffer.push({
+                id: device.mac,
+                distance: this.positioningService.rssiToDistance(device.rssi),
+                timestamp: data.time,
+                x: sensor.x,
+                y: sensor.y,
+              });
+            });
+          });
+      }
+      const positions = this.positioningService.getPositions(tempBuffer);
+      resolve(positions);
+    });
   }
 }
