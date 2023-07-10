@@ -1,10 +1,11 @@
-import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core';
 import { get } from 'http';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
 import {Html5QrcodeScanner} from "html5-qrcode";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface DroppedItem {
   name: string;
@@ -16,7 +17,7 @@ interface DroppedItem {
   styleUrls: ['./createfloorplan.page.css'],
 })
 
-export class CreateFloorPlanPage {
+export class CreateFloorPlanPage implements OnInit{
     @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLDivElement>;
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
@@ -39,10 +40,14 @@ export class CreateFloorPlanPage {
     paths: Konva.Path[] = [];
     activePath: Konva.Path | null = null;
     onDustbin = false;
+    public macAddressBlocks: string[] = [];
+    canLinkSensorWithMacAddress = false;
+    macAddressForm!: FormGroup;
 
     constructor(
       private readonly appApiService: AppApiService,
-      private readonly route: ActivatedRoute
+      private readonly route: ActivatedRoute,
+      private readonly formBuilder: FormBuilder, 
     ) {}
 
     toggleEditing(): void {
@@ -215,7 +220,6 @@ export class CreateFloorPlanPage {
       element.off('mouseenter');
       element.off('mouseleave');
     }
-        
 
     ngAfterViewInit(): void {
         // wait for elements to render before initializing fabric canvas
@@ -273,7 +277,13 @@ export class CreateFloorPlanPage {
               }
             });
 
-            window.addEventListener('keydown', (event: KeyboardEvent) => this.handleKeyDown(event));
+            window.addEventListener('keydown', (event: KeyboardEvent) => {
+              // Check if the event code is the Delete key
+              if (event.code === 'Delete') {
+                this.handleKeyDown(event);
+              }
+            });
+            
         }, 6);
     }
 
@@ -883,8 +893,17 @@ export class CreateFloorPlanPage {
       this.canvasContainer.setAttr('height', height*0.965);
     }
     
-      ngOnInit() {
+      ngOnInit() : void {
         this.checkScreenWidth();
+
+        this.macAddressForm = this.formBuilder.group({
+          macAddressBlock1: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock2: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock3: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock4: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock5: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock6: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+        });
       }
     
       checkScreenWidth() {
@@ -918,7 +937,6 @@ export class CreateFloorPlanPage {
 
       getUniqueId(): string {
         this.appApiService.getNewEventSensorId().subscribe((res: any) => {
-          console.log(res);
           return res;
         });
 
@@ -955,7 +973,7 @@ export class CreateFloorPlanPage {
       if (this.activeItem && this.activeItem instanceof Konva.Image) {
         return true;
       }
-      this.isCardFlipped = false;
+      // this.isCardFlipped = false;
       return false;
     }
 
@@ -983,9 +1001,62 @@ export class CreateFloorPlanPage {
       return this.activeItem?.attrs.customId;
     }
 
-    updateLinkedSensors() {
+    updateLinkedSensors(event: any) {
       console.log('sensors linked');
     }
+
+    handleMacAddressInput(event: any, blockIndex: number) {
+      // Format and store the value in your desired format
+      // Example: Assuming you have an array called macAddressBlocks to store the individual blocks
+      this.macAddressBlocks[blockIndex] = event.target.toUpperCase();
+      // Add any additional validation or formatting logic here
+      // Example: Restrict input to valid hexadecimal characters only
+      const validHexCharacters = /^[0-9A-Fa-f]*$/;
+      if (!validHexCharacters.test(event.target)) {
+        // Handle invalid input, show an error message, etc.
+      }
+
+      // Move focus to the next input when 2 characters are entered, 4 characters, etc.
+      if (event.target.value.length === 2) {
+        const nextInput = event.target.nextElementSibling;
+        if (nextInput && nextInput.tagName === 'ION-INPUT') {
+          nextInput.setFocus();
+        }
+      }
+
+      //check to see if all the blocks are filled
+      if (this.macAddressBlocks.every((block: any) => block !== '')) {
+        // join the blocks together with a colon
+        const macAddress = this.macAddressBlocks.join(':');
+        // do something with the mac address
+        this.canLinkSensorWithMacAddress = true;
+      }
+    }    
+
+    get macAddressBlock1() {
+      return this.macAddressForm.get('macAddressBlock1');
+    }
+
+    get macAddressBlock2() {
+      return this.macAddressForm.get('macAddressBlock2');
+    }
+
+    get macAddressBlock3() {
+      return this.macAddressForm.get('macAddressBlock3');
+    }
+
+    get macAddressBlock4() {
+      return this.macAddressForm.get('macAddressBlock4');
+    }
+
+    get macAddressBlock5() {
+      return this.macAddressForm.get('macAddressBlock5');
+    }
+
+    get macAddressBlock6() {
+      return this.macAddressForm.get('macAddressBlock6');
+    }
+
       chooseDustbinImage(): string {
         if (this.openDustbin && !this.onDustbin) {
           return 'assets/trash-open.svg';

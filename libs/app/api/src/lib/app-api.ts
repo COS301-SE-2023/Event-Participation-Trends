@@ -250,7 +250,7 @@ export class AppApiService {
   }
 
   getNewEventSensorId(): Observable<IgetNewEventSensorIdResponse> {
-    return this.http.get<IgetNewEventSensorIdResponse>('/api/sensorlinking/getNewID', {
+    return this.http.get<IgetNewEventSensorIdResponse>('/api/sensorLinking/getNewID', {
       headers:{
         'x-csrf-token': this.cookieService.get('csrf'),
       }
