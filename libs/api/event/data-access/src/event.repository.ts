@@ -179,10 +179,10 @@ export class EventRepository {
             { FloorLayout: 1 })
     }
 
-    async addDevicePosition(eventID: Types.ObjectId, position: Position){
+    async addDevicePosition(eventID: Types.ObjectId, position: Position[]){
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
-            { $push: { Devices: position } });
+            { $push: { Devices: { $each: position } } });
     }
 
     async getDevicePosotions(eventID: Types.ObjectId){
