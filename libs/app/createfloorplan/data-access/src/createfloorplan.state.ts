@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors } from '@event-participation-trends/app/createfloorplan/util';
+import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import Konva from 'konva';
 
@@ -87,6 +87,28 @@ export class CreateFloorPlanState {
             const newState = {
                 ...state,
                 sensors: state.sensors.filter((sensor: ISensorState) => sensor.object.getAttr('customId') !== sensorId)
+            };
+            return ctx.dispatch(new SetCreateFloorPlanState(newState));
+        } catch (error) {
+            return ctx.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(UpdateSensorLinkedStatus)
+    async updateSensorLinkedStatus(ctx: StateContext<CreateFloorPlanStateModel>, { sensorId, isLinked }: UpdateSensorLinkedStatus) {
+        try {
+            const state = ctx.getState();
+            const newState = {
+                ...state,
+                sensors: state.sensors.map((sensor: ISensorState) => {
+                    if (sensor.object.getAttr('customId') === sensorId) {
+                        return {
+                            ...sensor,
+                            isLinked
+                        }
+                    }
+                    return sensor;
+                })
             };
             return ctx.dispatch(new SetCreateFloorPlanState(newState));
         } catch (error) {

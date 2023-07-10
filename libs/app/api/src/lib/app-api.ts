@@ -257,11 +257,11 @@ export class AppApiService {
     });
   }
 
-  async linkSensor(eventSensorId: IlinkSensorRequest): Promise<{success: true} | null | undefined> {
+  async linkSensor(eventSensorMac: IlinkSensorRequest): Promise<{success: true} | null | undefined> {
     return firstValueFrom(
       this.http.post<{success: true}>(
         '/api/sensorlinking/mac_addr_here',
-        eventSensorId,
+        eventSensorMac,
         {
           headers: {
             'x-csrf-token': this.cookieService.get('csrf'),

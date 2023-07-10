@@ -10,7 +10,7 @@ import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinkin
 import { Select, Store } from '@ngxs/store';
 import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@event-participation-trends/app/createfloorplan/data-access';
 import { Observable } from 'rxjs';
-import { AddSensor, RemoveSensor } from '@event-participation-trends/app/createfloorplan/util';
+import { AddSensor, RemoveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 
 interface DroppedItem {
   name: string;
@@ -51,7 +51,6 @@ export class CreateFloorPlanPage implements OnInit{
     canLinkSensorWithMacAddress = false;
     macAddressForm!: FormGroup;
     inputHasFocus = false;
-    sensorAlreadyLinked = false;
 
     constructor(
       private readonly appApiService: AppApiService,
@@ -1035,8 +1034,16 @@ export class CreateFloorPlanPage implements OnInit{
         id: this.activeItem.getAttr('customId')
       };
 
-      this.appApiService.linkSensor(request).then((res: any) => {
-        console.log(res);
+      // check if sensor isn't already linked 
+      this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
+        if(!res['isLinked']) {
+          this.appApiService.linkSensor(request).then((res: any) => {
+            if (res['isLinked']) {
+              // set the 'isLinked' attribute to true
+              this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
+            }
+          });
+        }
       });
     }
 
@@ -1078,15 +1085,14 @@ export class CreateFloorPlanPage implements OnInit{
       this.inputHasFocus = value;
     }
 
-    isLinked() {
-      this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
-        if(res) {
-          this.sensorAlreadyLinked = true;
-        }
-        return res;
-      });
+    // isLinked() {
+    //   this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
+    //     if(!res['success']) {
+    //       this.store.dispatch(new UpdateSensorLinkedStatus(this.activeItem?.getAttr('customId'), false));
+    //     }
+    //   });
 
-    }
+    // }
 
     get macAddressBlock1() {
       return this.macAddressForm.get('macAddressBlock1');
