@@ -87,18 +87,16 @@ export class MqttService {
           }).then(()=>{
             this.buffer = new Array<any>();
           }).then(()=>{
-            // const positioning_sets : PositioningSet[] = this.positioningService.transformToSensorMatrices(tempBuffer);
-            // console.log(positioning_sets);
-            // const positions : Position[] = this.positioningService.findPositions(positioning_sets);  
-            // console.log(positions);
+            const positions = this.positioningService.getPositions(tempBuffer);
+            
+            // for devices
+            // find kalmann filter of device
+            // if not found, create new, with the first 2 parameeters being the measured x and y
+            // const estimation = kalman.update(new_time, new Matrix(2, 1, [[position.x], [position.y]]));
+            // kalman.predict();
           });
         });
         
-        // for devices
-        // find kalmann filter of device
-        // if not found, create new, with the first 2 parameeters being the measured x and y
-        // const estimation = kalman.update(new_time, new Matrix(2, 1, [[position.x], [position.y]]));
-        // kalman.predict();
       });
   }
 }

@@ -61,6 +61,10 @@ export class PositioningService {
 
       // find intersection closest to centroid
       for (const intersection of intersections) {
+        if (intersection.length !== 2) {
+          continue;
+        }
+
         const error = Math.sqrt(
           Math.pow(intersection[0] - centroid_x, 2) +
           Math.pow(intersection[1] - centroid_y, 2)
@@ -71,6 +75,10 @@ export class PositioningService {
           best_intersection[1] = intersection[1];
           best_error = error;
         }
+      }
+
+      if (best_intersection.length !== 2) {
+        continue;
       }
 
       const position: Position = {
