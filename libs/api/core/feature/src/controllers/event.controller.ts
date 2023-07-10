@@ -28,6 +28,8 @@ import {
     IGetEventFloorlayoutResponse,
     IAddViewerRequest,
     IAddViewerResponse,
+    IGetEventDevicePositionRequest,
+    IGetEventDevicePositionResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -336,5 +338,31 @@ export class EventController {
         (<unknown>this.eventService.addEventViewer(extractRequest))
     );
     }
+
+    @Get('getEventDevicePosition')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getEventDevicePosition(
+        @Query() query: any
+    ): Promise<IGetEventDevicePositionResponse> {
+  
+        if(query.eventId==undefined || query.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+    
+        if(query.startTime==undefined || query.startTime ==null)
+            throw new HttpException("Bad Request: startDate not provided", 400);
+        
+        if(query.endTime==undefined || query.endTime ==null)
+            throw new HttpException("Bad Request: endDate not provided", 400);
+
+        const extractRequest: IGetEventDevicePositionRequest = {
+            eventId: query.eventId,
+            startTime: query.startTime,
+            endTime: query.endTime
+        };
+  
+        return <IGetEventDevicePositionResponse><unknown>(
+            this.eventService.getEventDevicePosition(extractRequest));
+   }
 
 }
