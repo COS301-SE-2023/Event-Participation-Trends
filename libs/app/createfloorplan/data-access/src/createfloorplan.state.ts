@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { Action, Selector, State, Store } from '@ngxs/store';
-import { SetCreateFloorPlanState, SetSensors } from '@event-participation-trends/app/createfloorplan/util';
+import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors } from '@event-participation-trends/app/createfloorplan/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 
 // Once we know the interface for the create floor plan we can remove the comment from the line below
@@ -55,6 +55,34 @@ export class CreateFloorPlanState {
             const newState = {
                 ...state,
                 sensors: payload
+            };
+            return ctx.dispatch(new SetCreateFloorPlanState(newState));
+        } catch (error) {
+            return ctx.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(AddSensor)
+    async addSensor(ctx: any, { payload }: AddSensor) {
+        try {
+            const state = ctx.getState();
+            const newState = {
+                ...state,
+                sensors: [...state.sensors, payload]
+            };
+            return ctx.dispatch(new SetCreateFloorPlanState(newState));
+        } catch (error) {
+            return ctx.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(RemoveSensor)
+    async removeSensor(ctx: any, { sensorId }: RemoveSensor) {
+        try {
+            const state = ctx.getState();
+            const newState = {
+                ...state,
+                sensors: state.sensors.filter((sensor: any) => sensor.attrs.customId !== sensorId)
             };
             return ctx.dispatch(new SetCreateFloorPlanState(newState));
         } catch (error) {

@@ -7,6 +7,9 @@ import { ActivatedRoute } from '@angular/router';
 import {Html5QrcodeScanner} from "html5-qrcode";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
+import { Select } from '@ngxs/store';
+import { CreateFloorPlanState, CreateFloorPlanStateModel } from '@event-participation-trends/app/createfloorplan/data-access';
+import { Observable } from 'rxjs';
 
 interface DroppedItem {
   name: string;
@@ -19,6 +22,7 @@ interface DroppedItem {
 })
 
 export class CreateFloorPlanPage implements OnInit{
+  @Select(CreateFloorPlanState.getSensors) sensors$!: Observable<CreateFloorPlanStateModel['sensors'] | undefined>; 
     @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLDivElement>;
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
