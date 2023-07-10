@@ -23,6 +23,7 @@ import {
     GetUserViewingEventsHandler,
     GetEventHandler,
     GetEventFloorlayoutHandler,
+    GetEventDevicePositionHandler,
  } from './queries';
 
 import {
@@ -75,6 +76,7 @@ export const QueryHandlers = [
     GetUserViewingEventsHandler,
     GetEventHandler,
     GetEventFloorlayoutHandler,
+    GetEventDevicePositionHandler,
 ];
 
 
