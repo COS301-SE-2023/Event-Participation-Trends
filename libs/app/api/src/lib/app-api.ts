@@ -32,7 +32,7 @@ import {
 import { Observable, firstValueFrom } from 'rxjs';
 import { Status } from '@event-participation-trends/api/user/util';
 import { CookieService } from 'ngx-cookie-service';
-import { IgetNewEventSensorIdResponse } from '@event-participation-trends/api/sensorlinking';
+import { IgetNewEventSensorIdResponse, IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
 
 interface IGetRequestsUsersResponse {
   Requesters: IUser[];
@@ -257,4 +257,19 @@ export class AppApiService {
     });
   }
 
+  async linkSensor(eventSensorId: IlinkSensorRequest): Promise<Status | null | undefined> {
+    return firstValueFrom(
+      this.http.post<Status>(
+        '/api/sensorLinking/',
+        eventSensorId,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response;
+    });
+  }
 }

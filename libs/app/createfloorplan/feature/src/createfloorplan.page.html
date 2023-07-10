@@ -6,7 +6,7 @@
       class="tool-menu col-span-2 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative"
       ngClass="card-container"
     >
-      <div ngClass="card" [class.flipped]="isCardFlipped ">
+      <div ngClass="card" [class.flipped]="isCardFlipped && isSensor()">
         <div ngClass="front-side">
           <div class="flex flex-row justify-evenly">
             <h1 class="text-lg font-semibold text-center mt-5">Tools</h1>
@@ -174,7 +174,6 @@
             <h1 class="text-lg font-semibold text-center mt-5">Link Sensors</h1>
             <ion-button
               id="hover-trigger"
-              *ngIf="isSensor()"
               class="mt-4 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
               title="Click to view Tools"
               (click)="toggleCardFlip()"
@@ -214,22 +213,26 @@
                 <ion-input
                   id="macAddressBlock1"
                   aria-label="MAC Address Block"
-                  class="w-7 uppercase border-2 rounded-md border-rose-500"
+                  class="bg-slate-200 w-7 uppercase border-2 rounded-md"
                   type="text"
                   maxlength="2"
                   (input)="handleMacAddressInput($event, 0)"
+                  (ionFocus)="setFocus(true)"
+                  (ionBlur)="setFocus(false)"
                   name="macAddressBlock1"
                   formControlName="macAddressBlock1"
                   [ngClass]="{ 'border-2 border-rose-500': macAddressBlock1?.hasError('required') && (macAddressBlock1?.dirty || macAddressBlock1?.touched), 'border-2 border-green-400' : macAddressBlock1?.valid && (macAddressBlock1?.dirty || macAddressBlock1?.touched)}"
-                ></ion-input>
-                <span class="ml-1 mr-1">:</span>
-                <ion-input
+                  ></ion-input>
+                  <span class="ml-1 mr-1">:</span>
+                  <ion-input
                   id="macAddressBlock2"
                   aria-label="MAC Address Block"
-                  class="w-7 uppercase border-2 rounded-md"
+                  class="bg-slate-200 w-7 uppercase border-2 rounded-md"
                   type="text"
                   maxlength="2"
                   (input)="handleMacAddressInput($event, 1)"
+                  (ionFocus)="setFocus(true)"
+                  (ionBlur)="setFocus(false)"
                   name="macAddressBlock2"
                   formControlName="macAddressBlock2"
                   [ngClass]="{ 'border-2 border-rose-500': macAddressBlock2?.hasError('required') && (macAddressBlock2?.dirty || macAddressBlock2?.touched), 'border-2 border-green-400' : macAddressBlock2?.valid && (macAddressBlock2?.dirty || macAddressBlock2?.touched)}"
@@ -238,22 +241,26 @@
                 <ion-input
                   id="macAddressBlock3"
                   aria-label="MAC Address Block"
-                  class="w-7 uppercase border-2 rounded-md"
+                  class="bg-slate-200 w-7 uppercase border-2 rounded-md"
                   type="text"
                   maxlength="2"
                   (input)="handleMacAddressInput($event, 2)"
+                  (ionFocus)="setFocus(true)"
+                  (ionBlur)="setFocus(false)"
                   name="macAddressBlock3"
                   formControlName="macAddressBlock3"
                   [ngClass]="{ 'border-2 border-rose-500': macAddressBlock3?.hasError('required') && (macAddressBlock3?.dirty || macAddressBlock3?.touched), 'border-2 border-green-400' : macAddressBlock3?.valid && (macAddressBlock3?.dirty || macAddressBlock3?.touched)}"
                 ></ion-input>
                 <span class="ml-1 mr-1">:</span>
                 <ion-input
-                id="macAddressBlock4"
+                  id="macAddressBlock4"
                   aria-label="MAC Address Block"
-                  class="w-7 uppercase border-2 rounded-md"
+                  class="bg-slate-200 w-7 uppercase border-2 rounded-md"
                   type="text"
                   maxlength="2"
                   (input)="handleMacAddressInput($event, 3)"
+                  (ionFocus)="setFocus(true)"
+                  (ionBlur)="setFocus(false)"
                   name="macAddressBlock4"
                   formControlName="macAddressBlock4"
                   [ngClass]="{ 'border-2 border-rose-500': macAddressBlock4?.hasError('required') && (macAddressBlock4?.dirty || macAddressBlock4?.touched), 'border-2 border-green-400' : macAddressBlock4?.valid && (macAddressBlock4?.dirty || macAddressBlock4?.touched)}"
@@ -262,10 +269,12 @@
                 <ion-input
                   id="macAddressBlock5"
                   aria-label="MAC Address Block"
-                  class="w-7 uppercase border-2 rounded-md"
+                  class="bg-slate-200 w-7 uppercase border-2 rounded-md"
                   type="text"
                   maxlength="2"
                   (input)="handleMacAddressInput($event, 4)"
+                  (ionFocus)="setFocus(true)"
+                  (ionBlur)="setFocus(false)"
                   name="macAddressBlock5"
                   formControlName="macAddressBlock5"
                   [ngClass]="{ 'border-2 border-rose-500': macAddressBlock5?.hasError('required') && (macAddressBlock5?.dirty || macAddressBlock5?.touched), 'border-2 border-green-400' : macAddressBlock5?.valid && (macAddressBlock5?.dirty || macAddressBlock5?.touched)}"
@@ -274,15 +283,16 @@
                 <ion-input
                   id="macAddressBlock6"
                   aria-label="MAC Address Block"
-                  class="w-7 uppercase border-2 rounded-md"
+                  class="bg-slate-200 w-7 uppercase border-2 rounded-md"
                   type="text"
                   maxlength="2"
                   (input)="handleMacAddressInput($event, 5)"
+                  (ionFocus)="setFocus(true)"
+                  (ionBlur)="setFocus(false)"
                   name="macAddressBlock6"
                   formControlName="macAddressBlock6"
                   [ngClass]="{ 'border-2 border-rose-500': macAddressBlock6?.hasError('required') && (macAddressBlock6?.dirty || macAddressBlock6?.touched), 'border-2 border-green-400' : macAddressBlock6?.valid && (macAddressBlock6?.dirty || macAddressBlock6?.touched)}"
                 ></ion-input>
-
               </div>
               <ion-button
                 class="mt-3 bg-ept-deep-grey rounded-md"

@@ -44,6 +44,7 @@ export class CreateFloorPlanPage implements OnInit{
     macAddressBlockElements : NodeListOf<HTMLIonInputElement> | undefined;
     canLinkSensorWithMacAddress = false;
     macAddressForm!: FormGroup;
+    inputHasFocus = false;
 
     constructor(
       private readonly appApiService: AppApiService,
@@ -277,19 +278,19 @@ export class CreateFloorPlanPage implements OnInit{
                 }
               }
             });
-
-            window.addEventListener('keydown', (event: KeyboardEvent) => {
-              // Check if the event code is the Delete key
-              if (event.code === 'Delete') {
-                this.handleKeyDown(event);
-              }
-            });
-
+            
             //set ion-input elements where aria-label="MAC Address Block"
             this.macAddressBlockElements = document.querySelectorAll('[aria-label="MAC Address Block"]');
-
+            
             this.macAddressBlockElements.forEach((element: HTMLIonInputElement) => {
               this.macAddressBlocks.push(element.value ? element.value.toString() : '');
+            });
+
+            window.addEventListener('keydown', (event: KeyboardEvent) => {
+              //now check if no input field has focus and the Delete key is pressed
+              if (!this.inputHasFocus && event.code === "Delete") {
+                this.handleKeyDown(event);
+              }
             });
             
         }, 6);
@@ -981,7 +982,7 @@ export class CreateFloorPlanPage implements OnInit{
       if (this.activeItem && this.activeItem instanceof Konva.Image) {
         return true;
       }
-      // this.isCardFlipped = false;
+      this.isCardFlipped = false;
       return false;
     }
 
@@ -1009,14 +1010,14 @@ export class CreateFloorPlanPage implements OnInit{
       return this.activeItem?.attrs.customId;
     }
 
-    updateLinkedSensors(event: any) {
-      console.log('sensors linked');
+    updateLinkedSensors() {
+      this
     }
 
     handleMacAddressInput(event: any, blockIndex: number) {
       // Format and store the value in your desired format
       // Example: Assuming you have an array called macAddressBlocks to store the individual blocks
-      this.macAddressBlocks[blockIndex] = event.target.value.toUpperCase();
+      this.macAddressBlocks[blockIndex] = event.target.value.toString().toUpperCase();
       // Add any additional validation or formatting logic here
       // Example: Restrict input to valid hexadecimal characters only
       const validHexCharacters = /^[0-9A-Fa-f]*$/;
@@ -1029,15 +1030,8 @@ export class CreateFloorPlanPage implements OnInit{
         // map thorugh the macAddressBlocksElements and find the next input
         const nextInput = this.macAddressBlockElements?.item(blockIndex + 1);
 
-        if (nextInput?.value?.toString().length === 2) {
-          event.target.blur();
-        }        
-        // if there is a next input, focus it
-        else if (nextInput) {
+        if (nextInput && nextInput?.value?.toString().length !== 2) {
           nextInput.setFocus();
-        }
-        else {
-          event.target.blur();
         }
       }
 
@@ -1053,7 +1047,12 @@ export class CreateFloorPlanPage implements OnInit{
       } else {
         this.canLinkSensorWithMacAddress = false;
       }
-    }    
+    }  
+
+    setFocus(value: boolean) {
+      this.inputHasFocus = value;
+      console.log(this.inputHasFocus);
+    }
 
     get macAddressBlock1() {
       return this.macAddressForm.get('macAddressBlock1');
