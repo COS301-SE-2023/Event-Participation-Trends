@@ -67,7 +67,7 @@ export class MqttService {
           }
         });
         const positions = await this.anotherOne(sensors);
-        console.log(positions);
+        // console.log(positions);
         this.buffer = new Array<any>();
         
 
