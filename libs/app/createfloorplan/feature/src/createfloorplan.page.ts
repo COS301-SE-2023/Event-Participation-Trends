@@ -40,7 +40,8 @@ export class CreateFloorPlanPage implements OnInit{
     paths: Konva.Path[] = [];
     activePath: Konva.Path | null = null;
     onDustbin = false;
-    public macAddressBlocks: string[] = [];
+    macAddressBlocks: string[] = [];
+    macAddressBlockElements : NodeListOf<HTMLIonInputElement> | undefined;
     canLinkSensorWithMacAddress = false;
     macAddressForm!: FormGroup;
 
@@ -282,6 +283,13 @@ export class CreateFloorPlanPage implements OnInit{
               if (event.code === 'Delete') {
                 this.handleKeyDown(event);
               }
+            });
+
+            //set ion-input elements where aria-label="MAC Address Block"
+            this.macAddressBlockElements = document.querySelectorAll('[aria-label="MAC Address Block"]');
+
+            this.macAddressBlockElements.forEach((element: HTMLIonInputElement) => {
+              this.macAddressBlocks.push(element.value ? element.value.toString() : '');
             });
             
         }, 6);
@@ -1008,7 +1016,7 @@ export class CreateFloorPlanPage implements OnInit{
     handleMacAddressInput(event: any, blockIndex: number) {
       // Format and store the value in your desired format
       // Example: Assuming you have an array called macAddressBlocks to store the individual blocks
-      this.macAddressBlocks[blockIndex] = event.target.toUpperCase();
+      this.macAddressBlocks[blockIndex] = event.target.value.toUpperCase();
       // Add any additional validation or formatting logic here
       // Example: Restrict input to valid hexadecimal characters only
       const validHexCharacters = /^[0-9A-Fa-f]*$/;
@@ -1017,19 +1025,33 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
       // Move focus to the next input when 2 characters are entered, 4 characters, etc.
-      if (event.target.value.length === 2) {
-        const nextInput = event.target.nextElementSibling;
-        if (nextInput && nextInput.tagName === 'ION-INPUT') {
+      if (event.target.value.length === 2 && validHexCharacters.test(event.target.value)) {
+        // map thorugh the macAddressBlocksElements and find the next input
+        const nextInput = this.macAddressBlockElements?.item(blockIndex + 1);
+
+        if (nextInput?.value?.toString().length === 2) {
+          event.target.blur();
+        }        
+        // if there is a next input, focus it
+        else if (nextInput) {
           nextInput.setFocus();
+        }
+        else {
+          event.target.blur();
         }
       }
 
-      //check to see if all the blocks are filled
-      if (this.macAddressBlocks.every((block: any) => block !== '')) {
-        // join the blocks together with a colon
+      //check to see if all the blocks are filled nd satisfies the regex
+      if (this.macAddressBlocks.every((block) => block.length === 2 && validHexCharacters.test(block))) {
+        console.log('all blocks filled');
+        // join the blocks together
         const macAddress = this.macAddressBlocks.join(':');
-        // do something with the mac address
+        // set the macAddress value in the form
+        this.macAddressForm.get('macAddress')?.setValue(macAddress);
+
         this.canLinkSensorWithMacAddress = true;
+      } else {
+        this.canLinkSensorWithMacAddress = false;
       }
     }    
 

@@ -212,7 +212,8 @@
             <div class="mt-4 flex flex-col items-center justify-evenly">
               <div class="flex items-center">
                 <ion-input
-                  aria-label="MAC Address Block 1"
+                  id="macAddressBlock1"
+                  aria-label="MAC Address Block"
                   class="w-7 uppercase border-2 rounded-md border-rose-500"
                   type="text"
                   maxlength="2"
@@ -223,6 +224,7 @@
                 ></ion-input>
                 <span class="ml-1 mr-1">:</span>
                 <ion-input
+                  id="macAddressBlock2"
                   aria-label="MAC Address Block"
                   class="w-7 uppercase border-2 rounded-md"
                   type="text"
@@ -234,6 +236,7 @@
                 ></ion-input>
                 <span class="ml-1 mr-1">:</span>
                 <ion-input
+                  id="macAddressBlock3"
                   aria-label="MAC Address Block"
                   class="w-7 uppercase border-2 rounded-md"
                   type="text"
@@ -245,6 +248,7 @@
                 ></ion-input>
                 <span class="ml-1 mr-1">:</span>
                 <ion-input
+                id="macAddressBlock4"
                   aria-label="MAC Address Block"
                   class="w-7 uppercase border-2 rounded-md"
                   type="text"
@@ -256,6 +260,7 @@
                 ></ion-input>
                 <span class="ml-1 mr-1">:</span>
                 <ion-input
+                  id="macAddressBlock5"
                   aria-label="MAC Address Block"
                   class="w-7 uppercase border-2 rounded-md"
                   type="text"
@@ -267,6 +272,7 @@
                 ></ion-input>
                 <span class="ml-1 mr-1">:</span>
                 <ion-input
+                  id="macAddressBlock6"
                   aria-label="MAC Address Block"
                   class="w-7 uppercase border-2 rounded-md"
                   type="text"
@@ -280,7 +286,7 @@
               </div>
               <ion-button
                 class="mt-3 bg-ept-deep-grey rounded-md"
-                disabled="!canLinkSensorWithMacAddress"
+                disabled="{{!canLinkSensorWithMacAddress}}"
                 >Link Sensor</ion-button
               >
             </div>
