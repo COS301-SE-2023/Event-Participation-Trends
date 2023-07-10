@@ -184,4 +184,10 @@ export class EventRepository {
             { _id: {$eq: eventID}},
             { $push: { Devices: position } });
     }
+
+    async getDevicePosotions(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { Devices: 1 })
+    }
 }
