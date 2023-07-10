@@ -7,9 +7,10 @@ import { ActivatedRoute } from '@angular/router';
 import {Html5QrcodeScanner} from "html5-qrcode";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
-import { Select } from '@ngxs/store';
-import { CreateFloorPlanState, CreateFloorPlanStateModel } from '@event-participation-trends/app/createfloorplan/data-access';
+import { Select, Store } from '@ngxs/store';
+import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@event-participation-trends/app/createfloorplan/data-access';
 import { Observable } from 'rxjs';
+import { AddSensor, RemoveSensor } from '@event-participation-trends/app/createfloorplan/util';
 
 interface DroppedItem {
   name: string;
@@ -40,7 +41,7 @@ export class CreateFloorPlanPage implements OnInit{
     transformer = new Konva.Transformer();
     preventCreatingWalls = true; // to prevent creating walls
     transformers: Konva.Transformer[] = [this.transformer];
-    sensors: Konva.Image[] = [];
+    sensors: ISensorState[] | undefined = [];
     gridSize = 10;
     paths: Konva.Path[] = [];
     activePath: Konva.Path | null = null;
@@ -56,6 +57,7 @@ export class CreateFloorPlanPage implements OnInit{
       private readonly appApiService: AppApiService,
       private readonly route: ActivatedRoute,
       private readonly formBuilder: FormBuilder, 
+      private readonly store: Store
     ) {}
 
     toggleEditing(): void {
@@ -172,11 +174,15 @@ export class CreateFloorPlanPage implements OnInit{
           } 
           else {
             image.setAttr('name', 'sensor');
-            image.setAttr('customId', this.getUniqueId());
-            this.sensors.push(image);
+            // image.setAttr('customId', this.getUniqueId());
+            // this.sensors.push({object: image, isLinked:false});
             this.canvas.add(image);
             this.canvas.draw();
             droppedItem.konvaObject = image;
+            this.store.dispatch(new AddSensor(image));
+            this.sensors$.subscribe(sensors => {
+              this.sensors = sensors;
+            });
           }
         });
       }
@@ -682,10 +688,18 @@ export class CreateFloorPlanPage implements OnInit{
             this.canvasItems.splice(index, 1);
 
             // remove item from sensors array if it is a sensor
-            const sensorIndex = this.sensors.findIndex((item) => item === selectedObject);
-            if (sensorIndex > -1) {
-                this.sensors.splice(sensorIndex, 1);
-            }
+            this.sensors$.subscribe((sensors) => {
+              sensors?.forEach((sensor) => {
+                  if (sensor.object === selectedObject) {
+                      this.store.dispatch(new RemoveSensor(sensor.object.getAttr('customId')));
+
+                      // reassign sensors to this.sensors
+                      this.sensors$.subscribe((sensors) => {
+                          this.sensors = sensors;
+                      });
+                  }
+              });                
+            });
         }
         this.canvas.batchDraw();
       }
@@ -950,13 +964,13 @@ export class CreateFloorPlanPage implements OnInit{
         });
       }
 
-      getUniqueId(): string {
-        this.appApiService.getNewEventSensorId().subscribe((res: any) => {
-          return res;
-        });
+      // getUniqueId(): string {
+      //   this.appApiService.getNewEventSensorId().subscribe((res: any) => {
+      //     return res;
+      //   });
 
-        return '';
-      }
+      //   return '';
+      // }
 
       updateWidth(event: any) {
         this.activeItem?.width(parseInt(event.target.value));
@@ -992,19 +1006,19 @@ export class CreateFloorPlanPage implements OnInit{
       return false;
     }
 
-    get SensorIds(): string[] {
-      // filter out active selected sensor
-      const sensors = this.sensors.filter((sensor: any) => {
-        return sensor.attrs.customId !== this.activeItem?.attrs.customId;
-      });
+    // get SensorIds(): string[] {
+    //   // filter out active selected sensor
+    //   const sensors = this.sensors.filter((sensor: any) => {
+    //     return sensor.attrs.customId !== this.activeItem?.attrs.customId;
+    //   });
 
-      // get the ids of the sensors
-      const sensorIds = sensors.map((sensor: any) => {
-        return sensor.attrs.customId;
-      });
+    //   // get the ids of the sensors
+    //   const sensorIds = sensors.map((sensor: any) => {
+    //     return sensor.attrs.customId;
+    //   });
 
-      return sensorIds;
-    }
+    //   return sensorIds;
+    // }
 
     isCardFlipped = false;
 

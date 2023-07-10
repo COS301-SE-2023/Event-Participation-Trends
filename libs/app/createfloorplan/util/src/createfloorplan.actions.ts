@@ -1,4 +1,5 @@
 import { CreateFloorPlanStateModel } from "@event-participation-trends/app/createfloorplan/data-access";
+import Konva from "konva";
 
 export class SetCreateFloorPlanState {
     static readonly type = '[CreateFloorPlan] SetCreateFloorPlanState';
@@ -11,7 +12,7 @@ export class SetSensors {
 }
 export class AddSensor {
     static readonly type = '[CreateFloorPlan] AddSensor';
-    constructor(public payload: CreateFloorPlanStateModel['sensors'][0]) {}
+    constructor(public sensor: Konva.Image) {}
 }
 
 export class RemoveSensor {

@@ -3,31 +3,24 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors } from '@event-participation-trends/app/createfloorplan/util';
 import { SetError } from '@event-participation-trends/app/error/util';
+import Konva from 'konva';
+
+export interface ISensorState {
+    object: Konva.Image,
+    isLinked: boolean,
+}
 
 // Once we know the interface for the create floor plan we can remove the comment from the line below
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface CreateFloorPlanStateModel {
-    sensors: {
-        attrs: {
-            x: number,
-            y: number,
-            width: number,
-            height: number,
-            cursor: string,
-            draggable: boolean,
-            cornerRadius: number,
-            padding: number,
-            fill: string,
-            opacity: number,
-            name: string,
-            customId: string
-        },
-        isLinked: boolean,
-    }[]
+    sensors: ISensorState[]
 }
 
 @State<CreateFloorPlanStateModel>({
-    name: 'createfloorplan'
+    name: 'createfloorplan',
+    defaults: {
+        sensors: []
+    }
 })
 
 @Injectable()
@@ -63,14 +56,25 @@ export class CreateFloorPlanState {
     }
 
     @Action(AddSensor)
-    async addSensor(ctx: StateContext<CreateFloorPlanStateModel>, { payload }: AddSensor) {
+    async addSensor(ctx: StateContext<CreateFloorPlanStateModel>, { sensor }: AddSensor) {
         try {
             const state = ctx.getState();
-            const newState = {
-                ...state,
-                sensors: [...state.sensors, payload]
-            };
-            return ctx.dispatch(new SetCreateFloorPlanState(newState));
+
+            const response = this.appApiService.getNewEventSensorId();
+            return response.subscribe((res: {id: string}) => {
+                sensor.setAttr('customId', res.id);
+      
+                  const newSensorState = {
+                    object: sensor,
+                    isLinked: false
+                  }
+    
+                const newState = {
+                    ...state,
+                    sensors: [...state.sensors, newSensorState]
+                };
+                return ctx.dispatch(new SetCreateFloorPlanState(newState));
+            });           
         } catch (error) {
             return ctx.dispatch(new SetError((error as Error).message));
         }
@@ -82,7 +86,7 @@ export class CreateFloorPlanState {
             const state = ctx.getState();
             const newState = {
                 ...state,
-                sensors: state.sensors.filter((sensor: any) => sensor.attrs.customId !== sensorId)
+                sensors: state.sensors.filter((sensor: ISensorState) => sensor.object.getAttr('customId') !== sensorId)
             };
             return ctx.dispatch(new SetCreateFloorPlanState(newState));
         } catch (error) {
