@@ -5,3 +5,4 @@ export * from './get-all-viewer-events.query';
 export * from './get-event.query';
 export * from './get-all-event-stalls.query';
 export * from './get-event-floorlayout.request';
+export * from './get-event-device-position.query';
