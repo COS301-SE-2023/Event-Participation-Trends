@@ -207,6 +207,10 @@
           <ion-label class="text-ept-deep-grey opacity-40"
             >Alternative:</ion-label
           >
+          <ion-badge
+            class="mt-2"
+            color="sensorAlreadyLinked"
+            >{{ sensorAlreadyLinked ? Linked : Not Linked }}</ion-badge>
           <form [formGroup]="macAddressForm">
             <div class="mt-4 flex flex-col items-center justify-evenly">
               <div class="flex items-center">
@@ -297,6 +301,7 @@
               <ion-button
                 class="mt-3 bg-ept-deep-grey rounded-md"
                 disabled="{{!canLinkSensorWithMacAddress}}"
+                (click)="updateLinkedSensors()"
                 >Link Sensor</ion-button
               >
             </div>

@@ -6,6 +6,7 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
 import {Html5QrcodeScanner} from "html5-qrcode";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
 
 interface DroppedItem {
   name: string;
@@ -45,6 +46,7 @@ export class CreateFloorPlanPage implements OnInit{
     canLinkSensorWithMacAddress = false;
     macAddressForm!: FormGroup;
     inputHasFocus = false;
+    sensorAlreadyLinked = false;
 
     constructor(
       private readonly appApiService: AppApiService,
@@ -1011,7 +1013,13 @@ export class CreateFloorPlanPage implements OnInit{
     }
 
     updateLinkedSensors() {
-      this
+      const request: IlinkSensorRequest = {
+        id: this.activeItem.getAttr('customId')
+      };
+
+      this.appApiService.linkSensor(request).then((res: any) => {
+        console.log(res);
+      });
     }
 
     handleMacAddressInput(event: any, blockIndex: number) {
@@ -1037,7 +1045,6 @@ export class CreateFloorPlanPage implements OnInit{
 
       //check to see if all the blocks are filled nd satisfies the regex
       if (this.macAddressBlocks.every((block) => block.length === 2 && validHexCharacters.test(block))) {
-        console.log('all blocks filled');
         // join the blocks together
         const macAddress = this.macAddressBlocks.join(':');
         // set the macAddress value in the form
@@ -1051,7 +1058,16 @@ export class CreateFloorPlanPage implements OnInit{
 
     setFocus(value: boolean) {
       this.inputHasFocus = value;
-      console.log(this.inputHasFocus);
+    }
+
+    isLinked() {
+      this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
+        if(res) {
+          this.sensorAlreadyLinked = true;
+        }
+        return res;
+      });
+
     }
 
     get macAddressBlock1() {
