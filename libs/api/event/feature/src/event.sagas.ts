@@ -1,7 +1,8 @@
 import { 
     AcceptViewRequestEvent, 
     RemoveViewerFromEventEvent,
-    CreateEventEvent
+    CreateEventEvent,
+    AddViewerEvent
 } from '@event-participation-trends/api/event/util';
 import {
     AddViewingEventCommand,
@@ -49,4 +50,11 @@ export class EventsSagas {
           );
     };
 
+    @Saga()
+    onAddEventViewer = (events$: Observable<any>): Observable<ICommand> => {
+      return events$.pipe(
+        ofType(AddViewerEvent),
+        map((event: AddViewerEvent) => new AddViewingEventCommand({request: {userEmail: event.event.UserEmail, eventId: <string> <unknown> event.event.eventId } })),
+      );
+    };
 }

@@ -23,19 +23,19 @@ export class EventRepository {
     }   
 
     async getAllEvents(){
-        return await this.eventModel.find();
+        return await this.eventModel.find().select("-Devices");
     }
 
     async getEventByName(eventName: string){
-        return await this.eventModel.find({Name: {$eq: eventName}});
+        return await this.eventModel.find({Name: {$eq: eventName}}).select("-Devices");
     }
 
     async getEventById(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id: {$eq: eventID}});
+        return await this.eventModel.find({_id: {$eq: eventID}}).select("-Devices");
     }
 
     async getManagedEvents(managerID: Types.ObjectId){
-        return await this.eventModel.find({Manager: {$eq: managerID}});
+        return await this.eventModel.find({Manager: {$eq: managerID}}).select("-Devices");
     }
 
     async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
@@ -115,7 +115,7 @@ export class EventRepository {
     }
 
     async getPopulatedEvent(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id :{$eq: eventID}});
+        return await this.eventModel.find({_id :{$eq: eventID}}).select("-Devices");
     }
 
     // Stall
@@ -179,9 +179,15 @@ export class EventRepository {
             { FloorLayout: 1 })
     }
 
-    async addDevicePosition(eventID: Types.ObjectId, position: Position){
+    async addDevicePosition(eventID: Types.ObjectId, position: Position[]){
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
-            { $push: { Devices: position } });
+            { $push: { Devices: { $each: position } } });
+    }
+
+    async getDevicePosotions(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { Devices: 1 })
     }
 }
