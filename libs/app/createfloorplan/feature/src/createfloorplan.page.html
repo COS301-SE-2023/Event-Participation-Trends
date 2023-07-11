@@ -153,14 +153,14 @@
 
           <div class="mt-2 text-center">
             <div class="flex flex-row justify-evenly items-center mb-4">
-              <ion-label>Component Selection</ion-label>
+              <ion-label [ngClass]="{'opacity-50' : !preventCreatingWalls}">Component Selection</ion-label>
               <ion-toggle
                 aria-label="Warning toggle"
                 [checked]="!preventCreatingWalls"
                 class="col-span-1"
                 (ionChange)="toggleEditing()"
               ></ion-toggle>
-              <ion-label>Wall Creation</ion-label>
+              <ion-label [ngClass]="{'opacity-50' : preventCreatingWalls}">Wall Creation</ion-label>
             </div>
           </div>
 
