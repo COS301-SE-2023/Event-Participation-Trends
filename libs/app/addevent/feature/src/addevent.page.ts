@@ -5,14 +5,14 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ICreateEventResponse, IEventDetails } from '@event-participation-trends/api/event/util';
+import { ICreateEventResponse, IEvent, IEventDetails } from '@event-participation-trends/api/event/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import * as moment from 'moment';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { AddEventState } from '@event-participation-trends/app/addevent/data-access';
 import { Observable } from 'rxjs';
-import { SetCanCreateFloorPlan } from '@event-participation-trends/app/addevent/util';
+import { SetCanCreateFloorPlan, SetNewlyCreatedEvent } from '@event-participation-trends/app/addevent/util';
 
 @Component({
   selector: 'event-participation-trends-addevent',
@@ -21,6 +21,7 @@ import { SetCanCreateFloorPlan } from '@event-participation-trends/app/addevent/
 })
 export class AddEventPage implements OnInit {
   @Select(AddEventState.getCanCreateFloorPlan) canCreateFloorPlan$!: Observable<boolean>;
+  @Select(AddEventState.getNewlyCreatedEvent) newlyCreatedEvent$!: Observable<IEvent | null>;
 
   eventForm!: FormGroup;
 
@@ -83,6 +84,16 @@ export class AddEventPage implements OnInit {
           this.presentToastSuccess('bottom', 'Event created successfully');
           loading.dismiss();
           this.store.dispatch(new SetCanCreateFloorPlan(true));
+
+          // get newly created event
+          this.appApiService.getManagedEvents().subscribe((response) => {
+            let newEvent: IEvent = {};
+            newEvent = response.events[response.events.length - 1];
+            
+            // set state
+            this.store.dispatch(new SetNewlyCreatedEvent(newEvent));
+          });
+
           // setTimeout(() => {
           //   this.router.navigateByUrl('/home/viewevents');
           // },1000);
@@ -209,4 +220,19 @@ export class AddEventPage implements OnInit {
     return new Date().toISOString().split("T")[0];
   }
 
+  openFloorPlanEditor() {
+    this.newlyCreatedEvent$.subscribe((event: any) => {
+      if (event) {
+        const queryParams: NavigationExtras = {
+          queryParams: {
+            m: false,
+            id: event._id,
+            queryParamsHandling: 'merge'
+          }
+        };
+
+        this.router.navigate(['/event/createfloorplan'], queryParams);
+      }
+    });    
+  }
 }
