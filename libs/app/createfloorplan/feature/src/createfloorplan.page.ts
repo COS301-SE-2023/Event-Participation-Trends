@@ -1085,10 +1085,12 @@ export class CreateFloorPlanPage implements OnInit{
         id: this.activeItem.getAttr('customId')
       };
 
+      const macAddress = this.macAddressBlocks.join(':');
+
       // check if sensor isn't already linked 
       this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
         if(!res['isLinked']) {
-          this.appApiService.linkSensor(request).then((res: any) => {
+          this.appApiService.linkSensor(request, macAddress).then((res: any) => {
             if (res['success']) {
               // set the 'isLinked' attribute to true
               this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
