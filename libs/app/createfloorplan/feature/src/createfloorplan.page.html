@@ -321,13 +321,13 @@
     >
       <p
         class="bg-white z-50 rounded-md text-center text-2xl text-ept-deep-grey text-opacity-30 font-semibold mt-10 absolute top-1/2 left-1/3"
-        *ngIf="noItemsAdded() && preventCreatingWalls"
+        *ngIf="canvasItems.length === 0 && preventCreatingWalls"
       >
         Drag a component to the canvas
       </p>
       <p
         class="bg-white z-50 rounded-md text-center text-2xl text-ept-deep-grey text-opacity-30 font-semibold mt-10 absolute top-1/2 left-1/3"
-        *ngIf="noItemsAdded() && !preventCreatingWalls"
+        *ngIf="canvasItems.length === 0 && !preventCreatingWalls"
       >
         Click and drag to create walls
       </p>
@@ -339,7 +339,7 @@
       <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
         <img
           #dustbin
-          *ngIf="!noItemsAdded()"
+          *ngIf="canvasItems.length > 0"
           class="dustbin"
           (dragover)="onDustbinDragOver($event)"
           (dragleave)="onDustbinDragLeave($event)"
