@@ -1120,7 +1120,7 @@ export class CreateFloorPlanPage implements OnInit{
         const nextInput = this.macAddressBlockElements?.item(blockIndex + 1);
 
         if (nextInput && nextInput?.value?.toString().length !== 2) {
-          nextInput.setFocus();
+          nextInput.focus();
         }
       }
 
@@ -1137,7 +1137,7 @@ export class CreateFloorPlanPage implements OnInit{
       }
     }  
 
-    setFocus(value: boolean) {
+    setInputFocus(value: boolean) {
       this.inputHasFocus = value;
     }
 
