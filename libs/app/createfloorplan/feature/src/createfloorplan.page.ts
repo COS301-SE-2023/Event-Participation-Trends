@@ -1121,11 +1121,17 @@ export class CreateFloorPlanPage implements OnInit{
 
         if (nextInput && nextInput?.value?.toString().length !== 2) {
           nextInput.focus();
+
+          // check if input now has focus
+          if (nextInput !== document.activeElement) {
+            // if not, set the focus to the next input
+            nextInput.setFocus();
+          }
         }
       }
 
       //check to see if all the blocks are filled nd satisfies the regex
-      if (this.macAddressBlocks.every((block) => block.length === 2 && validHexCharacters.test(block))) {
+      if (this.macAddressBlocks.every((block) => block.valueOf().length === 2 && validHexCharacters.test(block))) {
         // join the blocks together
         const macAddress = this.macAddressBlocks.join(':');
         // set the macAddress value in the form
