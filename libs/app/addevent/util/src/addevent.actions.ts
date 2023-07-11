@@ -1,4 +1,4 @@
 export class SetCanCreateFloorPlanState {
     static readonly type = '[AddEvent] SetCanCreateFloorPlanState';
-    constructor(public payload: boolean) {}
+    constructor(public value: boolean) {}
 }
