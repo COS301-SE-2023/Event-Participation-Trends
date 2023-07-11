@@ -38,6 +38,7 @@ export class AddEventPage implements OnInit {
   }
 
   isLoading = false;
+  canCreateFloorPlan = false;
 
   async createEvent() {
     const selectedDate = (document.getElementById('date') as HTMLIonInputElement).value;
@@ -71,12 +72,13 @@ export class AddEventPage implements OnInit {
         if (response && response.status) {        
           this.presentToastSuccess('bottom', 'Event created successfully');
           loading.dismiss();
-          setTimeout(() => {
-            this.router.navigateByUrl('/home/viewevents');
-          },1000);
-          setTimeout(() => {
-            location.reload();
-          }, 1200); 
+          this.canCreateFloorPlan = true;
+          // setTimeout(() => {
+          //   this.router.navigateByUrl('/home/viewevents');
+          // },1000);
+          // setTimeout(() => {
+          //   location.reload();
+          // }, 1200); 
         }
         else {
           this.presentToastFailure('bottom', 'Event creation failed. Please try again.');
@@ -84,7 +86,6 @@ export class AddEventPage implements OnInit {
           this.eventForm.reset();
         }
       });
-      
     }
     else {
       this.presentToastFailure('bottom', 'Invalid event data. Please try again.');

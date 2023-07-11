@@ -117,12 +117,13 @@
       </div>
     </form>
       <div
-        class="bg-[url('assets/floormap_icon.svg')] bg-no-repeat bg-center col-span-2 m-7 flex flex-col items-center justify-center rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
+        class="bg-[url('assets/floormap_icon.svg')] bg-no-repeat bg-center col-span-2 m-7 flex flex-col items-center justify-center rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white"
       >
-        <div class="h-full w-full backdrop-blur-[6px] flex flex-col items-center justify-center">
+        <div class="h-full w-full backdrop-blur-[8px] flex flex-col items-center justify-center">
           <ion-button
-            class="z-1 m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
+            class="z-1 m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all text-ept-bumble-yellow"
             routerLink="/event/createfloorplan"
+            disabled="!canCreateFloorPlan"
           >
             <ion-icon name="create-outline"></ion-icon>Create Floor
             Plan</ion-button
