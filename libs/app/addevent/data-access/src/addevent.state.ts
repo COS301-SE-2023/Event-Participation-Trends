@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext } from "@ngxs/store";
-import { SetCanCreateFloorPlanState } from "@event-participation-trends/app/addevent/util";
+import { SetCanCreateFloorPlan } from "@event-participation-trends/app/addevent/util";
 
 export interface AddEventStateModel {
     canCreateFloorPlan: boolean;
@@ -20,8 +20,8 @@ export class AddEventState {
         return state.canCreateFloorPlan;
     }
 
-    @Action(SetCanCreateFloorPlanState)
-    setCanCreateFloorPlanState(ctx: StateContext<AddEventStateModel>, { value }: SetCanCreateFloorPlanState) {
+    @Action(SetCanCreateFloorPlan)
+    setCanCreateFloorPlan(ctx: StateContext<AddEventStateModel>, { value }: SetCanCreateFloorPlan) {
         ctx.patchState({ canCreateFloorPlan: value});
     }
 }

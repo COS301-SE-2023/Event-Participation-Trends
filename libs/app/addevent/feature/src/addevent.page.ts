@@ -9,6 +9,10 @@ import { ICreateEventResponse, IEventDetails } from '@event-participation-trends
 import { AppApiService } from '@event-participation-trends/app/api';
 import * as moment from 'moment';
 import { Router } from '@angular/router';
+import { Select, Store } from '@ngxs/store';
+import { AddEventState } from '@event-participation-trends/app/addevent/data-access';
+import { Observable } from 'rxjs';
+import { SetCanCreateFloorPlan } from '@event-participation-trends/app/addevent/util';
 
 @Component({
   selector: 'event-participation-trends-addevent',
@@ -16,6 +20,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./addevent.page.css'],
 })
 export class AddEventPage implements OnInit {
+  @Select(AddEventState.getCanCreateFloorPlan) canCreateFloorPlan$!: Observable<boolean>;
+
   eventForm!: FormGroup;
 
   constructor(
@@ -24,7 +30,9 @@ export class AddEventPage implements OnInit {
     private readonly alertController: AlertController,
     private readonly toastController: ToastController,
     private readonly loadingController: LoadingController,
-    private readonly router: Router) {}
+    private readonly router: Router,
+    private readonly store: Store  
+  ) {}
 
   ngOnInit(): void {
     this.eventForm = this.formBuilder.group({
@@ -35,6 +43,8 @@ export class AddEventPage implements OnInit {
       eventStartTime: ['', Validators.required],
       eventEndTime: ['', Validators.required]
     });
+
+    this.store.dispatch(new SetCanCreateFloorPlan(false));
   }
 
   isLoading = false;
@@ -72,7 +82,7 @@ export class AddEventPage implements OnInit {
         if (response && response.status) {        
           this.presentToastSuccess('bottom', 'Event created successfully');
           loading.dismiss();
-          this.canCreateFloorPlan = true;
+          this.store.dispatch(new SetCanCreateFloorPlan(true));
           // setTimeout(() => {
           //   this.router.navigateByUrl('/home/viewevents');
           // },1000);
