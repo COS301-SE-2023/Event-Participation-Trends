@@ -16,7 +16,7 @@ export class AddDevicePositionEventHandler implements IEventHandler<AddDevicePos
         const eventIdObj = <Types.ObjectId> <unknown> event.event.eventId;
 
         if(request.eventId != null){
-            await this.eventRepository.addDevicePosition(eventIdObj, <Position> request.position);
+            await this.eventRepository.addDevicePosition(eventIdObj, <Position[]> request.position);
         }
     }
     

@@ -4,7 +4,7 @@ import { PassportService } from './passport.service';
 import { GoogleOAuthGuard } from '../google-oauth-guard.guard';
 import { GoogleStrategy } from './google.strategy';
 import { PassportModule as pass } from '@nestjs/passport';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { UserService, UserModule } from '@event-participation-trends/api/user/feature';
 import { CqrsModule } from '@nestjs/cqrs';
 
@@ -13,7 +13,6 @@ import { CqrsModule } from '@nestjs/cqrs';
     pass.register({
       defaultStrategy: 'google',
     }),
-    JwtModule.register({}), 
     UserModule,
     CqrsModule,
   ],

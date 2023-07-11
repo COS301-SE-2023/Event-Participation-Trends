@@ -8,7 +8,7 @@ import { AggregateRoot } from '@nestjs/cqrs';
 export class AddDevicePosition extends AggregateRoot implements IAddDevicePosition {
     constructor(
         public eventId: string | undefined | null,
-        public position: IPosition | undefined | null,
+        public position: IPosition[] | undefined | null,
     ){
         super();
     }

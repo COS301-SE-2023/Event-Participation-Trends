@@ -8,3 +8,4 @@ export * from './update-event-details-event.handler';
 export * from './update-stall-event.handler';
 export * from './/update-floorlayout.event.handler';
 export * from './add-device-position.event.handler';
+export * from './add-event-viewer.handler';

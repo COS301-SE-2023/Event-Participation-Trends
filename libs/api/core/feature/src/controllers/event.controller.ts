@@ -26,6 +26,10 @@ import {
     IUpdateFloorlayoutResponse,
     IGetEventFloorlayoutRequest,
     IGetEventFloorlayoutResponse,
+    IAddViewerRequest,
+    IAddViewerResponse,
+    IGetEventDevicePositionRequest,
+    IGetEventDevicePositionResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -48,7 +52,7 @@ import {
   JwtGuard,
   RbacGuard,
 } from '@event-participation-trends/api/guards';
-import { Role } from '@event-participation-trends/api/user/util';
+import { IAddEventToAdminRequest, Role } from '@event-participation-trends/api/user/util';
 
 
 @Controller('event')
@@ -310,5 +314,55 @@ export class EventController {
   return <IGetEventFloorlayoutResponse>(
     (<unknown>this.eventService.getEventFloorLayout(extractRequest))
   );
-}
+ }
+ 
+    @Post('addEventViewer')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async addEventViewer(
+    @Body() requestBody: IAddViewerRequest
+    ): Promise<IAddViewerResponse> {
+
+    if(requestBody.eventId==undefined || requestBody.eventId ==null)
+        throw new HttpException("Bad Request: eventId not provided", 400);
+
+    if(requestBody.userEmail==undefined || requestBody.userEmail ==null)
+        throw new HttpException("Bad Request: userEmail not provided", 400);
+
+    const extractRequest: IAddViewerRequest = {
+            userEmail: requestBody.userEmail,
+            eventId: requestBody.eventId,
+    };
+
+    return <IAddViewerResponse>(
+        (<unknown>this.eventService.addEventViewer(extractRequest))
+    );
+    }
+
+    @Get('getEventDevicePosition')
+    @SetMetadata('role',Role.MANAGER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getEventDevicePosition(
+        @Query() query: any
+    ): Promise<IGetEventDevicePositionResponse> {
+  
+        if(query.eventId==undefined || query.eventId ==null)
+            throw new HttpException("Bad Request: eventId not provided", 400);
+    
+        if(query.startTime==undefined || query.startTime ==null)
+            throw new HttpException("Bad Request: startDate not provided", 400);
+        
+        if(query.endTime==undefined || query.endTime ==null)
+            throw new HttpException("Bad Request: endDate not provided", 400);
+
+        const extractRequest: IGetEventDevicePositionRequest = {
+            eventId: query.eventId,
+            startTime: query.startTime,
+            endTime: query.endTime
+        };
+  
+        return <IGetEventDevicePositionResponse><unknown>(
+            this.eventService.getEventDevicePosition(extractRequest));
+   }
+
 }

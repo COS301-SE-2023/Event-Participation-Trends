@@ -153,16 +153,17 @@
 
           <div class="mt-2 text-center">
             <div class="flex flex-row justify-evenly items-center mb-4">
-              <ion-label>Component Selection</ion-label>
+              <ion-label [ngClass]="{'opacity-50' : !preventCreatingWalls}">Component Selection</ion-label>
               <ion-toggle
                 aria-label="Warning toggle"
                 [checked]="!preventCreatingWalls"
                 class="col-span-1"
                 (ionChange)="toggleEditing()"
               ></ion-toggle>
-              <ion-label>Wall Creation</ion-label>
+              <ion-label [ngClass]="{'opacity-50' : preventCreatingWalls}">Wall Creation</ion-label>
             </div>
           </div>
+
           <ion-button
             (click)="saveFloorLayout()"
             class="create-event mt-20 ml-20 right-2.5 h-40px text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg absolute bottom-0 mb-10 hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
@@ -187,17 +188,21 @@
             <ion-text class="text-ept-deep-grey font-bold m-auto opacity-1">{{getSelectedSensorId()}}</ion-text>
           </div>
           <div class="mt-5 text-center">
-            <ion-label class="text-ept-deep-grey opacity-40">Select a sensor to link with:</ion-label>
+            <ion-label class="text-ept-deep-grey opacity-40"
+              >Select a sensor to link with:</ion-label
+            >
             <ion-list>
-              <ion-item
-                *ngFor="let sensorId of SensorIds"
-              >
+              <ion-item *ngFor="let sensorId of SensorIds">
                 <ion-checkbox>
                   <ion-label>{{sensorId}}</ion-label>
                 </ion-checkbox>
               </ion-item>
             </ion-list>
-            <ion-text class="text-red-500 font-bold m-auto opacity-1" *ngIf="SensorIds.length === 0">No sensors found</ion-text>
+            <ion-text
+              class="text-red-500 font-bold m-auto opacity-1"
+              *ngIf="SensorIds.length === 0"
+              >No sensors found</ion-text
+            >
           </div>
           <ion-button
             (click)="updateLinkedSensors()"
