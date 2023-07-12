@@ -29,6 +29,7 @@ export class CreateFloorPlanPage implements OnInit{
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
     @ViewChild('stall', {static: false}) stallElement!: ElementRef<HTMLImageElement>;
+    macAddrFromQR: string = '';
     isDropdownOpen = false;
     openDustbin = false;
     canvasItems: DroppedItem[] = [];
@@ -518,7 +519,10 @@ export class CreateFloorPlanPage implements OnInit{
               "reader",
               { fps: 10, qrbox: {width: 250, height: 250} },
               /* verbose= */ false);
-            html5QrcodeScanner.render(this.onScanSuccess, this.onScanFailure);
+            html5QrcodeScanner.render((decoded, res)=>{
+              this.macAddrFromQR = decoded;
+              this.updateLinkedSensors();
+            } , undefined);
           }
           return;
         }
@@ -1236,7 +1240,7 @@ export class CreateFloorPlanPage implements OnInit{
         id: this.activeItem.getAttr('customId')
       };
 
-      const macAddress = this.macAddressBlocks.join(':');
+      const macAddress = this.macAddrFromQR || this.macAddressBlocks.join(':');
 
       // check if sensor isn't already linked 
       this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
@@ -1342,16 +1346,5 @@ export class CreateFloorPlanPage implements OnInit{
           return 'assets/trash-delete.svg';
         }
         else return '';
-    }
-
-    onScanSuccess(decodedText: any, decodedResult: any) {
-      // handle the scanned code as you like, for example:
-      console.log(`Code matched = ${decodedText}`, decodedResult);
-    }
-    
-    onScanFailure(error: any) {
-      // handle scan failure, usually better to ignore and keep scanning.
-      // for example:
-      console.warn(`Code scan error = ${error}`);
     }
 }
