@@ -140,7 +140,7 @@ export class CreateFloorPlanPage implements OnInit{
             const positionY = this.canvasContainer.getPointerPosition()?.y || 0;
             const droppedItem: DroppedItem = { name };
             this.canvasItems.push(droppedItem);
-            this.addKonvaObject(droppedItem, positionX, positionY);
+            this.addKonvaObject(droppedItem, positionX/this.canvasContainer.scaleX(), positionY/this.canvasContainer.scaleY());
         }
     }
 
