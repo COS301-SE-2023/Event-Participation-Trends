@@ -517,10 +517,10 @@ export class CreateFloorPlanPage implements OnInit{
 
         e.evt.preventDefault();
         const points = this.canvasContainer.getPointerPosition();
-        x1 = points ? points.x : 0;
-        y1 = points ? points.y : 0;
-        x2 = points ? points.x : 0;
-        y2 = points ? points.y : 0;
+        x1 = points ? (points.x - this.canvasContainer.x()) / this.canvasContainer.scaleX() : 0;
+        y1 = points ? (points.y - this.canvasContainer.y()) / this.canvasContainer.scaleY() : 0;
+        x2 = points ? (points.x - this.canvasContainer.x()) / this.canvasContainer.scaleX() : 0;
+        y2 = points ? (points.y - this.canvasContainer.y()) / this.canvasContainer.scaleY() : 0;
 
         selectionBox.visible(true);
         selectionBox.width(0);
@@ -539,8 +539,8 @@ export class CreateFloorPlanPage implements OnInit{
         e.evt.preventDefault();
 
         const points = this.canvasContainer.getPointerPosition();
-        x2 = points ? points.x : 0;
-        y2 = points ? points.y : 0;
+        x2 = points ? (points.x - this.canvasContainer.x()) / this.canvasContainer.scaleX() : 0;
+        y2 = points ? (points.y - this.canvasContainer.y()) / this.canvasContainer.scaleY() : 0;
 
         selectionBox.setAttrs({
           x: Math.min(x1, x2),
