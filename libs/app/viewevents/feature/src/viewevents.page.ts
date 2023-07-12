@@ -342,4 +342,15 @@ export class VieweventsPage implements OnInit{
   hasFloorLayout(event: any): boolean {
     return event.FloorLayout ? true : false;
   }
+
+  handleRefresh(event: any) {
+    setTimeout(() => {
+      this.store.dispatch(new GetAllEvents());
+      this.store.dispatch(new GetMyEvents());
+      this.store.dispatch(new GetSubscribedEvents());
+      this.store.dispatch(new GetUnsubscribedEvents());
+      
+      event.target.complete();
+    }, 2000);
+  }
 }

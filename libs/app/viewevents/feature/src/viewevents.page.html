@@ -6,11 +6,19 @@
       <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>
       <ion-label>Loading Content...</ion-label>
     </div>
-    <div *ngIf="!isLoading" class="grid grid-cols-3 p-6 px-7">
-      <div class="col-span-1 flex items-center"></div>
+    <div *ngIf="!isLoading" class="grid grid-cols-3 px-7">
+      <div class="col-span-1 flex items-center">
+        <ion-refresher slot="fixed" [pullMin]="30" [pullMax]="70" (ionRefresh)="handleRefresh($event)">
+          <ion-refresher-content 
+            pullingIcon="arrow-down-circle-outline"
+            refreshingSpinner="bubbles"
+            class="absolute left-4 text-ept-bumble-yellow"
+          ></ion-refresher-content>
+        </ion-refresher>
+      </div>
       <span
         ngClass="sidebar-content"
-        class="flex w-full col-span-3 lg:col-span-1"
+        class="flex w-full col-span-3 lg:col-span-1 py-6"
       >
         <ion-searchbar
           ngClass="sidebar-searchbar"
