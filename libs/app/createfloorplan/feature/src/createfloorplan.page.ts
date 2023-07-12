@@ -76,6 +76,14 @@ export class CreateFloorPlanPage implements OnInit{
       private readonly store: Store
     ) {}
 
+    convertX(x: number): number {
+      return (x - this.canvasContainer.x()) / this.canvasContainer.scaleX();
+    }
+
+    convertY(y: number): number {
+      return (y - this.canvasContainer.y()) / this.canvasContainer.scaleY();
+    }
+
     toggleEditing(): void {
       this.preventCreatingWalls = !this.preventCreatingWalls;
       this.activeItem = null;
@@ -377,7 +385,7 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
       const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-      this.gridSize = newScale*10;
+      this.gridSize = 10;
 
       if (newScale <= 1 || newScale >= 5) return;
 
@@ -892,8 +900,8 @@ export class CreateFloorPlanPage implements OnInit{
         
         const pointer = this.canvasContainer.getPointerPosition();
         const grid = this.gridSize;
-        const xValue = pointer ? pointer.x : 0;
-        const yValue = pointer ? pointer.y : 0;
+        const xValue = pointer ? this.convertX(pointer.x) : 0;
+        const yValue = pointer ? this.convertY(pointer.y) : 0;
         const snapPoint = {
             x: Math.round(xValue / grid) * grid,
             y: Math.round(yValue / grid) * grid,
@@ -934,8 +942,8 @@ export class CreateFloorPlanPage implements OnInit{
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
             const grid = this.gridSize;
-            const xValue = pointer ? pointer.x : 0;
-            const yValue = pointer ? pointer.y : 0;
+            const xValue = pointer ? this.convertX(pointer.x) : 0;
+            const yValue = pointer ? this.convertY(pointer.y) : 0;
             const snapPoint = {
                 x: Math.round(xValue / grid) * grid,
                 y: Math.round(yValue / grid) * grid,
@@ -958,8 +966,8 @@ export class CreateFloorPlanPage implements OnInit{
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
           const grid = this.gridSize;
-          const xValue = pointer ? pointer.x : 0;
-          const yValue = pointer ? pointer.y : 0;
+          const xValue = pointer ? this.convertX(pointer.x) : 0;
+          const yValue = pointer ? this.convertY(pointer.y) : 0;
           const snapPoint = {
               x: Math.round(xValue / grid) * grid,
               y: Math.round(yValue / grid) * grid,
