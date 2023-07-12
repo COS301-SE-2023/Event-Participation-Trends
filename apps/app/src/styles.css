@@ -27,3 +27,9 @@
     font-family: "Poppins", sans-serif; 
     font-weight: 500;
 }
+
+@media (min-width: 768px) {
+    ion-modal {     
+        --border-radius: 23px!important;   
+    }
+}
