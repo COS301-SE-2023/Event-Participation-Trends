@@ -103,6 +103,11 @@ export class UserController {
     @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getFullName(@Req() req: Request): Promise<IGetFullNameResponse> {
         const request: any = req;
+        if (request.user['lastName'] == undefined) {
+            return {
+                fullName: request.user['firstName'],
+            };
+        }
         return {
             fullName: request.user['firstName'] + ' ' + request.user['lastName'],
         };
