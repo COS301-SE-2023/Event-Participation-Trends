@@ -34,38 +34,3 @@
   }
 }
 
-ion-content {
-  --offset-bottom: auto !important;
-  --overflow: auto;
-  background: var(
-    --ion-toolbar-background,
-    var(--ion-background-color, #000000)
-  ) !important;
-  overflow: auto;
-
-  &::-webkit-scrollbar {
-    width: 12px;
-    height: 5px;
-}
-
-&::-webkit-scrollbar-track {
-    background: rgb(0, 0, 0, 0);
-}
-
-&::-webkit-scrollbar-track:hover {
-    background: rgb(0, 0, 0, 0);
-}
-
-&::-webkit-scrollbar-thumb {
-      border-radius: 2px;
-    background: #101010;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: #facc15;
-  }
-
-  .inner-scroll {
-    scrollbar-width: thin;
-  }
-}
