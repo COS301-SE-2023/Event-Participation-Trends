@@ -29,7 +29,7 @@ export class CreateFloorPlanPage implements OnInit{
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
     @ViewChild('stall', {static: false}) stallElement!: ElementRef<HTMLImageElement>;
-    macAddrFromQR: string = '';
+    macAddrFromQR = '';
     isDropdownOpen = false;
     openDustbin = false;
     canvasItems: DroppedItem[] = [];
