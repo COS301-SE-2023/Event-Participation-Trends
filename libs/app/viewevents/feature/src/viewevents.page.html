@@ -1,6 +1,22 @@
 <ion-content
   class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
 >
+  <ion-toast
+    [isOpen]="didRefresh && newEventsFound"
+    message="There are new events available!"
+    [duration]="2000"
+    class="text-center"
+    color="warning"
+    position="top"
+  ></ion-toast>
+  <ion-toast
+    [isOpen]="didRefresh && !newEventsFound"
+    message="No new events."
+    [duration]="2000"
+    class="text-center"
+    color="warning"
+    position="top"
+  ></ion-toast>
   <div class="backdrop-blur-[6px] min-h-full h-fit" [ngClass]="{'items-center flex justify-center': isLoading}">
     <div *ngIf="isLoading" class="flex flex-col justify-center items-center">
       <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>

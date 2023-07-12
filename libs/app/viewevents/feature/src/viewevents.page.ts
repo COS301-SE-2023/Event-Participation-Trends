@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RequestAccessModalComponent } from '@event-participation-trends/app/requestaccessmodal/feature';
 import { ViewEventModalComponent } from '@event-participation-trends/app/vieweventmodal/feature';
-import { ModalController, NavController } from '@ionic/angular';
+import { ModalController, NavController, ToastController } from '@ionic/angular';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { IEvent, IGetManagedEventsResponse } from '@event-participation-trends/api/event/util';
 import { Observable, forkJoin } from 'rxjs';
@@ -31,13 +31,16 @@ export class VieweventsPage implements OnInit{
   public searchValue = '';
   public address_location = '';
   isLoading = true;
+  didRefresh = false;
+  newEventsFound = false;
 
   constructor(
     private appApiService: AppApiService,
     private readonly modalController: ModalController,
     private readonly navController: NavController,
     private readonly router: Router,
-    private store: Store
+    private store: Store,
+    private readonly toastController: ToastController,
   ) {
     // // get role
     // this.appApiService.getRole().subscribe((role) => {
@@ -345,12 +348,40 @@ export class VieweventsPage implements OnInit{
 
   handleRefresh(event: any) {
     setTimeout(() => {
+      const old_allEvents = this.all_events;
+      this.newEventsFound = false;
+      this.didRefresh = false;
+
       this.store.dispatch(new GetAllEvents());
       this.store.dispatch(new GetMyEvents());
       this.store.dispatch(new GetSubscribedEvents());
       this.store.dispatch(new GetUnsubscribedEvents());
-      
+
+      //present toast if there are new events
+      this.all_events$.subscribe((all_events) => {
+        if (all_events && all_events.length > old_allEvents.length) {
+          // this.presentToast('top', 'There are new events!');
+          this.newEventsFound = true;
+        }
+        else {
+          // this.presentToast('top', 'No new events!');
+          this.newEventsFound = false;
+        }
+      });
+
       event.target.complete();
+      this.didRefresh = true;
     }, 2000);
+  }
+
+  async presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2500,
+      position: position,
+      color: 'warning',
+    });
+
+    await toast.present();
   }
 }
