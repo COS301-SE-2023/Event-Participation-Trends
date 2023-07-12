@@ -1,8 +1,18 @@
 import { IEvent } from "@event-participation-trends/api/event/util";
 
+interface VieweventsStateModel {
+    all_events: IEvent[];
+    subscribed_events: IEvent[];
+    unsubscribed_events: IEvent[];
+    my_events: IEvent[];
+    role: string;
+    searchValue: string;
+    address_location: string;
+}
+
 export class SetViewEvents {
     static readonly type = '[Viewevents] SetViewEvents';
-    constructor(public newState: any) {}
+    constructor(public newState: VieweventsStateModel) {}
 }
 
 export class SetAllEvents {
@@ -27,7 +37,7 @@ export class SetMyEvents {
 
 export class SetRole {
     static readonly type = '[Viewevents] SetRole';
-    constructor(public newRole: string) {}
+    constructor(public newRole: string | undefined | null) {}
 }
 
 export class SetSearchValue {
