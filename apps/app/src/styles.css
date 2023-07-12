@@ -57,6 +57,7 @@ ion-content {
 }
 
 &::-webkit-scrollbar-thumb {
+      border-radius: 2px;
     background: #101010;
   }
 
