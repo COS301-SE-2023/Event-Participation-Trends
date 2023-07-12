@@ -83,4 +83,7 @@ export class SendViewRequest {
     constructor(public eventId: string) {}
 }
 
-
+export class AddNewlyCreatedEvent {
+    static readonly type = '[Viewevents] AddNewlyCreatedEvent';
+    constructor(public newEvent: IEvent) {}
+}

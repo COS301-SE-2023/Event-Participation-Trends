@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { IEvent, IGetAllEventsResponse } from '@event-participation-trends/api/event/util';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { Action, State, StateContext } from '@ngxs/store';
-import { GetAllEvents, GetMyEvents, GetRole, GetSubscribedEvents, GetUnsubscribedEvents, SetAddressLocation, SetAllEvents, SetMyEvents, SetRole, SetSearchValue, SetSubscribedEvents, SetUnsubscribedEvents, SetViewEvents } from '@event-participation-trends/app/viewevents/util';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { AddNewlyCreatedEvent, GetAllEvents, GetMyEvents, GetRole, GetSubscribedEvents, GetUnsubscribedEvents, SetAddressLocation, SetAllEvents, SetMyEvents, SetRole, SetSearchValue, SetSubscribedEvents, SetUnsubscribedEvents, SetViewEvents } from '@event-participation-trends/app/viewevents/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import { Observable } from 'rxjs';
 import { IGetUserRoleResponse } from '@event-participation-trends/api/user/util';
@@ -38,6 +38,37 @@ export class VieweventsState {
     constructor(
         private readonly appApiService: AppApiService,
     ) {}
+
+    // Selectors
+    @Selector()
+    static all_events(state: VieweventsStateModel): IEvent[] {
+        return state.all_events;
+    }
+
+    @Selector()
+    static subscribed_events(state: VieweventsStateModel): IEvent[] {
+        return state.subscribed_events;
+    }
+
+    @Selector()
+    static unsubscribed_events(state: VieweventsStateModel): IEvent[] {
+        return state.unsubscribed_events;
+    }
+
+    @Selector()
+    static my_events(state: VieweventsStateModel): IEvent[] {
+        return state.my_events;
+    }
+
+    @Selector()
+    static role(state: VieweventsStateModel): string {
+        return state.role;
+    }
+
+    @Selector()
+    static searchValue(state: VieweventsStateModel): string {
+        return state.searchValue;
+    }
 
     // Setter Actions
 
@@ -125,7 +156,7 @@ export class VieweventsState {
 
             const newState = {
                 ...state,
-                role: newRole ? newRole : ''
+                role: newRole ? newRole : 'Viewer'
             };
 
             return ctx.dispatch(new SetViewEvents(newState));
@@ -200,9 +231,55 @@ export class VieweventsState {
             const response: Observable<IGetUserRoleResponse> = await this.appApiService.getRole();
 
             return response.subscribe((res: IGetUserRoleResponse) => {
-                const role = res.userRole;
+                const role = res.userRole ? res.userRole : 'Viewer';
                 return ctx.dispatch(new SetRole(role));
             });
+        } catch (error) {
+            return ctx.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(GetUnsubscribedEvents)
+    async getUnsubscribedEvents(ctx: StateContext<VieweventsStateModel>) {
+        try {
+            const state = ctx.getState();
+            const all_events = state.all_events;
+            const subscribed_events = state.subscribed_events as any[];
+            const my_events = state.my_events as any[];
+
+            // Set unsubscribed events
+            const unsubscribed_events = all_events.filter((event: any) => {
+                let hasAccess = false;
+                for (let i = 0; i < subscribed_events.length; i++) {
+                    if (subscribed_events[i]._id == event._id) {
+                    hasAccess = true;
+                    return;
+                    }
+                }
+
+                return (
+                !hasAccess &&
+                my_events.filter((my_event) => {
+                    return my_event._id == event._id;
+                }).length == 0
+                );
+            });
+
+            return ctx.dispatch(new SetUnsubscribedEvents(unsubscribed_events));
+        } catch (error) {
+            return ctx.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(AddNewlyCreatedEvent)
+    async addNewlyCreatedEvent(ctx: StateContext<VieweventsStateModel>, { newEvent }: AddNewlyCreatedEvent) {
+        try {
+            const state = ctx.getState();
+            const my_events = state.my_events as any[];
+
+            my_events.push(newEvent);
+
+            return ctx.dispatch(new SetMyEvents(my_events));
         } catch (error) {
             return ctx.dispatch(new SetError((error as Error).message));
         }
