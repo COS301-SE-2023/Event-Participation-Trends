@@ -208,4 +208,8 @@ export class VieweventsPage {
 
     this.router.navigate(['/event/addevent'], queryParams);
   }
+
+  hasFloorLayout(event: any): boolean {
+    return event.FloorLayout ? true : false;
+  }
 }

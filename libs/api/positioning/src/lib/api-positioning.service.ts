@@ -24,11 +24,12 @@ export interface Position {
 @Injectable()
 export class PositioningService {
   public getPositions(sensor_readings: SensorReading[]): Position[] {
-    const positions: Position[] = [];
+    const positions_of_targets: Position[] = [];
 
-    const device_to_readings = this.groupByID(sensor_readings);
+    const device_to_readings_map = this.groupByID(sensor_readings);
 
-    for (const [id, readings] of device_to_readings) {
+    for (const [id, readings] of device_to_readings_map) {
+      // if less than three readings no position can be calculated
       if (readings.length < 3) {
         continue;
       }
@@ -36,7 +37,8 @@ export class PositioningService {
       // sort by distance
       readings.sort((a, b) => a.distance - b.distance);
 
-      const intersections = this.getPossibleIntersections(
+      // get the possible intersections of the three circles predicted as closest to the target
+      const intersections_of_circles = this.getPossibleIntersections(
         readings[0].x,
         readings[0].y,
         readings[1].x,
@@ -48,7 +50,8 @@ export class PositioningService {
         readings[2].distance
       );
 
-      if (intersections.length === 0) {
+      // if no intersections found, continue
+      if (intersections_of_circles.length === 0) {
         continue;
       }
 
@@ -60,20 +63,20 @@ export class PositioningService {
       const centroid_y = (readings[0].y + readings[1].y + readings[2].y) / 3;
 
       // find intersection closest to centroid
-      for (const intersection of intersections) {
+      for (const intersection of intersections_of_circles) {
         if (intersection.length !== 2) {
           continue;
         }
 
-        const error = Math.sqrt(
+        const distance_error = Math.sqrt(
           Math.pow(intersection[0] - centroid_x, 2) +
           Math.pow(intersection[1] - centroid_y, 2)
         );
 
-        if (error < best_error) {
+        if (distance_error < best_error) {
           best_intersection[0] = intersection[0];
           best_intersection[1] = intersection[1];
-          best_error = error;
+          best_error = distance_error;
         }
       }
 
@@ -81,17 +84,15 @@ export class PositioningService {
         continue;
       }
 
-      const position: Position = {
+      positions_of_targets.push({
         id: id,
         x: best_intersection[0],
         y: best_intersection[1],
         timestamp: readings[0].timestamp,
-      };
-
-      positions.push(position);
+      });
     }
 
-    return positions;
+    return positions_of_targets;
   }
 
   private findIntersectionOfTwoCircles(
@@ -241,26 +242,26 @@ export class PositioningService {
   private groupByID(
     sensor_readings: SensorReading[]
   ): Map<number, SensorReading[]> {
-    const map: Map<number, SensorReading[]> = new Map();
+    const device_to_readings_map: Map<number, SensorReading[]> = new Map();
 
     for (const sensor_reading of sensor_readings) {
-      const id = sensor_reading.id;
+      const device_id = sensor_reading.id;
 
-      if (map.has(id)) {
-        const sensor_readings = map.get(id);
+      if (device_to_readings_map.has(device_id)) {
+        const device_readings = device_to_readings_map.get(device_id);
 
-        if (sensor_readings === undefined) {
+        if (device_readings === undefined) {
           throw new Error('sensor_readings is undefined');
         }
 
-        sensor_readings.push(sensor_reading);
+        device_readings.push(sensor_reading);
       } else {
         const sensor_readings: SensorReading[] = [sensor_reading];
-        map.set(id, sensor_readings);
+        device_to_readings_map.set(device_id, sensor_readings);
       }
     }
 
-    return map;
+    return device_to_readings_map;
   }
 
   public rssiToDistance(

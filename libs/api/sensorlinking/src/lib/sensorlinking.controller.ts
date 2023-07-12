@@ -64,4 +64,5 @@ export class SensorlinkingController {
       success: true,
     };
   }
+
 }

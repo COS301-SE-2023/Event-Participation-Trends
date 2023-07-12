@@ -1,9 +1,16 @@
-import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core';
 import { get } from 'http';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
+import {Html5QrcodeScanner} from "html5-qrcode";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
+import { Select, Store } from '@ngxs/store';
+import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@event-participation-trends/app/createfloorplan/data-access';
+import { Observable } from 'rxjs';
+import { AddSensor, RemoveSensor, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 
 interface DroppedItem {
   name: string;
@@ -15,7 +22,9 @@ interface DroppedItem {
   styleUrls: ['./createfloorplan.page.css'],
 })
 
-export class CreateFloorPlanPage {
+export class CreateFloorPlanPage implements OnInit{
+  @Select(CreateFloorPlanState.getSensors) sensors$!: Observable<ISensorState[] | undefined>; 
+  @Select(CreateFloorPlanState.getActiveSensor) activeSensor$!: Observable<ISensorState | null>;
     @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLDivElement>;
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
@@ -33,7 +42,7 @@ export class CreateFloorPlanPage {
     transformer = new Konva.Transformer();
     preventCreatingWalls = true; // to prevent creating walls
     transformers: Konva.Transformer[] = [this.transformer];
-    sensors: Konva.Image[] = [];
+    sensors: ISensorState[] | undefined = [];
     gridSize = 10;
     paths: Konva.Path[] = [];
     activePath: Konva.Path | null = null;
@@ -53,15 +62,23 @@ export class CreateFloorPlanPage {
       stageX: 0,
       stageY: 0,
     }
+    macAddressBlocks: string[] = [];
+    macAddressBlockElements : NodeListOf<HTMLIonInputElement> | undefined;
+    canLinkSensorWithMacAddress = false;
+    macAddressForm!: FormGroup;
+    inputHasFocus = false;
 
     constructor(
       private readonly appApiService: AppApiService,
       private readonly route: ActivatedRoute,
+      private readonly formBuilder: FormBuilder, 
+      private readonly store: Store
     ) {}
 
     toggleEditing(): void {
       this.preventCreatingWalls = !this.preventCreatingWalls;
       this.activeItem = null;
+      this.store.dispatch(new UpdateActiveSensor(''));
 
       //remove all selected items
       this.transformers.forEach(transformer => {
@@ -173,11 +190,15 @@ export class CreateFloorPlanPage {
           } 
           else {
             image.setAttr('name', 'sensor');
-            image.setAttr('customId', this.getUniqueId());
-            this.sensors.push(image);
+            // image.setAttr('customId', this.getUniqueId());
+            // this.sensors.push({object: image, isLinked:false});
             this.canvas.add(image);
             this.canvas.draw();
             droppedItem.konvaObject = image;
+            this.store.dispatch(new AddSensor(image));
+            this.sensors$.subscribe(sensors => {
+              this.sensors = sensors;
+            });
           }
         });
       }
@@ -204,11 +225,19 @@ export class CreateFloorPlanPage {
       element.on('dragmove', () => {
         this.activeItem = element;
         this.setTransformer(this.activeItem, undefined);
+
+        if (this.activeItem instanceof Konva.Image) {
+          this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+        }
       });
       element.on('dragmove', this.onObjectMoving.bind(this));
       element.on('click', () => {
         this.activeItem = element;
         this.setTransformer(this.activeItem, undefined);
+
+        if (this.activeItem instanceof Konva.Image) {
+          this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+        }
       });
       element.on('dragend', () => {
         this.openDustbin = false;
@@ -229,7 +258,6 @@ export class CreateFloorPlanPage {
       element.off('mouseenter');
       element.off('mouseleave');
     }
-        
 
     ngAfterViewInit(): void {
         // wait for elements to render before initializing fabric canvas
@@ -286,8 +314,20 @@ export class CreateFloorPlanPage {
                 }
               }
             });
+            
+            //set ion-input elements where aria-label="MAC Address Block"
+            this.macAddressBlockElements = document.querySelectorAll('[aria-label="MAC Address Block"]');
+            
+            this.macAddressBlockElements.forEach((element: HTMLIonInputElement) => {
+              this.macAddressBlocks.push(element.value ? element.value.toString() : '');
+            });
 
-            window.addEventListener('keydown', (event: KeyboardEvent) => this.handleKeyDown(event));
+            window.addEventListener('keydown', (event: KeyboardEvent) => {
+              //now check if no input field has focus and the Delete key is pressed
+              if (!this.inputHasFocus && event.code === "Delete") {
+                this.handleKeyDown(event);
+              }
+            });
             window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
 
             const scaleBy = 1.1;
@@ -411,7 +451,7 @@ export class CreateFloorPlanPage {
 
     setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line | Konva.Path): void {
       if(!this.preventCreatingWalls) return;
-      
+
       this.transformer.detach();
       this.canvas.add(this.transformer);
       let target = null;
@@ -454,11 +494,21 @@ export class CreateFloorPlanPage {
         
         if (!this.preventCreatingWalls) {
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
+  
           return;
         }
 
         // do nothing if we mousedown on any shape
         if (e.target !== this.canvasContainer) {
+          if (e.target instanceof Konva.Image) {
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+              "reader",
+              { fps: 10, qrbox: {width: 250, height: 250} },
+              /* verbose= */ false);
+            html5QrcodeScanner.render(this.onScanSuccess, this.onScanFailure);
+          }
           return;
         }
 
@@ -534,6 +584,10 @@ export class CreateFloorPlanPage {
 
         if (tr.nodes().length === 1) {
           this.activeItem = tr.nodes()[0];
+
+          if (this.activeItem instanceof Konva.Image) {
+            this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+          }
         }
       });
 
@@ -549,11 +603,15 @@ export class CreateFloorPlanPage {
             tr.nodes([]);
           });
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
           return;
         }
 
         if (tr.nodes().length > 1){
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
         }
 
         // if we are selecting with rect, do nothing
@@ -564,6 +622,9 @@ export class CreateFloorPlanPage {
         // do nothing if clicked NOT on our lines or images or text
         if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall') && !e.target.hasName('stallName')) {
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
+          
           return;
         }
 
@@ -585,8 +646,15 @@ export class CreateFloorPlanPage {
 
           if (tr.nodes().length > 1){
             this.activeItem = null;
+
+            this.store.dispatch(new UpdateActiveSensor(''));
+            
           } else if (tr.nodes().length === 1) {
             this.activeItem = tr.nodes()[0];
+
+            if (this.activeItem instanceof Konva.Image) {
+              this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+            }
           }
 
         } else if (metaPressed && !isSelected) {
@@ -596,6 +664,9 @@ export class CreateFloorPlanPage {
 
           if (tr.nodes().length > 1){
             this.activeItem = null;
+
+            this.store.dispatch(new UpdateActiveSensor(''));
+            
           }
         }
       });
@@ -613,6 +684,10 @@ export class CreateFloorPlanPage {
             //set new active item
             this.activeItem = event.target;
             this.activeItem.setAttr('customClass', 'active');
+
+            if (this.activeItem instanceof Konva.Image) {
+              this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+            }
         }
 
         const movedObject = event.currentTarget;
@@ -750,16 +825,26 @@ export class CreateFloorPlanPage {
         this.onDustbin = false;
         this.activeItem = null;
 
+        this.store.dispatch(new UpdateActiveSensor(''));
+
         // remove item from canvasItems array
         const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
         if (index > -1) {
             this.canvasItems.splice(index, 1);
 
             // remove item from sensors array if it is a sensor
-            const sensorIndex = this.sensors.findIndex((item) => item === selectedObject);
-            if (sensorIndex > -1) {
-                this.sensors.splice(sensorIndex, 1);
-            }
+            this.sensors$.subscribe((sensors) => {
+              sensors?.forEach((sensor) => {
+                  if (sensor.object === selectedObject) {
+                      this.store.dispatch(new RemoveSensor(sensor.object.getAttr('customId')));
+
+                      // reassign sensors to this.sensors
+                      this.sensors$.subscribe((sensors) => {
+                          this.sensors = sensors;
+                      });
+                  }
+              });                
+            });
         }
         this.canvas.batchDraw();
       }
@@ -1009,8 +1094,17 @@ export class CreateFloorPlanPage {
       });
     }
     
-      ngOnInit() {
+      ngOnInit() : void {
         this.checkScreenWidth();
+
+        this.macAddressForm = this.formBuilder.group({
+          macAddressBlock1: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock2: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock3: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock4: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock5: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock6: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+        });
       }
     
       checkScreenWidth() {
@@ -1042,22 +1136,13 @@ export class CreateFloorPlanPage {
         });
       }
 
-      getUniqueId(): string {
-        // find latest id from sensor customId attribute first character
-        const sensors = this.sensors;
-        let latestId = 0;
-        sensors.forEach((sensor: any) => {
-            const id = parseInt(sensor.attrs.customId[1]);
-            if (id > latestId) {
-                latestId = id;
-            }
-        });
+      // getUniqueId(): string {
+      //   this.appApiService.getNewEventSensorId().subscribe((res: any) => {
+      //     return res;
+      //   });
 
-        // generate random string for the id that is maximum 10 characters long
-        const randomString = Math.random().toString(36).substring(2, 12);
-
-        return `s${(latestId + 1).toString() + randomString}`;
-      }
+      //   return '';
+      // }
 
       updateWidth(event: any) {
         this.activeItem?.width(parseInt(event.target.value));
@@ -1090,27 +1175,38 @@ export class CreateFloorPlanPage {
         return true;
       }
       this.isCardFlipped = false;
+
+      //clear macAddressBlocks
+      this.macAddressForm.reset();
+
+      this.canLinkSensorWithMacAddress = false;
+
       return false;
     }
 
-    get SensorIds(): string[] {
-      // filter out active selected sensor
-      const sensors = this.sensors.filter((sensor: any) => {
-        return sensor.attrs.customId !== this.activeItem?.attrs.customId;
-      });
+    // get SensorIds(): string[] {
+    //   // filter out active selected sensor
+    //   const sensors = this.sensors.filter((sensor: any) => {
+    //     return sensor.attrs.customId !== this.activeItem?.attrs.customId;
+    //   });
 
-      // get the ids of the sensors
-      const sensorIds = sensors.map((sensor: any) => {
-        return sensor.attrs.customId;
-      });
+    //   // get the ids of the sensors
+    //   const sensorIds = sensors.map((sensor: any) => {
+    //     return sensor.attrs.customId;
+    //   });
 
-      return sensorIds;
-    }
+    //   return sensorIds;
+    // }
 
     isCardFlipped = false;
 
     toggleCardFlip() {
       this.isCardFlipped = !this.isCardFlipped;
+
+      //clear macAddressBlocks
+      this.macAddressForm.reset();
+
+      this.canLinkSensorWithMacAddress = false;
     }
 
     getSelectedSensorId() {
@@ -1118,8 +1214,105 @@ export class CreateFloorPlanPage {
     }
 
     updateLinkedSensors() {
-      console.log('sensors linked');
+      const request: IlinkSensorRequest = {
+        id: this.activeItem.getAttr('customId')
+      };
+
+      const macAddress = this.macAddressBlocks.join(':');
+
+      // check if sensor isn't already linked 
+      this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
+        if(!res['isLinked']) {
+          this.appApiService.linkSensor(request, macAddress).then((res: any) => {
+            if (res['success']) {
+              // set the 'isLinked' attribute to true
+              this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
+
+              //update active sensor
+              this.store.dispatch(new UpdateActiveSensor(request.id));
+            }
+          });
+        }
+      });
     }
+
+    handleMacAddressInput(event: any, blockIndex: number) {
+      // Format and store the value in your desired format
+      // Example: Assuming you have an array called macAddressBlocks to store the individual blocks
+      this.macAddressBlocks[blockIndex] = event.target.value.toString().toUpperCase();
+      // Add any additional validation or formatting logic here
+      // Example: Restrict input to valid hexadecimal characters only
+      const validHexCharacters = /^[0-9A-Fa-f]*$/;
+      if (!validHexCharacters.test(event.target)) {
+        // Handle invalid input, show an error message, etc.
+      }
+
+      // Move focus to the next input when 2 characters are entered, 4 characters, etc.
+      if (event.target.value.length === 2 && validHexCharacters.test(event.target.value)) {
+        // map thorugh the macAddressBlocksElements and find the next input
+        const nextInput = this.macAddressBlockElements?.item(blockIndex + 1);
+
+        if (nextInput && nextInput?.value?.toString().length !== 2) {
+          nextInput.focus();
+
+          // check if input now has focus
+          if (nextInput !== document.activeElement) {
+            // if not, set the focus to the next input
+            nextInput.setFocus();
+          }
+        }
+      }
+
+      //check to see if all the blocks are filled nd satisfies the regex
+      if (this.macAddressBlocks.every((block) => block.valueOf().length === 2 && validHexCharacters.test(block))) {
+        // join the blocks together
+        const macAddress = this.macAddressBlocks.join(':');
+        // set the macAddress value in the form
+        this.macAddressForm.get('macAddress')?.setValue(macAddress);
+
+        this.canLinkSensorWithMacAddress = true;
+      } else {
+        this.canLinkSensorWithMacAddress = false;
+      }
+    }  
+
+    setInputFocus(value: boolean) {
+      this.inputHasFocus = value;
+    }
+
+    // isLinked() {
+    //   this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
+    //     if(!res['success']) {
+    //       this.store.dispatch(new UpdateSensorLinkedStatus(this.activeItem?.getAttr('customId'), false));
+    //     }
+    //   });
+
+    // }
+
+    get macAddressBlock1() {
+      return this.macAddressForm.get('macAddressBlock1');
+    }
+
+    get macAddressBlock2() {
+      return this.macAddressForm.get('macAddressBlock2');
+    }
+
+    get macAddressBlock3() {
+      return this.macAddressForm.get('macAddressBlock3');
+    }
+
+    get macAddressBlock4() {
+      return this.macAddressForm.get('macAddressBlock4');
+    }
+
+    get macAddressBlock5() {
+      return this.macAddressForm.get('macAddressBlock5');
+    }
+
+    get macAddressBlock6() {
+      return this.macAddressForm.get('macAddressBlock6');
+    }
+
       chooseDustbinImage(): string {
         if (this.openDustbin && !this.onDustbin) {
           return 'assets/trash-open.svg';
@@ -1131,5 +1324,16 @@ export class CreateFloorPlanPage {
           return 'assets/trash-delete.svg';
         }
         else return '';
+    }
+
+    onScanSuccess(decodedText: any, decodedResult: any) {
+      // handle the scanned code as you like, for example:
+      console.log(`Code matched = ${decodedText}`, decodedResult);
+    }
+    
+    onScanFailure(error: any) {
+      // handle scan failure, usually better to ignore and keep scanning.
+      // for example:
+      console.warn(`Code scan error = ${error}`);
     }
 }

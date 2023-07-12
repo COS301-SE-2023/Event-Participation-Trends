@@ -36,7 +36,14 @@
       >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all bg-transparent"
+          title="This event has no floor layout"
         >
+          <ion-icon
+            *ngIf="!hasFloorLayout(event)"
+            class="h-8 w-8 p-4 duration-300 transition-all absolute self-end text-ept-bumble-yellow"
+            name="Warning"
+          >
+          </ion-icon>
           <p
             class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium bg-transparent"
           >
