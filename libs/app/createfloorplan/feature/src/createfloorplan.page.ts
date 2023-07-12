@@ -67,6 +67,7 @@ export class CreateFloorPlanPage implements OnInit{
     canLinkSensorWithMacAddress = false;
     macAddressForm!: FormGroup;
     inputHasFocus = false;
+    initialHeight = 0;
 
     constructor(
       private readonly appApiService: AppApiService,
@@ -272,10 +273,12 @@ export class CreateFloorPlanPage implements OnInit{
             const height = canvasParent.nativeElement.offsetHeight;
 
             this.canvasContainer = new Konva.Stage({
-                container: '#canvasElement',
-                width: width*0.97,
-                height: height*0.925,             
+              container: '#canvasElement',
+              width: width*0.9783,
+              height: window.innerHeight-100,      //height*0.92,       
             });
+
+            this.initialHeight = this.canvasContainer.height();
 
             this.canvas = new Konva.Layer();
 
@@ -324,7 +327,7 @@ export class CreateFloorPlanPage implements OnInit{
 
             window.addEventListener('keydown', (event: KeyboardEvent) => {
               //now check if no input field has focus and the Delete key is pressed
-              if (!this.inputHasFocus && event.code === "Delete") {
+              if (!this.inputHasFocus && (event.code === "Delete" || event.ctrlKey)) {
                 this.handleKeyDown(event);
               }
             });
@@ -1073,8 +1076,15 @@ export class CreateFloorPlanPage implements OnInit{
       // set the grid lines when the window is resized
     @HostListener('window:resize', ['$event'])
     onResize(event: any) {
+      this.checkScreenWidth();
       // remove gridlines and then add them again
       this.removeGridLines();
+      const width = this.canvasParent.nativeElement.offsetWidth;
+
+      this.canvasContainer.setAttrs({
+        width: width*0.9783,
+        height: this.initialHeight,
+      });
       this.createGridLines();
     }
 
