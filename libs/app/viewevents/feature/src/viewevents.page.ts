@@ -229,6 +229,17 @@ export class VieweventsPage implements OnInit{
   }
 
   managedEvents(): any[] {
+    // return this.my_events.filter((event) => {
+    //   return event.Name
+    //     ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
+    //     : false;
+    // });
+    this.my_events = [];
+
+    this.my_events$.subscribe((my_events) => {
+      this.my_events = my_events ? my_events : [];
+    });
+
     return this.my_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
@@ -237,6 +248,17 @@ export class VieweventsPage implements OnInit{
   }
 
   subscribedEvents(): any[] {
+    // return this.subscribed_events.filter((event) => {
+    //   return event.Name
+    //     ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
+    //     : false;
+    // });
+    this.subscribed_events = [];
+
+    this.subscribed_events$.subscribe((subscribed_events) => {
+      this.subscribed_events = subscribed_events ? subscribed_events : [];
+    });
+
     return this.subscribed_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
@@ -245,6 +267,17 @@ export class VieweventsPage implements OnInit{
   }
 
   unsubscribedEvents(): any[] {
+    // return this.unsubscribed_events.filter((event) => {
+    //   return event.Name
+    //     ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
+    //     : false;
+    // });
+    this.unsubscribed_events = [];
+
+    this.unsubscribed_events$.subscribe((unsubscribed_events) => {
+      this.unsubscribed_events = unsubscribed_events ? unsubscribed_events : [];
+    });
+
     return this.unsubscribed_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
@@ -259,6 +292,16 @@ export class VieweventsPage implements OnInit{
     }
     
     return this.address_location;
+  }
+
+  getMyEventsLength(): number {
+    let num = 0;
+
+    this.my_events$.subscribe((my_events) => {
+      num = my_events ? my_events.length : 0;
+    });
+
+    return num;
   }
 
   // openEventScreenView(event: any) {
