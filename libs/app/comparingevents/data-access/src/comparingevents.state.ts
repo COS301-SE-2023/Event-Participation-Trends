@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { GetAllCategories, SetCompareEventsState, SetSelectedCategory, UpdateCategories } from '@event-participation-trends/app/comparingevents/util';
+import { GetAllCategories, SetCompareEventsState, SetSearchedCategories, SetSelectedCategory, UpdateCategories } from '@event-participation-trends/app/comparingevents/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { SetError } from '@event-participation-trends/app/error/util';
 
@@ -9,6 +9,7 @@ import { SetError } from '@event-participation-trends/app/error/util';
 export interface ComparingeventsStateModel {
     selectedCategory: string;
     categories: string[];
+    searchedCategories: string[];
 }
 
 @State<ComparingeventsStateModel>({
@@ -16,6 +17,7 @@ export interface ComparingeventsStateModel {
     defaults: {
         selectedCategory: '',
         categories: [],
+        searchedCategories: [],
     },
 })
 
@@ -30,6 +32,11 @@ export class ComparingeventsState {
     @Selector()
     static categories(state: ComparingeventsStateModel) {
         return state.categories;
+    }
+
+    @Selector()
+    static searchedCategories(state: ComparingeventsStateModel) {
+        return state.searchedCategories;
     }
 
     constructor(
@@ -68,5 +75,12 @@ export class ComparingeventsState {
         } catch(error) {
             return this.store.dispatch(new SetError((error as Error).message));
         }
+    }
+
+    @Action(SetSearchedCategories)
+    setSearchedCategories(ctx: StateContext<ComparingeventsStateModel>, { searchedCategories }: SetSearchedCategories) {
+        ctx.patchState({
+            searchedCategories,
+        });
     }
 }
