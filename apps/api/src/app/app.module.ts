@@ -29,9 +29,17 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot(
+      {
+        isGlobal: true,
+      }
+    ),
     Wow,
-    JwtModule.register({}),
+    JwtModule.register({
+      global: true,
+      secret: process.env['JWT_SECRET'],
+      signOptions: { expiresIn: process.env['JWT_EXPIRE_TIME'] },
+    }),
     MongooseModule.forRoot(process.env['MONGO_ALTALS_CONNECTION_URL']),
     UserModule,
     EventModule,

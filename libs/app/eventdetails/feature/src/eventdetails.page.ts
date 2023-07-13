@@ -123,4 +123,10 @@ export class EventDetailsPage {
     }
     this.appApiService.updateEventDetails(updateDetails);
   }
+
+  openCreateFloorplan() {
+    //get event if from url
+    const queryParams = { m: false, id: this.event._id, queryParamsHandling: 'merge' };
+    this.router.navigate(['/event/createfloorplan'], { queryParams });
+  }
 }

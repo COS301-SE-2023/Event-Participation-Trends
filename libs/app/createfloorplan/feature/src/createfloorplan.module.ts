@@ -5,6 +5,7 @@ import { CreateFloorPlanRoutingModule } from './createfloorplan.routing';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '@event-participation-trends/app/shared/feature';
 import { CreateFloorPlanPage } from './createfloorplan.page';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -14,7 +15,9 @@ import { CreateFloorPlanPage } from './createfloorplan.page';
     IonicModule,
     SharedModule,
     CreateFloorPlanRoutingModule,
-    CreateFloorPlanDataAccessModule
+    CreateFloorPlanDataAccessModule,
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class CreateFloorPlanModule { }

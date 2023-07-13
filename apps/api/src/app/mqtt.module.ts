@@ -3,7 +3,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MqttController } from './mqtt.controller';
-import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   PassportController,
@@ -20,19 +19,18 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { EventService } from '@event-participation-trends/api/event/feature';
 import { EventModule } from '@event-participation-trends/api/event/data-access';
 import { ApiGuardsModule } from '@event-participation-trends/api/guards';
-import { ConfigModule } from '@nestjs/config';
 
 import {
   SensorlinkingModule,
   SensorlinkingService,
 } from '@event-participation-trends/api/sensorlinking';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ApiPositioningModule, PositioningService } from '@event-participation-trends/api/positioning';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
     Wow,
-    JwtModule.register({}),
     ClientsModule.register([
       {
         name: 'MQTT_SERVICE',
@@ -52,6 +50,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ApiGuardsModule,
     SensorlinkingModule,
     ScheduleModule.forRoot(),
+    ApiPositioningModule
   ],
   controllers: [MqttController],
   providers: [
@@ -61,6 +60,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     UserService,
     EventService,
     SensorlinkingService,
+    PositioningService,
+    JwtService
   ],
 })
 export class MqttModule {}

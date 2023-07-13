@@ -9,22 +9,8 @@ export interface Circle {
 export interface SensorReading {
   x: number;
   y: number;
-  signal_strength: number;
+  distance: number;
   id: number;
-  timestamp: Date;
-}
-
-export interface PositioningSet {
-  id: number;
-  Ax: number;
-  Ay: number;
-  Bx: number;
-  By: number;
-  Cx: number;
-  Cy: number;
-  As: number;
-  Bs: number;
-  Cs: number;
   timestamp: Date;
 }
 
@@ -37,29 +23,76 @@ export interface Position {
 
 @Injectable()
 export class PositioningService {
-  public findPositions(positioning_sets: PositioningSet[]): Position[] {
-    const positions: Position[] = [];
+  public getPositions(sensor_readings: SensorReading[]): Position[] {
+    const positions_of_targets: Position[] = [];
 
-    for (const positioning_set of positioning_sets) {
-      const position = this.findPosition(positioning_set);
-      positions.push(position);
+    const device_to_readings_map = this.groupByID(sensor_readings);
+
+    for (const [id, readings] of device_to_readings_map) {
+      // if less than three readings no position can be calculated
+      if (readings.length < 3) {
+        continue;
+      }
+
+      // sort by distance
+      readings.sort((a, b) => a.distance - b.distance);
+
+      // get the possible intersections of the three circles predicted as closest to the target
+      const intersections_of_circles = this.getPossibleIntersections(
+        readings[0].x,
+        readings[0].y,
+        readings[1].x,
+        readings[1].y,
+        readings[2].x,
+        readings[2].y,
+        readings[0].distance,
+        readings[1].distance,
+        readings[2].distance
+      );
+
+      // if no intersections found, continue
+      if (intersections_of_circles.length === 0) {
+        continue;
+      }
+
+      const best_intersection: number[] = [];
+      let best_error = Infinity;
+
+      // find centroid of intersections
+      const centroid_x = (readings[0].x + readings[1].x + readings[2].x) / 3;
+      const centroid_y = (readings[0].y + readings[1].y + readings[2].y) / 3;
+
+      // find intersection closest to centroid
+      for (const intersection of intersections_of_circles) {
+        if (intersection.length !== 2) {
+          continue;
+        }
+
+        const distance_error = Math.sqrt(
+          Math.pow(intersection[0] - centroid_x, 2) +
+          Math.pow(intersection[1] - centroid_y, 2)
+        );
+
+        if (distance_error < best_error) {
+          best_intersection[0] = intersection[0];
+          best_intersection[1] = intersection[1];
+          best_error = distance_error;
+        }
+      }
+
+      if (best_intersection.length !== 2) {
+        continue;
+      }
+
+      positions_of_targets.push({
+        id: id,
+        x: best_intersection[0],
+        y: best_intersection[1],
+        timestamp: readings[0].timestamp,
+      });
     }
 
-    return positions;
-  }
-
-  private findPosition(positioning_set: PositioningSet): Position {
-    const { id, Ax, Ay, Bx, By, Cx, Cy, As, Bs, Cs, timestamp } =
-      positioning_set;
-
-    const [x, y] = this.calculateP(Ax, Ay, Bx, By, Cx, Cy, As, Bs, Cs);
-
-    return {
-      id,
-      x,
-      y,
-      timestamp,
-    };
+    return positions_of_targets;
   }
 
   private findIntersectionOfTwoCircles(
@@ -103,7 +136,7 @@ export class PositioningService {
     ];
   }
 
-  private calculateP(
+  private getPossibleIntersections(
     Ax: number,
     Ay: number,
     Bx: number,
@@ -113,7 +146,7 @@ export class PositioningService {
     As: number,
     Bs: number,
     Cs: number
-  ): number[] | [] {
+  ): number[][] | [] {
     const circles: Circle[] = [];
 
     // Calculate the ratios
@@ -194,162 +227,52 @@ export class PositioningService {
             Math.pow(intersection[1] - circles[2].y, 2);
           const right = circles[2].r;
 
-          return Math.pow(left - right, 2) > 0.000001;
+          return Math.pow(left - right, 2) > 0.0001;
         });
       }
     }
 
     if (intersections.length === 0) {
       return [];
-    } else if (intersections.length === 1) {
-      return intersections[0];
     }
 
-    let best_fit: number[] = [];
-    let best_error = 0;
-
-    for (const intersection in intersections) {
-      const dA = Math.sqrt(
-        Math.pow(Ax - intersections[intersection][0], 2) +
-        Math.pow(Ay - intersections[intersection][1], 2)
-      );
-      const dB = Math.sqrt(
-        Math.pow(Bx - intersections[intersection][0], 2) +
-        Math.pow(By - intersections[intersection][1], 2)
-      );
-      const dC = Math.sqrt(
-        Math.pow(Cx - intersections[intersection][0], 2) +
-        Math.pow(Cy - intersections[intersection][1], 2)
-      );
-
-      const error = Math.abs(dA - As) + Math.abs(dB - Bs) + Math.abs(dC - Cs);
-
-      if (best_fit.length === 0 || error < best_error) {
-        best_fit = intersections[intersection];
-        best_error = error;
-      }
-    }
-
-    return best_fit;
-  }
-
-  public transformToSensorMatrices(
-    sensor_readings: SensorReading[]
-  ): PositioningSet[] {
-    const return_array: PositioningSet[] = [];
-
-    const grouped_sensor_readings = this.groupByID(sensor_readings);
-
-    for (const [key, value] of grouped_sensor_readings.entries()) {
-      const usable_readings = this.getUsableReadings(value);
-
-      const positioning_set: PositioningSet = {
-        id: key,
-        Ax: usable_readings[0].x,
-        Ay: usable_readings[0].y,
-        Bx: usable_readings[1].x,
-        By: usable_readings[1].y,
-        Cx: usable_readings[2].x,
-        Cy: usable_readings[2].y,
-        As: usable_readings[0].signal_strength,
-        Bs: usable_readings[1].signal_strength,
-        Cs: usable_readings[2].signal_strength,
-        timestamp: new Date(),
-      };
-
-      return_array.push(positioning_set);
-    }
-
-    return return_array;
+    return intersections;
   }
 
   private groupByID(
     sensor_readings: SensorReading[]
   ): Map<number, SensorReading[]> {
-    const map: Map<number, SensorReading[]> = new Map();
+    const device_to_readings_map: Map<number, SensorReading[]> = new Map();
 
     for (const sensor_reading of sensor_readings) {
-      const id = sensor_reading.id;
+      const device_id = sensor_reading.id;
 
-      if (map.has(id)) {
-        const sensor_readings = map.get(id);
+      if (device_to_readings_map.has(device_id)) {
+        const device_readings = device_to_readings_map.get(device_id);
 
-        if (sensor_readings === undefined) {
+        if (device_readings === undefined) {
           throw new Error('sensor_readings is undefined');
         }
 
-        sensor_readings.push(sensor_reading);
+        device_readings.push(sensor_reading);
       } else {
         const sensor_readings: SensorReading[] = [sensor_reading];
-        map.set(id, sensor_readings);
+        device_to_readings_map.set(device_id, sensor_readings);
       }
     }
 
-    return map;
+    return device_to_readings_map;
   }
 
-  private getUsableReadings(sensor_readings: SensorReading[]): SensorReading[] {
-    // sort by signal strength
-    sensor_readings.sort((a, b) => a.signal_strength - b.signal_strength);
-
-    // pop elements until only 3 are left
-    while (sensor_readings.length > 3) {
-      sensor_readings.pop();
-    }
-
-    return sensor_readings;
-  }
-
-  public generateSensorReadings(
-    devices: number,
-    sensors: number,
-    range_x = 100,
-    range_y = 100
-  ): SensorReading[] {
-    const sensor_readings: SensorReading[] = [];
-
-    // generate 3 random points
-    const points: number[][] = [];
-
-    for (let sensor = 0; sensor < sensors; sensor++) {
-      const x = Number((Math.random() * range_x).toFixed(4));
-      const y = Number((Math.random() * range_y).toFixed(4));
-
-      points.push([x, y]);
-    }
-
-    for (let device = 0; device < devices; device++) {
-      // generate a random point
-      const x = Number((Math.random() * range_x).toFixed(4));
-      const y = Number((Math.random() * range_y).toFixed(4));
-
-      for (let sensor = 0; sensor < sensors; sensor++) {
-        const sensor_x = points[sensor][0];
-        const sensor_y = points[sensor][1];
-
-        const distance = Math.sqrt(
-          Math.pow(sensor_x - x, 2) + Math.pow(sensor_y - y, 2)
-        );
-
-        const signal_strength = Number((distance*1.1).toFixed(4));
-
-        const sensor_reading: SensorReading = {
-          x: sensor_x,
-          y: sensor_y,
-          signal_strength,
-          id: device,
-          timestamp: new Date(),
-        };
-
-        sensor_readings.push(sensor_reading);
-      }
-    }
-
-    return sensor_readings;
-  }
-
-  public rssiToDistance(rssi: number, measured_power = 46.4, environmental_factor = 3.05): number {
-    const distance = Math.pow(10, (measured_power + rssi) / (10 * environmental_factor));
+  public rssiToDistance(
+    rssi: number,
+    measured_power = 46.4,
+    environmental_factor = 3.05
+  ): number {
+    const distance = Math.pow(
+      10,
+      (measured_power + rssi) / (10 * environmental_factor)
+    );
 
     return distance;
   }

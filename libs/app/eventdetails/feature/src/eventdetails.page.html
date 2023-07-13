@@ -170,9 +170,16 @@
         </div>
       </div>
       <div
-        class="col-span-2 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
-        routerLink="/flooreditor"
-      ></div>
+        class="col-span-2 m-7 flex flex-col items-center justify-center rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
+      >
+      <ion-button
+        class="m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
+        (click)="openCreateFloorplan()"
+      >
+        <ion-icon name="create-outline"></ion-icon>Edit Floor
+        Plan</ion-button
+      >
+      </div>
     </div>
   </div>
 </ion-content>

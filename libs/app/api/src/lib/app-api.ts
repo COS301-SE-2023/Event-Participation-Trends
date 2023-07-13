@@ -28,10 +28,12 @@ import {
   ISendViewRequestResponse,
   IUpdateEventDetailsRequest,
   IUpdateEventDetailsResponse,
+  IUpdateFloorlayoutResponse
 } from '@event-participation-trends/api/event/util';
 import { Observable, firstValueFrom } from 'rxjs';
 import { Status } from '@event-participation-trends/api/user/util';
 import { CookieService } from 'ngx-cookie-service';
+import { IgetNewEventSensorIdResponse, IisLinkedResponse, IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
 
 interface IGetRequestsUsersResponse {
   Requesters: IUser[];
@@ -236,7 +238,50 @@ export class AppApiService {
       }
     });
   }
+  
+  updateFloorLayout(eventId: string, floorLayout: string): Observable<IUpdateFloorlayoutResponse> {
+    return this.http.post<IUpdateFloorlayoutResponse>('/api/event/updateEventFloorLayout', {
+      eventId: eventId,
+      floorlayout: floorLayout
+    }, {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
+    });
+  }
 
+  getNewEventSensorId(): Observable<IgetNewEventSensorIdResponse> {
+    return this.http.get<IgetNewEventSensorIdResponse>('/api/sensorLinking/getNewID', {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
+    });
+  }
+
+  async linkSensor(request: IlinkSensorRequest ,eventSensorMac: string): Promise<{success: true} | null | undefined> {
+    return firstValueFrom(
+      this.http.post<{success: true}>(
+        `/api/sensorlinking/${eventSensorMac}`,
+        request,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response;
+    });
+  }
+
+  isLinked(eventId: string): Observable<IisLinkedResponse> {
+    return this.http.get<IisLinkedResponse>(`/api/sensorLinking/isLinked/${eventId}`, {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
+    });
+  }
+  
   async getAllEventCategories(): Promise<string[] | undefined | null> {
     return firstValueFrom(
       this.http.get<IGetAllEventCategoriesResponse>(

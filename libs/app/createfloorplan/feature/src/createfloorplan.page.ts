@@ -1,7 +1,16 @@
-import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core';
 import { get } from 'http';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
+import { AppApiService } from '@event-participation-trends/app/api';
+import { ActivatedRoute } from '@angular/router';
+import {Html5QrcodeScanner} from "html5-qrcode";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
+import { Select, Store } from '@ngxs/store';
+import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@event-participation-trends/app/createfloorplan/data-access';
+import { Observable } from 'rxjs';
+import { AddSensor, RemoveSensor, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 
 interface DroppedItem {
   name: string;
@@ -13,11 +22,14 @@ interface DroppedItem {
   styleUrls: ['./createfloorplan.page.css'],
 })
 
-export class CreateFloorPlanPage {
+export class CreateFloorPlanPage implements OnInit{
+  @Select(CreateFloorPlanState.getSensors) sensors$!: Observable<ISensorState[] | undefined>; 
+  @Select(CreateFloorPlanState.getActiveSensor) activeSensor$!: Observable<ISensorState | null>;
     @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLDivElement>;
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
     @ViewChild('stall', {static: false}) stallElement!: ElementRef<HTMLImageElement>;
+    macAddrFromQR = '';
     isDropdownOpen = false;
     openDustbin = false;
     canvasItems: DroppedItem[] = [];
@@ -31,14 +43,70 @@ export class CreateFloorPlanPage {
     transformer = new Konva.Transformer();
     preventCreatingWalls = true; // to prevent creating walls
     transformers: Konva.Transformer[] = [this.transformer];
-    sensors: Konva.Image[] = [];
-    gridSize = 10;
+    sensors: ISensorState[] | undefined = [];
+    gridSize = 5;
     paths: Konva.Path[] = [];
     activePath: Konva.Path | null = null;
+    onDustbin = false;
+    ctrlDown = false;
+    mouseDown = false;
+    gridBoundaries = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      bottom: 0,
+      right: 0,
+    };
+    stageState = {
+      stageScale: 1,
+      stageX: 0,
+      stageY: 0,
+    }
+    macAddressBlocks: string[] = [];
+    macAddressBlockElements : NodeListOf<HTMLIonInputElement> | undefined;
+    canLinkSensorWithMacAddress = false;
+    macAddressForm!: FormGroup;
+    inputHasFocus = false;
+    initialHeight = 0;
+    scaleSnap = 5;
+    initialSnap = this.scaleSnap;
+    displayedSnap = this.scaleSnap;
+    initialGridSize = this.gridSize;
+    currentScale = 1;
+    gridLines !: Konva.Group;
+    currentPathStrokeWidth = 0;
+    currentGridStrokeWidth = 0;
+    snaps: number[] = [];
+    wheelCounter = 0;
+    contentLoaded = false;
+    componentSize = this.gridSize * 2;
+
+    constructor(
+      private readonly appApiService: AppApiService,
+      private readonly route: ActivatedRoute,
+      private readonly formBuilder: FormBuilder, 
+      private readonly store: Store
+    ) {
+      for (let i = 1; i <= this.initialGridSize; i++) {
+        const snap = this.initialGridSize / i;
+        this.snaps.push(snap);
+        this.displayedSnap = this.initialSnap;
+      }
+    }
+
+    convertX(x: number): number {
+      return (x - this.canvasContainer.x()) / this.canvasContainer.scaleX();
+    }
+
+    convertY(y: number): number {
+      return (y - this.canvasContainer.y()) / this.canvasContainer.scaleY();
+    }
 
     toggleEditing(): void {
       this.preventCreatingWalls = !this.preventCreatingWalls;
       this.activeItem = null;
+      this.store.dispatch(new UpdateActiveSensor(''));
 
       //remove all selected items
       this.transformers.forEach(transformer => {
@@ -99,7 +167,7 @@ export class CreateFloorPlanPage {
             const positionY = this.canvasContainer.getPointerPosition()?.y || 0;
             const droppedItem: DroppedItem = { name };
             this.canvasItems.push(droppedItem);
-            this.addKonvaObject(droppedItem, positionX, positionY);
+            this.addKonvaObject(droppedItem, (positionX - this.canvasContainer.x()) / this.canvasContainer.scaleX() , (positionY - this.canvasContainer.y()) / this.canvasContainer.scaleY());
         }
     }
 
@@ -117,8 +185,8 @@ export class CreateFloorPlanPage {
               name: 'stall',
               x: positionX,
               y: positionY,
-              width: 50,
-              height: 50,
+              width: this.componentSize,
+              height: this.componentSize,
               draggable: true,
               cursor: 'move',
               fill: 'white',
@@ -130,11 +198,11 @@ export class CreateFloorPlanPage {
               x: 0,
               y: 0,
               text: 'Stall',
-              fontSize: 11,
+              fontSize: 2,
               fontFamily: 'Calibri',
               fill: 'black',
-              width: 50,
-              height: 50,
+              width: this.componentSize,
+              height: this.componentSize,
               align: 'center',
               verticalAlign: 'middle',
               padding: 3,
@@ -150,10 +218,15 @@ export class CreateFloorPlanPage {
           } 
           else {
             image.setAttr('name', 'sensor');
-            this.sensors.push(image);
+            // image.setAttr('customId', this.getUniqueId());
+            // this.sensors.push({object: image, isLinked:false});
             this.canvas.add(image);
             this.canvas.draw();
             droppedItem.konvaObject = image;
+            this.store.dispatch(new AddSensor(image));
+            this.sensors$.subscribe(sensors => {
+              this.sensors = sensors;
+            });
           }
         });
       }
@@ -163,14 +236,13 @@ export class CreateFloorPlanPage {
       element.setAttrs({
         x: positionX,
         y: positionY,
-        width: 50,
-        height: 50,
+        width: this.componentSize,
+        height: this.componentSize,
         cursor: 'move',
         draggable: true,
         cornerRadius: 2,
         padding: 20,
         fill: 'white',
-        customId: this.getUniqueId(),
         opacity: 1,
       });
     
@@ -181,11 +253,19 @@ export class CreateFloorPlanPage {
       element.on('dragmove', () => {
         this.activeItem = element;
         this.setTransformer(this.activeItem, undefined);
+
+        if (this.activeItem instanceof Konva.Image) {
+          this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+        }
       });
       element.on('dragmove', this.onObjectMoving.bind(this));
       element.on('click', () => {
         this.activeItem = element;
         this.setTransformer(this.activeItem, undefined);
+
+        if (this.activeItem instanceof Konva.Image) {
+          this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+        }
       });
       element.on('dragend', () => {
         this.openDustbin = false;
@@ -206,7 +286,6 @@ export class CreateFloorPlanPage {
       element.off('mouseenter');
       element.off('mouseleave');
     }
-        
 
     ngAfterViewInit(): void {
         // wait for elements to render before initializing fabric canvas
@@ -221,10 +300,12 @@ export class CreateFloorPlanPage {
             const height = canvasParent.nativeElement.offsetHeight;
 
             this.canvasContainer = new Konva.Stage({
-                container: '#canvasElement',
-                width: width*0.9783,
-                height: height*0.92               
+              container: '#canvasElement',
+              width: width*0.9783,
+              height: window.innerHeight-100,      //height*0.92,       
             });
+
+            this.initialHeight = this.canvasContainer.height();
 
             this.canvas = new Konva.Layer();
 
@@ -232,7 +313,7 @@ export class CreateFloorPlanPage {
             this.canvasContainer.draw();
 
             //set object moving
-            // this.canvas.on('dragmove', this.onObjectMoving.bind(this));
+            this.canvas.on('dragmove', this.handleDragMove.bind(this));
 
             // Attach the mouse down event listener to start dragging lines
             this.canvasContainer.on('mousedown', this.onMouseDown.bind(this));
@@ -249,7 +330,7 @@ export class CreateFloorPlanPage {
 
               const component = this.canvas.getIntersection(position);
 
-              if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image) && !(component instanceof Konva.Group)) {
+              if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image) && !(component instanceof Konva.Group) && !(component instanceof Konva.Path)) {
                 this.transformer.detach();
               }
 
@@ -263,10 +344,208 @@ export class CreateFloorPlanPage {
                 }
               }
             });
+            
+            //set ion-input elements where aria-label="MAC Address Block"
+            this.macAddressBlockElements = document.querySelectorAll('[aria-label="MAC Address Block"]');
+            
+            this.macAddressBlockElements.forEach((element: HTMLIonInputElement) => {
+              this.macAddressBlocks.push(element.value ? element.value.toString() : '');
+            });
+
+            window.addEventListener('keydown', (event: KeyboardEvent) => {
+              //now check if no input field has focus and the Delete key is pressed
+              if (!this.inputHasFocus && (event.code === "Delete" || event.ctrlKey)) {
+                this.handleKeyDown(event);
+              }
+            });
+            window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
+
+            const scaleBy = 2;
+
+            this.canvasContainer.on('wheel', (e) => {
+              e.evt.preventDefault();
+              this.handleScaleAndDrag(e, scaleBy);              
+            });
+
+            this.canvasContainer.scaleX(scaleBy);
+            this.canvasContainer.scaleY(scaleBy);
+            const wheelEvent = new WheelEvent('wheel', { deltaY: -1 });
+            this.canvasContainer.dispatchEvent(wheelEvent);
+            this.handleScaleAndDrag(wheelEvent, scaleBy);
+            this.contentLoaded = true;
         }, 6);
     }
 
+    handleScaleAndDrag(e: any, scaleBy:number) {
+      const stage = e.target;
+      if (!stage) return;
+      const oldScale = stage.scaleX();
+
+      let pointer = null;
+      if (stage instanceof Konva.Stage) {
+        pointer = stage.getPointerPosition();
+      }
+      else {
+        pointer = stage.getStage().getPointerPosition();
+      }
+
+      if (!pointer) {
+        return;
+      }
+
+      const mousePointTo = {
+        x: pointer.x / oldScale - stage.x() / oldScale,
+        y: pointer.y / oldScale - stage.y() / oldScale
+      };
+
+      let direction = e.evt.deltaY < 0 ? 1 : -1;
+
+      if (e.evt.ctrlKey) {
+        direction = -direction;
+      }
+
+      const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+      this.gridSize = this.initialGridSize * newScale;
+      this.currentScale = newScale;
+      
+      if (newScale <= 1 || newScale >= 40) return;
+
+      if (e.evt.deltaY < 0 ) {
+        if (this.contentLoaded) {
+          this.wheelCounter++;
+          this.scaleSnap = this.snaps[this.wheelCounter];
+          this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
+        }
+        else {
+          this.scaleSnap = this.initialSnap;
+          this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
+        }
+
+        // decrease size of grid lines storkewidth
+        if (this.gridLines && this.gridLines.children) {
+          this.gridLines.children?.forEach((child: any) => {
+            const prevWidth = child.getAttr('strokeWidth');
+            child.strokeWidth(prevWidth / 2);
+            this.currentGridStrokeWidth = prevWidth / 2;
+          });
+
+          if (this.canvas && this.canvas.children) {
+            this.canvas.children?.forEach((child: any) => {
+              if (child instanceof Konva.Path) {
+                const prevWidth = child.getAttr('strokeWidth');
+                child.strokeWidth(prevWidth / 2);
+                this.currentPathStrokeWidth = prevWidth / 2;
+              }
+            });
+          }
+        }
+      }
+      else {
+        if (this.contentLoaded) {
+          this.wheelCounter--;
+          this.scaleSnap = this.snaps[this.wheelCounter];
+          this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
+        }
+        else {
+          this.scaleSnap = this.initialSnap;
+          this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
+        }
+
+        if (this.gridLines && this.gridLines.children) {
+          this.gridLines.children?.forEach((child: any) => {
+            const prevWidth = child.getAttr('strokeWidth');
+            child.strokeWidth(prevWidth * 2);
+            this.currentGridStrokeWidth = prevWidth * 2;
+          });
+
+          if (this.canvas && this.canvas.children) {
+            this.canvas.children?.forEach((child: any) => {
+              if (child instanceof Konva.Path) {
+                const prevWidth = child.getAttr('strokeWidth');
+                child.strokeWidth(prevWidth * 2);
+                this.currentPathStrokeWidth = prevWidth * 2;
+              }
+            });
+          }
+        }
+      }
+
+      const x =
+        -(mousePointTo.x - pointer.x / newScale) * newScale;
+      const y =
+        -(mousePointTo.y - pointer.y / newScale) * newScale;
+
+      const pos = this.boundFunc({ x, y }, newScale);
+
+      this.canvasContainer.scale({ x: newScale, y: newScale });
+      this.canvasContainer.position(pos);
+      // this.removeGridLines();
+      // this.createGridLines();
+    }
+
+    boundFunc(pos: any, scale: any) {
+      const stageWidth = this.canvasContainer.width();
+      const stageHeight = this.canvasContainer.height();
+  
+      const x = Math.min(0, Math.max(pos.x, stageWidth * (1 - scale)));
+      const y = Math.min(0, Math.max(pos.y, stageHeight * (1 - scale)));
+  
+      return {
+        x,
+        y
+      };
+    }
+
+    handleDragMove(e: any) {
+      if (this.ctrlDown) {
+        this.canvasContainer.position({
+          x: e.target.x(),
+          y: e.target.y()
+        });
+      }
+    }
+
+    handleKeyDown(event: KeyboardEvent): void {
+      this.ctrlDown = false;
+      event.preventDefault();
+
+      if (this.activeItem) {
+        if (event.code === "Delete") {
+          this.removeObject(this.activeItem);
+          this.canvas.batchDraw();
+        }
+      }
+      else if (this.activePath) {
+        if (event.code === "Delete") {
+          this.removeObject(this.activePath);
+          this.canvas.batchDraw();
+        }
+      }
+      else if (event.ctrlKey) {
+        this.ctrlDown = true;
+        document.body.style.cursor = 'grab';
+        if (this.mouseDown) {
+          document.body.style.cursor = 'grabbing';
+        }
+
+        this.canvasContainer.draggable(true);   
+        
+        this.canvasContainer.dragBoundFunc((pos) => {          
+          return this.boundFunc(pos, this.canvasContainer.scaleX());
+        });
+      }
+    }
+
+    handleKeyUp(event: KeyboardEvent): void {
+      this.ctrlDown = false;
+      this.canvasContainer.draggable(false);
+      document.body.style.cursor = 'default';
+      event.preventDefault();
+    }
+
     setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line | Konva.Path): void {
+      if(!this.preventCreatingWalls) return;
+
       this.transformer.detach();
       this.canvas.add(this.transformer);
       let target = null;
@@ -277,31 +556,18 @@ export class CreateFloorPlanPage {
         target = line;
       }
 
-      if (target && target instanceof Konva.Line || target instanceof Konva.Path) {
-        if (line) {
-          // this.transformer.nodes([line]);
-          return;
-        }
-      } else if (target && target instanceof Konva.Image) {
-        // Clicked on an existing textbox, do nothing  
-        // this.transformer.nodes([this.activeItem]);
-        return;
-      }
-      else if (target && target instanceof Konva.Group) {
-        this.transformer.nodes([target]);
-        return;
-      }
+      const node = target as Konva.Node;
+      this.transformer.nodes([node]);
     }
 
     createSelectionBox(): void {
+      if (this.ctrlDown) {
+        return;
+      }
 
-      const tr = new Konva.Transformer({
-        enabledAnchors: []
-      });
+      const tr = new Konva.Transformer();
       this.transformers.push(tr);
       this.canvas.add(tr);
-
-      // tr.nodes([rect1, rect2]);
 
       const selectionBox = new Konva.Rect({
         fill: 'rgba(0,0,255,0.2)',
@@ -316,22 +582,40 @@ export class CreateFloorPlanPage {
       let y2: number;
 
       this.canvasContainer.on('mousedown', (e) => {
+        if (this.ctrlDown) {
+          return;
+        }
+        
         if (!this.preventCreatingWalls) {
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
+  
           return;
         }
 
         // do nothing if we mousedown on any shape
         if (e.target !== this.canvasContainer) {
+          if (e.target instanceof Konva.Image) {
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+              "reader",
+              { fps: 15 },
+              /* verbose= */ false);
+            html5QrcodeScanner.render((decoded, res)=>{
+              this.macAddrFromQR = decoded;
+              this.updateLinkedSensors();
+              html5QrcodeScanner.pause();
+            } , undefined);
+          }
           return;
         }
 
         e.evt.preventDefault();
         const points = this.canvasContainer.getPointerPosition();
-        x1 = points ? points.x : 0;
-        y1 = points ? points.y : 0;
-        x2 = points ? points.x : 0;
-        y2 = points ? points.y : 0;
+        x1 = points ? (points.x - this.canvasContainer.x()) / this.canvasContainer.scaleX() : 0;
+        y1 = points ? (points.y - this.canvasContainer.y()) / this.canvasContainer.scaleY() : 0;
+        x2 = points ? (points.x - this.canvasContainer.x()) / this.canvasContainer.scaleX() : 0;
+        y2 = points ? (points.y - this.canvasContainer.y()) / this.canvasContainer.scaleY() : 0;
 
         selectionBox.visible(true);
         selectionBox.width(0);
@@ -350,8 +634,8 @@ export class CreateFloorPlanPage {
         e.evt.preventDefault();
 
         const points = this.canvasContainer.getPointerPosition();
-        x2 = points ? points.x : 0;
-        y2 = points ? points.y : 0;
+        x2 = points ? (points.x - this.canvasContainer.x()) / this.canvasContainer.scaleX() : 0;
+        y2 = points ? (points.y - this.canvasContainer.y()) / this.canvasContainer.scaleY() : 0;
 
         selectionBox.setAttrs({
           x: Math.min(x1, x2),
@@ -398,6 +682,10 @@ export class CreateFloorPlanPage {
 
         if (tr.nodes().length === 1) {
           this.activeItem = tr.nodes()[0];
+
+          if (this.activeItem instanceof Konva.Image) {
+            this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+          }
         }
       });
 
@@ -413,11 +701,15 @@ export class CreateFloorPlanPage {
             tr.nodes([]);
           });
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
           return;
         }
 
         if (tr.nodes().length > 1){
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
         }
 
         // if we are selecting with rect, do nothing
@@ -428,6 +720,9 @@ export class CreateFloorPlanPage {
         // do nothing if clicked NOT on our lines or images or text
         if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall') && !e.target.hasName('stallName')) {
           this.activeItem = null;
+
+          this.store.dispatch(new UpdateActiveSensor(''));
+          
           return;
         }
 
@@ -449,8 +744,15 @@ export class CreateFloorPlanPage {
 
           if (tr.nodes().length > 1){
             this.activeItem = null;
+
+            this.store.dispatch(new UpdateActiveSensor(''));
+            
           } else if (tr.nodes().length === 1) {
             this.activeItem = tr.nodes()[0];
+
+            if (this.activeItem instanceof Konva.Image) {
+              this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+            }
           }
 
         } else if (metaPressed && !isSelected) {
@@ -460,6 +762,9 @@ export class CreateFloorPlanPage {
 
           if (tr.nodes().length > 1){
             this.activeItem = null;
+
+            this.store.dispatch(new UpdateActiveSensor(''));
+            
           }
         }
       });
@@ -477,6 +782,10 @@ export class CreateFloorPlanPage {
             //set new active item
             this.activeItem = event.target;
             this.activeItem.setAttr('customClass', 'active');
+
+            if (this.activeItem instanceof Konva.Image) {
+              this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+            }
         }
 
         const movedObject = event.currentTarget;
@@ -495,7 +804,7 @@ export class CreateFloorPlanPage {
             const positionX = movedObject.x() || 0;
             const positionY = movedObject.y() || 0;
         
-            const gridSize = this.gridSize;
+            const gridSize = this.initialGridSize / this.currentScale;
             const minX = 0;
             const minY = 0;
             const maxX = canvasWidth - objectWidth;
@@ -531,6 +840,24 @@ export class CreateFloorPlanPage {
             this.canvas.batchDraw();
         
             this.openDustbin = true;
+
+            // test if the cursor is on the dustbin
+            const dustbinElement = this.dustbinElement.nativeElement;
+            const boundingRect = dustbinElement.getBoundingClientRect();
+            const mouseX = event.evt.clientX;
+            const mouseY = event.evt.clientY;
+
+            if (
+                mouseX >= boundingRect.left &&
+                mouseX <= boundingRect.right &&
+                mouseY >= boundingRect.top &&
+                mouseY <= boundingRect.bottom
+            ) {
+                this.onDustbin = true;
+            }
+            else {
+                this.onDustbin = false;
+            }
         }
     }          
     
@@ -543,6 +870,7 @@ export class CreateFloorPlanPage {
       onDustbinDragLeave(event: DragEvent): void {
         event.preventDefault();
         this.openDustbin = false;
+        this.onDustbin = false;
         this.canvasContainer.container().style.cursor = 'default';
       }
       
@@ -570,26 +898,53 @@ export class CreateFloorPlanPage {
             }
             
             if (selectedObject) {
-                this.transformer.detach();
-                document.body.style.cursor = 'default';
-                selectedObject.remove();
-                this.openDustbin = false;
-                // remove item from canvasItems array
-                const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
-                if (index > -1) {
-                    this.canvasItems.splice(index, 1);
-
-                    // remove item from sensors array if it is a sensor
-                    const sensorIndex = this.sensors.findIndex((item) => item === selectedObject);
-                    if (sensorIndex > -1) {
-                        this.sensors.splice(sensorIndex, 1);
-                        console.log('sensor removed');
-                    }
-                }
-                this.canvas.batchDraw();
+              this.removeObject(selectedObject);
             }
 
         }
+      }
+
+      removeObject(selectedObject: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path) {
+        if (this.transformer) {
+          this.canvas.find('Transformer').forEach((node) => node.remove());
+
+          // add transformers to existing objects
+          this.canvasItems.forEach((item) => {
+            const transformer = new Konva.Transformer();
+            this.canvas.add(transformer);
+          });
+
+        }
+      
+        document.body.style.cursor = 'default';
+        this.removeMouseEvents(selectedObject);
+        selectedObject.remove();
+        this.openDustbin = false;
+        this.onDustbin = false;
+        this.activeItem = null;
+
+        this.store.dispatch(new UpdateActiveSensor(''));
+
+        // remove item from canvasItems array
+        const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
+        if (index > -1) {
+            this.canvasItems.splice(index, 1);
+
+            // remove item from sensors array if it is a sensor
+            this.sensors$.subscribe((sensors) => {
+              sensors?.forEach((sensor) => {
+                  if (sensor.object === selectedObject) {
+                      this.store.dispatch(new RemoveSensor(sensor.object.getAttr('customId')));
+
+                      // reassign sensors to this.sensors
+                      this.sensors$.subscribe((sensors) => {
+                          this.sensors = sensors;
+                      });
+                  }
+              });                
+            });
+        }
+        this.canvas.batchDraw();
       }
       
       onDustbinDrop(event: Konva.KonvaEventObject<DragEvent>): void {
@@ -613,6 +968,11 @@ export class CreateFloorPlanPage {
       }
       
       onMouseDown(event: Konva.KonvaEventObject<MouseEvent>): void {
+        this.mouseDown = true;
+        if (this.ctrlDown) {
+          return;
+        }
+
         const target = event.target;
         if (target && target instanceof Konva.Line
           || target instanceof Konva.Path
@@ -626,20 +986,32 @@ export class CreateFloorPlanPage {
         else this.transformer.detach();
         
         const pointer = this.canvasContainer.getPointerPosition();
-        const grid = this.gridSize;
-        const xValue = pointer ? pointer.x : 0;
-        const yValue = pointer ? pointer.y : 0;
+        const grid = this.initialGridSize;
+        const xValue = pointer ? this.convertX(pointer.x) : 0;
+        const yValue = pointer ? this.convertY(pointer.y) : 0;
         const snapPoint = {
             x: Math.round(xValue / grid) * grid,
             y: Math.round(yValue / grid) * grid,
         };
+
+        // test if there already exists a wall
+        const wall = this.canvas.findOne('.wall');
+        if (wall) {
+          this.currentPathStrokeWidth = wall.getAttr('strokeWidth');
+        }
+        else if (this.currentScale !== 1){
+          this.currentPathStrokeWidth = this.currentGridStrokeWidth * 3;
+        }
+        else {
+          this.currentPathStrokeWidth = 3;
+        }
         
         const path = new Konva.Path({
             x: snapPoint.x,
             y: snapPoint.y,
             data: 'M0,0 L0,0',
             stroke: 'black',
-            strokeWidth: 5,
+            strokeWidth: this.currentPathStrokeWidth,
             lineCap: 'round',
             lineJoin: 'round',
             draggable: true,
@@ -662,11 +1034,15 @@ export class CreateFloorPlanPage {
       }
       
       onMouseMove(): void {
+        if (this.ctrlDown) {
+          return;
+        }
+
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
-            const grid = this.gridSize;
-            const xValue = pointer ? pointer.x : 0;
-            const yValue = pointer ? pointer.y : 0;
+            const grid = this.scaleSnap;
+            const xValue = pointer ? this.convertX(pointer.x) : 0;
+            const yValue = pointer ? this.convertY(pointer.y) : 0;
             const snapPoint = {
                 x: Math.round(xValue / grid) * grid,
                 y: Math.round(yValue / grid) * grid,
@@ -684,12 +1060,13 @@ export class CreateFloorPlanPage {
       
       onMouseUp(): void {
         this.openDustbin = false;
+        this.mouseDown = false;
 
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
-          const grid = this.gridSize;
-          const xValue = pointer ? pointer.x : 0;
-          const yValue = pointer ? pointer.y : 0;
+          const grid = this.scaleSnap;
+          const xValue = pointer ? this.convertX(pointer.x) : 0;
+          const yValue = pointer ? this.convertY(pointer.y) : 0;
           const snapPoint = {
               x: Math.round(xValue / grid) * grid,
               y: Math.round(yValue / grid) * grid,
@@ -749,17 +1126,23 @@ export class CreateFloorPlanPage {
       }
       
       createGridLines() {
-        const grid = 10;
+        const grid = this.initialGridSize;
         const stage = this.canvasContainer;
         const width = stage.width();
         const height = stage.height();
         const gridGroup = new Konva.Group({
+          x: stage.x(),
+          y: stage.y(),
+          width: width,
+          height: height,
+          bottom: stage.y() + height,
+          right: stage.x() + width,
           draggable: false,
         });
         for (let i = 0; i < width / grid; i++) {
           const distance = i * grid;
           const horizontalLine = new Konva.Line({
-            points: [distance, 0, distance, height],
+            points: [distance, 0, distance, width],
             stroke: '#ccc',
             strokeWidth: 1,
             draggable: false,
@@ -775,6 +1158,17 @@ export class CreateFloorPlanPage {
           gridGroup.add(horizontalLine);
           gridGroup.add(verticalLine);
         }
+        // get grid boundaries
+        this.gridBoundaries = {
+          x: gridGroup.x(),
+          y: gridGroup.y(),
+          width: gridGroup.width(),
+          height: gridGroup.height(),
+          bottom: gridGroup.y() + gridGroup.height(),
+          right: gridGroup.x() + gridGroup.width(),
+        };
+        this.gridLines = gridGroup;
+
         this.canvas.add(gridGroup);
         gridGroup.moveToBottom();
         this.canvas.batchDraw();
@@ -790,35 +1184,52 @@ export class CreateFloorPlanPage {
       // set the grid lines when the window is resized
     @HostListener('window:resize', ['$event'])
     onResize(event: any) {
+      this.checkScreenWidth();
       // remove gridlines and then add them again
       this.removeGridLines();
+      const width = this.canvasParent.nativeElement.offsetWidth;
+
+      this.canvasContainer.setAttrs({
+        width: width*0.9783,
+        height: this.initialHeight,
+      });
       this.createGridLines();
     }
 
     removeGridLines(): void {
+      const elementsToRemove: any[] = [];
+
       this.canvas?.children?.forEach((child: any) => {
-        if (child.attrs.customClass === 'grid-line') {
-          child.remove();
-        }
+        child.children?.forEach((grandChild: any) => {
+          if (grandChild.attrs.customClass === 'grid-line') {
+            elementsToRemove.push(grandChild);
+          }
+        });
       });
 
-      
-      const width = this.canvasParent.nativeElement.offsetWidth;
-      const height = this.canvasParent.nativeElement.offsetHeight;
-
-      this.canvasContainer.setAttr('width', width*0.9783);
-      this.canvasContainer.setAttr('height', height*0.965);
+      elementsToRemove.forEach((element: any) => {
+        element.remove();
+      });
     }
     
-      ngOnInit() {
+      ngOnInit() : void {
         this.checkScreenWidth();
+
+        this.macAddressForm = this.formBuilder.group({
+          macAddressBlock1: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock2: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock3: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock4: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock5: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+          macAddressBlock6: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
+        });
       }
     
       checkScreenWidth() {
         this.shouldStackVertically = window.innerWidth < 1421;
       }
 
-      testJSON(): void {
+      saveFloorLayout(): void {
         // remove grid lines from the JSON data
         const json = this.canvas.toObject();
 
@@ -827,49 +1238,227 @@ export class CreateFloorPlanPage {
           return child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor';
         });
 
-        console.log(json);
-      }
+        //stringify the JSON data
+        const jsonString = JSON.stringify(json);
 
-      getUniqueId(): string {
-        // find latest id from sensor customId attribute first character
-        const sensors = this.sensors;
-        let latestId = 0;
-        sensors.forEach((sensor: any) => {
-            const id = parseInt(sensor.attrs.customId[1]);
-            if (id > latestId) {
-                latestId = id;
-            }
+        // subscribe to params and get the event id
+        let eventId = '';
+        
+        this.route.queryParams.subscribe(params => {
+          eventId = params['id'];
         });
 
-        // generate random string for the id
-        const randomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-        return `s${(latestId + 1).toString() + randomString}`;
+        // save the JSON data to the database
+        this.appApiService.updateFloorLayout(eventId, jsonString).subscribe((res: any) => {
+          console.log(res);
+        });
       }
 
+      // getUniqueId(): string {
+      //   this.appApiService.getNewEventSensorId().subscribe((res: any) => {
+      //     return res;
+      //   });
+
+      //   return '';
+      // }
+
       updateWidth(event: any) {
-        this.activeItem?.width(parseInt(event.target.value));
-        this.activeItem?.scaleX(1);
+        const input = parseInt(event.target.value);
+        if (this.activeItem instanceof Konva.Path) {
+          const newPathData = `M0,0 L${input},0`;
+          this.activeItem?.setAttr('data', newPathData);
+        }
+        this.activeItem?.width(input);
+        this.canvas.batchDraw();
       }
     
       updateHeight(event: any) {
-        this.activeItem?.height(parseInt(event.target.value));
-        this.activeItem?.scaleY(1);
+        const input = parseInt(event.target.value);
+        if (this.activeItem instanceof Konva.Path) {
+          const newPathData = `M0,0 L0,${input}`;
+          this.activeItem?.setAttr('data', newPathData);
+        }
+        this.activeItem?.width(input);
+        this.canvas.batchDraw();
       }
 
       updateRotation(event: any) {
-        this.activeItem?.rotation(parseInt(event.target.value));
+        const input = parseInt(event.target.value);
+        if (input < 0) {
+          this.activeItem?.rotation(360 + input);
+        }
+        else {
+          this.activeItem?.rotation(input);
+        }
       }
 
       getActiveItemWidth(): number {
-        return Math.round(this.activeItem?.width() * this.activeItem?.scaleX());
+        return Math.round(this.activeItem?.width() * this.activeItem?.scaleX() * 100) / 100;
       }
 
       getActiveItemHeight(): number {
-        return Math.round(this.activeItem?.height() * this.activeItem?.scaleY());
+        return Math.round(this.activeItem?.height() * this.activeItem?.scaleY() * 100) / 100;
       }
 
       getActiveItemRotation(): number {
-        return Math.round(this.activeItem?.rotation());
+        if (Math.round(this.activeItem?.rotation()) > 360) {
+          return Math.round(this.activeItem?.rotation()) - 360;
+        }
+        else if (Math.round(this.activeItem?.rotation()) === 360) {
+          return 0;
+        }
+        else {
+          return Math.round(this.activeItem?.rotation());
+        }
       }
+
+    isSensor() : boolean {
+      if (this.activeItem && this.activeItem instanceof Konva.Image) {
+        return true;
+      }
+      this.isCardFlipped = false;
+
+      //clear macAddressBlocks
+      this.macAddressForm.reset();
+
+      this.canLinkSensorWithMacAddress = false;
+
+      return false;
+    }
+
+    // get SensorIds(): string[] {
+    //   // filter out active selected sensor
+    //   const sensors = this.sensors.filter((sensor: any) => {
+    //     return sensor.attrs.customId !== this.activeItem?.attrs.customId;
+    //   });
+
+    //   // get the ids of the sensors
+    //   const sensorIds = sensors.map((sensor: any) => {
+    //     return sensor.attrs.customId;
+    //   });
+
+    //   return sensorIds;
+    // }
+
+    isCardFlipped = false;
+
+    toggleCardFlip() {
+      this.isCardFlipped = !this.isCardFlipped;
+
+      //clear macAddressBlocks
+      this.macAddressForm.reset();
+
+      this.canLinkSensorWithMacAddress = false;
+    }
+
+    getSelectedSensorId() {
+      return this.activeItem?.attrs.customId;
+    }
+
+    updateLinkedSensors() {
+      const request: IlinkSensorRequest = {
+        id: this.activeItem.getAttr('customId')
+      };
+
+      const macAddress = this.macAddrFromQR || this.macAddressBlocks.join(':');
+        this.appApiService.linkSensor(request, macAddress).then((res: any) => {
+          if (res['success']) {
+            // set the 'isLinked' attribute to true
+            this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
+
+            //update active sensor
+            this.store.dispatch(new UpdateActiveSensor(request.id));
+          }
+        });
+    }
+
+    handleMacAddressInput(event: any, blockIndex: number) {
+      // Format and store the value in your desired format
+      // Example: Assuming you have an array called macAddressBlocks to store the individual blocks
+      this.macAddressBlocks[blockIndex] = event.target.value.toString().toUpperCase();
+      // Add any additional validation or formatting logic here
+      // Example: Restrict input to valid hexadecimal characters only
+      const validHexCharacters = /^[0-9A-Fa-f]*$/;
+      if (!validHexCharacters.test(event.target)) {
+        // Handle invalid input, show an error message, etc.
+      }
+
+      // Move focus to the next input when 2 characters are entered, 4 characters, etc.
+      if (event.target.value.length === 2 && validHexCharacters.test(event.target.value)) {
+        // map thorugh the macAddressBlocksElements and find the next input
+        const nextInput = this.macAddressBlockElements?.item(blockIndex + 1);
+
+        if (nextInput && nextInput?.value?.toString().length !== 2) {
+          nextInput.focus();
+
+          // check if input now has focus
+          if (nextInput !== document.activeElement) {
+            // if not, set the focus to the next input
+            nextInput.setFocus();
+          }
+        }
+      }
+
+      //check to see if all the blocks are filled nd satisfies the regex
+      if (this.macAddressBlocks.every((block) => block.valueOf().length === 2 && validHexCharacters.test(block))) {
+        // join the blocks together
+        const macAddress = this.macAddressBlocks.join(':');
+        // set the macAddress value in the form
+        this.macAddressForm.get('macAddress')?.setValue(macAddress);
+
+        this.canLinkSensorWithMacAddress = true;
+      } else {
+        this.canLinkSensorWithMacAddress = false;
+      }
+    }  
+
+    setInputFocus(value: boolean) {
+      this.inputHasFocus = value;
+    }
+
+    // isLinked() {
+    //   this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
+    //     if(!res['success']) {
+    //       this.store.dispatch(new UpdateSensorLinkedStatus(this.activeItem?.getAttr('customId'), false));
+    //     }
+    //   });
+
+    // }
+
+    get macAddressBlock1() {
+      return this.macAddressForm.get('macAddressBlock1');
+    }
+
+    get macAddressBlock2() {
+      return this.macAddressForm.get('macAddressBlock2');
+    }
+
+    get macAddressBlock3() {
+      return this.macAddressForm.get('macAddressBlock3');
+    }
+
+    get macAddressBlock4() {
+      return this.macAddressForm.get('macAddressBlock4');
+    }
+
+    get macAddressBlock5() {
+      return this.macAddressForm.get('macAddressBlock5');
+    }
+
+    get macAddressBlock6() {
+      return this.macAddressForm.get('macAddressBlock6');
+    }
+
+      chooseDustbinImage(): string {
+        if (this.openDustbin && !this.onDustbin) {
+          return 'assets/trash-open.svg';
+        }
+        else if (!this.openDustbin && !this.onDustbin) {
+          return 'assets/trash-svgrepo-com.svg';
+        }
+        else if (this.openDustbin && this.onDustbin) {
+          return 'assets/trash-delete.svg';
+        }
+        else return '';
+    }
 }

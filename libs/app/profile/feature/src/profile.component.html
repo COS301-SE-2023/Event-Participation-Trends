@@ -1,11 +1,12 @@
-<ion-content class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed">
+<ion-content class="bg-ept-off-white bg-cover bg-no-repeat bg-center bg-fixed">
     <div class="flex flex-col backdrop-blur-[10px] min-h-full h-fit">
         <div class="flex justify-end items-center mt-5 mr-5">
             <ion-icon (click)="closeProfile()" name="close-outline" class="text-ept-deep-grey w-[30px] h-[30px] cursor-pointer"></ion-icon>
         </div>
         <div class="flex flex-col justify-center items-center mt-10">
-            <img src="{{profilePicUrl}}" class="w-[100px] h-[100px] rounded-full" alt="profile picture">
-            <ion-label class="profile-name text-ept-deep-grey mt-2">{{username}}</ion-label>
+            <ion-icon *ngIf="faultyImage" name="person-circle" class="w-[100px] h-[100px] rounded-full" alt="profile picture"></ion-icon>
+            <img *ngIf="!faultyImage" src="{{profilePicUrl}}" class="w-[100px] h-[100px] rounded-full" alt="profile picture">
+            <ion-label class="profile-name text-ept-deep-grey mt-4 text-3xl">{{username}}</ion-label>
         </div>
         <div class="flex justify-evenly mt-10">
             <div class="flex flex-col justify-evenly items-center mb-5">
@@ -20,7 +21,7 @@
             </div>
         </div>
         <div (click)="logout()" class="flex justify-center items-center">
-            <ion-button class="logout-button w-fit h-fit text-red-500 cursor-pointer">Logout</ion-button>
+            <ion-button class="logout-button w-fit h-fit text-red-500 cursor-pointer text-lg">Logout</ion-button>
         </div>
     </div>
 </ion-content>
