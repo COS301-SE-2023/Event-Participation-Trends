@@ -100,7 +100,6 @@
                 step="1"
                 [value]="activeItem ? getActiveItemRotation() : 0"
                 (input)="updateRotation($event)"
-                min="0"
                 [disabled]="!preventCreatingWalls || activeItem == null"
               ></ion-input>
             </ion-item>
@@ -145,7 +144,6 @@
                 step="1"
                 [value]="activeItem ? getActiveItemRotation() : 0"
                 (input)="updateRotation($event)"
-                min="0"
                 [disabled]="!preventCreatingWalls || activeItem == null"
               ></ion-input>
             </div>
@@ -354,6 +352,11 @@
           alt="trash"
           class="bg-white h-10 transition-all duration-300"
         />
+      </div>
+      <div class="absolute bottom-3 right-1 bg-ept-off-white">
+        <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Block = {{initialGridSize}}m</ion-label>
+        <br/>
+        <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Snap = {{displayedSnap}}m</ion-label>
       </div>
     </div>
   </div>

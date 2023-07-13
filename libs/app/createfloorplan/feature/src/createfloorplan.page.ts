@@ -44,7 +44,7 @@ export class CreateFloorPlanPage implements OnInit{
     preventCreatingWalls = true; // to prevent creating walls
     transformers: Konva.Transformer[] = [this.transformer];
     sensors: ISensorState[] | undefined = [];
-    gridSize = 10;
+    gridSize = 5;
     paths: Konva.Path[] = [];
     activePath: Konva.Path | null = null;
     onDustbin = false;
@@ -69,13 +69,31 @@ export class CreateFloorPlanPage implements OnInit{
     macAddressForm!: FormGroup;
     inputHasFocus = false;
     initialHeight = 0;
+    scaleSnap = 5;
+    initialSnap = this.scaleSnap;
+    displayedSnap = this.scaleSnap;
+    initialGridSize = this.gridSize;
+    currentScale = 1;
+    gridLines !: Konva.Group;
+    currentPathStrokeWidth = 0;
+    currentGridStrokeWidth = 0;
+    snaps: number[] = [];
+    wheelCounter = 0;
+    contentLoaded = false;
+    componentSize = this.gridSize * 2;
 
     constructor(
       private readonly appApiService: AppApiService,
       private readonly route: ActivatedRoute,
       private readonly formBuilder: FormBuilder, 
       private readonly store: Store
-    ) {}
+    ) {
+      for (let i = 1; i <= this.initialGridSize; i++) {
+        const snap = this.initialGridSize / i;
+        this.snaps.push(snap);
+        this.displayedSnap = this.initialSnap;
+      }
+    }
 
     convertX(x: number): number {
       return (x - this.canvasContainer.x()) / this.canvasContainer.scaleX();
@@ -167,8 +185,8 @@ export class CreateFloorPlanPage implements OnInit{
               name: 'stall',
               x: positionX,
               y: positionY,
-              width: 50,
-              height: 50,
+              width: this.componentSize,
+              height: this.componentSize,
               draggable: true,
               cursor: 'move',
               fill: 'white',
@@ -180,11 +198,11 @@ export class CreateFloorPlanPage implements OnInit{
               x: 0,
               y: 0,
               text: 'Stall',
-              fontSize: 11,
+              fontSize: 2,
               fontFamily: 'Calibri',
               fill: 'black',
-              width: 50,
-              height: 50,
+              width: this.componentSize,
+              height: this.componentSize,
               align: 'center',
               verticalAlign: 'middle',
               padding: 3,
@@ -218,8 +236,8 @@ export class CreateFloorPlanPage implements OnInit{
       element.setAttrs({
         x: positionX,
         y: positionY,
-        width: 50,
-        height: 50,
+        width: this.componentSize,
+        height: this.componentSize,
         cursor: 'move',
         draggable: true,
         cornerRadius: 2,
@@ -312,7 +330,7 @@ export class CreateFloorPlanPage implements OnInit{
 
               const component = this.canvas.getIntersection(position);
 
-              if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image) && !(component instanceof Konva.Group)) {
+              if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image) && !(component instanceof Konva.Group) && !(component instanceof Konva.Path)) {
                 this.transformer.detach();
               }
 
@@ -342,7 +360,7 @@ export class CreateFloorPlanPage implements OnInit{
             });
             window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
 
-            const scaleBy = 1.1;
+            const scaleBy = 2;
 
             this.canvasContainer.on('wheel', (e) => {
               e.evt.preventDefault();
@@ -353,7 +371,8 @@ export class CreateFloorPlanPage implements OnInit{
             this.canvasContainer.scaleY(scaleBy);
             const wheelEvent = new WheelEvent('wheel', { deltaY: -1 });
             this.canvasContainer.dispatchEvent(wheelEvent);
-            this.handleScaleAndDrag(wheelEvent, 1.1);
+            this.handleScaleAndDrag(wheelEvent, scaleBy);
+            this.contentLoaded = true;
         }, 6);
     }
 
@@ -386,9 +405,70 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
       const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-      this.gridSize = 10;
+      this.gridSize = this.initialGridSize * newScale;
+      this.currentScale = newScale;
+      
+      if (newScale <= 1 || newScale >= 40) return;
 
-      if (newScale <= 1 || newScale >= 5) return;
+      if (e.evt.deltaY < 0 ) {
+        if (this.contentLoaded) {
+          this.wheelCounter++;
+          this.scaleSnap = this.snaps[this.wheelCounter];
+          this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
+        }
+        else {
+          this.scaleSnap = this.initialSnap;
+          this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
+        }
+
+        // decrease size of grid lines storkewidth
+        if (this.gridLines && this.gridLines.children) {
+          this.gridLines.children?.forEach((child: any) => {
+            const prevWidth = child.getAttr('strokeWidth');
+            child.strokeWidth(prevWidth / 2);
+            this.currentGridStrokeWidth = prevWidth / 2;
+          });
+
+          if (this.canvas && this.canvas.children) {
+            this.canvas.children?.forEach((child: any) => {
+              if (child instanceof Konva.Path) {
+                const prevWidth = child.getAttr('strokeWidth');
+                child.strokeWidth(prevWidth / 2);
+                this.currentPathStrokeWidth = prevWidth / 2;
+              }
+            });
+          }
+        }
+      }
+      else {
+        if (this.contentLoaded) {
+          this.wheelCounter--;
+          this.scaleSnap = this.snaps[this.wheelCounter];
+          this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
+        }
+        else {
+          this.scaleSnap = this.initialSnap;
+          this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
+        }
+
+        if (this.gridLines && this.gridLines.children) {
+          this.gridLines.children?.forEach((child: any) => {
+            const prevWidth = child.getAttr('strokeWidth');
+            child.strokeWidth(prevWidth * 2);
+            this.currentGridStrokeWidth = prevWidth * 2;
+          });
+
+          if (this.canvas && this.canvas.children) {
+            this.canvas.children?.forEach((child: any) => {
+              if (child instanceof Konva.Path) {
+                const prevWidth = child.getAttr('strokeWidth');
+                child.strokeWidth(prevWidth * 2);
+                this.currentPathStrokeWidth = prevWidth * 2;
+              }
+            });
+          }
+        }
+      }
 
       const x =
         -(mousePointTo.x - pointer.x / newScale) * newScale;
@@ -399,6 +479,8 @@ export class CreateFloorPlanPage implements OnInit{
 
       this.canvasContainer.scale({ x: newScale, y: newScale });
       this.canvasContainer.position(pos);
+      // this.removeGridLines();
+      // this.createGridLines();
     }
 
     boundFunc(pos: any, scale: any) {
@@ -721,7 +803,7 @@ export class CreateFloorPlanPage implements OnInit{
             const positionX = movedObject.x() || 0;
             const positionY = movedObject.y() || 0;
         
-            const gridSize = this.gridSize;
+            const gridSize = this.initialGridSize / this.currentScale;
             const minX = 0;
             const minY = 0;
             const maxX = canvasWidth - objectWidth;
@@ -903,20 +985,32 @@ export class CreateFloorPlanPage implements OnInit{
         else this.transformer.detach();
         
         const pointer = this.canvasContainer.getPointerPosition();
-        const grid = this.gridSize;
+        const grid = this.initialGridSize;
         const xValue = pointer ? this.convertX(pointer.x) : 0;
         const yValue = pointer ? this.convertY(pointer.y) : 0;
         const snapPoint = {
             x: Math.round(xValue / grid) * grid,
             y: Math.round(yValue / grid) * grid,
         };
+
+        // test if there already exists a wall
+        const wall = this.canvas.findOne('.wall');
+        if (wall) {
+          this.currentPathStrokeWidth = wall.getAttr('strokeWidth');
+        }
+        else if (this.currentScale !== 1){
+          this.currentPathStrokeWidth = this.currentGridStrokeWidth * 3;
+        }
+        else {
+          this.currentPathStrokeWidth = 3;
+        }
         
         const path = new Konva.Path({
             x: snapPoint.x,
             y: snapPoint.y,
             data: 'M0,0 L0,0',
             stroke: 'black',
-            strokeWidth: 5,
+            strokeWidth: this.currentPathStrokeWidth,
             lineCap: 'round',
             lineJoin: 'round',
             draggable: true,
@@ -945,7 +1039,7 @@ export class CreateFloorPlanPage implements OnInit{
 
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
-            const grid = this.gridSize;
+            const grid = this.scaleSnap;
             const xValue = pointer ? this.convertX(pointer.x) : 0;
             const yValue = pointer ? this.convertY(pointer.y) : 0;
             const snapPoint = {
@@ -969,7 +1063,7 @@ export class CreateFloorPlanPage implements OnInit{
 
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
-          const grid = this.gridSize;
+          const grid = this.scaleSnap;
           const xValue = pointer ? this.convertX(pointer.x) : 0;
           const yValue = pointer ? this.convertY(pointer.y) : 0;
           const snapPoint = {
@@ -1031,7 +1125,7 @@ export class CreateFloorPlanPage implements OnInit{
       }
       
       createGridLines() {
-        const grid = 10;
+        const grid = this.initialGridSize;
         const stage = this.canvasContainer;
         const width = stage.width();
         const height = stage.height();
@@ -1072,6 +1166,7 @@ export class CreateFloorPlanPage implements OnInit{
           bottom: gridGroup.y() + gridGroup.height(),
           right: gridGroup.x() + gridGroup.width(),
         };
+        this.gridLines = gridGroup;
 
         this.canvas.add(gridGroup);
         gridGroup.moveToBottom();
@@ -1167,29 +1262,53 @@ export class CreateFloorPlanPage implements OnInit{
       // }
 
       updateWidth(event: any) {
-        this.activeItem?.width(parseInt(event.target.value));
-        this.activeItem?.scaleX(1);
+        const input = parseInt(event.target.value);
+        if (this.activeItem instanceof Konva.Path) {
+          const newPathData = `M0,0 L${input},0`;
+          this.activeItem?.setAttr('data', newPathData);
+        }
+        this.activeItem?.width(input);
+        this.canvas.batchDraw();
       }
     
       updateHeight(event: any) {
-        this.activeItem?.height(parseInt(event.target.value));
-        this.activeItem?.scaleY(1);
+        const input = parseInt(event.target.value);
+        if (this.activeItem instanceof Konva.Path) {
+          const newPathData = `M0,0 L0,${input}`;
+          this.activeItem?.setAttr('data', newPathData);
+        }
+        this.activeItem?.width(input);
+        this.canvas.batchDraw();
       }
 
       updateRotation(event: any) {
-        this.activeItem?.rotation(parseInt(event.target.value));
+        const input = parseInt(event.target.value);
+        if (input < 0) {
+          this.activeItem?.rotation(360 + input);
+        }
+        else {
+          this.activeItem?.rotation(input);
+        }
       }
 
       getActiveItemWidth(): number {
-        return Math.round(this.activeItem?.width() * this.activeItem?.scaleX());
+        return Math.round(this.activeItem?.width() * this.activeItem?.scaleX() * 100) / 100;
       }
 
       getActiveItemHeight(): number {
-        return Math.round(this.activeItem?.height() * this.activeItem?.scaleY());
+        return Math.round(this.activeItem?.height() * this.activeItem?.scaleY() * 100) / 100;
       }
 
       getActiveItemRotation(): number {
-        return Math.round(this.activeItem?.rotation());
+        if (Math.round(this.activeItem?.rotation()) > 360) {
+          return Math.round(this.activeItem?.rotation()) - 360;
+        }
+        else if (Math.round(this.activeItem?.rotation()) === 360) {
+          return 0;
+        }
+        else {
+          return Math.round(this.activeItem?.rotation());
+        }
       }
 
     isSensor() : boolean {
