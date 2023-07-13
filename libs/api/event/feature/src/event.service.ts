@@ -47,6 +47,8 @@ import {
     IGetEventDevicePositionRequest,
     IGetEventDevicePositionResponse,
     GetEventDevicePositionQuery,
+    IGetAllEventCategoriesResponse,
+    GetAllEventCategoriesQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -136,5 +138,9 @@ export class EventService {
 
     async getEventDevicePosition(request: IGetEventDevicePositionRequest) {
         return await this.queryBus.execute<GetEventDevicePositionQuery, IGetEventDevicePositionResponse>(new GetEventDevicePositionQuery(request));
+    }
+
+    async getAllEventCategories() {
+        return await this.queryBus.execute<GetAllEventCategoriesQuery, IGetAllEventCategoriesResponse>(new GetAllEventCategoriesQuery());
     }
 }
