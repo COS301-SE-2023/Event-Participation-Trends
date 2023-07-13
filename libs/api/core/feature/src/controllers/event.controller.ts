@@ -55,7 +55,6 @@ import {
 } from '@event-participation-trends/api/guards';
 import { Role } from '@event-participation-trends/api/user/util';
 
-
 @Controller('event')
 export class EventController {
   constructor(
