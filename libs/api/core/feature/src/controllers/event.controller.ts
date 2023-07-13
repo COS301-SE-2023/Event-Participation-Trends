@@ -30,6 +30,7 @@ import {
     IAddViewerResponse,
     IGetEventDevicePositionRequest,
     IGetEventDevicePositionResponse,
+    IGetAllEventCategoriesResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -52,12 +53,14 @@ import {
   JwtGuard,
   RbacGuard,
 } from '@event-participation-trends/api/guards';
-import { IAddEventToAdminRequest, Role } from '@event-participation-trends/api/user/util';
+import { Role } from '@event-participation-trends/api/user/util';
 
 
 @Controller('event')
 export class EventController {
-  constructor(private eventService: EventService) {}
+  constructor(
+    private eventService: EventService,
+  ) {}
 
   @Post('createEvent')
   @SetMetadata('role', Role.MANAGER)
@@ -364,5 +367,13 @@ export class EventController {
         return <IGetEventDevicePositionResponse><unknown>(
             this.eventService.getEventDevicePosition(extractRequest));
    }
+
+  @Get('getAllEventCategories')
+  @SetMetadata('role', Role.MANAGER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
+  async getAllEventCategories(): Promise<IGetAllEventCategoriesResponse> {
+
+    return this.eventService.getAllEventCategories();
+  }
 
 }

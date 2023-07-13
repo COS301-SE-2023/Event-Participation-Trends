@@ -190,4 +190,9 @@ export class EventRepository {
             {_id :{$eq: eventID}},
             { Devices: 1 })
     }
+
+    async getAllEventCategories(){
+        return await this.eventModel.find().select("Category").distinct("Category");
+    }
+
 }
