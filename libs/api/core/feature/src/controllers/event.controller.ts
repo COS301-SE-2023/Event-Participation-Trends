@@ -54,14 +54,12 @@ import {
   RbacGuard,
 } from '@event-participation-trends/api/guards';
 import { Role } from '@event-participation-trends/api/user/util';
-import { EmailService } from '@event-participation-trends/api/email/feature';
 
 
 @Controller('event')
 export class EventController {
   constructor(
     private eventService: EventService,
-    private emailService: EmailService,
   ) {}
 
   @Post('createEvent')
@@ -369,7 +367,7 @@ export class EventController {
         return <IGetEventDevicePositionResponse><unknown>(
             this.eventService.getEventDevicePosition(extractRequest));
    }
-   
+
   @Get('getAllEventCategories')
   @SetMetadata('role', Role.MANAGER)
   @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
