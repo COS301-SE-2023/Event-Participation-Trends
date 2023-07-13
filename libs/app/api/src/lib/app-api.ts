@@ -21,6 +21,7 @@ import {
   IEvent,
   IEventDetails,
   IEventId,
+  IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
@@ -237,7 +238,7 @@ export class AppApiService {
       }
     });
   }
-
+  
   updateFloorLayout(eventId: string, floorLayout: string): Observable<IUpdateFloorlayoutResponse> {
     return this.http.post<IUpdateFloorlayoutResponse>('/api/event/updateEventFloorLayout', {
       eventId: eventId,
@@ -278,6 +279,21 @@ export class AppApiService {
       headers:{
         'x-csrf-token': this.cookieService.get('csrf'),
       }
+    });
+  }
+  
+  async getAllEventCategories(): Promise<string[] | undefined | null> {
+    return firstValueFrom(
+      this.http.get<IGetAllEventCategoriesResponse>(
+        '/api/event/getAllEventCategories',
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response.categories;
     });
   }
 }
