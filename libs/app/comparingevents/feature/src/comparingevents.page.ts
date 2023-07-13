@@ -36,6 +36,12 @@ export class ComparingeventsPage {
     this.checkOverflow();
 
     this.store.dispatch(new GetAllCategories());
+
+    this.categories$.subscribe((categories) => {
+      if (categories) {
+        this.store.dispatch(new SetSelectedCategory(categories[0]));
+      }
+    });
   }
 
   checkOverflow() {
@@ -119,7 +125,7 @@ export class ComparingeventsPage {
     return this.events.length === 0;
   }
 
-  toggleItemSelection(event: any) {
+  toggleItemSelection(category: string) {
     // if (this.selectedEvents.includes(event)) {
     //   // Remove from selectedEvents
     //   this.selectedEvents = this.selectedEvents.filter(
@@ -137,8 +143,8 @@ export class ComparingeventsPage {
     // } else {
     //   this.maxSelectionReached = true;
     // }
-
-    this.store.dispatch(new SetSelectedCategory(event.name));
+    // console.log(category);
+    this.store.dispatch(new SetSelectedCategory(category));
   }
 
   isItemDisabled(event: any): boolean {
@@ -154,17 +160,17 @@ export class ComparingeventsPage {
   }
 
   getEventCategories() : string[] {
+    let categoryList: string[] | undefined = [];
     this.categories$.subscribe((categories) => {
-      return categories;
+      categoryList = categories;
     });
-    return [];
+    return categoryList || [];
   }
 
   isSelectedCategory(category: string): boolean {
     let isSelected = false;
     this.selectedCategory$.subscribe((selectedCategory) => {
       isSelected = selectedCategory === category;
-
       return isSelected;
     });
 
