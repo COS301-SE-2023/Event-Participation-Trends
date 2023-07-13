@@ -358,6 +358,26 @@
         <br/>
         <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Snap = {{displayedSnap}}m</ion-label>
       </div>
+      <div class="absolute bottom-3 left-2.5 flex flex-row bg-ept-off-white">
+        <div>
+          <img
+            class="h-8 w-8 mr-1 border-2 p-0.5 border-ept-deep-grey cursor-pointer"
+            src="assets/zoom-in-svgrepo-com.svg"
+            alt="zoom in"
+            (click)="zoomIn()"
+            [ngClass]="{'opacity-50 pointer-events-none border-opacity-50': zoomInDisabled}"
+          >
+        </div>
+        <div>
+          <img
+            class="h-8 w-8 border-2 p-0.5 border-ept-deep-grey cursor-pointer"
+            src="assets/zoom-out-svgrepo-com.svg"
+            alt="zoom out"
+            (click)="zoomOut()"
+            [ngClass]="{'opacity-50 pointer-events-none border-opacity-50': zoomOutDisabled}"
+          >
+        </div>
+      </div>
     </div>
   </div>
   <ion-toast
