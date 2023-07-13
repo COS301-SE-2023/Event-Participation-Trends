@@ -599,11 +599,12 @@ export class CreateFloorPlanPage implements OnInit{
           if (e.target instanceof Konva.Image) {
             const html5QrcodeScanner = new Html5QrcodeScanner(
               "reader",
-              { fps: 10, qrbox: {width: 250, height: 250} },
+              { fps: 15 },
               /* verbose= */ false);
             html5QrcodeScanner.render((decoded, res)=>{
               this.macAddrFromQR = decoded;
               this.updateLinkedSensors();
+              html5QrcodeScanner.pause();
             } , undefined);
           }
           return;
@@ -1360,21 +1361,15 @@ export class CreateFloorPlanPage implements OnInit{
       };
 
       const macAddress = this.macAddrFromQR || this.macAddressBlocks.join(':');
+        this.appApiService.linkSensor(request, macAddress).then((res: any) => {
+          if (res['success']) {
+            // set the 'isLinked' attribute to true
+            this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
 
-      // check if sensor isn't already linked 
-      this.appApiService.isLinked(this.activeItem?.getAttr('customId')).subscribe((res: any) => {
-        if(!res['isLinked']) {
-          this.appApiService.linkSensor(request, macAddress).then((res: any) => {
-            if (res['success']) {
-              // set the 'isLinked' attribute to true
-              this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
-
-              //update active sensor
-              this.store.dispatch(new UpdateActiveSensor(request.id));
-            }
-          });
-        }
-      });
+            //update active sensor
+            this.store.dispatch(new UpdateActiveSensor(request.id));
+          }
+        });
     }
 
     handleMacAddressInput(event: any, blockIndex: number) {

@@ -13,6 +13,7 @@ import { Select, Store } from '@ngxs/store';
 import { AddEventState } from '@event-participation-trends/app/addevent/data-access';
 import { Observable } from 'rxjs';
 import { SetCanCreateFloorPlan, SetNewlyCreatedEvent } from '@event-participation-trends/app/addevent/util';
+import { AddNewlyCreatedEvent } from '@event-participation-trends/app/viewevents/util';
 
 @Component({
   selector: 'event-participation-trends-addevent',
@@ -92,6 +93,9 @@ export class AddEventPage implements OnInit {
             
             // set state
             this.store.dispatch(new SetNewlyCreatedEvent(newEvent));
+
+            // Update viewevents
+            this.store.dispatch(new AddNewlyCreatedEvent(newEvent));
           });
 
           // setTimeout(() => {

@@ -1,12 +1,40 @@
 <ion-content
   class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
 >
-  <div class="backdrop-blur-[6px] min-h-full h-fit">
-    <div class="grid grid-cols-3 p-6 px-7">
-      <div class="col-span-1 flex items-center"></div>
+  <ion-toast
+    [isOpen]="didRefresh && newEventsFound"
+    message="There are new events available!"
+    [duration]="2000"
+    class="text-center"
+    color="warning"
+    position="top"
+  ></ion-toast>
+  <ion-toast
+    [isOpen]="didRefresh && !newEventsFound"
+    message="No new events."
+    [duration]="2000"
+    class="text-center"
+    color="warning"
+    position="top"
+  ></ion-toast>
+  <div class="backdrop-blur-[6px] min-h-full h-fit" [ngClass]="{'items-center flex justify-center': isLoading}">
+    <div *ngIf="isLoading" class="flex flex-col justify-center items-center">
+      <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>
+      <ion-label>Loading Content...</ion-label>
+    </div>
+    <div *ngIf="!isLoading" class="grid grid-cols-3 px-7">
+      <div class="col-span-1 flex items-center">
+        <ion-refresher slot="fixed" [pullMin]="30" [pullMax]="70" (ionRefresh)="handleRefresh($event)">
+          <ion-refresher-content 
+            pullingIcon="arrow-down-circle-outline"
+            refreshingSpinner="bubbles"
+            class="absolute left-4 text-ept-bumble-yellow"
+          ></ion-refresher-content>
+        </ion-refresher>
+      </div>
       <span
         ngClass="sidebar-content"
-        class="flex w-full col-span-3 lg:col-span-1"
+        class="flex w-full col-span-3 lg:col-span-1 py-6"
       >
         <ion-searchbar
           ngClass="sidebar-searchbar"
@@ -75,7 +103,7 @@
         </ion-card-content>
       </ion-card>
     </div>
-    <div class="grid grid-cols-3 p-6 px-7" *ngIf="allEventsTitle()">
+    <div class="grid grid-cols-3 p-6 px-7" *ngIf="allEventsLength">
       <div class="col-span-1 flex items-center">
         <p class="text-2xl">All Events</p>
       </div>
