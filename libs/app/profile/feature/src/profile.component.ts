@@ -15,6 +15,7 @@ export class ProfileComponent {
   public fullName = '';
   public profilePicUrl = '';
   public email = '';
+  public faultyImage = false;
 
   constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
     this.appApiService.getRole().subscribe((response)=>{
@@ -28,6 +29,9 @@ export class ProfileComponent {
     });
     this.appApiService.getProfilePicUrl().subscribe((response)=>{
       this.profilePicUrl = response.url || '';
+      if (this.profilePicUrl === '') {
+        this.faultyImage = true;
+      }
     });
     this.appApiService.getEmail().subscribe((response)=>{
       this.email = response.email || '';

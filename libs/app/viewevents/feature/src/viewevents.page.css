@@ -5,3 +5,7 @@
 /* ion-icon {
   --ionicon-stroke-width: 60px;
 } */
+
+ion-refresher ion-refresher-content {
+  --color: rgb(0 0 255 / var(--tw-text-opacity)) !important;
+}

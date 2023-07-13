@@ -1,4 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ComparingeventsState } from '@event-participation-trends/app/comparingevents/data-access';
+import { Select, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { GetAllCategories, SetSelectedCategory } from '@event-participation-trends/app/comparingevents/util';
 
 interface Event {
   id: number;
@@ -15,16 +19,29 @@ interface Event {
   styleUrls: ['./comparingevents.page.css'],
 })
 export class ComparingeventsPage {
+  @Select(ComparingeventsState.selectedCategory) selectedCategory$!: Observable<string | undefined>;
+  @Select(ComparingeventsState.categories) categories$!: Observable<string[] | undefined>;
   @ViewChild('content-body', { static: true }) contentBody!: ElementRef;
 
   selectedEvents: any[] = [];
   maxSelectionAllowed = 2;
 
-  constructor(private containerElement: ElementRef) {}
+  constructor(
+    private containerElement: ElementRef,
+    private readonly store: Store,
+  ) {}
   overflow = false;
 
   ngAfterViewInit() {
     this.checkOverflow();
+
+    this.store.dispatch(new GetAllCategories());
+
+    this.categories$.subscribe((categories) => {
+      if (categories) {
+        this.store.dispatch(new SetSelectedCategory(categories[0]));
+      }
+    });
   }
 
   checkOverflow() {
@@ -108,24 +125,26 @@ export class ComparingeventsPage {
     return this.events.length === 0;
   }
 
-  toggleItemSelection(event: any) {
-    if (this.selectedEvents.includes(event)) {
-      // Remove from selectedEvents
-      this.selectedEvents = this.selectedEvents.filter(
-        (selectedEvent) => selectedEvent !== event
-      );
-      event.selected = false;
-    } else if (this.selectedEvents.length < this.maxSelectionAllowed) {
-      // Add to selectedEvents
-      event.selected = true;
-      this.selectedEvents.push(event);
-    }
+  toggleItemSelection(category: string) {
+    // if (this.selectedEvents.includes(event)) {
+    //   // Remove from selectedEvents
+    //   this.selectedEvents = this.selectedEvents.filter(
+    //     (selectedEvent) => selectedEvent !== event
+    //   );
+    //   event.selected = false;
+    // } else if (this.selectedEvents.length < this.maxSelectionAllowed) {
+    //   // Add to selectedEvents
+    //   event.selected = true;
+    //   this.selectedEvents.push(event);
+    // }
 
-    if (this.selectedEvents.length < this.maxSelectionAllowed) {
-      this.maxSelectionReached = false;
-    } else {
-      this.maxSelectionReached = true;
-    }
+    // if (this.selectedEvents.length < this.maxSelectionAllowed) {
+    //   this.maxSelectionReached = false;
+    // } else {
+    //   this.maxSelectionReached = true;
+    // }
+    // console.log(category);
+    this.store.dispatch(new SetSelectedCategory(category));
   }
 
   isItemDisabled(event: any): boolean {
@@ -138,5 +157,23 @@ export class ComparingeventsPage {
 
   isSelected(event: any): boolean {
     return event.selected;
+  }
+
+  getEventCategories() : string[] {
+    let categoryList: string[] | undefined = [];
+    this.categories$.subscribe((categories) => {
+      categoryList = categories;
+    });
+    return categoryList || [];
+  }
+
+  isSelectedCategory(category: string): boolean {
+    let isSelected = false;
+    this.selectedCategory$.subscribe((selectedCategory) => {
+      isSelected = selectedCategory === category;
+      return isSelected;
+    });
+
+    return isSelected;
   }
 }

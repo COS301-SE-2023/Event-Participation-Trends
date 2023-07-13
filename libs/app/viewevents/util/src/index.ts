@@ -1,1 +1,1 @@
-// export * from './viewevents.actions';
+export * from './viewevents.actions';

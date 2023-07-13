@@ -25,6 +25,62 @@ ion-toggle::part(track) {
   overflow: visible;
 }
 
+ion-checkbox {
+  --checkbox-background-checked: #101010;
+  --checkmark-color: #facc15;
+  --checkmark-width: 4px;
+}
+
+ion-checkbox::part(container) {
+  border: 2px solid #101010;
+}
+
+ion-list {
+  background: transparent;
+
+}
+ion-item {
+    --background: inherit;
+}
+
+/*
+* The following is used to flip the card on the left side of the screen
+*/
+.card-container {
+  position: relative;
+  perspective: 1000px;
+}
+
+.card {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.front-side,
+.back-side {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  backface-visibility: hidden;
+}
+
+.front-side {
+  z-index: 2;
+}
+
+.back-side {
+  transform: rotateY(180deg);
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+/*///////////////////////////////////////////////*/
+
 .content {
     display: grid;
     grid-template-columns: 2fr 10fr;

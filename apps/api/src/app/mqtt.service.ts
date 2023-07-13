@@ -1,9 +1,10 @@
-import { EventService } from '@event-participation-trends/api/event/feature';
+import { AddDevicePosition, EventService } from '@event-participation-trends/api/event/feature';
 import { IGetAllEventsRequest } from '@event-participation-trends/api/event/util';
-import { SensorReading } from '@event-participation-trends/api/positioning';
+import { PositioningService, SensorReading } from '@event-participation-trends/api/positioning';
 import { Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { SensorlinkingService } from '@event-participation-trends/api/sensorlinking';
+import { Position } from '@event-participation-trends/api/event/data-access';
 
 @Injectable()
 export class MqttService {
@@ -12,7 +13,7 @@ export class MqttService {
   private buffer: Array<any>;
   private idNum: number;
 
-  constructor(private readonly sensorLinkingService: SensorlinkingService) {
+  constructor(private readonly sensorLinkingService: SensorlinkingService, private readonly positioningService: PositioningService, private readonly eventService: EventService) {
     this.sensors = new Array<string>();
     this.macToId = new Map<string, number>();
     this.buffer = new Array<any>();
@@ -41,7 +42,7 @@ export class MqttService {
     this.buffer.push(tempSensors);
   }
 
-  @Interval(5000)
+  @Interval(1000)
   async processBuffer() {
     const events = this.sensorLinkingService.events;
     this.sensorLinkingService.shouldUpdate = true;
@@ -49,7 +50,7 @@ export class MqttService {
       ?.filter(
         (event) => event.StartDate < new Date() && event.EndDate > new Date()
       )
-      .forEach((event) => {
+      .forEach(async (event) => {
         const sensors = new Set<any>();
         if (!event.FloorLayout) return;
         const thisFloorLayout = JSON.parse(
@@ -65,25 +66,38 @@ export class MqttService {
             });
           }
         });
-        const tempBuffer: SensorReading[] = new Array<SensorReading>();
-        sensors.forEach(async (sensor) => {
-          const id = sensor.id;
-          const sensorMac = await this.sensorLinkingService.getMacAddress(id);
-          this.buffer
-            .filter((data) => data.sensorMac === sensorMac)
-            .forEach((data) => {
-              data.devices.forEach((device: any) => {
-                tempBuffer.push({
-                  id: device.mac,
-                  signal_strength: device.rssi,
-                  timestamp: data.time,
-                  x: sensor.x,
-                  y: sensor.y,
-                });
-              });
-            });
-        });
+        const positions = await this.anotherOne(sensors);
+        this.buffer = new Array<any>();
+
+
+        // for devices
+        // find kalmann filter of device
+        // if not found, create new, with the first 2 parameeters being the measured x and y
+        // const estimation = kalman.update(new_time, new Matrix(2, 1, [[position.x], [position.y]]));
+        // kalman.predict();
       });
-    this.buffer = new Array<any>();
   }
+
+  async anotherOne(sensors: any): Promise<Position[]> {
+    const tempBuffer = new Array<any>;
+    for await (const sensor of sensors) {
+      const id = sensor.id;
+      const sensorMac = await this.sensorLinkingService.getMacAddress(id);
+      this.buffer
+        .filter((data) => data.sensorMac === sensorMac)
+        .forEach((data) => {
+          data.devices.forEach((device: any) => {
+            tempBuffer.push({
+              id: device.mac,
+              distance: this.positioningService.rssiToDistance(device.rssi),
+              timestamp: data.time,
+              x: sensor.x,
+              y: sensor.y,
+            });
+          });
+        });
+    }
+    const positions = this.positioningService.getPositions(tempBuffer);
+    return positions;
+  };
 }
