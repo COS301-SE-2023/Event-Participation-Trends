@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, State, StateContext, Store } from '@ngxs/store';
+import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import { GetAllCategories, SetCompareEventsState, SetSelectedCategory, UpdateCategories } from '@event-participation-trends/app/comparingevents/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { SetError } from '@event-participation-trends/app/error/util';
@@ -21,6 +21,16 @@ export interface ComparingeventsStateModel {
 
 @Injectable()
 export class ComparingeventsState {
+
+    @Selector()
+    static selectedCategory(state: ComparingeventsStateModel) {
+        return state.selectedCategory;
+    }
+
+    @Selector()
+    static categories(state: ComparingeventsStateModel) {
+        return state.categories;
+    }
 
     constructor(
         private readonly store: Store,
