@@ -194,4 +194,20 @@ export class ComparingeventsPage {
     const pattern = new RegExp(search, 'gi');
     return text.replace(pattern, match => `<span class="bg-ept-bumble-yellow">${match}</span>`);
   }
+
+  handleRefresh(event: any) {
+    setTimeout(() => {
+      let old_categories = [];
+      this.categories$.subscribe((categories) => {
+        if (categories) {
+          old_categories = categories;
+        }
+      });
+
+      this.store.dispatch(new GetAllCategories());
+      // this.store.dispatch(new GetMyEvents());
+
+      event.target.complete();
+    }, 2000);
+  }
 }

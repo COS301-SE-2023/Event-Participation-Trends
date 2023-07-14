@@ -105,8 +105,17 @@
           </ion-checkbox>
         </ion-item>
       </ion-list> -->
+      <div class="col-span-1 flex items-center">
+        <ion-refresher slot="fixed" [pullMin]="30" [pullMax]="70" (ionRefresh)="handleRefresh($event)">
+          <ion-refresher-content 
+            pullingIcon="arrow-down-circle-outline"
+            refreshingSpinner="bubbles"
+            class="absolute right-3 text-ept-bumble-yellow"
+          ></ion-refresher-content>
+        </ion-refresher>
+      </div>
       <ion-list
-        class="rounded-lg"
+        class="rounded-lg ion-content-scroll-host ion-padding"
         *ngIf="getEventCategories().length > 0"
         [ngClass]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
       >
