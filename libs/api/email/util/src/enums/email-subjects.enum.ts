@@ -5,4 +5,6 @@ export enum EmailSubject{
     REJECT_MANAGER_REQUST= "Event Participation Trends: Manager Request Denied",
     REVOKE_VIEW_ACCESS= "Event Participation Trends: Viewer Access Revoked",
     CREATE_EVENT= "Event Participation Trends: Event Created",
+    ROLE_CHANGED= "Event Participation Trends: Role Change",
+    
 }
