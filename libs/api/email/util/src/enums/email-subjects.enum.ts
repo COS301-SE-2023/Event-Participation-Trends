@@ -6,5 +6,5 @@ export enum EmailSubject{
     REVOKE_VIEW_ACCESS= "Event Participation Trends: Viewer Access Revoked",
     CREATE_EVENT= "Event Participation Trends: Event Created",
     ROLE_CHANGED= "Event Participation Trends: Role Change",
-    
+    EVENT_DETAILS_UPDATED= "Event Participation Trends: Event Details Updated",
 }
