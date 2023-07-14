@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { GetAllCategories, SetCompareEventsState, SetSearchedCategories, SetSelectedCategory, UpdateCategories } from '@event-participation-trends/app/comparingevents/util';
+import { GetAllCategories, GetMyEventCategories, SetCompareEventsState, SetSelectedCategory, UpdateCategories } from '@event-participation-trends/app/comparingevents/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { SetError } from '@event-participation-trends/app/error/util';
 
@@ -9,7 +9,7 @@ import { SetError } from '@event-participation-trends/app/error/util';
 export interface ComparingeventsStateModel {
     selectedCategory: string;
     categories: string[];
-    searchedCategories: string[];
+    myEventCategories: string[];
 }
 
 @State<ComparingeventsStateModel>({
@@ -17,7 +17,7 @@ export interface ComparingeventsStateModel {
     defaults: {
         selectedCategory: '',
         categories: [],
-        searchedCategories: [],
+        myEventCategories: [],
     },
 })
 
@@ -35,8 +35,8 @@ export class ComparingeventsState {
     }
 
     @Selector()
-    static searchedCategories(state: ComparingeventsStateModel) {
-        return state.searchedCategories;
+    static myEventCategories(state: ComparingeventsStateModel) {
+        return state.myEventCategories;
     }
 
     constructor(
@@ -77,10 +77,19 @@ export class ComparingeventsState {
         }
     }
 
-    @Action(SetSearchedCategories)
-    setSearchedCategories(ctx: StateContext<ComparingeventsStateModel>, { searchedCategories }: SetSearchedCategories) {
-        ctx.patchState({
-            searchedCategories,
-        });
+    @Action(GetMyEventCategories)
+    async getMyEventCategories(ctx: StateContext<ComparingeventsStateModel>) {
+        try {
+            const myEventCategories: string[] = [];
+
+            if (myEventCategories && myEventCategories.length > 0) {
+                return ctx.patchState({
+                    myEventCategories,
+                });
+            }
+            return;
+        } catch(error) {
+            return this.store.dispatch(new SetError((error as Error).message));
+        }
     }
 }
