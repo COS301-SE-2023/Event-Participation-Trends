@@ -4,7 +4,7 @@ import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
-import {Html5QrcodeScanner} from "html5-qrcode";
+import {Html5QrcodeScanner, Html5QrcodeScannerState} from "html5-qrcode";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
 import { Select, Store } from '@ngxs/store';
@@ -70,6 +70,7 @@ export class CreateFloorPlanPage implements OnInit{
     inputHasFocus = false;
     initialHeight = 0;
     scaleSnap = 5;
+    scaleBy = 2;
     initialSnap = this.scaleSnap;
     displayedSnap = this.scaleSnap;
     initialGridSize = this.gridSize;
@@ -81,6 +82,8 @@ export class CreateFloorPlanPage implements OnInit{
     wheelCounter = 0;
     contentLoaded = false;
     componentSize = this.gridSize * 2;
+    zoomInDisabled = false;
+    zoomOutDisabled = false;
 
     constructor(
       private readonly appApiService: AppApiService,
@@ -91,7 +94,6 @@ export class CreateFloorPlanPage implements OnInit{
       for (let i = 1; i <= this.initialGridSize; i++) {
         const snap = this.initialGridSize / i;
         this.snaps.push(snap);
-        this.displayedSnap = this.initialSnap;
       }
     }
 
@@ -290,6 +292,8 @@ export class CreateFloorPlanPage implements OnInit{
     ngAfterViewInit(): void {
         // wait for elements to render before initializing fabric canvas
         setTimeout(() => {
+            this.displayedSnap = this.initialSnap;
+            this.zoomOutDisabled = true;
             const canvasParent = this.canvasParent;
 
             // get width and height of the parent element
@@ -360,24 +364,30 @@ export class CreateFloorPlanPage implements OnInit{
             });
             window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
 
-            const scaleBy = 2;
+            this.scaleBy = 2;
 
             this.canvasContainer.on('wheel', (e) => {
               e.evt.preventDefault();
-              this.handleScaleAndDrag(e, scaleBy);              
+              this.handleScaleAndDrag(this.scaleBy, e);              
             });
 
-            this.canvasContainer.scaleX(scaleBy);
-            this.canvasContainer.scaleY(scaleBy);
+            this.canvasContainer.scaleX(this.scaleBy);
+            this.canvasContainer.scaleY(this.scaleBy);
             const wheelEvent = new WheelEvent('wheel', { deltaY: -1 });
             this.canvasContainer.dispatchEvent(wheelEvent);
-            this.handleScaleAndDrag(wheelEvent, scaleBy);
+            this.handleScaleAndDrag(this.scaleBy, wheelEvent);
             this.contentLoaded = true;
         }, 6);
     }
 
-    handleScaleAndDrag(e: any, scaleBy:number) {
-      const stage = e.target;
+    handleScaleAndDrag(scaleBy:number, e?: any, direction?: 'in' | 'out'): void {
+      let stage = null;
+      if (e) {
+        stage = e.target;
+      }
+      else {
+        stage = this.canvasContainer;
+      }
       if (!stage) return;
       const oldScale = stage.scaleX();
 
@@ -385,7 +395,7 @@ export class CreateFloorPlanPage implements OnInit{
       if (stage instanceof Konva.Stage) {
         pointer = stage.getPointerPosition();
       }
-      else {
+      else if (e){
         pointer = stage.getStage().getPointerPosition();
       }
 
@@ -398,19 +408,22 @@ export class CreateFloorPlanPage implements OnInit{
         y: pointer.y / oldScale - stage.y() / oldScale
       };
 
-      let direction = e.evt.deltaY < 0 ? 1 : -1;
-
-      if (e.evt.ctrlKey) {
-        direction = -direction;
+      let wheelDirection = 0;
+      if (!direction) {
+        wheelDirection = e.evt.deltaY < 0 ? 1 : -1;
       }
 
-      const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+      if (e?.evt.ctrlKey) {
+        wheelDirection = -wheelDirection;
+      }
+
+      const newScale = (direction === 'in' || (!direction && wheelDirection > 0)) ? oldScale * scaleBy : oldScale / scaleBy;
       this.gridSize = this.initialGridSize * newScale;
       this.currentScale = newScale;
       
       if (newScale <= 1 || newScale >= 40) return;
 
-      if (e.evt.deltaY < 0 ) {
+      if (direction === 'in' || (!direction && wheelDirection > 0)) {
         if (this.contentLoaded) {
           this.wheelCounter++;
           this.scaleSnap = this.snaps[this.wheelCounter];
@@ -421,24 +434,9 @@ export class CreateFloorPlanPage implements OnInit{
           this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
         }
 
-        // decrease size of grid lines storkewidth
-        if (this.gridLines && this.gridLines.children) {
-          this.gridLines.children?.forEach((child: any) => {
-            const prevWidth = child.getAttr('strokeWidth');
-            child.strokeWidth(prevWidth / 2);
-            this.currentGridStrokeWidth = prevWidth / 2;
-          });
-
-          if (this.canvas && this.canvas.children) {
-            this.canvas.children?.forEach((child: any) => {
-              if (child instanceof Konva.Path) {
-                const prevWidth = child.getAttr('strokeWidth');
-                child.strokeWidth(prevWidth / 2);
-                this.currentPathStrokeWidth = prevWidth / 2;
-              }
-            });
-          }
-        }
+        this.updateStrokeWidths(0.5);
+        this.setZoomInDisabled(this.displayedSnap);
+        this.setZoomOutDisabled(this.displayedSnap);
       }
       else {
         if (this.contentLoaded) {
@@ -451,23 +449,9 @@ export class CreateFloorPlanPage implements OnInit{
           this.displayedSnap = Math.round(this.scaleSnap * 100) / 100;
         }
 
-        if (this.gridLines && this.gridLines.children) {
-          this.gridLines.children?.forEach((child: any) => {
-            const prevWidth = child.getAttr('strokeWidth');
-            child.strokeWidth(prevWidth * 2);
-            this.currentGridStrokeWidth = prevWidth * 2;
-          });
-
-          if (this.canvas && this.canvas.children) {
-            this.canvas.children?.forEach((child: any) => {
-              if (child instanceof Konva.Path) {
-                const prevWidth = child.getAttr('strokeWidth');
-                child.strokeWidth(prevWidth * 2);
-                this.currentPathStrokeWidth = prevWidth * 2;
-              }
-            });
-          }
-        }
+        this.updateStrokeWidths(2);
+        this.setZoomInDisabled(this.displayedSnap);
+        this.setZoomOutDisabled(this.displayedSnap);
       }
 
       const x =
@@ -479,8 +463,26 @@ export class CreateFloorPlanPage implements OnInit{
 
       this.canvasContainer.scale({ x: newScale, y: newScale });
       this.canvasContainer.position(pos);
-      // this.removeGridLines();
-      // this.createGridLines();
+    }
+
+    updateStrokeWidths(scale: number) {
+      if (this.gridLines && this.gridLines.children) {
+        this.gridLines.children?.forEach((child: any) => {
+          const prevWidth = child.getAttr('strokeWidth');
+          child.strokeWidth(prevWidth * scale);
+          this.currentGridStrokeWidth = prevWidth * scale;
+        });
+
+        if (this.canvas && this.canvas.children) {
+          this.canvas.children?.forEach((child: any) => {
+            if (child instanceof Konva.Path) {
+              const prevWidth = child.getAttr('strokeWidth');
+              child.strokeWidth(prevWidth * scale);
+              this.currentPathStrokeWidth = prevWidth * scale;
+            }
+          });
+        }
+      }
     }
 
     boundFunc(pos: any, scale: any) {
@@ -604,7 +606,8 @@ export class CreateFloorPlanPage implements OnInit{
             html5QrcodeScanner.render((decoded, res)=>{
               this.macAddrFromQR = decoded;
               this.updateLinkedSensors();
-              html5QrcodeScanner.pause();
+              if(html5QrcodeScanner.getState() == Html5QrcodeScannerState.SCANNING)
+                html5QrcodeScanner.pause();
             } , undefined);
           }
           return;
@@ -1360,7 +1363,8 @@ export class CreateFloorPlanPage implements OnInit{
         id: this.activeItem.getAttr('customId')
       };
 
-      const macAddress = this.macAddrFromQR || this.macAddressBlocks.join(':');
+      const macAddress = (this.macAddrFromQR || this.macAddressBlocks.join(':')).toLowerCase();
+      this.macAddrFromQR = '';
         this.appApiService.linkSensor(request, macAddress).then((res: any) => {
           if (res['success']) {
             // set the 'isLinked' attribute to true
@@ -1375,7 +1379,7 @@ export class CreateFloorPlanPage implements OnInit{
     handleMacAddressInput(event: any, blockIndex: number) {
       // Format and store the value in your desired format
       // Example: Assuming you have an array called macAddressBlocks to store the individual blocks
-      this.macAddressBlocks[blockIndex] = event.target.value.toString().toUpperCase();
+      this.macAddressBlocks[blockIndex] = event.target.value.toString();
       // Add any additional validation or formatting logic here
       // Example: Restrict input to valid hexadecimal characters only
       const validHexCharacters = /^[0-9A-Fa-f]*$/;
@@ -1411,6 +1415,41 @@ export class CreateFloorPlanPage implements OnInit{
         this.canLinkSensorWithMacAddress = false;
       }
     }  
+
+    zoomIn(): void {
+      this.zoomOutDisabled = false;
+      const scale = this.canvasContainer.scaleX();
+      console.log(scale)
+      if (this.currentScale !== 1) {
+        this.handleScaleAndDrag(this.scaleBy, null, 'in');
+      }
+      else {
+        this.handleScaleAndDrag(scale, null, 'in');
+      }
+
+      this.setZoomInDisabled(this.displayedSnap);
+    }
+
+    zoomOut(): void {
+      this.zoomInDisabled = false;
+      const scale = this.canvasContainer.scaleX();
+      if (this.currentScale !== 1) {
+        this.handleScaleAndDrag(this.scaleBy, null, 'out');
+      }
+      else {
+        this.handleScaleAndDrag(scale, null, 'out');
+      }
+
+      this.setZoomOutDisabled(this.displayedSnap);
+    }
+
+    setZoomInDisabled(value: number): void {
+      this.zoomInDisabled = value === this.snaps[this.snaps.length - 1] ? true : false;
+    }
+
+    setZoomOutDisabled(value: number): void {
+      this.zoomOutDisabled = value === this.initialSnap ? true : false;
+    }
 
     setInputFocus(value: boolean) {
       this.inputHasFocus = value;
