@@ -66,6 +66,9 @@ export class ComparingeventsPage {
         this.categories$.subscribe((categories) => {
           if (categories) {
             this.categoryList = categories;
+
+            //set selected category to first category
+            this.store.dispatch(new SetSelectedCategory(categories[0]));
           }
         });
       } 
@@ -76,6 +79,9 @@ export class ComparingeventsPage {
         this.managedEventCategories$.subscribe((categories) => {
           if (categories) {
             this.categoryList = categories;
+
+            //set selected category to first category
+            this.store.dispatch(new SetSelectedCategory(categories[0]));
           }
         });
       }
@@ -205,25 +211,19 @@ export class ComparingeventsPage {
         this.categories$.subscribe((categories) => {
           this.categoryList = categories || [];
         });
-        return this.categoryList.filter((category) => {
-          return category
-            ? category.toLowerCase().includes(this.searchValue.toLowerCase())
-            : false;
-        });
       }
       else {
         this.managedEventCategories$.subscribe((categories) => {
           this.categoryList = categories || [];
         });
-        return this.categoryList.filter((category) => {
-          return category
-            ? category.toLowerCase().includes(this.searchValue.toLowerCase())
-            : false;
-        });
       }
     });
 
-    return this.categoryList;
+    return this.categoryList.filter((category) => {
+      return category
+        ? category.toLowerCase().includes(this.searchValue.toLowerCase())
+        : false;
+    });
   }
 
   isSelectedCategory(category: string): boolean {
