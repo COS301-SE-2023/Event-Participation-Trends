@@ -66,33 +66,19 @@
             class="flex flex-col cursor-default"
           >
             <ion-item class="attributes-list flex mt-2" lines="none">
-              <ion-label class="ion-col-4 mr-3 min-w-fit">Width:</ion-label>
-              <ion-input
-                aria-label=""
-                class="ion-col-8 input-field ml-auto input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
-                type="number"
-                step="1"
-                [value]="activeItem ? getActiveItemWidth() : 0"
-                (input)="updateWidth($event)"
-                min="0"
-                [disabled]="!preventCreatingWalls || activeItem == null"
-              ></ion-input>
-            </ion-item>
-            <ion-item class="attributes-list flex mt-2" lines="none">
-              <ion-label class="ion-col-4 mr-2 min-w-fit">Height:</ion-label>
+              <ion-label class="ion-col-4 mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || !selectedWall}">Length:</ion-label>
               <ion-input
                 aria-label=""
                 class="ion-col-8 input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
                 type="number"
                 step="1"
-                [value]="activeItem ? getActiveItemHeight() : 0"
-                (input)="updateHeight($event)"
-                min="0"
-                [disabled]="!preventCreatingWalls || activeItem == null"
+                [value]="activeItem ? getActiveItemRotation() : 0"
+                (input)="updateWidth($event)"
+                [disabled]="!preventCreatingWalls || activeItem == null|| !selectedWall"
               ></ion-input>
             </ion-item>
             <ion-item class="attributes-list flex mt-2" lines="none">
-              <ion-label class="ion-col-4 mr-3 min-w-fit">Angle:</ion-label>
+              <ion-label class="ion-col-4 mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null}">Angle:</ion-label>
               <ion-input
                 aria-label=""
                 class="ion-col-8 input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
@@ -109,34 +95,20 @@
             id="attributes-container"
             class="flex flex-col items-center justify-evenly"
           >
-            <div>
-              <ion-label>Width:</ion-label>
-              <ion-input
-                aria-label=""
-                class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 l"
-                type="number"
-                step="1"
-                [value]="activeItem ? getActiveItemWidth() : 0"
-                (input)="updateWidth($event)"
-                min="0"
-                [disabled]="!preventCreatingWalls || activeItem == null"
-              ></ion-input>
-            </div>
             <div class="mt-3">
-              <ion-label>Height:</ion-label>
+              <ion-label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || !selectedWall}">Length:</ion-label>
               <ion-input
                 aria-label=""
                 class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
                 step="1"
-                [value]="activeItem ? getActiveItemHeight() : 0"
-                (input)="updateHeight($event)"
-                min="0"
-                [disabled]="!preventCreatingWalls || activeItem == null"
+                [value]="activeItem ? getActiveItemRotation() : 0"
+                (input)="updateWidth($event)"
+                [disabled]="!preventCreatingWalls || activeItem == null || !selectedWall"
               ></ion-input>
             </div>
             <div class="mt-3">
-              <ion-label>Angle:</ion-label>
+              <ion-label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null}">Angle:</ion-label>
               <ion-input
                 aria-label=""
                 class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
@@ -354,9 +326,9 @@
         />
       </div>
       <div class="absolute bottom-3 right-1 bg-ept-off-white">
-        <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Block = {{initialGridSize}}m</ion-label>
+        <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Block = {{gridSizeLabel}}m</ion-label>
         <br/>
-        <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Snap = {{displayedSnap}}m</ion-label>
+        <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Snap = {{snapLabel}}m</ion-label>
       </div>
       <div class="absolute bottom-3 left-2.5 flex flex-row bg-ept-off-white">
         <div>
