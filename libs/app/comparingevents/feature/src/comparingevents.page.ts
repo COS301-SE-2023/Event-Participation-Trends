@@ -205,6 +205,7 @@ export class ComparingeventsPage {
 
   getEventCategories() : string[] {
     this.categoryList = [];
+    this.searchSize = 0;
 
     this.role$.subscribe((role) => {
       if (role === 'admin') {
@@ -219,11 +220,21 @@ export class ComparingeventsPage {
       }
     });
 
+    this.searchSize = this.categoryList.length;
+
     return this.categoryList.filter((category) => {
       return category
         ? category.toLowerCase().includes(this.searchValue.toLowerCase())
         : false;
     });
+  }
+
+  hasCategories(): boolean {
+    const categories = this.getEventCategories();
+
+    this.searchSize = categories.length;
+
+    return categories.length > 0;
   }
 
   isSelectedCategory(category: string): boolean {

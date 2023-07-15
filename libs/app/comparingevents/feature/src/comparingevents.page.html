@@ -116,11 +116,11 @@
       </div>
       <ion-list
         class="rounded-lg ion-content-scroll-host ion-padding"
-        *ngIf="getEventCategories().length > 0"
+        *ngIf="hasCategories()"
         [ngClass]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
       >
         <ion-item
-          *ngFor="let category of getEventCategories()"
+          *ngFor="let category of categoryList"
           (click)="toggleItemSelection(category)"
           class="hover:cursor-pointer rounded-lg"
           [ngClass]="{'bg-[rgb(220,220,220)]': isSelectedCategory(category), 'hover:bg-[rgb(230,230,230)]': !isSelectedCategory(category)}"
@@ -134,6 +134,9 @@
           <ion-label [innerHTML]="highlightText(category, searchValue)"></ion-label>
         </ion-item>
       </ion-list>
+      <ion-item *ngIf="searchSize === 0" class="flex items-center justify-center text-center">
+        <ion-label class="text-red-500">No categories found.</ion-label>
+      </ion-item>
     </div>
   </div>
 </ion-content>
