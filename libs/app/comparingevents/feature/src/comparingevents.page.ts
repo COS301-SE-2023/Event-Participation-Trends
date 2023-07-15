@@ -2,7 +2,8 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ComparingeventsState } from '@event-participation-trends/app/comparingevents/data-access';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { GetAllCategories, SetSelectedCategory } from '@event-participation-trends/app/comparingevents/util';
+import { GetAllCategories, GetManagedEventCategories, GetRole, SetSelectedCategory } from '@event-participation-trends/app/comparingevents/util';
+import { VieweventsState } from '@event-participation-trends/app/viewevents/data-access';
 
 interface Event {
   id: number;
@@ -21,13 +22,16 @@ interface Event {
 export class ComparingeventsPage {
   @Select(ComparingeventsState.selectedCategory) selectedCategory$!: Observable<string | undefined>;
   @Select(ComparingeventsState.categories) categories$!: Observable<string[] | undefined>;
-  @Select(ComparingeventsState.myEventCategories) myEventCategories$!: Observable<string[] | undefined>;
+  @Select(ComparingeventsState.managedEventCategories) managedEventCategories$!: Observable<string[] | undefined>;
+  @Select(ComparingeventsState.role) role$!: Observable<string | undefined>;
   @ViewChild('content-body', { static: true }) contentBody!: ElementRef;
 
   selectedEvents: any[] = [];
   maxSelectionAllowed = 2;
   searchValue = '';
   searchSize = 0;
+  categoryList: string[] = [];
+  userRole: string | undefined;
 
   constructor(
     private containerElement: ElementRef,
@@ -38,14 +42,44 @@ export class ComparingeventsPage {
   ngAfterViewInit() {
     this.checkOverflow();
 
-    this.store.dispatch(new GetAllCategories());
+    // this.store.dispatch(new GetAllCategories());
 
-    this.categories$.subscribe((categories) => {
-      if (categories) {
-        this.store.dispatch(new SetSelectedCategory(categories[0]));
+    // this.categories$.subscribe((categories) => {
+    //   if (categories) {
+    //     this.store.dispatch(new SetSelectedCategory(categories[0]));
+    //   }
+    // });
+  }
+
+  ngOnInit() {
+    // if user role is admin, get all categories
+    this.store.dispatch(new GetRole());
+
+    this.role$.subscribe((role) => {
+      this.userRole = role ? role : '';
+      console.log('role: ', role);
+
+      if (role === 'admin') {
+        //get all categories
+        this.store.dispatch(new GetAllCategories());
+
+        this.categories$.subscribe((categories) => {
+          if (categories) {
+            this.categoryList = categories;
+          }
+        });
+      } 
+      else if (role === 'manager') {
+        //get managed event categories
+        this.store.dispatch(new GetManagedEventCategories());
+
+        this.managedEventCategories$.subscribe((categories) => {
+          if (categories) {
+            this.categoryList = categories;
+          }
+        });
       }
     });
-
   }
 
   checkOverflow() {
@@ -164,15 +198,32 @@ export class ComparingeventsPage {
   }
 
   getEventCategories() : string[] {
-    let categoryList: string[] | undefined = [];
-    this.categories$.subscribe((categories) => {
-      categoryList = categories;
+    this.categoryList = [];
+
+    this.role$.subscribe((role) => {
+      if (role === 'admin') {
+        this.categories$.subscribe((categories) => {
+          this.categoryList = categories || [];
+        });
+        return this.categoryList.filter((category) => {
+          return category
+            ? category.toLowerCase().includes(this.searchValue.toLowerCase())
+            : false;
+        });
+      }
+      else {
+        this.managedEventCategories$.subscribe((categories) => {
+          this.categoryList = categories || [];
+        });
+        return this.categoryList.filter((category) => {
+          return category
+            ? category.toLowerCase().includes(this.searchValue.toLowerCase())
+            : false;
+        });
+      }
     });
-    return categoryList.filter((category) => {
-      return category
-        ? category.toLowerCase().includes(this.searchValue.toLowerCase())
-        : false;
-    });
+
+    return this.categoryList;
   }
 
   isSelectedCategory(category: string): boolean {

@@ -16,6 +16,15 @@ export class SetSelectedCategory {
     constructor(public newCategory: string) {}
 }
 
-export class GetMyEventCategories {
-    static readonly type = '[Comparingevents] GetMyEventCategories';
+export class GetManagedEventCategories {
+    static readonly type = '[Comparingevents] GetManagedEventCategories';
+}
+
+export class GetRole {
+    static readonly type = '[Comparingevents] GetRole';
+}
+
+export class SetRole {
+    static readonly type = '[Comparingevents] SetRole';
+    constructor(public newRole: string) {}
 }

@@ -23,6 +23,7 @@ import {
   IEventId,
   IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
+  IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
   ISendViewRequestResponse,
@@ -286,6 +287,21 @@ export class AppApiService {
     return firstValueFrom(
       this.http.get<IGetAllEventCategoriesResponse>(
         '/api/event/getAllEventCategories',
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response.categories;
+    });
+  }
+
+  async getManagedEventCategories(): Promise<string[] | undefined | null> {
+    return firstValueFrom(
+      this.http.get<IGetManagedEventCategoriesResponse>(
+        '/api/event/getManagedEventCategories',
         {
           headers: {
             'x-csrf-token': this.cookieService.get('csrf'),

@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { GetAllCategories, GetMyEventCategories, SetCompareEventsState, SetSelectedCategory, UpdateCategories } from '@event-participation-trends/app/comparingevents/util';
+import { GetAllCategories, GetManagedEventCategories, GetRole, SetCompareEventsState, SetRole, SetSelectedCategory, UpdateCategories } from '@event-participation-trends/app/comparingevents/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { SetError } from '@event-participation-trends/app/error/util';
+import { Observable } from 'rxjs';
+import { IGetUserRoleResponse } from '@event-participation-trends/api/user/util';
 
 // Once we know the interface for the Comparingevents page we can remove the comment from the line below
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ComparingeventsStateModel {
     selectedCategory: string;
     categories: string[];
-    myEventCategories: string[];
+    managedEventCategories: string[];
+    role: string;
 }
 
 @State<ComparingeventsStateModel>({
@@ -17,7 +20,8 @@ export interface ComparingeventsStateModel {
     defaults: {
         selectedCategory: '',
         categories: [],
-        myEventCategories: [],
+        managedEventCategories: [],
+        role: '',
     },
 })
 
@@ -35,8 +39,13 @@ export class ComparingeventsState {
     }
 
     @Selector()
-    static myEventCategories(state: ComparingeventsStateModel) {
-        return state.myEventCategories;
+    static managedEventCategories(state: ComparingeventsStateModel) {
+        return state.managedEventCategories;
+    }
+
+    @Selector()
+    static role(state: ComparingeventsStateModel): string {
+        return state.role;
     }
 
     constructor(
@@ -77,19 +86,50 @@ export class ComparingeventsState {
         }
     }
 
-    @Action(GetMyEventCategories)
-    async getMyEventCategories(ctx: StateContext<ComparingeventsStateModel>) {
+    @Action(GetManagedEventCategories)
+    async getManagedEventCategories(ctx: StateContext<ComparingeventsStateModel>) {
         try {
-            const myEventCategories: string[] = [];
+            const managedEventCategories = await this.appApiService.getManagedEventCategories();
 
-            if (myEventCategories && myEventCategories.length > 0) {
+            if (managedEventCategories && managedEventCategories.length > 0) {
                 return ctx.patchState({
-                    myEventCategories,
+                    managedEventCategories,
                 });
             }
             return;
         } catch(error) {
             return this.store.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(GetRole)
+    async getRole(ctx: StateContext<ComparingeventsStateModel>) {
+        try {
+        const response: Observable<IGetUserRoleResponse> =
+            await this.appApiService.getRole();
+
+        return response.subscribe((res: IGetUserRoleResponse) => {
+            const role = res.userRole ? res.userRole : 'Viewer';
+            return ctx.dispatch(new SetRole(role));
+        });
+        } catch (error) {
+        return ctx.dispatch(new SetError((error as Error).message));
+        }
+    }
+
+    @Action(SetRole)
+    setRole(ctx: StateContext<ComparingeventsStateModel>, { newRole }: SetRole) {
+        try {
+        const state = ctx.getState();
+
+        const newState = {
+            ...state,
+            role: newRole ? newRole : 'Viewer',
+        };
+
+        return ctx.dispatch(new SetCompareEventsState(newState));
+        } catch (error) {
+        return ctx.dispatch(new SetError((error as Error).message));
         }
     }
 }
