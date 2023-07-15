@@ -86,6 +86,7 @@ export class CreateFloorPlanPage implements OnInit{
     zoomOutDisabled = false;
     gridSizeLabel = 0;
     snapLabel = 0;
+    selectedWall = false;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -277,6 +278,7 @@ export class CreateFloorPlanPage implements OnInit{
       element.on('dragmove', this.onObjectMoving.bind(this));
       element.on('click', () => {
         this.activeItem = element;
+        this.selectedWall = this.activeItem instanceof Konva.Path ? true : false;
         this.setTransformer(this.activeItem, undefined);
 
         if (this.activeItem instanceof Konva.Image) {
@@ -1010,7 +1012,6 @@ export class CreateFloorPlanPage implements OnInit{
         
         const pointer = this.canvasContainer.getPointerPosition();
         const grid = this.scaleSnap;
-        console.log('grid', grid);
         const xValue = pointer ? this.convertX(pointer.x) : 0;
         const yValue = pointer ? this.convertY(pointer.y) : 0;
         const snapPoint = {
