@@ -384,4 +384,13 @@ export class VieweventsPage implements OnInit{
 
     await toast.present();
   }
+
+  highlightText(text: string, search: string): string {
+    if (!search || !text) {
+      return text;
+    }
+
+    const pattern = new RegExp(search, 'gi');
+    return text.replace(pattern, match => `<span class="bg-ept-bumble-yellow text-ept-deep-grey">${match}</span>`);
+  }
 }

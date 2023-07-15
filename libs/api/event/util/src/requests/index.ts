@@ -17,3 +17,4 @@ export * from './get-event-floorlayout.request';
 export * from './add-event-viewer.request';
 export * from './add-device-postion.request';
 export * from './get-event-device-positions.request';
+export * from './get-managed-event-categories.request';

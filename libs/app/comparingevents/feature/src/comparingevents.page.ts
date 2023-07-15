@@ -21,10 +21,13 @@ interface Event {
 export class ComparingeventsPage {
   @Select(ComparingeventsState.selectedCategory) selectedCategory$!: Observable<string | undefined>;
   @Select(ComparingeventsState.categories) categories$!: Observable<string[] | undefined>;
+  @Select(ComparingeventsState.myEventCategories) myEventCategories$!: Observable<string[] | undefined>;
   @ViewChild('content-body', { static: true }) contentBody!: ElementRef;
 
   selectedEvents: any[] = [];
   maxSelectionAllowed = 2;
+  searchValue = '';
+  searchSize = 0;
 
   constructor(
     private containerElement: ElementRef,
@@ -42,6 +45,7 @@ export class ComparingeventsPage {
         this.store.dispatch(new SetSelectedCategory(categories[0]));
       }
     });
+
   }
 
   checkOverflow() {
@@ -164,7 +168,11 @@ export class ComparingeventsPage {
     this.categories$.subscribe((categories) => {
       categoryList = categories;
     });
-    return categoryList || [];
+    return categoryList.filter((category) => {
+      return category
+        ? category.toLowerCase().includes(this.searchValue.toLowerCase())
+        : false;
+    });
   }
 
   isSelectedCategory(category: string): boolean {
@@ -175,5 +183,30 @@ export class ComparingeventsPage {
     });
 
     return isSelected;
+  }
+
+  highlightText(text: string, search: string): string {
+    if (!search || !text) {
+      return text;
+    }
+
+    const pattern = new RegExp(search, 'gi');
+    return text.replace(pattern, match => `<span class="bg-ept-bumble-yellow">${match}</span>`);
+  }
+
+  handleRefresh(event: any) {
+    setTimeout(() => {
+      let old_categories = [];
+      this.categories$.subscribe((categories) => {
+        if (categories) {
+          old_categories = categories;
+        }
+      });
+
+      this.store.dispatch(new GetAllCategories());
+      // this.store.dispatch(new GetMyEvents());
+
+      event.target.complete();
+    }, 2000);
   }
 }

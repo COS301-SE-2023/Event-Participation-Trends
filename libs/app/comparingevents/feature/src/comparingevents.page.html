@@ -72,6 +72,7 @@
         <ion-searchbar
           ngClass="sidebar-searchbar"
           placeholder="Search"
+          [(ngModel)]="searchValue"
         ></ion-searchbar>
         <ion-icon
           ngClass="search-filter"
@@ -104,8 +105,17 @@
           </ion-checkbox>
         </ion-item>
       </ion-list> -->
+      <div class="col-span-1 flex items-center">
+        <ion-refresher slot="fixed" [pullMin]="30" [pullMax]="70" (ionRefresh)="handleRefresh($event)">
+          <ion-refresher-content 
+            pullingIcon="arrow-down-circle-outline"
+            refreshingSpinner="bubbles"
+            class="absolute right-3 text-ept-bumble-yellow"
+          ></ion-refresher-content>
+        </ion-refresher>
+      </div>
       <ion-list
-        class="rounded-lg"
+        class="rounded-lg ion-content-scroll-host ion-padding"
         *ngIf="getEventCategories().length > 0"
         [ngClass]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
       >
@@ -121,7 +131,7 @@
             name="checkmark-circle"
             class="text-ept-bumble-yellow w-5 h-5 bg-ept-deep-grey rounded-full"
           ></ion-icon>
-          <ion-label>{{category}}</ion-label>
+          <ion-label [innerHTML]="highlightText(category, searchValue)"></ion-label>
         </ion-item>
       </ion-list>
     </div>

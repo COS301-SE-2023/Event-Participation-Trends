@@ -195,4 +195,9 @@ export class EventRepository {
         return await this.eventModel.find().select("Category").distinct("Category");
     }
 
+    async getManagedEventCategories(managerID: Types.ObjectId){
+        return await this.eventModel.find(
+            {Manager: {$eq: managerID}}).select("Category").distinct("Category");
+    }
+
 }

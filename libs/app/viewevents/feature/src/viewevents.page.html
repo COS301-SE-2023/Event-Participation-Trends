@@ -74,8 +74,8 @@
           </ion-icon>
           <p
             class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium bg-transparent"
+            [innerHTML]="highlightText(event.Name, searchValue)"
           >
-            {{event.Name}}
           </p>
           <div
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all bg-transparent"
@@ -128,8 +128,8 @@
           </ion-icon>
           <p
             class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
+            [innerHTML]="highlightText(event.Name, searchValue)"
           >
-            {{event.Name}}
           </p>
           <div
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
@@ -160,8 +160,8 @@
           </ion-icon>
           <p
             class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
+            [innerHTML]="highlightText(event.Name, searchValue)"
           >
-            {{event.Name}}
           </p>
           <div
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"

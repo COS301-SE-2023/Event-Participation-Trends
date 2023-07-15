@@ -15,3 +15,7 @@ export class SetSelectedCategory {
     static readonly type = '[Comparingevents] SetSelectedCategory';
     constructor(public newCategory: string) {}
 }
+
+export class GetMyEventCategories {
+    static readonly type = '[Comparingevents] GetMyEventCategories';
+}

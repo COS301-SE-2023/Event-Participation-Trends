@@ -4,7 +4,7 @@ import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
-import {Html5QrcodeScanner} from "html5-qrcode";
+import {Html5QrcodeScanner, Html5QrcodeScannerState} from "html5-qrcode";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
 import { Select, Store } from '@ngxs/store';
@@ -626,7 +626,8 @@ export class CreateFloorPlanPage implements OnInit{
             html5QrcodeScanner.render((decoded, res)=>{
               this.macAddrFromQR = decoded;
               this.updateLinkedSensors();
-              html5QrcodeScanner.pause();
+              if(html5QrcodeScanner.getState() == Html5QrcodeScannerState.SCANNING)
+                html5QrcodeScanner.pause();
             } , undefined);
           }
           return;
@@ -1418,7 +1419,8 @@ export class CreateFloorPlanPage implements OnInit{
         id: this.activeItem.getAttr('customId')
       };
 
-      const macAddress = this.macAddrFromQR || this.macAddressBlocks.join(':');
+      const macAddress = (this.macAddrFromQR || this.macAddressBlocks.join(':')).toLowerCase();
+      this.macAddrFromQR = '';
         this.appApiService.linkSensor(request, macAddress).then((res: any) => {
           if (res['success']) {
             // set the 'isLinked' attribute to true
@@ -1433,7 +1435,7 @@ export class CreateFloorPlanPage implements OnInit{
     handleMacAddressInput(event: any, blockIndex: number) {
       // Format and store the value in your desired format
       // Example: Assuming you have an array called macAddressBlocks to store the individual blocks
-      this.macAddressBlocks[blockIndex] = event.target.value.toString().toUpperCase();
+      this.macAddressBlocks[blockIndex] = event.target.value.toString();
       // Add any additional validation or formatting logic here
       // Example: Restrict input to valid hexadecimal characters only
       const validHexCharacters = /^[0-9A-Fa-f]*$/;
