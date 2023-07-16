@@ -325,15 +325,15 @@
           class="bg-white h-10 transition-all duration-300"
         />
       </div>
-      <div class="absolute bottom-3 right-1 bg-ept-off-white">
+      <div class="absolute bottom-2.5 right-2.5 bg-ept-off-white border-2 border-ept-deep-grey rounded">
         <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Block = {{gridSizeLabel}}m</ion-label>
         <br/>
         <ion-label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Snap = {{snapLabel}}m</ion-label>
       </div>
-      <div class="absolute bottom-3 left-2.5 flex flex-row bg-ept-off-white">
+      <div class="absolute bottom-2.5 left-2.5 flex flex-row bg-ept-off-white">
         <div>
           <img
-            class="h-8 w-8 mr-1 border-2 p-0.5 border-ept-deep-grey cursor-pointer"
+            class="h-8 w-8 mr-1 border-2 p-0.5 border-ept-deep-grey cursor-pointer rounded"
             src="assets/zoom-in-svgrepo-com.svg"
             alt="zoom in"
             (click)="zoomIn()"
@@ -342,7 +342,7 @@
         </div>
         <div>
           <img
-            class="h-8 w-8 border-2 p-0.5 border-ept-deep-grey cursor-pointer"
+            class="h-8 w-8 border-2 p-0.5 border-ept-deep-grey cursor-pointer rounded"
             src="assets/zoom-out-svgrepo-com.svg"
             alt="zoom out"
             (click)="zoomOut()"
