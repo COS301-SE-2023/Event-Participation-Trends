@@ -11,6 +11,7 @@ import { Select, Store } from '@ngxs/store';
 import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@event-participation-trends/app/createfloorplan/data-access';
 import { Observable } from 'rxjs';
 import { AddSensor, RemoveSensor, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
+import { IonInput } from '@ionic/angular';
 
 interface DroppedItem {
   name: string;
@@ -29,6 +30,8 @@ export class CreateFloorPlanPage implements OnInit{
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
     @ViewChild('stall', {static: false}) stallElement!: ElementRef<HTMLImageElement>;
+    @ViewChild('textBox', {static: false}) textElement!: ElementRef<HTMLImageElement>;
+    @ViewChild('textInput', {static: false}) textInputField!: IonInput;
     macAddrFromQR = '';
     isDropdownOpen = false;
     openDustbin = false;
@@ -87,6 +90,8 @@ export class CreateFloorPlanPage implements OnInit{
     gridSizeLabel = 0;
     snapLabel = 0;
     selectedWall = false;
+    textBoxCount = 0;
+    selectedTextBox = false;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -189,7 +194,7 @@ export class CreateFloorPlanPage implements OnInit{
     }
 
     addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
-      if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg')) {
+      if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg') || droppedItem.name.includes('svg')) {
         Konva.Image.fromURL(droppedItem.name, (image) => {
           this.setupElement(image, positionX, positionY);
           
@@ -233,7 +238,7 @@ export class CreateFloorPlanPage implements OnInit{
             this.canvas.draw();
             droppedItem.konvaObject = group;
           } 
-          else {
+          else if (droppedItem.name.includes('sensor')) {
             image.setAttr('name', 'sensor');
             // image.setAttr('customId', this.getUniqueId());
             // this.sensors.push({object: image, isLinked:false});
@@ -244,6 +249,34 @@ export class CreateFloorPlanPage implements OnInit{
             this.sensors$.subscribe(sensors => {
               this.sensors = sensors;
             });
+          }
+          else if (droppedItem.name.includes('text-selection')) {
+            const name = 'textbox-' + this.textBoxCount++;
+
+            // create a text object with default text which then allows the user to edit the text if they double click on it
+            const text = new Konva.Text({
+              id: name,
+              name: 'textBox',
+              x: positionX,
+              y: positionY,
+              text: 'Text',
+              fontSize: 10,
+              fontFamily: 'Calibri',
+              fill: 'black',
+              align: 'center',
+              verticalAlign: 'middle',
+              draggable: true,
+              cursor: 'move',
+            });
+            text.setAttrs({
+              width: text.text().length * text.fontSize() / 2,
+              height: text.fontSize(),
+            });
+
+            this.setMouseEvents(text);
+            this.canvas.add(text);
+            this.canvas.draw();
+            droppedItem.konvaObject = text;
           }
         });
       }
@@ -280,6 +313,10 @@ export class CreateFloorPlanPage implements OnInit{
         this.activeItem = element;
         this.selectedWall = this.activeItem instanceof Konva.Path ? true : false;
         this.setTransformer(this.activeItem, undefined);
+        
+        if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
+          this.selectedTextBox = true;
+        }
 
         if (this.activeItem instanceof Konva.Image) {
           this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
@@ -294,6 +331,58 @@ export class CreateFloorPlanPage implements OnInit{
       element.on('mouseleave', () => {
         document.body.style.cursor = 'default';
       });
+
+      if (element instanceof Konva.Text && element.getAttr('name') === 'textBox') {
+        this.activeItem = element;
+        element.on('dblclick', () => {
+          this.selectedTextBox = true;
+          setTimeout(() => {
+            this.textInputField.setFocus();
+            // highlight the text in the input field
+            this.textInputField.getInputElement().then((input: HTMLInputElement) => {
+              input.select();
+            });
+          }, 10);
+        });
+        element.on('textChange', () => {
+          const maxWidth = 8; // Update with your desired maximum width
+          const lineHeight = element.getAttr('lineHeight');
+          const text = element.getAttr('text');
+          const fontSize = element.getAttr('fontSize');
+          const fontFamily = element.getAttr('fontFamily');
+          const fontStyle = element.getAttr('fontStyle');
+      
+          const tempText = new Konva.Text({
+            text: text,
+            fontSize: fontSize,
+            fontFamily: fontFamily,
+            fontStyle: fontStyle,
+          });
+      
+          const words = text.split(' ');
+          let wrappedText = '';
+          let currentLine = '';
+      
+          words.forEach((word: string) => {
+            const testLine = currentLine.length === 0 ? word : currentLine + ' ' + word;
+            tempText.setAttr('text', testLine);
+            const textWidth = tempText.width();
+      
+            if (textWidth > maxWidth) {
+              wrappedText += (currentLine.length === 0 ? '' : currentLine + '\n');
+              currentLine = word;
+            } else {
+              currentLine = testLine;
+            }
+          });
+      
+          wrappedText += currentLine;
+      
+          element.setAttr('text', wrappedText);
+          // element.setAttr('height', lineHeight * wrappedText.split('\n').length);
+          element.getLayer()?.batchDraw();
+        });
+      }
     }
 
     removeMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path): void {
@@ -571,6 +660,14 @@ export class CreateFloorPlanPage implements OnInit{
       if(!this.preventCreatingWalls) return;
 
       this.transformer.detach();
+
+      if (this.selectedTextBox) {
+        this.transformer = new Konva.Transformer({
+          enabledAnchors: [],
+          rotateEnabled: true,
+        });
+      }
+
       this.canvas.add(this.transformer);
       let target = null;
       if (mouseEvent) {
@@ -687,7 +784,7 @@ export class CreateFloorPlanPage implements OnInit{
         });
 
         //find any this related to lines and images and text
-        const shapes = this.canvasContainer.find('.rect, .wall, .sensor, .stall, .stallName');
+        const shapes = this.canvasContainer.find('.rect, .wall, .sensor, .stall, .stallName, .textBox');
         const box = selectionBox.getClientRect();
         const selected = shapes.filter((shape) => {
           return Konva.Util.haveIntersection(box, shape.getClientRect());
@@ -743,7 +840,7 @@ export class CreateFloorPlanPage implements OnInit{
         }
 
         // do nothing if clicked NOT on our lines or images or text
-        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall') && !e.target.hasName('stallName')) {
+        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall') && !e.target.hasName('stallName') && !e.target.hasName('textBox')) {
           this.activeItem = null;
 
           this.store.dispatch(new UpdateActiveSensor(''));
@@ -1341,6 +1438,21 @@ export class CreateFloorPlanPage implements OnInit{
         this.canvas.batchDraw();
       }
 
+      updateText(event: any) {
+        const input = event.target.value;
+        if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
+          const alphanumericRegex = /^[a-zA-Z0-9\s]+$/;
+          if (!alphanumericRegex.test(input)) {
+            // Remove non-alphanumeric characters, excluding white spaces
+            const alphanumericInput = input.replace(/[^a-zA-Z0-9 ]/g, '');
+            this.textInputField.value = alphanumericInput;
+            return;
+          }
+          this.activeItem?.text(input);
+        }
+        this.canvas.batchDraw();
+      }      
+
       updateRotation(event: any) {
         const input = this.revertValue(parseInt(event.target.value));
         if (input < 0) {
@@ -1358,6 +1470,13 @@ export class CreateFloorPlanPage implements OnInit{
 
       getActiveItemHeight(): number {
         return this.adjustValue(Math.round(this.activeItem?.height() * this.activeItem?.scaleY() * 100) / 100);
+      }
+
+      getActiveItemText(): string {
+        if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
+          return this.activeItem?.text();
+        }
+        return '';
       }
 
       getActiveItemRotation(): number {
