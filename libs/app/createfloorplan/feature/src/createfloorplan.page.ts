@@ -492,9 +492,9 @@ export class CreateFloorPlanPage implements OnInit{
 
             this.canvasContainer.scaleX(this.scaleBy);
             this.canvasContainer.scaleY(this.scaleBy);
-            const wheelEvent = new WheelEvent('wheel', { deltaY: -1 });
-            this.canvasContainer.dispatchEvent(wheelEvent);
-            this.handleScaleAndDrag(this.scaleBy, wheelEvent);
+            // const wheelEvent = new WheelEvent('wheel', { deltaY: -1 });
+            // this.canvasContainer.dispatchEvent(wheelEvent);
+            // this.handleScaleAndDrag(this.scaleBy, wheelEvent);
             this.contentLoaded = true;
             this.snapLabel = this.TRUE_SCALE_FACTOR;
             this.gridSizeLabel = this.TRUE_SCALE_FACTOR;
@@ -542,7 +542,7 @@ export class CreateFloorPlanPage implements OnInit{
       this.gridSize = this.initialGridSize * newScale;
       this.currentScale = newScale;
       
-      if (newScale <= 1 || newScale >= 129) return;
+      if (newScale <= 1 || newScale >= 17) return;
 
       if (direction === 'in' || (!direction && wheelDirection > 0)) {
         if (this.contentLoaded) {
