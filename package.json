@@ -83,6 +83,7 @@
     "@types/cookie-parser": "^1.4.3",
     "@types/jest": "^29.4.0",
     "@types/node": "~18.7.1",
+    "@types/leaflet.heat": "^0.2.1",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "autoprefixer": "^10.4.0",

@@ -1311,6 +1311,20 @@ export class CreateFloorPlanPage implements OnInit{
         this.appApiService.updateFloorLayout(eventId, jsonString).subscribe((res: any) => {
           console.log(res);
         });
+
+        // save an image of the canvas
+        const dataUrl = this.canvasContainer.toDataURL({ pixelRatio: 3 });
+        this.downloadURI(dataUrl, 'stage.png');
+
+      }
+
+      downloadURI(uri: string, name: string) {
+        const link = document.createElement('a');
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
 
       // getUniqueId(): string {
