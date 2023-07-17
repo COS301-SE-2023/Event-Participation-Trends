@@ -88,10 +88,10 @@ export class EventScreenViewPage {
         label: 'Total Users',
         data: [100],
         backgroundColor: [
-          '#FF0B55',
+          '#0000FF',
         ],
         borderColor: [
-          '#FF0B55',
+          '#0000FF',
         ],
       }]
     };
