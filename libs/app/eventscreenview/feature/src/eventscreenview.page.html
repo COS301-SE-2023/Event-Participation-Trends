@@ -21,8 +21,14 @@
 
         <div class="bg-gray-300 bg-opacity-40  p-2 border-2 border-ept-deep-grey rounded-md col-span-2 flex flex-row justify-evenly">
             <div class="grid grid-rows-2">
-                <ion-label class="text-ept-deep-grey text-xl self-center">Active Sensors <span><ion-badge color="success">{{activeDevices}}</ion-badge></span></ion-label>
-                <ion-label class="text-ept-deep-grey text-xl self-center">Inactive Sensors <span><ion-badge color="danger" class="text-ept-deep-grey">{{inactiveDevices}}</ion-badge></span></ion-label>
+                <div class="mt-3">
+                    <ion-icon name="radio-button-on-outline" color="success"></ion-icon>
+                    <ion-label class="text-ept-deep-grey text-xl self-center">Active Sensors <span><ion-badge>{{activeDevices}}</ion-badge></span></ion-label>
+                </div>
+                <div>
+                    <ion-icon name="radio-button-on-outline" color="danger"></ion-icon>
+                    <ion-label class="text-ept-deep-grey text-xl self-center">Inactive Sensors <span><ion-badge>{{inactiveDevices}}</ion-badge></span></ion-label>
+                </div>
             </div>
             <canvas #totalDeviceCountChart></canvas>
         </div>
