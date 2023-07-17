@@ -81,40 +81,45 @@
             id="attributes-container"
             class="flex flex-col cursor-default"
           >
-            <ion-item class="attributes-list flex mt-2" lines="none">
-              <ion-label class="ion-col-4 mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || !selectedTextBox}">Text:</ion-label>
+            <ion-item class="mt-2" lines="none">
               <ion-input
                 #textInput
+                id="textInput"
                 aria-label=""
-                class="ion-col-8 input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
+                class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="text"
                 pattern="[a-zA-Z0-9 ]*"
                 [value]="activeItem ? getActiveItemText() : ''"
                 (input)="updateText($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null|| !selectedTextBox"
-                maxlength="15"
+                maxlength="{{getMaxTextLength()}}"
+                label="Text:"
+                labelPlacement="floating"
               ></ion-input>
             </ion-item>
-            <ion-item class="attributes-list flex mt-2" lines="none">
-              <ion-label class="ion-col-4 mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || !selectedWall}">Length:</ion-label>
+            <p 
+              class="text-ept-deep-grey mr-4 flex flex-row justify-end text-xs"
+              [ngClass]="{'opacity-50' : !selectedTextBox}">{{getTextLength()}}/{{getMaxTextLength()}}</p>
+            <ion-item class="attributes-list flex flex-row items-center justify-between mt-2" lines="none">
+              <ion-label class="flex mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || !selectedWall}">Length:</ion-label>
               <ion-input
                 aria-label=""
-                class="ion-col-8 input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
+                class="flex ml-auto input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
-                step="1"
-                [value]="activeItem ? getActiveItemRotation() : 0"
+                step="0.5"
+                [value]="(activeItem && selectedWall) ? getActiveItemWidth() : ''"
                 (input)="updateWidth($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null|| !selectedWall"
               ></ion-input>
             </ion-item>
-            <ion-item class="attributes-list flex mt-2" lines="none">
-              <ion-label class="ion-col-4 mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null}">Angle:</ion-label>
+            <ion-item class="attributes-list flex flex-row items-center justify-between mt-2" lines="none">
+              <ion-label class="flex mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null}">Angle:</ion-label>
               <ion-input
                 aria-label=""
-                class="ion-col-8 input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 mr-10 border-2 rounded h-7"
+                class="flex ml-auto input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
                 step="1"
-                [value]="activeItem ? getActiveItemRotation() : 0"
+                [value]="activeItem ? getActiveItemRotation() : ''"
                 (input)="updateRotation($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null"
               ></ion-input>
@@ -126,18 +131,23 @@
             class="flex flex-col items-center justify-evenly"
           >
             <div class="mt-3">
-              <ion-label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || !selectedTextBox}">Text:</ion-label>
+              <div class="p-1">
               <ion-input
                 #textInput
+                id="textInput"
                 aria-label=""
-                class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
+                class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="text"
                 pattern="[a-zA-Z0-9 ]*"
                 [value]="activeItem ? getActiveItemText() : ''"
                 (input)="updateText($event)"
-                [disabled]="!preventCreatingWalls || activeItem == null || !selectedTextBox"
+                [disabled]="!preventCreatingWalls || activeItem == null|| !selectedTextBox"
                 maxlength="15"
+                label="Text:"
+                labelPlacement="floating"
               ></ion-input>
+              <p class="text-ept-deep-grey opacity-40 mr-4 flex flex-row justify-end text-xs">{{getTextLength()}}/{{getMaxTextLength()}}</p>
+              </div>
             </div>
             <div class="mt-3">
               <ion-label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || !selectedWall}">Length:</ion-label>
@@ -145,8 +155,8 @@
                 aria-label=""
                 class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
-                step="1"
-                [value]="activeItem ? getActiveItemRotation() : 0"
+                step="0.5"
+                [value]="(activeItem && selectedWall) ? getActiveItemWidth() : ''"
                 (input)="updateWidth($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null || !selectedWall"
               ></ion-input>
@@ -158,7 +168,7 @@
                 class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
                 step="1"
-                [value]="activeItem ? getActiveItemRotation() : 0"
+                [value]="activeItem ? getActiveItemRotation() : ''"
                 (input)="updateRotation($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null"
               ></ion-input>

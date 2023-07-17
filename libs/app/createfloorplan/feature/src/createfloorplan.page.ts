@@ -92,6 +92,10 @@ export class CreateFloorPlanPage implements OnInit{
     selectedWall = false;
     textBoxCount = 0;
     selectedTextBox = false;
+    minWallLength = 0.5;
+    textLength = 0;
+    maxTextLength = 15;
+    maxStallNameLength = 10;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -128,6 +132,7 @@ export class CreateFloorPlanPage implements OnInit{
     toggleEditing(): void {
       this.preventCreatingWalls = !this.preventCreatingWalls;
       this.activeItem = null;
+      this.textLength = 0;
       this.store.dispatch(new UpdateActiveSensor(''));
 
       //remove all selected items
@@ -311,9 +316,17 @@ export class CreateFloorPlanPage implements OnInit{
       element.on('dragmove', this.onObjectMoving.bind(this));
       element.on('click', () => {
         this.activeItem = element;
-        this.selectedWall = this.activeItem instanceof Konva.Path ? true : false;
+        this.selectedWall = this.activeItem instanceof Konva.Path ? true : false;        
+        this.selectedTextBox = (this.activeItem instanceof Konva.Text || 
+                                (this.activeItem instanceof Konva.Group && this.activeItem?.hasName('stall'))) ? true : false;
         this.setTransformer(this.activeItem, undefined);
         
+        
+        if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
+          this.selectedTextBox = true;
+        }
+
+
         if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
           this.selectedTextBox = true;
         }
@@ -332,9 +345,9 @@ export class CreateFloorPlanPage implements OnInit{
         document.body.style.cursor = 'default';
       });
 
-      if (element instanceof Konva.Text && element.getAttr('name') === 'textBox') {
-        this.activeItem = element;
+      if (element instanceof Konva.Text && (element.getAttr('name') === 'textBox' || element.getAttr('name') === 'stallName')) {
         element.on('dblclick', () => {
+          this.activeItem = element;
           this.selectedTextBox = true;
           setTimeout(() => {
             this.textInputField.setFocus();
@@ -563,7 +576,6 @@ export class CreateFloorPlanPage implements OnInit{
         this.setZoomInDisabled(this.displayedSnap);
         this.setZoomOutDisabled(this.displayedSnap);
       }
-      console.log(this.snapLabel)
 
       const x =
         -(mousePointTo.x - pointer.x / newScale) * newScale;
@@ -709,6 +721,8 @@ export class CreateFloorPlanPage implements OnInit{
         
         if (!this.preventCreatingWalls) {
           this.activeItem = null;
+          this.textLength = 0;
+          this.selectedTextBox = false;
 
           this.store.dispatch(new UpdateActiveSensor(''));
   
@@ -823,6 +837,8 @@ export class CreateFloorPlanPage implements OnInit{
             tr.nodes([]);
           });
           this.activeItem = null;
+          this.textLength = 0;
+          this.selectedTextBox = false;
 
           this.store.dispatch(new UpdateActiveSensor(''));
           return;
@@ -830,6 +846,8 @@ export class CreateFloorPlanPage implements OnInit{
 
         if (tr.nodes().length > 1){
           this.activeItem = null;
+          this.textLength = 0;
+          this.selectedTextBox = false;
 
           this.store.dispatch(new UpdateActiveSensor(''));
         }
@@ -842,6 +860,8 @@ export class CreateFloorPlanPage implements OnInit{
         // do nothing if clicked NOT on our lines or images or text
         if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall') && !e.target.hasName('stallName') && !e.target.hasName('textBox')) {
           this.activeItem = null;
+          this.textLength = 0;
+          this.selectedTextBox = false;
 
           this.store.dispatch(new UpdateActiveSensor(''));
           
@@ -866,6 +886,8 @@ export class CreateFloorPlanPage implements OnInit{
 
           if (tr.nodes().length > 1){
             this.activeItem = null;
+            this.textLength = 0;
+            this.selectedTextBox = false;
 
             this.store.dispatch(new UpdateActiveSensor(''));
             
@@ -884,6 +906,8 @@ export class CreateFloorPlanPage implements OnInit{
 
           if (tr.nodes().length > 1){
             this.activeItem = null;
+            this.textLength = 0;
+            this.selectedTextBox = false;
 
             this.store.dispatch(new UpdateActiveSensor(''));
             
@@ -1044,6 +1068,8 @@ export class CreateFloorPlanPage implements OnInit{
         this.openDustbin = false;
         this.onDustbin = false;
         this.activeItem = null;
+        this.textLength = 0;
+        this.selectedTextBox = false;
 
         this.store.dispatch(new UpdateActiveSensor(''));
 
@@ -1419,7 +1445,7 @@ export class CreateFloorPlanPage implements OnInit{
       // }
 
       updateWidth(event: any) {
-        const input = this.revertValue(parseInt(event.target.value));
+        const input = this.revertValue(parseFloat(event.target.value));
         if (this.activeItem instanceof Konva.Path) {
           const newPathData = `M0,0 L${input},0`;
           this.activeItem?.setAttr('data', newPathData);
@@ -1440,7 +1466,9 @@ export class CreateFloorPlanPage implements OnInit{
 
       updateText(event: any) {
         const input = event.target.value;
-        if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
+        const isStall = (this.activeItem instanceof Konva.Group && this.activeItem?.hasName('stall'));
+        const isOnlyText = (this.activeItem instanceof Konva.Text && this.activeItem?.hasName('textBox'));
+        if (isOnlyText || isStall) {
           const alphanumericRegex = /^[a-zA-Z0-9\s]+$/;
           if (!alphanumericRegex.test(input)) {
             // Remove non-alphanumeric characters, excluding white spaces
@@ -1448,13 +1476,24 @@ export class CreateFloorPlanPage implements OnInit{
             this.textInputField.value = alphanumericInput;
             return;
           }
-          this.activeItem?.text(input);
+
+          if (isOnlyText) {
+            this.activeItem?.text(input);
+          }
+          else {
+            // find child text of group
+            const text = this.activeItem?.children.find((child: any) => {
+              return child instanceof Konva.Text;
+            });
+            text?.text(input);
+          }
+          this.textLength = input.length;
         }
         this.canvas.batchDraw();
       }      
 
       updateRotation(event: any) {
-        const input = this.revertValue(parseInt(event.target.value));
+        const input = parseFloat(event.target.value);
         if (input < 0) {
           this.activeItem?.rotation(360 + input);
         }
@@ -1464,8 +1503,7 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
       getActiveItemWidth(): number {
-        console.log(this.activeItem?.width());
-        return this.adjustValue(Math.round(this.activeItem?.width() * this.activeItem?.scaleX() * 100) / 100) ;
+        return this.adjustValue(Math.round(this.activeItem?.width() * this.activeItem?.scaleX() * 10000) / 10000) ;
       }
 
       getActiveItemHeight(): number {
@@ -1473,21 +1511,47 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
       getActiveItemText(): string {
-        if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
+        const isStall = (this.activeItem instanceof Konva.Group && this.activeItem?.hasName('stall'));
+        const isOnlyText = (this.activeItem instanceof Konva.Text && this.activeItem?.hasName('textBox'));
+        if (isOnlyText) {          
+          this.textLength = this.activeItem?.text().length;
           return this.activeItem?.text();
+        }
+        else if (isStall) {
+          // find child text of group
+          const text = this.activeItem?.children.find((child: any) => {
+            return child instanceof Konva.Text;
+          });
+          this.textLength = text?.text().length;
+          return text?.text();
         }
         return '';
       }
 
-      getActiveItemRotation(): number {
-        if (Math.round(this.activeItem?.rotation()) > 360) {
-          return Math.round(this.activeItem?.rotation()) - 360;
+      getTextLength(): number {
+        return this.textLength;
+      }
+
+      getMaxTextLength(): number {
+        if (this.activeItem instanceof Konva.Group && this.activeItem?.hasName('stall')) {
+          return this.maxStallNameLength;
         }
-        else if (Math.round(this.activeItem?.rotation()) === 360) {
+        else if (this.activeItem instanceof Konva.Text && this.activeItem?.hasName('textBox')) {
+          return this.maxTextLength;
+        }
+        else return 0;
+      }
+
+      getActiveItemRotation(): number {
+        const angle = Math.round(this.activeItem?.rotation() * 100) / 100;
+        if (angle > 360) {
+          return angle - 360;
+        }
+        else if (angle === 360) {
           return 0;
         }
         else {
-          return Math.round(this.activeItem?.rotation());
+          return angle;
         }
       }
 
