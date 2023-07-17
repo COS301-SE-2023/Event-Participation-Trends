@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
+import Chart from 'chart.js/auto';
+import 'chartjs-plugin-datalabels';
 
 
 @Component({
@@ -10,8 +12,20 @@ import 'leaflet.heat';
 })
 export class EventScreenViewPage {
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
 
+  isLoading = false;
+  
   ngAfterViewInit() {
+    // wait until the heatmap container is rendered
+    // setTimeout(() => {
+    //   this.isLoading = false;
+    // }, 1000);
+    this.renderHeatMap();
+    this.renderTotalUserCount();
+  }
+
+  renderHeatMap() {
     const map = L.map(this.heatmapContainer.nativeElement).setView([51.505, -0.09], 13);
 
     //disable zoom functionality
@@ -55,5 +69,73 @@ export class EventScreenViewPage {
         minOpacity: 0.4
       }
     ).addTo(map);
+  }
+
+  renderTotalUserCount() {
+    const data = {
+      datasets: [{
+        label: 'Total Users',
+        data: [100],
+        backgroundColor: [
+          '#facc15',
+        ],
+        borderColor: [
+          '#facc15',
+        ],
+      }]
+    };
+
+    const userCountCanvas = this.totalUserCountChart.nativeElement;
+
+    if (userCountCanvas) {
+      const userCountCtx = userCountCanvas.getContext('2d');
+      if (userCountCtx) {
+        const myChart = new Chart(
+          userCountCanvas,
+          {
+            type: 'doughnut',
+            data: data,
+            options: {
+              responsive: true,
+              cutout: '80%',
+              plugins: {
+                tooltip: {
+                  enabled: false
+                }
+              } 
+            },  
+          }
+        );
+
+        // center the text inside the doughnut chart
+        Chart.register({
+          id: 'center-label',
+          beforeDraw: function (chart: any) {
+            const width = chart.width;
+            const height = chart.height;
+            const ctx = chart.ctx;
+
+            // set font size to 30px
+            ctx.font = '30px Arial';
+
+            ctx.restore();
+            ctx.textBaseline = 'middle';
+
+            const text = myChart.data.datasets[0].data[0] ;
+            const textX = Math.round((width - ctx.measureText(text).width) / 2);
+            const textY = height / 2 + 5;
+
+            ctx.fillText(text, textX, textY);
+            ctx.save();
+          }
+        });
+      }
+      else {
+        console.log('userCountCtx is null');
+      }
+    }
+    else {
+      console.log('userCountCanvas is null');
+    }
   }
 }
