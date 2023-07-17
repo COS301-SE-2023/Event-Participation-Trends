@@ -1,5 +1,5 @@
 <!-- <subpagenav [currentPage]="'/home/eventscreenview'"></subpagenav> -->
-<div class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-screen">
+<ion-content class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full">
     <div class="backdrop-blur-[6px] h-full grid grid-cols-6 grid-rows-5 gap-3 p-2">
         <div #heatmapContainer class="border-2 border-ept-deep-grey rounded-md col-span-6 row-span-3">
 
@@ -10,11 +10,17 @@
         
         <div class="border-2 border-ept-deep-grey rounded-md col-span-2 row-span-2"></div>
         
-        <div class="bg-ept-off-white p-2 border-2 border-ept-deep-grey rounded-md col-span-2 flex flex-row justify-evenly">
+        <div class="bg-gray-300 bg-opacity-40  p-2 border-2 border-ept-deep-grey rounded-md col-span-2 flex flex-row justify-evenly">
             <ion-label class="text-ept-deep-grey text-2xl self-center">Total Users</ion-label>
             <canvas #totalUserCountChart></canvas>
         </div>
 
-        <div class="border-2 border-ept-deep-grey rounded-md col-span-2"></div>
+        <div class="bg-gray-300 bg-opacity-40  p-2 border-2 border-ept-deep-grey rounded-md col-span-2 flex flex-row justify-evenly">
+            <div class="grid grid-rows-2">
+                <ion-label class="text-ept-deep-grey text-xl self-center">Active Sensors <span><ion-badge color="success">{{activeDevices}}</ion-badge></span></ion-label>
+                <ion-label class="text-ept-deep-grey text-xl self-center">Inactive Sensors <span><ion-badge color="danger" class="text-ept-deep-grey">{{inactiveDevices}}</ion-badge></span></ion-label>
+            </div>
+            <canvas #totalDeviceCountChart></canvas>
+        </div>
     </div>
-</div>
+</ion-content>

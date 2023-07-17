@@ -13,16 +13,21 @@ import 'chartjs-plugin-datalabels';
 export class EventScreenViewPage {
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
 
   isLoading = false;
+  activeDevices = 25;
+  inactiveDevices = 5;
+  diviceCountChart = null;
   
   ngAfterViewInit() {
     // wait until the heatmap container is rendered
     // setTimeout(() => {
     //   this.isLoading = false;
     // }, 1000);
-    this.renderHeatMap();
+    // this.renderHeatMap();
     this.renderTotalUserCount();
+    this.renderTotalDeviceCount();
   }
 
   renderHeatMap() {
@@ -77,10 +82,10 @@ export class EventScreenViewPage {
         label: 'Total Users',
         data: [100],
         backgroundColor: [
-          '#facc15',
+          '#FF0B55',
         ],
         borderColor: [
-          '#facc15',
+          '#FF0B55',
         ],
       }]
     };
@@ -101,34 +106,34 @@ export class EventScreenViewPage {
               plugins: {
                 tooltip: {
                   enabled: false
-                }
+                },
               } 
-            },  
+            },
+            plugins: [
+              {
+                id: 'center-label-devices',
+                beforeDraw: function (chart: any) {
+                  const width = chart.width;
+                  const height = chart.height;
+                  const ctx = chart.ctx;
+                  
+                  // set font size to 30px
+                  ctx.font = '30px Poppins';
+                  
+                  ctx.restore();
+                  ctx.textBaseline = 'middle';
+        
+                  const text = chart.data.datasets[0].data[0];
+                  const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                  const textY = height / 2 + 5;
+        
+                  ctx.fillText(text, textX, textY);
+                  ctx.save();
+                }
+              }
+            ]
           }
         );
-
-        // center the text inside the doughnut chart
-        Chart.register({
-          id: 'center-label',
-          beforeDraw: function (chart: any) {
-            const width = chart.width;
-            const height = chart.height;
-            const ctx = chart.ctx;
-
-            // set font size to 30px
-            ctx.font = '30px Arial';
-
-            ctx.restore();
-            ctx.textBaseline = 'middle';
-
-            const text = myChart.data.datasets[0].data[0] ;
-            const textX = Math.round((width - ctx.measureText(text).width) / 2);
-            const textY = height / 2 + 5;
-
-            ctx.fillText(text, textX, textY);
-            ctx.save();
-          }
-        });
       }
       else {
         console.log('userCountCtx is null');
@@ -136,6 +141,71 @@ export class EventScreenViewPage {
     }
     else {
       console.log('userCountCanvas is null');
+    }
+  }
+
+  renderTotalDeviceCount() {
+    const data = {
+      datasets: [{
+        label: 'Devices',
+        data: [this.activeDevices, this.inactiveDevices],
+        backgroundColor: [
+          'rgb(34 197 94)',
+          '#FF0000',
+        ],
+        borderColor: [
+          'rgb(34 197 94)',
+          '#FF0000',
+        ],
+      }]
+    };
+
+    const deviceCountCanvas = this.totalDeviceCountChart.nativeElement;
+
+    if (deviceCountCanvas) {
+      const deviceCountCtx = deviceCountCanvas.getContext('2d');
+      if (deviceCountCtx) {
+        const myChart = new Chart(
+          deviceCountCanvas,
+          {
+            type: 'doughnut',
+            data: data,
+            options: {
+              responsive: true,
+              cutout: '80%',
+            },
+            plugins: [
+              {
+                id: 'center-label-devices',
+                beforeDraw: function (chart: any) {
+                  const width = chart.width;
+                  const height = chart.height;
+                  const ctx = chart.ctx;
+                  
+                  // set font size to 30px
+                  ctx.font = '30px Poppins';
+                  
+                  ctx.restore();
+                  ctx.textBaseline = 'middle';
+        
+                  const text = chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1];
+                  const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                  const textY = height / 2 + 5;
+        
+                  ctx.fillText(text, textX, textY);
+                  ctx.save();
+                }
+              }
+            ]
+          }
+        );
+      }
+      else {
+        console.log('deviceCountCtx is null');
+      }
+    }
+    else {
+      console.log('deviceCountCanvas is null');
     }
   }
 }
