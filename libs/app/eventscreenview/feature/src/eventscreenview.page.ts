@@ -15,19 +15,25 @@ export class EventScreenViewPage {
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
 
-  isLoading = false;
+  isLoading = true;
   activeDevices = 25;
   inactiveDevices = 5;
   diviceCountChart = null;
+  heatmap: any;
+  windowWidth = window.innerWidth;
+  windowHeight = window.innerHeight;
   
   ngAfterViewInit() {
     // wait until the heatmap container is rendered
-    // setTimeout(() => {
-    //   this.isLoading = false;
-    // }, 1000);
-    // this.renderHeatMap();
-    this.renderTotalUserCount();
-    this.renderTotalDeviceCount();
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1000);
+    
+    setTimeout(() => {
+      this.renderHeatMap();
+      this.renderTotalUserCount();
+      this.renderTotalDeviceCount();
+    }, 1000);
   }
 
   renderHeatMap() {
@@ -135,12 +141,6 @@ export class EventScreenViewPage {
           }
         );
       }
-      else {
-        console.log('userCountCtx is null');
-      }
-    }
-    else {
-      console.log('userCountCanvas is null');
     }
   }
 
@@ -200,12 +200,6 @@ export class EventScreenViewPage {
           }
         );
       }
-      else {
-        console.log('deviceCountCtx is null');
-      }
-    }
-    else {
-      console.log('deviceCountCanvas is null');
     }
   }
 }
