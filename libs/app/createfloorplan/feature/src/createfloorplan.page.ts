@@ -102,6 +102,13 @@ export class CreateFloorPlanPage implements OnInit{
     tooltips: Konva.Label[] = [];
     activePathStartPoint = {x: 0, y:0};
     activePathEndPoint = {x: 0, y:0};
+    currentLabelFontSize = 0;
+    currentLabelShadowBlur = 0;
+    currentLabelShadowOffsetX = 0;
+    currentLabelShadowOffsetY = 0;
+    currentLabelPointerWidth = 0;
+    currentLabelPointerHeight = 0;
+    tooltipAllowedVisible = false;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -270,7 +277,7 @@ export class CreateFloorPlanPage implements OnInit{
               radius: 2,
               fill: 'red',
               stroke: 'black',
-              strokeWidth: 1,
+              strokeWidth: this.currentSensorCircleStrokeWidth === 0 ? 1 : this.currentSensorCircleStrokeWidth,
               draggable: true,
               cursor: 'move',
             });
@@ -379,7 +386,7 @@ export class CreateFloorPlanPage implements OnInit{
       });
       element.on('mouseenter', () => {
         document.body.style.cursor = 'move';
-        this.setTooltipVisibility(element, true);
+        if (this.tooltipAllowedVisible) this.setTooltipVisibility(element, true);
 
         setTimeout(() => {
           this.setTooltipVisibility(element, false);
@@ -464,6 +471,12 @@ export class CreateFloorPlanPage implements OnInit{
         tooltip?.setAttr('visible', visible);
       }
     }
+
+    setAllTootipsVisibility(visible: boolean): void {
+      this.tooltips.forEach(tooltip => {
+        tooltip.setAttr('visible', visible);
+      });
+    }
       
 
     addTooltip(element: KonvaTypes, positionX: number, positionY: number): Konva.Label{
@@ -480,13 +493,13 @@ export class CreateFloorPlanPage implements OnInit{
         new Konva.Tag({
           fill: 'black',
           pointerDirection: 'down',
-          pointerWidth: 4,
-          pointerHeight: 4,
+          pointerWidth: this.currentLabelPointerWidth ===0  ? 4 : this.currentLabelPointerWidth,
+          pointerHeight: this.currentLabelPointerHeight === 0 ? 4 : this.currentLabelPointerHeight,
           lineJoin: 'round',
           shadowColor: 'black',
-          shadowBlur: 10,
-          shadowOffsetX: 10,
-          shadowOffsetY: 10,
+          shadowBlur: this.currentLabelShadowBlur === 0 ? 10 : this.currentLabelShadowBlur,
+          shadowOffsetX: this.currentLabelShadowOffsetX === 0 ? 10 : this.currentLabelShadowOffsetX,
+          shadowOffsetY: this.currentLabelShadowOffsetY === 0 ? 10 : this.currentLabelShadowOffsetY,
           shadowOpacity: 0.5,
         })
       );
@@ -494,7 +507,7 @@ export class CreateFloorPlanPage implements OnInit{
         new Konva.Text({
           text: tooltipID,
           fontFamily: 'Calibri',
-          fontSize: 10,
+          fontSize: this.currentLabelFontSize === 0 ? 10 : this.currentLabelFontSize,
           padding: 2,
           fill: 'white',
         })
@@ -630,6 +643,7 @@ export class CreateFloorPlanPage implements OnInit{
             this.contentLoaded = true;
             this.snapLabel = this.TRUE_SCALE_FACTOR;
             this.gridSizeLabel = this.TRUE_SCALE_FACTOR;
+            this.tooltipAllowedVisible = true;
         }, 6);
     }
 
@@ -673,7 +687,7 @@ export class CreateFloorPlanPage implements OnInit{
       const newScale = (direction === 'in' || (!direction && wheelDirection > 0)) ? oldScale * scaleBy : oldScale / scaleBy;
       this.gridSize = this.initialGridSize * newScale;
       this.currentScale = newScale;
-      
+
       if (newScale <= 1 || newScale >= 17) return;
 
       if (direction === 'in' || (!direction && wheelDirection > 0)) {
@@ -689,6 +703,14 @@ export class CreateFloorPlanPage implements OnInit{
         this.snapLabel = this.adjustValue(this.displayedSnap);
 
         this.updateStrokeWidths(0.5);
+        if (newScale < 8) {
+          this.tooltipAllowedVisible = true;
+          this.updateLabelSize(0.5);
+        }
+        else {
+          this.tooltipAllowedVisible = false;
+          this.setAllTootipsVisibility(false);
+        }
         this.setZoomInDisabled(this.displayedSnap);
         this.setZoomOutDisabled(this.displayedSnap);
       }
@@ -705,6 +727,14 @@ export class CreateFloorPlanPage implements OnInit{
         this.snapLabel = this.adjustValue(this.displayedSnap);
 
         this.updateStrokeWidths(2);
+        if (newScale < 8) {
+          this.tooltipAllowedVisible = true;
+          this.updateLabelSize(2);
+        }
+        else {
+          this.tooltipAllowedVisible = false;
+          this.setAllTootipsVisibility(false);
+        }
         this.setZoomInDisabled(this.displayedSnap);
         this.setZoomOutDisabled(this.displayedSnap);
       }
@@ -731,18 +761,49 @@ export class CreateFloorPlanPage implements OnInit{
         if (this.canvas && this.canvas.children) {
           this.canvas.children?.forEach((child: any) => {
             if (child instanceof Konva.Path) {
-              const prevWidth = child.getAttr('strokeWidth');
+              const prevWidth = this.currentPathStrokeWidth === 0 ? child.getAttr('strokeWidth') : this.currentPathStrokeWidth;
               child.strokeWidth(prevWidth * scale);
               this.currentPathStrokeWidth = prevWidth * scale;
             }
             if (child instanceof Konva.Circle) {
-              const prevWidth = child.getAttr('strokeWidth');
+              const prevWidth = this.currentSensorCircleStrokeWidth === 0 ? child.getAttr('strokeWidth') : this.currentSensorCircleStrokeWidth;
               child.strokeWidth(prevWidth * scale);
               this.currentSensorCircleStrokeWidth = prevWidth * scale;
             }
           });
         }
       }
+    }
+
+    updateLabelSize(scale: number) {
+      this.tooltips.forEach((tooltip: any) => {
+        tooltip.children?.forEach((child: any) => {
+          if (child instanceof Konva.Text) {
+            const prevSize = this.currentLabelFontSize === 0 ? child.getAttr('fontSize') : this.currentLabelFontSize;
+            child.fontSize(prevSize * scale);
+            this.currentLabelFontSize = prevSize * scale;
+          }
+          else if (child instanceof Konva.Tag) {
+            const prevPointerWidth = this.currentLabelPointerWidth === 0 ? child.getAttr('pointerWidth') : this.currentLabelPointerWidth;
+            const prevPointerHeight = this.currentLabelPointerHeight === 0 ? child.getAttr('pointerHeight') : this.currentLabelPointerHeight;
+            const prevShadowBlur = this.currentLabelShadowBlur === 0 ? child.getAttr('shadowBlur') : this.currentLabelShadowBlur;
+            const prevShadowOffsetX = this.currentLabelShadowOffsetX === 0 ? child.getAttr('shadowOffsetX') : this.currentLabelShadowOffsetX;
+            const prevShadowOffsetY = this.currentLabelShadowOffsetY === 0 ? child.getAttr('shadowOffsetY') : this.currentLabelShadowOffsetY;
+
+            child.pointerWidth(prevPointerWidth * scale);
+            child.pointerHeight(prevPointerHeight * scale);
+            child.shadowBlur(prevShadowBlur * scale);
+            child.shadowOffsetX(prevShadowOffsetX * scale);
+            child.shadowOffsetY(prevShadowOffsetY * scale);
+
+            this.currentLabelPointerWidth = prevPointerWidth * scale;
+            this.currentLabelPointerHeight = prevPointerHeight * scale;
+            this.currentLabelShadowBlur = prevShadowBlur * scale;
+            this.currentLabelShadowOffsetX = prevShadowOffsetX * scale;
+            this.currentLabelShadowOffsetY = prevShadowOffsetY * scale;
+          }
+        });
+      });
     }
 
     boundFunc(pos: any, scale: any) {
