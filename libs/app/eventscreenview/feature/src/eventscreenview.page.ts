@@ -2,7 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 import Chart from 'chart.js/auto';
+import 'chartjs-adapter-luxon';
 import 'chartjs-plugin-datalabels';
+import ChartStreaming from 'chartjs-plugin-streaming';
 
 
 @Component({
@@ -14,6 +16,7 @@ export class EventScreenViewPage {
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('userCountDataStreamingChart') userCountDataStreamingChart!: ElementRef<HTMLCanvasElement>;
 
   isLoading = true;
   activeDevices = 25;
@@ -30,14 +33,16 @@ export class EventScreenViewPage {
     }, 1000);
     
     setTimeout(() => {
+      Chart.register(ChartStreaming);
       this.renderHeatMap();
       this.renderTotalUserCount();
       this.renderTotalDeviceCount();
+      this.renderUserCountDataStreaming();
     }, 1000);
   }
 
   renderHeatMap() {
-    const map = L.map(this.heatmapContainer.nativeElement).setView([51.505, -0.09], 13);
+    const map = L.map(this.heatmapContainer.nativeElement).setView([0, 0], 13);
 
     //disable zoom functionality
     map.touchZoom.disable();
@@ -66,20 +71,56 @@ export class EventScreenViewPage {
     );
     L.imageOverlay(imageUrl, imageBounds).addTo(map);
 
-    const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [
-      [51.5, -0.09, 0.2], // lat, lng, intensity
-      [51.51, -0.09, 0.5],
-      [51.508, -0.09, 0.7]
-    ];
+    const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();
 
     const heat = L.heatLayer(
       heatmapData,
       {
         radius: 25,
         gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' },
-        minOpacity: 0.4
+        minOpacity: 0.3
       }
     ).addTo(map);
+
+    // If we have the data we can determine the hotzone of the heatmap and add a red circle radius Marker to it
+    // determine hot zone and add a red circle radius Marker to it
+    // const hotZone = this.getHotZone(heatmapData);
+    // L.circleMarker(hotZone, { radius: 40, color: 'red', fillColor: 'red', fillOpacity: 0.45 }).addTo(map);
+  }
+
+  getHotZone(heatmapData: (L.LatLng | L.HeatLatLngTuple)[]) {
+    let maxIntensity = 0;
+    let hotZone: L.LatLng = L.latLng(0, 0);
+
+    heatmapData.forEach((data: any) => {
+      const intensity = data[2];
+      if (intensity > maxIntensity) {
+        maxIntensity = intensity;
+        hotZone = L.latLng(data[0], data[1]);
+      }
+    });
+
+    return hotZone;
+  }
+
+  generateHeatmapData() { 
+    const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [];
+    const bounds = {
+      north: 0.031,   // Latitude of the north boundary
+      south: -0.0315,   // Latitude of the south boundary
+      east: 0.123,   // Longitude of the east boundary
+      west: -0.1235    // Longitude of the west boundary
+    };
+  
+    for (let i = 0; i < 1000; i++) {
+      const latitude = bounds.south + Math.random() * (bounds.north - bounds.south);
+      const longitude = bounds.west + Math.random() * (bounds.east - bounds.west);
+      const intensity = 0.5 + Math.random() * 0.5;
+  
+      heatmapData.push([latitude, longitude, intensity]);
+    }
+  
+    return heatmapData;
   }
 
   renderTotalUserCount() {
@@ -199,6 +240,87 @@ export class EventScreenViewPage {
             ]
           }
         );
+      }
+    }
+  }
+
+  onRefresh(chart: any) {
+    // // query your data source and get the array of {x: timestamp, y: value} objects
+    // var data = getLatestData();
+
+    // // append the new data array to the existing chart data
+    // chart.data.datasets[0].data.push(...data);
+
+    chart.config.data.datasets.forEach((dataset: any) => {
+      dataset.data.push({
+        x: Date.now(),
+        y: Math.random()
+      });
+    });
+  }
+
+  renderUserCountDataStreaming() {
+    const data = {
+      datasets: [{
+        label: 'Users',
+        data: [],
+        backgroundColor: [
+          '#0000FF',
+        ],
+        borderColor: [
+          '#0000FF',
+        ],
+      }]
+    };
+
+    const userCountDataStreamingCanvas = this.userCountDataStreamingChart.nativeElement;
+
+    if (userCountDataStreamingCanvas) {
+      const userCountDataStreamingCtx = userCountDataStreamingCanvas.getContext('2d');
+      if (userCountDataStreamingCtx) {
+        const myChart = new Chart(
+          userCountDataStreamingCtx, 
+        {
+          type: 'line',             // 'line', 'bar', 'bubble' and 'scatter' types are supported
+          data: {
+            datasets: [{
+              label: 'Users',
+              data: []              // empty at the beginning
+            }]
+          },
+          options: {
+            scales: {
+              x: {
+                type: 'realtime',   // x axis will auto-scroll from right to left
+                realtime: {         // per-axis options
+                  duration: 20000,  // data in the past 20000 ms will be displayed
+                  refresh: 1000,    // onRefresh callback will be called every 1000 ms
+                  delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+                  pause: false,     // chart is not paused
+                  ttl: undefined,   // data will be automatically deleted as it disappears off the chart
+                  frameRate: 30,    // data points are drawn 30 times every second
+        
+                  // a callback to update datasets
+                  onRefresh: chart => {
+        
+                    // // query your data source and get the array of {x: timestamp, y: value} objects
+                    // let data = getLatestData();
+        
+                    // // append the new data array to the existing chart data
+                    // chart.data.datasets[0].data.push(...data);
+
+                    chart.config.data.datasets.forEach((dataset: any) => {
+                      dataset.data.push({
+                        x: Date.now(),
+                        y: Math.random()
+                      });
+                    });
+                  }
+                }
+              }
+            }
+          }
+        });
       }
     }
   }
