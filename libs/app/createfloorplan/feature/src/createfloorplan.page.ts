@@ -241,6 +241,12 @@ export class CreateFloorPlanPage implements OnInit{
               padding: 3,
               cursor: 'move',
             });
+            text.on('click', (e) => {
+              this.setTransformer(group);
+              // this.canvas.draw();
+              // e.cancelBubble = true;
+              console.log('clicked');
+            });
 
             group.add(image);
             group.add(text);
@@ -353,6 +359,11 @@ export class CreateFloorPlanPage implements OnInit{
         this.selectedTextBox = (this.activeItem instanceof Konva.Text || 
                                 (this.activeItem instanceof Konva.Group && this.activeItem?.hasName('stall'))) ? true : false;
         this.setTransformer(this.activeItem, undefined);
+
+        if (this.activeItem instanceof Konva.Group) {
+          this.transformer.nodes([this.activeItem]);
+          this.canvas.draw();
+        }
         
         
         if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
@@ -565,7 +576,7 @@ export class CreateFloorPlanPage implements OnInit{
             // create selection box to select different components on the canvas
             this.createSelectionBox();
 
-            this.canvasContainer.on('click', () => {
+            this.canvasContainer.on('click', (e) => {
               const position = this.canvasContainer.getRelativePointerPosition();
 
               const component = this.canvas.getIntersection(position);
@@ -577,11 +588,15 @@ export class CreateFloorPlanPage implements OnInit{
               if (component && component instanceof Konva.Text) {
                 const selectedText = component;
                 const group = selectedText.getAncestors()[0] as Konva.Group;
-                
                 if (group) {
                   this.activeItem = group;
                   this.setTransformer(group, undefined);
                 }
+              }
+              if (e.target.hasName('stallName')) {
+                const parent = e.target.getParent();
+                this.activeItem = parent;
+                this.setTransformer(parent, undefined);
               }
             });
             
@@ -824,6 +839,17 @@ export class CreateFloorPlanPage implements OnInit{
           borderStrokeWidth: 1,
         });
       }
+      else if (this.activeItem instanceof Konva.Group) {
+        this.transformer = new Konva.Transformer({
+          nodes: [this.activeItem],
+          rotateEnabled: true,
+          enabledAnchors: [],
+          keepRatio: false,
+          boundBoxFunc: (oldBox, newBox) => {
+            return newBox;
+          }
+        });
+      }
 
       this.canvas.add(this.transformer);
       let target = null;
@@ -982,6 +1008,8 @@ export class CreateFloorPlanPage implements OnInit{
             tr.nodes([]);
           });
           this.activeItem = null;
+          this.transformer.nodes([]);
+          tr.nodes([]);
           this.textLength = 0;
           this.selectedTextBox = false;
 
@@ -1008,17 +1036,40 @@ export class CreateFloorPlanPage implements OnInit{
           !e.target.hasName('wall') && 
           !e.target.hasName('sensor') && 
           !e.target.hasName('stall') && 
-          !e.target.hasName('stallName') && 
-          !e.target.hasName('textBox')) {
+          // !e.target.hasName('stallName') && 
+          !e.target.hasName('textBox') && e.target === this.canvasContainer) {
           this.activeItem = null;
           this.textLength = 0;
           this.selectedTextBox = false;
           this.transformer.detach();
+          this.transformer.nodes([]);
           tr.detach();
+          tr.nodes([]);
           this.transformers = [];
 
           this.store.dispatch(new UpdateActiveSensor(''));
           
+          if (e.target.hasName('stallName')) {
+            // find parent
+            const parent = e.target.getParent();
+            this.activeItem = parent;
+            this.transformer.nodes([parent]);
+            tr.nodes([parent]);
+            this.transformers = [this.transformer];
+            this.canvas.draw();
+          }
+          return;
+        }
+
+        if (e.target instanceof Konva.Line) {
+          this.activeItem = null;
+          this.textLength = 0;
+          this.selectedTextBox = false;
+          this.transformer.detach();
+          this.transformer.nodes([]);
+          tr.detach();
+          tr.nodes([]);
+          this.transformers = [];
           return;
         }
 
