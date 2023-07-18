@@ -109,6 +109,7 @@ export class CreateFloorPlanPage implements OnInit{
     currentLabelPointerWidth = 0;
     currentLabelPointerHeight = 0;
     tooltipAllowedVisible = false;
+    maxReached = false;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -267,6 +268,8 @@ export class CreateFloorPlanPage implements OnInit{
           else if (droppedItem.name.includes('sensor')) {
             image.setAttr('name', 'sensor');
 
+            const sensor = this.canvas.findOne('.sensor');
+
             // create circle to represent sensor
             const sensorCount = this.sensors ? this.sensors.length+1 : 1;
             const circle = new Konva.Circle({
@@ -277,7 +280,7 @@ export class CreateFloorPlanPage implements OnInit{
               radius: 2,
               fill: 'red',
               stroke: 'black',
-              strokeWidth: this.currentSensorCircleStrokeWidth === 0 ? 1 : this.currentSensorCircleStrokeWidth,
+              strokeWidth: this.currentSensorCircleStrokeWidth === 0 && !sensor ? 1 : sensor.getAttr('strokeWidth'),
               draggable: true,
               cursor: 'move',
             });
@@ -704,8 +707,9 @@ export class CreateFloorPlanPage implements OnInit{
 
         this.updateStrokeWidths(0.5);
         if (newScale < 8) {
+          this.maxReached = oldScale >= 8 ? true : false; 
           this.tooltipAllowedVisible = true;
-          this.updateLabelSize(0.5);
+          this.updateLabelSize(0.5, this.maxReached);
         }
         else {
           this.tooltipAllowedVisible = false;
@@ -726,10 +730,12 @@ export class CreateFloorPlanPage implements OnInit{
         }
         this.snapLabel = this.adjustValue(this.displayedSnap);
 
+        
         this.updateStrokeWidths(2);
         if (newScale < 8) {
+          this.maxReached = oldScale >= 8 ? true : false; 
           this.tooltipAllowedVisible = true;
-          this.updateLabelSize(2);
+          this.updateLabelSize(2, this.maxReached);
         }
         else {
           this.tooltipAllowedVisible = false;
@@ -766,7 +772,7 @@ export class CreateFloorPlanPage implements OnInit{
               this.currentPathStrokeWidth = prevWidth * scale;
             }
             if (child instanceof Konva.Circle) {
-              const prevWidth = this.currentSensorCircleStrokeWidth === 0 ? child.getAttr('strokeWidth') : this.currentSensorCircleStrokeWidth;
+              const prevWidth = child.getAttr('strokeWidth');
               child.strokeWidth(prevWidth * scale);
               this.currentSensorCircleStrokeWidth = prevWidth * scale;
             }
@@ -775,26 +781,40 @@ export class CreateFloorPlanPage implements OnInit{
       }
     }
 
-    updateLabelSize(scale: number) {
+    updateLabelSize(scale: number, maxWasReached: boolean) {
       this.tooltips.forEach((tooltip: any) => {
         tooltip.children?.forEach((child: any) => {
           if (child instanceof Konva.Text) {
-            const prevSize = this.currentLabelFontSize === 0 ? child.getAttr('fontSize') : this.currentLabelFontSize;
-            child.fontSize(prevSize * scale);
+            const prevSize = child.getAttr('fontSize')
+            if (maxWasReached) {
+              child.fontSize(prevSize);
+            }
+            else {
+              child.fontSize(prevSize * scale);
+            }
             this.currentLabelFontSize = prevSize * scale;
           }
           else if (child instanceof Konva.Tag) {
-            const prevPointerWidth = this.currentLabelPointerWidth === 0 ? child.getAttr('pointerWidth') : this.currentLabelPointerWidth;
-            const prevPointerHeight = this.currentLabelPointerHeight === 0 ? child.getAttr('pointerHeight') : this.currentLabelPointerHeight;
-            const prevShadowBlur = this.currentLabelShadowBlur === 0 ? child.getAttr('shadowBlur') : this.currentLabelShadowBlur;
-            const prevShadowOffsetX = this.currentLabelShadowOffsetX === 0 ? child.getAttr('shadowOffsetX') : this.currentLabelShadowOffsetX;
-            const prevShadowOffsetY = this.currentLabelShadowOffsetY === 0 ? child.getAttr('shadowOffsetY') : this.currentLabelShadowOffsetY;
-
-            child.pointerWidth(prevPointerWidth * scale);
-            child.pointerHeight(prevPointerHeight * scale);
-            child.shadowBlur(prevShadowBlur * scale);
-            child.shadowOffsetX(prevShadowOffsetX * scale);
-            child.shadowOffsetY(prevShadowOffsetY * scale);
+            const prevPointerWidth = child.getAttr('pointerWidth');
+            const prevPointerHeight = child.getAttr('pointerHeight');
+            const prevShadowBlur = child.getAttr('shadowBlur');
+            const prevShadowOffsetX = child.getAttr('shadowOffsetX');
+            const prevShadowOffsetY = child.getAttr('shadowOffsetY');
+            
+            if (maxWasReached) {
+              child.pointerWidth(prevPointerWidth);
+              child.pointerHeight(prevPointerHeight);
+              child.shadowBlur(prevShadowBlur);
+              child.shadowOffsetX(prevShadowOffsetX);
+              child.shadowOffsetY(prevShadowOffsetY);
+            }
+            else {
+              child.pointerWidth(prevPointerWidth * scale);
+              child.pointerHeight(prevPointerHeight * scale);
+              child.shadowBlur(prevShadowBlur * scale);
+              child.shadowOffsetX(prevShadowOffsetX * scale);
+              child.shadowOffsetY(prevShadowOffsetY * scale);
+            }
 
             this.currentLabelPointerWidth = prevPointerWidth * scale;
             this.currentLabelPointerHeight = prevPointerHeight * scale;
@@ -883,13 +903,27 @@ export class CreateFloorPlanPage implements OnInit{
           enabledAnchors: ['middle-left', 'middle-right'],
           rotateEnabled: true,
         });
-        this.activeItem.on('dragmove click', () => {
+        this.activeItem.on('dragmove click dblclick', () => {
           const newWidth = this.revertValue(this.getActiveItemWidth());
           const newPathData = `M0,0 L${newWidth},0`;
           this.activeItem?.setAttr('data', newPathData);
           this.activeItem?.setAttr('rotation', this.activeItem?.getAttr('angle'));
           this.transformer.rotation(this.activeItem?.getAttr('angle'));
           this.transformer.update();
+        });
+        this.transformer.on('transform', () => {
+          const pointer = this.canvasContainer.getPointerPosition();
+          const object = this.updateData(this.activeItem, pointer);
+          const data = object['newData'];
+          const startPointX = object['startPointX'];
+          const startPointY = object['startPointY'];
+          const endPointX = object['endPointX'];
+          const endPointY = object['endPointY'];
+          this.activeItem?.setAttr('data', data);
+          const newWidth = this.calculateWidth(this.activeItem);
+          const newAngle = this.calculatePathAngle(this.activeItem);
+          this.activeItem?.setAttr('width', newWidth);
+          this.activeItem?.setAttr('angle', newAngle);
         });
       }
       else if (this.activeItem instanceof Konva.Circle) {
@@ -1094,7 +1128,7 @@ export class CreateFloorPlanPage implements OnInit{
         // do nothing if clicked NOT on our lines or images or text
         if (
           !e.target.hasName('rect') && 
-          !e.target.hasName('wall') && 
+          // !e.target.hasName('wall') && 
           !e.target.hasName('sensor') && 
           !e.target.hasName('stall') && 
           // !e.target.hasName('stallName') && 
@@ -1117,6 +1151,11 @@ export class CreateFloorPlanPage implements OnInit{
             this.transformer.nodes([parent]);
             tr.nodes([parent]);
             this.transformers = [this.transformer];
+            this.canvas.draw();
+          }
+          else if (e.target.hasName('wall')) {
+            this.activeItem = e.target;
+            // this.setTransformer(undefined, this.activeItem);
             this.canvas.draw();
           }
           return;
