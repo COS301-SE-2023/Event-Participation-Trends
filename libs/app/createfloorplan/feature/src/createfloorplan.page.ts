@@ -13,9 +13,11 @@ import { Observable } from 'rxjs';
 import { AddSensor, RemoveSensor, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 import { IonInput } from '@ionic/angular';
 
+type KonvaTypes = Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path | Konva.Circle;
+
 interface DroppedItem {
   name: string;
-  konvaObject?: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path;
+  konvaObject?: KonvaTypes;
 }
 @Component({
   selector: 'event-participation-trends-createfloorplan',
@@ -81,6 +83,7 @@ export class CreateFloorPlanPage implements OnInit{
     gridLines !: Konva.Group;
     currentPathStrokeWidth = 0;
     currentGridStrokeWidth = 0;
+    currentSensorCircleStrokeWidth = 0;
     snaps: number[] = [];
     wheelCounter = 0;
     contentLoaded = false;
@@ -96,6 +99,9 @@ export class CreateFloorPlanPage implements OnInit{
     textLength = 0;
     maxTextLength = 15;
     maxStallNameLength = 10;
+    tooltips: Konva.Label[] = [];
+    activePathStartPoint = {x: 0, y:0};
+    activePathEndPoint = {x: 0, y:0};
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -238,6 +244,8 @@ export class CreateFloorPlanPage implements OnInit{
 
             group.add(image);
             group.add(text);
+            const tooltip = this.addTooltip(text, positionX, positionY);
+            this.tooltips.push(tooltip);
             this.setMouseEvents(group);
             this.canvas.add(group);
             this.canvas.draw();
@@ -245,11 +253,34 @@ export class CreateFloorPlanPage implements OnInit{
           } 
           else if (droppedItem.name.includes('sensor')) {
             image.setAttr('name', 'sensor');
+
+            // create circle to represent sensor
+            const sensorCount = this.sensors ? this.sensors.length+1 : 1;
+            const circle = new Konva.Circle({
+              id: 'sensor-' + sensorCount,
+              name: 'sensor',
+              x: positionX,
+              y: positionY,
+              radius: 2,
+              fill: 'red',
+              stroke: 'black',
+              strokeWidth: 1,
+              draggable: true,
+              cursor: 'move',
+            });
+
             // image.setAttr('customId', this.getUniqueId());
-            // this.sensors.push({object: image, isLinked:false});
-            this.canvas.add(image);
+            this.sensors?.push({object: image, isLinked:false});
+            // this.canvas.add(image);
+            // this.canvas.draw();
+            // droppedItem.konvaObject = image;
+            circle.setAttr('customId', this.getSelectedSensorId());
+            const tooltip = this.addTooltip(circle, positionX, positionY);
+            this.tooltips.push(tooltip);
+            this.setMouseEvents(circle);
+            this.canvas.add(circle);
             this.canvas.draw();
-            droppedItem.konvaObject = image;
+            droppedItem.konvaObject = circle;
             this.store.dispatch(new AddSensor(image));
             this.sensors$.subscribe(sensors => {
               this.sensors = sensors;
@@ -287,7 +318,7 @@ export class CreateFloorPlanPage implements OnInit{
       }
     }
     
-    setupElement(element: Konva.Line | Konva.Image | Konva.Group | Konva.Path, positionX: number, positionY: number): void {
+    setupElement(element: KonvaTypes, positionX: number, positionY: number): void {
       element.setAttrs({
         x: positionX,
         y: positionY,
@@ -304,10 +335,12 @@ export class CreateFloorPlanPage implements OnInit{
       this.setMouseEvents(element);
     }
 
-    setMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path): void {
+    setMouseEvents(element: KonvaTypes): void {
       element.on('dragmove', () => {
         this.activeItem = element;
         this.setTransformer(this.activeItem, undefined);
+
+        this.setTooltipVisibility(element, false);
 
         if (this.activeItem instanceof Konva.Image) {
           this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
@@ -326,11 +359,6 @@ export class CreateFloorPlanPage implements OnInit{
           this.selectedTextBox = true;
         }
 
-
-        if (this.activeItem instanceof Konva.Text && this.activeItem.getAttr('name') === 'textBox') {
-          this.selectedTextBox = true;
-        }
-
         if (this.activeItem instanceof Konva.Image) {
           this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
         }
@@ -340,9 +368,15 @@ export class CreateFloorPlanPage implements OnInit{
       });
       element.on('mouseenter', () => {
         document.body.style.cursor = 'move';
+        this.setTooltipVisibility(element, true);
+
+        setTimeout(() => {
+          this.setTooltipVisibility(element, false);
+        }, 2000);
       });
       element.on('mouseleave', () => {
         document.body.style.cursor = 'default';
+        this.setTooltipVisibility(element, false);
       });
 
       if (element instanceof Konva.Text && (element.getAttr('name') === 'textBox' || element.getAttr('name') === 'stallName')) {
@@ -398,13 +432,96 @@ export class CreateFloorPlanPage implements OnInit{
       }
     }
 
-    removeMouseEvents(element: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path): void {
+    removeMouseEvents(element: KonvaTypes): void {
       element.off('dragmove');
       element.off('dragmove');
       element.off('click');
       element.off('dragend');
       element.off('mouseenter');
       element.off('mouseleave');
+    }
+
+    setTooltipVisibility(element: KonvaTypes, visible: boolean): void {
+      if (element instanceof Konva.Circle) {
+        const tooltip = this.tooltips.find(tooltip => tooltip.getAttr('id').includes(element.getAttr('id')));
+        tooltip?.setAttr('visible', visible);
+      }
+      else if (element instanceof Konva.Group) {
+        // find text child of group
+        const text = element.getChildren().find(child => child instanceof Konva.Text);
+        const tooltip = this.tooltips.find(tooltip => tooltip.getAttr('id').includes(text?.getAttr('text')));
+        tooltip?.setAttr('visible', visible);
+      }
+    }
+      
+
+    addTooltip(element: KonvaTypes, positionX: number, positionY: number): Konva.Label{
+      const tooltipID = element.getAttr('text') ? element.getAttr('text') : element.getAttr('id');
+      const tooltip = new Konva.Label({
+        id: 'tooltip-' + tooltipID,
+        x: element instanceof Konva.Circle ? positionX : positionX + 5,
+        y: element instanceof Konva.Circle ? positionY - 3 : positionY,
+        opacity: 0.75,
+        visible: false,
+        listening: false,
+      });
+      tooltip.add(
+        new Konva.Tag({
+          fill: 'black',
+          pointerDirection: 'down',
+          pointerWidth: 4,
+          pointerHeight: 4,
+          lineJoin: 'round',
+          shadowColor: 'black',
+          shadowBlur: 10,
+          shadowOffsetX: 10,
+          shadowOffsetY: 10,
+          shadowOpacity: 0.5,
+        })
+      );
+      tooltip.add(
+        new Konva.Text({
+          text: tooltipID,
+          fontFamily: 'Calibri',
+          fontSize: 10,
+          padding: 2,
+          fill: 'white',
+        })
+      );
+      this.canvas.add(tooltip);
+      return tooltip;
+    }
+
+    updateTooltipID(element: KonvaTypes): void {
+      let tooltipID = '';
+      let text = null;
+      let index = 0;
+
+      if (!element) return;
+
+      if (element instanceof Konva.Group) {
+        tooltipID = element.getChildren().find(child => child instanceof Konva.Text)?.getAttr('text');
+        text = element.getChildren().find(child => child instanceof Konva.Text) as Konva.Text;
+      }
+      else {
+        tooltipID = element.getAttr('text') ? element.getAttr('text') : element.getAttr('id');
+      }
+
+      const isText = element instanceof Konva.Text;
+      text = isText ? element : text;
+
+      for (let i = 0; i < this.tooltips.length; i++) {
+        if (this.tooltips[i].getAttr('id').includes(tooltipID)) {
+          index = i;
+          break;
+        }
+      }
+
+      const newTooltip = 
+        text ? 
+        this.addTooltip(text, text.getParent().getAttr('x'), text.getParent().getAttr('y')) :
+        this.addTooltip(element, element.getAttr('x'), element.getAttr('y'));
+      this.tooltips[index] = newTooltip;
     }
 
     ngAfterViewInit(): void {
@@ -603,6 +720,11 @@ export class CreateFloorPlanPage implements OnInit{
               child.strokeWidth(prevWidth * scale);
               this.currentPathStrokeWidth = prevWidth * scale;
             }
+            if (child instanceof Konva.Circle) {
+              const prevWidth = child.getAttr('strokeWidth');
+              child.strokeWidth(prevWidth * scale);
+              this.currentSensorCircleStrokeWidth = prevWidth * scale;
+            }
           });
         }
       }
@@ -672,11 +794,34 @@ export class CreateFloorPlanPage implements OnInit{
       if(!this.preventCreatingWalls) return;
 
       this.transformer.detach();
+      this.transformers = [];
 
       if (this.selectedTextBox) {
         this.transformer = new Konva.Transformer({
           enabledAnchors: [],
           rotateEnabled: true,
+        });
+      }
+      else if (this.selectedWall) {
+        this.transformer = new Konva.Transformer({
+          enabledAnchors: ['middle-left', 'middle-right'],
+          rotateEnabled: true,
+        });
+        this.activeItem.on('dragmove click', () => {
+          const newWidth = this.revertValue(this.getActiveItemWidth());
+          const newPathData = `M0,0 L${newWidth},0`;
+          this.activeItem?.setAttr('data', newPathData);
+          this.activeItem?.setAttr('rotation', this.activeItem?.getAttr('angle'));
+          this.transformer.rotation(this.activeItem?.getAttr('angle'));
+          this.transformer.update();
+        });
+      }
+      else if (this.activeItem instanceof Konva.Circle) {
+        this.transformer = new Konva.Transformer({
+          enabledAnchors: [],
+          rotateEnabled: false,
+          borderStroke: 'blue',
+          borderStrokeWidth: 1,
         });
       }
 
@@ -698,7 +843,7 @@ export class CreateFloorPlanPage implements OnInit{
         return;
       }
 
-      const tr = new Konva.Transformer();
+      const tr = new Konva.Transformer({enabledAnchors: []});
       this.transformers.push(tr);
       this.canvas.add(tr);
 
@@ -858,10 +1003,19 @@ export class CreateFloorPlanPage implements OnInit{
         }
 
         // do nothing if clicked NOT on our lines or images or text
-        if (!e.target.hasName('rect') && !e.target.hasName('wall') && !e.target.hasName('sensor') && !e.target.hasName('stall') && !e.target.hasName('stallName') && !e.target.hasName('textBox')) {
+        if (
+          !e.target.hasName('rect') && 
+          !e.target.hasName('wall') && 
+          !e.target.hasName('sensor') && 
+          !e.target.hasName('stall') && 
+          !e.target.hasName('stallName') && 
+          !e.target.hasName('textBox')) {
           this.activeItem = null;
           this.textLength = 0;
           this.selectedTextBox = false;
+          this.transformer.detach();
+          tr.detach();
+          this.transformers = [];
 
           this.store.dispatch(new UpdateActiveSensor(''));
           
@@ -982,7 +1136,8 @@ export class CreateFloorPlanPage implements OnInit{
             // droppedItem.konvaObject?.setAttrs({
             //     draggable: false
             // });
-        
+            const element = droppedItem.konvaObject;
+            if (element) this.updateTooltipID(element);
             this.canvas.batchDraw();
         
             this.openDustbin = true;
@@ -1050,7 +1205,7 @@ export class CreateFloorPlanPage implements OnInit{
         }
       }
 
-      removeObject(selectedObject: Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path) {
+      removeObject(selectedObject: KonvaTypes) {
         if (this.transformer) {
           this.canvas.find('Transformer').forEach((node) => node.remove());
 
@@ -1180,6 +1335,55 @@ export class CreateFloorPlanPage implements OnInit{
         // Attach the mouse up event listener
         this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
       }
+
+      calculatePathAngle(path: Konva.Path): number {
+        const pointer = this.canvasContainer.getPointerPosition();
+        if (path) {
+          const object = this.updateData(path, pointer);
+          const startPointX = object['startPointX'];
+          const startPointY = object['startPointY'];
+          const endPointX = object['endPointX'];
+          const endPointY = object['endPointY'];
+          const angle = Math.atan2(endPointY - startPointY, endPointX - startPointX) * 180 / Math.PI;
+          this.activePathStartPoint = {
+            x: startPointX,
+            y: startPointY
+          };
+          this.activePathEndPoint = {
+            x: endPointX,
+            y: endPointY
+          };
+          return angle;
+        }
+        return 0;
+      }
+
+      calculateWidth(element: Konva.Path): number {
+        const data = element.data();
+        const startPointX = parseFloat(data.split(' ')[0].split(',')[0].replace('M', ''));
+        const startPointY = parseFloat(data.split(' ')[0].split(',')[1]);
+        const endPointX = parseFloat(data.split(' ')[1].split(',')[0].slice(1));
+        const endPointY = parseFloat(data.split(' ')[1].split(',')[1]);
+        const width = Math.sqrt(Math.pow(endPointX, 2) + Math.pow(endPointY, 2));
+        return width;
+      }
+
+      updateData(element: Konva.Path, pointer: any) : {newData: string, snapPoint: {x: number, y: number}, endPointX: number, endPointY: number, startPointX: number, startPointY: number} {
+        const grid = this.scaleSnap;
+        const xValue = pointer ? this.convertX(pointer.x) : 0;
+        const yValue = pointer ? this.convertY(pointer.y) : 0;
+        const snapPoint = {
+            x: Math.round(xValue / grid) * grid,
+            y: Math.round(yValue / grid) * grid,
+        };
+        const data = element.data();
+        const startPointX = data.split(' ')[0].split(',')[0].replace('M', '');
+        const startPointY = data.split(' ')[0].split(',')[1];
+        const endPointX = snapPoint.x - element.x();
+        const endPointY = snapPoint.y - element.y();
+        const newData = `M${startPointX},${startPointY} L${endPointX},${endPointY}`;
+        return {'newData': newData, 'snapPoint': snapPoint, 'endPointX': endPointX, 'endPointY': endPointY, 'startPointX': parseFloat(startPointX), 'startPointY': parseFloat(startPointY)};
+      }
       
       onMouseMove(): void {
         if (this.ctrlDown) {
@@ -1188,20 +1392,19 @@ export class CreateFloorPlanPage implements OnInit{
 
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
-            const grid = this.scaleSnap;
-            const xValue = pointer ? this.convertX(pointer.x) : 0;
-            const yValue = pointer ? this.convertY(pointer.y) : 0;
-            const snapPoint = {
-                x: Math.round(xValue / grid) * grid,
-                y: Math.round(yValue / grid) * grid,
-            };
-            const data = this.activePath.data();
-            const startPointX = data.split(' ')[0].split(',')[0].replace('M', '');
-            const startPointY = data.split(' ')[0].split(',')[1];
-            const endPointX = snapPoint.x - this.activePath.x();
-            const endPointY = snapPoint.y - this.activePath.y();
-            const newData = `M${startPointX},${startPointY} L${endPointX},${endPointY}`;
+            const object = this.updateData(this.activePath, pointer);
+            const newData = object['newData'];
+            const endPointX = object['endPointX'];
+            const endPointY = object['endPointY'];
+            const startPointX = object['startPointX'];
+            const startPointY = object['startPointY'];
+            // this.activePath.setAttr('points', {'startPointX': startPointX, 'startPointY': startPointY, 'endPointX': endPointX, 'endPointY': endPointY});
+            // console.log(this.activePath.getAttr('points'));
+            const newWidth = Math.sqrt(Math.pow(endPointX, 2) + Math.pow(endPointY, 2));
             this.activePath.data(newData);
+            const angle = this.calculatePathAngle(this.activePath);
+            this.activePath.setAttr('angle', angle);
+            this.activePath.setAttr('width', newWidth);
             this.canvas.batchDraw();
         }
       }
@@ -1212,20 +1415,16 @@ export class CreateFloorPlanPage implements OnInit{
 
         const pointer = this.canvasContainer.getPointerPosition();
         if (this.activePath) {
-          const grid = this.scaleSnap;
-          const xValue = pointer ? this.convertX(pointer.x) : 0;
-          const yValue = pointer ? this.convertY(pointer.y) : 0;
-          const snapPoint = {
-              x: Math.round(xValue / grid) * grid,
-              y: Math.round(yValue / grid) * grid,
-          };
-          const data = this.activePath.data();
-          const startPointX = data.split(' ')[0].split(',')[0].replace('M', '');
-          const startPointY = data.split(' ')[0].split(',')[1];
-          const endPointX = snapPoint.x - this.activePath.x();
-          const endPointY = snapPoint.y - this.activePath.y();
-          const newData = `M${startPointX},${startPointY} L${endPointX},${endPointY}`;
+          const object = this.updateData(this.activePath, pointer);
+          const newData = object['newData'];
+          const snapPoint = object['snapPoint'];
+          const endPointX = object['endPointX'];
+          const endPointY = object['endPointY'];
+          const newWidth = Math.sqrt(Math.pow(endPointX, 2) + Math.pow(endPointY, 2));
           this.activePath.data(newData);
+          const angle = this.calculatePathAngle(this.activePath);
+          this.activePath.setAttr('angle', angle);
+          this.activePath.setAttr('width', newWidth);
           this.canvas.batchDraw();
 
           // test if the line is more than a certain length
@@ -1245,10 +1444,6 @@ export class CreateFloorPlanPage implements OnInit{
             name: 'path',
             konvaObject: this.activePath,
           });
-
-          // set the width a.k.a length of the wall
-          const width = Math.abs(snapPoint.x - this.activePath.x());
-          this.activePath.setAttr('width', width); // this acts as the length of the wall (vertically or horizontally)
 
           // set the height of the wall
           const height = Math.abs(snapPoint.y - this.activePath.y());
@@ -1486,6 +1681,7 @@ export class CreateFloorPlanPage implements OnInit{
               return child instanceof Konva.Text;
             });
             text?.text(input);
+            this.updateTooltipID(text);
           }
           this.textLength = input.length;
         }
@@ -1503,7 +1699,13 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
       getActiveItemWidth(): number {
-        return this.adjustValue(Math.round(this.activeItem?.width() * this.activeItem?.scaleX() * 10000) / 10000) ;
+        if (this.activeItem instanceof Konva.Path) {
+          const width = this.calculateWidth(this.activeItem);
+          return this.adjustValue(width);
+        }
+        else {
+          return this.adjustValue(Math.round(this.activeItem?.width() * this.activeItem?.scaleX() * 10000) / 10000) ;
+        }
       }
 
       getActiveItemHeight(): number {
@@ -1543,7 +1745,7 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
       getActiveItemRotation(): number {
-        const angle = Math.round(this.activeItem?.rotation() * 100) / 100;
+        const angle = Math.round(this.activeItem?.getAttr('angle') * 100) / 100;
         if (angle > 360) {
           return angle - 360;
         }
