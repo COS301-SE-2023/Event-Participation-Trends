@@ -4,33 +4,35 @@
         <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>
         <ion-label>Loading Content...</ion-label>
     </div>
-    <div *ngIf="!isLoading" class="backdrop-blur-[6px] h-full grid grid-cols-6 grid-rows-5 gap-3 p-2">
-        <div #heatmapContainer class="border-2 border-ept-deep-grey rounded-md col-span-6 row-span-3">
+    <div *ngIf="!isLoading" class="backdrop-blur-[6px] h-full grid grid-cols-12 grid-rows-5 gap-3 p-2">
+        <div #heatmapContainer class="border-2 border-ept-deep-grey rounded-md col-span-12 row-span-3">
 
         </div>
-        <div class="border-2 border-ept-deep-grey rounded-md col-span-2 row-span-2">
+        <div class="border-2 border-ept-deep-grey rounded-md col-span-5 row-span-2">
             
         </div>
         
-        <div class="border-2 border-ept-deep-grey rounded-md col-span-2 row-span-2"></div>
+        <div class="border-2 border-ept-deep-grey rounded-md col-span-5 row-span-2"></div>
         
-        <div class="bg-gray-300 bg-opacity-40  p-2 border-2 border-ept-deep-grey rounded-md col-span-2 flex flex-row justify-evenly">
+        <div class="bg-gray-300 bg-opacity-40  py-2 px-4 border-2 border-ept-deep-grey rounded-md col-span-2 row-span-1 flex flex-row justify-evenly">
             <ion-label class="text-ept-deep-grey text-2xl self-center">Total Users</ion-label>
             <canvas #totalUserCountChart></canvas>
         </div>
 
-        <div class="bg-gray-300 bg-opacity-40  p-2 border-2 border-ept-deep-grey rounded-md col-span-2 flex flex-row justify-evenly">
+        <div class="bg-gray-300 bg-opacity-40  p-2 border-2 border-ept-deep-grey rounded-md col-span-2 row-span-1 flex flex-row justify-evenly">
             <div class="grid grid-rows-2">
-                <div class="mt-3">
+                <div>
                     <ion-icon name="radio-button-on-outline" color="success"></ion-icon>
-                    <ion-label class="text-ept-deep-grey text-xl self-center">Active Sensors <span><ion-badge>{{activeDevices}}</ion-badge></span></ion-label>
+                    <ion-label class="text-ept-deep-grey">Active Sensors <span class="pl-2"><ion-badge class="text-[12px]">{{activeDevices}}</ion-badge></span></ion-label>
                 </div>
                 <div>
                     <ion-icon name="radio-button-on-outline" color="danger"></ion-icon>
-                    <ion-label class="text-ept-deep-grey text-xl self-center">Inactive Sensors <span><ion-badge>{{inactiveDevices}}</ion-badge></span></ion-label>
+                    <ion-label class="text-ept-deep-grey">Inactive Sensors <span class="pl-2"><ion-badge class="text-[12px]">{{inactiveDevices}}</ion-badge></span></ion-label>
                 </div>
             </div>
-            <canvas #totalDeviceCountChart></canvas>
+            <div>
+                <canvas #totalDeviceCountChart></canvas>
+            </div>
         </div>
     </div>
 </ion-content>
