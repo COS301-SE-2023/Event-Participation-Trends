@@ -110,6 +110,7 @@ export class CreateFloorPlanPage implements OnInit{
     currentLabelPointerHeight = 0;
     tooltipAllowedVisible = false;
     maxReached = false;
+    selectedSensor = false;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -353,7 +354,11 @@ export class CreateFloorPlanPage implements OnInit{
         this.setTooltipVisibility(element, false);
 
         if (this.activeItem instanceof Konva.Circle) {
+          this.selectedSensor = true;
           this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+        }
+        else {
+          this.selectedSensor = false;
         }
       });
       element.on('dragmove', this.onObjectMoving.bind(this));
@@ -375,7 +380,11 @@ export class CreateFloorPlanPage implements OnInit{
         }
 
         if (this.activeItem instanceof Konva.Circle) {
+          this.selectedSensor = true;
           this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+        }
+        else {
+          this.selectedSensor = false;
         }
       });
       element.on('dragend', () => {

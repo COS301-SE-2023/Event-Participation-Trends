@@ -113,7 +113,7 @@
               ></ion-input>
             </ion-item>
             <ion-item class="attributes-list flex flex-row items-center justify-between mt-2" lines="none">
-              <ion-label class="flex mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null}">Angle:</ion-label>
+              <ion-label class="flex mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || selectedSensor}">Angle:</ion-label>
               <ion-input
                 aria-label=""
                 class="flex ml-auto input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
@@ -121,7 +121,7 @@
                 step="1"
                 [value]="activeItem ? getActiveItemRotation() : ''"
                 (input)="updateRotation($event)"
-                [disabled]="!preventCreatingWalls || activeItem == null"
+                [disabled]="!preventCreatingWalls || activeItem == null || selectedSensor"
               ></ion-input>
             </ion-item>
           </div>
@@ -162,7 +162,7 @@
               ></ion-input>
             </div>
             <div class="mt-3">
-              <ion-label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null}">Angle:</ion-label>
+              <ion-label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || selectedSensor}">Angle:</ion-label>
               <ion-input
                 aria-label=""
                 class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
@@ -170,7 +170,7 @@
                 step="1"
                 [value]="activeItem ? getActiveItemRotation() : ''"
                 (input)="updateRotation($event)"
-                [disabled]="!preventCreatingWalls || activeItem == null"
+                [disabled]="!preventCreatingWalls || activeItem == null || selectedSensor"
               ></ion-input>
             </div>
           </div>
