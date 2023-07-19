@@ -284,20 +284,14 @@ export class CreateFloorPlanPage implements OnInit{
               draggable: true,
               cursor: 'move',
             });
-
-            // image.setAttr('customId', this.getUniqueId());
-            this.sensors?.push({object: image, isLinked:false});
-            // this.canvas.add(image);
-            // this.canvas.draw();
-            // droppedItem.konvaObject = image;
-            circle.setAttr('customId', this.getSelectedSensorId());
+            circle.setAttr('customId', this.getSelectedSensorId(circle));
             const tooltip = this.addTooltip(circle, positionX, positionY);
             this.tooltips.push(tooltip);
             this.setMouseEvents(circle);
             this.canvas.add(circle);
             this.canvas.draw();
             droppedItem.konvaObject = circle;
-            this.store.dispatch(new AddSensor(image));
+            this.store.dispatch(new AddSensor(circle));
             this.sensors$.subscribe(sensors => {
               this.sensors = sensors;
             });
@@ -358,7 +352,7 @@ export class CreateFloorPlanPage implements OnInit{
 
         this.setTooltipVisibility(element, false);
 
-        if (this.activeItem instanceof Konva.Image) {
+        if (this.activeItem instanceof Konva.Circle) {
           this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
         }
       });
@@ -380,7 +374,7 @@ export class CreateFloorPlanPage implements OnInit{
           this.selectedTextBox = true;
         }
 
-        if (this.activeItem instanceof Konva.Image) {
+        if (this.activeItem instanceof Konva.Circle) {
           this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
         }
       });
@@ -1085,7 +1079,7 @@ export class CreateFloorPlanPage implements OnInit{
         if (tr.nodes().length === 1) {
           this.activeItem = tr.nodes()[0];
 
-          if (this.activeItem instanceof Konva.Image) {
+          if (this.activeItem instanceof Konva.Circle) {
             this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
           }
         }
@@ -1199,7 +1193,7 @@ export class CreateFloorPlanPage implements OnInit{
           } else if (tr.nodes().length === 1) {
             this.activeItem = tr.nodes()[0];
 
-            if (this.activeItem instanceof Konva.Image) {
+            if (this.activeItem instanceof Konva.Circle) {
               this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
             }
           }
@@ -1234,7 +1228,7 @@ export class CreateFloorPlanPage implements OnInit{
             this.activeItem = event.target;
             this.activeItem.setAttr('customClass', 'active');
 
-            if (this.activeItem instanceof Konva.Image) {
+            if (this.activeItem instanceof Konva.Circle) {
               this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
             }
         }
@@ -1923,7 +1917,7 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
     isSensor() : boolean {
-      if (this.activeItem && this.activeItem instanceof Konva.Image) {
+      if (this.activeItem && this.activeItem instanceof Konva.Circle) {
         return true;
       }
       this.isCardFlipped = false;
@@ -1961,8 +1955,8 @@ export class CreateFloorPlanPage implements OnInit{
       this.canLinkSensorWithMacAddress = false;
     }
 
-    getSelectedSensorId() {
-      return this.activeItem?.attrs.customId;
+    getSelectedSensorId(element: Konva.Circle) {
+      return element.getAttr('id');
     }
 
     updateLinkedSensors() {

@@ -4,9 +4,10 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 import Konva from 'konva';
+import { IgetNewEventSensorIdResponse } from '@event-participation-trends/api/sensorlinking';
 
 export interface ISensorState {
-    object: Konva.Image,
+    object: Konva.Circle,
     isLinked: boolean,
 }
 
@@ -65,23 +66,16 @@ export class CreateFloorPlanState {
     @Action(AddSensor)
     async addSensor(ctx: StateContext<CreateFloorPlanStateModel>, { sensor }: AddSensor) {
         try {
-            const state = ctx.getState();
-
-            const response = this.appApiService.getNewEventSensorId();
-            return response.subscribe((res: {id: string}) => {
-                sensor.setAttr('customId', res.id);
-      
-                  const newSensorState = {
-                    object: sensor,
-                    isLinked: false
-                  }
-    
-                const newState = {
-                    ...state,
-                    sensors: [...state.sensors, newSensorState]
-                };
-                return ctx.dispatch(new SetCreateFloorPlanState(newState));
-            });           
+            const state = ctx.getState();            
+            const newSensorState = {
+                object: sensor,
+                isLinked: false
+            }
+            const newState = {
+                ...state,
+                sensors: [...state.sensors, newSensorState]
+            };
+            return ctx.dispatch(new SetCreateFloorPlanState(newState));   
         } catch (error) {
             return ctx.dispatch(new SetError((error as Error).message));
         }
