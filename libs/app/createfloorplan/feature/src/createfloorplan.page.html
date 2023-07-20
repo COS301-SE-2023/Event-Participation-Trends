@@ -107,7 +107,7 @@
                 class="flex ml-auto input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
                 step="0.5"
-                [value]="(activeItem && selectedWall) ? getActiveItemWidth() : ''"
+                [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
                 (input)="updateWidth($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null|| !selectedWall"
               ></ion-input>
@@ -119,7 +119,7 @@
                 class="flex ml-auto input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
                 step="1"
-                [value]="activeItem ? getActiveItemRotation() : ''"
+                [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
                 (input)="updateRotation($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null || selectedSensor"
               ></ion-input>
@@ -156,7 +156,7 @@
                 class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
                 step="0.5"
-                [value]="(activeItem && selectedWall) ? getActiveItemWidth() : ''"
+                [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
                 (input)="updateWidth($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null || !selectedWall"
               ></ion-input>
@@ -168,7 +168,7 @@
                 class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
                 type="number"
                 step="1"
-                [value]="activeItem ? getActiveItemRotation() : ''"
+                [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
                 (input)="updateRotation($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null || selectedSensor"
               ></ion-input>
