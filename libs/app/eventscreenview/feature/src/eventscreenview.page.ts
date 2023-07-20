@@ -14,6 +14,7 @@ export class EventScreenViewPage {
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('totalDevicesBarChart') totalDevicesBarChart!: ElementRef<HTMLCanvasElement>;
 
   isLoading = true;
   activeDevices = 25;
@@ -33,6 +34,7 @@ export class EventScreenViewPage {
       this.renderHeatMap();
       this.renderTotalUserCount();
       this.renderTotalDeviceCount();
+      this.renderTotalDevicesBarChart();
     }, 1000);
   }
 
@@ -200,6 +202,67 @@ export class EventScreenViewPage {
           }
         );
       }
+    }
+  }
+
+  renderTotalDevicesBarChart(){
+    const data = {
+        labels: ['08:00', '09:00', '10:00', '10:00', '11:00'],
+        datasets: [{
+          data: [10, 20, 15, 25, 30],
+          backgroundColor: [
+            'rgb(34 197 94)',
+            '#FF0000',
+          ],
+          borderColor: [
+            'rgb(34 197 94)',
+            '#FF0000',
+          ],
+          borderWidth: 1,
+        }]
+      };
+    
+    const deviceBarChartCanvas = this.totalDevicesBarChart.nativeElement;
+
+    if (deviceBarChartCanvas) {
+        const deviceBarChartCtx = deviceBarChartCanvas.getContext('2d');
+        if (deviceBarChartCtx) {
+            const myChart = new Chart(
+                deviceBarChartCanvas,
+                {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        plugins: {
+                            title: {
+                              display: true,
+                              text: 'Active users vs Time of day', // Set the title of the graph
+                            },
+                            legend:{
+                                display: false
+                            }
+                          },
+                        scales: {
+                            x: {
+                                display: true, // Display x-axis labels
+                                title: {
+                                  display: true,
+                                  text: 'Time of day', // Set the X-axis label
+                                },
+                              },
+                              y: {
+                                display: true,
+                                title: {
+                                  display: true,
+                                  text: 'Number of Active Devices', // Set the Y-axis label
+                                },
+                                beginAtZero: true, // If you want the Y-axis to start at zero
+                              },
+                        }
+                    },
+                  }
+            );
+        }
     }
   }
 }
