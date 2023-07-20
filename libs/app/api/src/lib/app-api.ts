@@ -201,7 +201,7 @@ export class AppApiService {
         },
       })
     ).then((response) => {
-      return response.users[0].Requesters;
+      return response.users[0]?.Requesters || [];
     });
   }
 
