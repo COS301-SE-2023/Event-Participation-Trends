@@ -23,6 +23,7 @@ import {
   IEventId,
   IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
+  IGetEventFloorlayoutResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
@@ -165,6 +166,14 @@ export class AppApiService {
       )
     ).then((response) => {
       return response;
+    });
+  }
+
+  getEventFloorLayout(eventId: string): Observable<IGetEventFloorlayoutResponse> {
+    return this.http.get<IGetEventFloorlayoutResponse>(`/api/event/getEventFloorLayout?eventId=${eventId}`, {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
     });
   }
 
