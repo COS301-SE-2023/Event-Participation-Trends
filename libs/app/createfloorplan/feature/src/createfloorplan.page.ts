@@ -12,8 +12,9 @@ import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@
 import { Observable } from 'rxjs';
 import { AddSensor, RemoveSensor, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
 import { IonInput } from '@ionic/angular';
+import { NumberSymbol } from '@angular/common';
 
-type KonvaTypes = Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path | Konva.Circle;
+type KonvaTypes = Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path | Konva.Circle | Konva.Label;
 
 interface DroppedItem {
   name: string;
@@ -111,6 +112,10 @@ export class CreateFloorPlanPage implements OnInit{
     tooltipAllowedVisible = false;
     maxReached = false;
     selectedSensor = false;
+    selectionGroup !: Konva.Group;
+    prevSelectionGroup !: Konva.Group;
+    selected : Konva.Shape[] = [];
+    stallCount = 1;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -214,16 +219,17 @@ export class CreateFloorPlanPage implements OnInit{
     }
 
     addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
-      if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg') || droppedItem.name.includes('svg')) {
-        Konva.Image.fromURL(droppedItem.name, (image) => {
+      if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg') || droppedItem.name.includes('svg') || 1 == 1) {
+        console.log('image');
+        Konva.Image.fromURL("https://static.wikia.nocookie.net/starwars/images/d/d6/Yoda_SWSB.png/revision/latest?cb=20150206140125", (image) => {
           this.setupElement(image, positionX, positionY);
           
           if (droppedItem.name.includes('stall')) {
-            image.setAttr('name', 'stall');
+            image.setAttr('name', 'stallImage');
             image.setAttr('x', 0);
             image.setAttr('y', 0);
             const group = new Konva.Group({
-              id: 'stall',
+              id: 'stall-' + this.stallCount,
               name: 'stall',
               x: positionX,
               y: positionY,
@@ -232,6 +238,7 @@ export class CreateFloorPlanPage implements OnInit{
               draggable: true,
               cursor: 'move',
               fill: 'white',
+              angle: 0,
             });
             
             const text = new Konva.Text({
@@ -239,7 +246,7 @@ export class CreateFloorPlanPage implements OnInit{
               name: 'stallName',
               x: 0,
               y: 0,
-              text: 'Stall',
+              text: 'Stall-' + this.stallCount,
               fontSize: 2,
               fontFamily: 'Calibri',
               fill: 'black',
@@ -265,6 +272,7 @@ export class CreateFloorPlanPage implements OnInit{
             this.canvas.add(group);
             this.canvas.draw();
             droppedItem.konvaObject = group;
+            this.stallCount++;
           } 
           else if (droppedItem.name.includes('sensor')) {
             image.setAttr('name', 'sensor');
@@ -314,6 +322,7 @@ export class CreateFloorPlanPage implements OnInit{
               verticalAlign: 'middle',
               draggable: true,
               cursor: 'move',
+              angle: 0,
             });
             text.setAttrs({
               width: text.text().length * text.fontSize() / 2,
@@ -576,34 +585,79 @@ export class CreateFloorPlanPage implements OnInit{
 
             this.initialHeight = this.canvasContainer.height();
 
-            this.canvas = new Konva.Layer();
+            this.route.queryParams.subscribe(params => {
+              const eventId = params['id'];
+              
+              this.appApiService.getEventFloorLayout(eventId).subscribe((response) => {
+                this.canvas = new Konva.Layer();
 
-            this.canvasContainer.add(this.canvas);
-            this.canvasContainer.draw();
-            // this.canvasParent.nativeElement.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
+                console.log(response.floorlayout);
+
+                const json = `
+                {"attrs":{},"className":"Layer","children":[{"attrs":{"x":130.9078928896872,"y":122.4397531304478,"width":50,"height":50,"cursor":"move","draggable":true,"cornerRadius":2,"padding":20,"fill":"white","name":"sensor","customId":"7d3c"},"className":"Image"},{"attrs":{"x":200,"y":190,"data":"M0,0 L20,270","stroke":"black","strokeWidth":1.25,"lineCap":"round","lineJoin":"round","name":"wall","width":20,"height":270,"opacity":0.5},"className":"Path"},{"attrs":{"x":540,"y":150,"data":"M0,0 L-170,300","stroke":"black","strokeWidth":1.25,"lineCap":"round","lineJoin":"round","name":"wall","width":170,"height":300,"opacity":0.5},"className":"Path"},{"attrs":{"x":410,"y":160,"data":"M0,0 L-170,-10","stroke":"black","strokeWidth":1.25,"lineCap":"round","lineJoin":"round","name":"wall","width":170,"height":10,"opacity":0.5},"className":"Path"},{"attrs":{"x":600,"y":400,"data":"M0,0 L0,0","stroke":"black","strokeWidth":1.25,"lineCap":"round","lineJoin":"round","draggable":true,"name":"wall"},"className":"Path"},{"attrs":{"x":600,"y":400,"data":"M0,0 L-120,-210","stroke":"black","strokeWidth":1.25,"lineCap":"round","lineJoin":"round","name":"wall","width":120,"height":210,"opacity":0.5},"className":"Path"},{"attrs":{"x":158.6296921875532,"y":477.72727272727275,"data":"M0,0 L-110,-460","stroke":"black","strokeWidth":1.25,"lineCap":"round","lineJoin":"round","draggable":true,"name":"wall","width":110,"height":460},"className":"Path"},{"attrs":{"x":430,"y":160,"data":"M0,0 L-140,370","stroke":"black","strokeWidth":1.25,"lineCap":"round","lineJoin":"round","draggable":true,"name":"wall","width":140,"height":370},"className":"Path"},{"attrs":{"id":"sensor-1","name":"sensor","x":310,"y":90,"radius":2,"fill":"red","stroke":"black","strokeWidth":0.25,"draggable":true,"cursor":"move"},"className":"Circle"},{"attrs":{"id":"stall","name":"stall","x":370,"y":90,"width":10,"height":10,"draggable":true,"cursor":"move","fill":"white"},"className":"Group","children":[{"attrs":{"width":10,"height":10,"cursor":"move","draggable":true,"cornerRadius":2,"padding":20,"fill":"white","name":"stall"},"className":"Image"},{"attrs":{"id":"stallName","name":"stallName","text":"Gendac","fontSize":2,"fontFamily":"Calibri","fill":"black","width":10,"align":"center","verticalAlign":"middle","padding":3,"cursor":"move"},"className":"Text"}]}]}
+                `;
+
+                const parsed = JSON.parse(json);
+
+                // this.canvas = Konva.Node.create(json, 'canvasParent');
+
+                // this.canvas.children!.forEach(child => {
+
+                //   let type : KonvaTypes;
+
+                //   switch (child.getClassName()) {
+                //     case 'Image':
+                //       type = new Konva.Image(child.getAttrs());
+                //       break;
+                //     case 'Path':
+                //       type = new Konva.Path(child.getAttrs());
+                //       break;
+                //     case 'Circle':
+                //       type = new Konva.Circle(child.getAttrs());
+                //       break;
+                //     case 'Group':
+                //       type = new Konva.Group(child.getAttrs());
+                //       break;
+                //     case 'Text':
+                //       type = new Konva.Text(child.getAttrs());
+                //       break;
+                //     default:
+                //       type = new Konva.Line(child.getAttrs());
+                //       break;
+                //   }
+
+                //   this.setMouseEvents(type);
+
+                //   this.canvasItems.push({name: child.getAttr('name'), konvaObject: type});
+                // });
+
+                
+                this.canvasContainer.add(this.canvas);
+                this.canvasContainer.draw();
+                // this.canvasParent.nativeElement.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 
             //set object moving
             this.canvas.on('dragmove', this.handleDragMove.bind(this));
-
+            
             // Attach the mouse down event listener to start dragging lines
             this.canvasContainer.on('mousedown', this.onMouseDown.bind(this));
-
+            
             this.createGridLines();
-
+            
             this.canvasContainer.on('mouseup', this.onMouseUp.bind(this));
-
+            
             // create selection box to select different components on the canvas
             this.createSelectionBox();
 
             this.canvasContainer.on('click', (e) => {
               const position = this.canvasContainer.getRelativePointerPosition();
-
+              
               const component = this.canvas.getIntersection(position);
-
+              
               if (!component || !(component instanceof Konva.Line) && !(component instanceof Konva.Image) && !(component instanceof Konva.Group) && !(component instanceof Konva.Path)) {
                 this.transformer.detach();
               }
-
+              
               if (component && component instanceof Konva.Text) {
                 const selectedText = component;
                 const group = selectedText.getAncestors()[0] as Konva.Group;
@@ -625,7 +679,7 @@ export class CreateFloorPlanPage implements OnInit{
             this.macAddressBlockElements.forEach((element: HTMLIonInputElement) => {
               this.macAddressBlocks.push(element.value ? element.value.toString() : '');
             });
-
+            
             window.addEventListener('keydown', (event: KeyboardEvent) => {
               //now check if no input field has focus and the Delete key is pressed
               if (!this.inputHasFocus && (event.code === "Delete" || event.ctrlKey)) {
@@ -633,14 +687,14 @@ export class CreateFloorPlanPage implements OnInit{
               }
             });
             window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
-
+            
             this.scaleBy = 2;
-
+            
             this.canvasContainer.on('wheel', (e) => {
               e.evt.preventDefault();
               this.handleScaleAndDrag(this.scaleBy, e);              
             });
-
+            
             this.canvasContainer.scaleX(this.scaleBy);
             this.canvasContainer.scaleY(this.scaleBy);
             // const wheelEvent = new WheelEvent('wheel', { deltaY: -1 });
@@ -649,10 +703,27 @@ export class CreateFloorPlanPage implements OnInit{
             this.contentLoaded = true;
             this.snapLabel = this.TRUE_SCALE_FACTOR;
             this.gridSizeLabel = this.TRUE_SCALE_FACTOR;
-            this.tooltipAllowedVisible = true;
-        }, 6);
-    }
 
+            // add all the elements from the database
+
+            parsed.children.forEach((child: { attrs: { x: any; y: any; name: any; }; }) => {
+              if (!child.attrs.x || !child.attrs.y) return;
+
+              const positionX = child.attrs.x;
+              const positionY = child.attrs.y;
+              const droppedItem: DroppedItem = { name: child.attrs.name };
+
+              this.canvasItems.push(droppedItem);
+              this.addKonvaObject(droppedItem, positionX, positionY);
+            });
+
+            console.log(this.canvasItems);
+
+            });
+          });
+          }, 6);
+    }
+    
     handleScaleAndDrag(scaleBy:number, e?: any, direction?: 'in' | 'out'): void {
       let stage = null;
       if (e) {
@@ -893,7 +964,7 @@ export class CreateFloorPlanPage implements OnInit{
       if(!this.preventCreatingWalls) return;
 
       this.transformer.detach();
-      this.transformers = [];
+      // this.transformers = [];
 
       if (this.selectedTextBox) {
         this.transformer = new Konva.Transformer({
@@ -926,7 +997,6 @@ export class CreateFloorPlanPage implements OnInit{
           const newWidth = this.calculateWidth(this.activeItem);
           const newAngle = this.calculatePathAngle(this.activeItem);
           this.activeItem?.setAttr('width', newWidth);
-          this.activeItem?.setAttr('angle', newAngle);
         });
       }
       else if (this.activeItem instanceof Konva.Circle) {
@@ -946,6 +1016,11 @@ export class CreateFloorPlanPage implements OnInit{
           boundBoxFunc: (oldBox, newBox) => {
             return newBox;
           }
+        });
+        this.transformer.on('transform', () => {
+          const newAngle = this.transformer.getAbsoluteRotation();
+          this.activeItem?.setAttr('rotation', newAngle);
+          console.log(this.activeItem?.getAttr('angle'));
         });
       }
 
@@ -967,16 +1042,27 @@ export class CreateFloorPlanPage implements OnInit{
         return;
       }
 
-      const tr = new Konva.Transformer({enabledAnchors: []});
-      this.transformers.push(tr);
-      this.canvas.add(tr);
+      this.transformer = new Konva.Transformer({
+        enabledAnchors: [],
+        resizeEnabled: false,
+      });
+      this.transformers.push(this.transformer);
+      this.canvas.add(this.transformer);
 
       const selectionBox = new Konva.Rect({
         fill: 'rgba(0,0,255,0.2)',
         visible: false,
       });
 
+      const rect = new Konva.Rect({
+        fill: 'rgba(0,0,0,0)',
+        visible: false,
+        draggable: false,
+        cursor: 'move',
+      })
+
       this.canvas.add(selectionBox);
+      this.canvas.add(rect);
 
       let x1: number;
       let y1: number;
@@ -1025,6 +1111,9 @@ export class CreateFloorPlanPage implements OnInit{
         selectionBox.visible(true);
         selectionBox.width(0);
         selectionBox.height(0);
+        rect.visible(true);
+        rect.width(0);
+        rect.height(0);
       });
 
       this.canvasContainer.on('mousemove', (e) => {
@@ -1069,9 +1158,9 @@ export class CreateFloorPlanPage implements OnInit{
         //find any this related to lines and images and text
         const shapes = this.canvasContainer.find('.rect, .wall, .sensor, .stall, .stallName, .textBox');
         const box = selectionBox.getClientRect();
-        const selected = shapes.filter((shape) => {
+        this.selected = shapes.filter((shape) => {
           return Konva.Util.haveIntersection(box, shape.getClientRect());
-        });
+        }) as Konva.Shape[];
         
         //remove all previous selections
         this.transformers.forEach((tr) => {
@@ -1079,14 +1168,16 @@ export class CreateFloorPlanPage implements OnInit{
         });
 
         //add new selections
-        if (selected.length) {
-          this.transformers.forEach((tr) => {
-            tr.nodes(selected);
-          });
+        if (this.selected.length) {
+          // this.transformers.forEach((tr) => {
+          //   tr.nodes(selected);
+          // });
+          // find the min and max x and y values among the selected shapes
+          this.madeSelection(rect, this.selected, this.transformer);
         }
 
-        if (tr.nodes().length === 1) {
-          this.activeItem = tr.nodes()[0];
+        if (this.transformer.nodes().length === 1) {
+          this.activeItem = this.transformer.nodes()[0];
 
           if (this.activeItem instanceof Konva.Circle) {
             this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
@@ -1103,19 +1194,30 @@ export class CreateFloorPlanPage implements OnInit{
         // if click on empty area - remove all selections
         if (e.target === this.canvasContainer) {
           this.transformers.forEach((tr) => {
-            tr.nodes([]);
+            this.transformer.nodes([]);
           });
           this.activeItem = null;
           this.transformer.nodes([]);
-          tr.nodes([]);
+          this.transformer.nodes([]);
           this.textLength = 0;
           this.selectedTextBox = false;
 
           this.store.dispatch(new UpdateActiveSensor(''));
+
+          if (this.selectionGroup) {
+            this.updatePositions();
+            this.selected.forEach((shape) => {
+              if (shape.hasName('textBox') ||  shape.hasName('stall') || shape.hasName('sensor') || shape.hasName('wall')) {
+                shape.moveTo(this.canvas);
+                shape.draggable(true);
+              }
+            });
+            this.selectionGroup.destroy();
+          }
           return;
         }
 
-        if (tr.nodes().length > 1){
+        if (this.transformer.nodes().length > 1){
           this.activeItem = null;
           this.textLength = 0;
           this.selectedTextBox = false;
@@ -1141,9 +1243,9 @@ export class CreateFloorPlanPage implements OnInit{
           this.selectedTextBox = false;
           this.transformer.detach();
           this.transformer.nodes([]);
-          tr.detach();
-          tr.nodes([]);
-          this.transformers = [];
+          // this.tr.detach();
+          this.transformer.nodes([]);
+          // this.transformers = [];
 
           this.store.dispatch(new UpdateActiveSensor(''));
           
@@ -1152,7 +1254,7 @@ export class CreateFloorPlanPage implements OnInit{
             const parent = e.target.getParent();
             this.activeItem = parent;
             this.transformer.nodes([parent]);
-            tr.nodes([parent]);
+            this.transformer.nodes([parent]);
             this.transformers = [this.transformer];
             this.canvas.draw();
           }
@@ -1170,37 +1272,37 @@ export class CreateFloorPlanPage implements OnInit{
           this.selectedTextBox = false;
           this.transformer.detach();
           this.transformer.nodes([]);
-          tr.detach();
-          tr.nodes([]);
-          this.transformers = [];
+          // tr.detach();
+          this.transformer.nodes([]);
+          // this.transformers = [];
           return;
         }
 
         // check to see if we pressed ctrl or shift
         const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-        const isSelected = tr.nodes().indexOf(e.target) >= 0;
+        const isSelected = this.transformer.nodes().indexOf(e.target) >= 0;
 
         if (!metaPressed && !isSelected) {
           // if no key pressed and the node is not selected
           // select just one
-          tr.nodes([e.target]);
+          this.transformer.nodes([e.target]);
         } else if (metaPressed && isSelected) {
           // if we pressed keys and node was selected
           // we need to remove it from selection:
-          const nodes = tr.nodes().slice(); // use slice to have new copy of array
+          const nodes = this.transformer.nodes().slice(); // use slice to have new copy of array
           // remove node from array
           nodes.splice(nodes.indexOf(e.target), 1);
-          tr.nodes(nodes);
+          this.transformer.nodes(nodes);
 
-          if (tr.nodes().length > 1){
+          if (this.transformer.nodes().length > 1){
             this.activeItem = null;
             this.textLength = 0;
             this.selectedTextBox = false;
 
             this.store.dispatch(new UpdateActiveSensor(''));
             
-          } else if (tr.nodes().length === 1) {
-            this.activeItem = tr.nodes()[0];
+          } else if (this.transformer.nodes().length === 1) {
+            this.activeItem = this.transformer.nodes()[0];
 
             if (this.activeItem instanceof Konva.Circle) {
               this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
@@ -1209,10 +1311,10 @@ export class CreateFloorPlanPage implements OnInit{
 
         } else if (metaPressed && !isSelected) {
           // add the node into selection
-          const nodes = tr.nodes().concat([e.target]);
-          tr.nodes(nodes);
+          const nodes = this.transformer.nodes().concat([e.target]);
+          this.transformer.nodes(nodes);
 
-          if (tr.nodes().length > 1){
+          if (this.transformer.nodes().length > 1){
             this.activeItem = null;
             this.textLength = 0;
             this.selectedTextBox = false;
@@ -1222,6 +1324,81 @@ export class CreateFloorPlanPage implements OnInit{
           }
         }
       });
+    }
+
+    updatePositions() {
+      if (this.prevSelectionGroup) {
+        this.selected.forEach((shape) => {
+          if (shape.hasName('textBox') ||  shape.hasName('stall') || shape.hasName('sensor') || shape.hasName('wall')) {
+            shape.x(shape.x() + this.prevSelectionGroup.x());
+            shape.y(shape.y() + this.prevSelectionGroup.y());
+            this.updateTooltipID(shape as KonvaTypes);
+          }
+        });
+        this.canvas.draw();
+      }
+      return;
+    }
+
+    madeSelection(rect: Konva.Rect, selected: Konva.Shape[], tr: Konva.Transformer) {
+      this.updatePositions();
+      let minX = selected[0].x();
+      let maxX = selected[0].x() + selected[0].width();
+      let minY = selected[0].y();
+      let maxY = selected[0].y() + selected[0].height();
+      selected.forEach((shape) => {
+        if (shape.hasName('textBox') ||  shape.hasName('stall') || shape.hasName('sensor') || shape.hasName('wall')) {
+          minX = Math.min(minX, shape.x());
+          maxX = Math.max(maxX, shape.x() + shape.width());
+          minY = Math.min(minY, shape.y());
+          maxY = Math.max(maxY, shape.y() + shape.height());
+        }
+      });
+
+      this.selectionGroup = new Konva.Group({
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY,
+        draggable: true,
+        name: 'selectionGroup',
+        cursor: 'move',
+      });
+
+      this.prevSelectionGroup = this.selectionGroup;
+      
+      // set the position and size of the box
+      rect.position({ x: 0, y: 0 });
+      rect.width(maxX - minX);
+      rect.height(maxY - minY);
+      rect.visible(true);
+
+      this.selectionGroup.on('mouseenter', () => {
+        document.body.style.cursor = 'move';
+      });
+      this.selectionGroup.on('mouseleave', () => {
+        document.body.style.cursor = 'default';
+      });
+      this.selectionGroup.on('dragmove', () => {
+        tr.nodes([this.selectionGroup]);
+      });
+      rect.on('click', () => {
+        tr.nodes([this.selectionGroup]);
+      });
+
+      selected.forEach((shape) => {
+        if (shape.hasName('textBox') ||  shape.hasName('stall') || shape.hasName('sensor') || shape.hasName('wall')) {
+          shape.moveTo(this.selectionGroup);
+          shape.draggable(false);
+          shape.x(shape.x() - minX);
+          shape.y(shape.y() - minY);
+        }
+      });
+      rect.moveTo(this.selectionGroup);
+      rect.draggable(false);
+      tr.nodes([this.selectionGroup]);
+      this.canvas.add(this.selectionGroup);
+      this.canvas.draw();
     }
 
     onObjectMoving(event: Konva.KonvaEventObject<DragEvent>): void {
@@ -1510,6 +1687,12 @@ export class CreateFloorPlanPage implements OnInit{
           return angle;
         }
         return 0;
+      }
+
+      calculateNewAngle(element: KonvaTypes): NumberSymbol {
+        const angleRad = element.rotation();
+        const angleDeg = angleRad * (180 / Math.PI);
+        return angleDeg;
       }
 
       calculateWidth(element: Konva.Path): number {
@@ -1913,12 +2096,15 @@ export class CreateFloorPlanPage implements OnInit{
       }
 
       getActiveItemRotation(): number {
-        const angle = Math.round(this.activeItem?.getAttr('angle') * 100) / 100;
+        const angle = Math.round(this.activeItem?.getAttr('rotation') * 100) / 100;
         if (angle > 360) {
           return angle - 360;
         }
         else if (angle === 360) {
           return 0;
+        }
+        else if (angle < 0) {
+          return 360 + angle;
         }
         else {
           return angle;
