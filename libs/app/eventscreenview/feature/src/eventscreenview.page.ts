@@ -236,7 +236,7 @@ export class EventScreenViewPage {
                         plugins: {
                             title: {
                               display: true,
-                              text: 'Active users vs Time of day', // Set the title of the graph
+                              text: 'Active Devices vs Time of day', // Set the title of the graph
                             },
                             legend:{
                                 display: false
