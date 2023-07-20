@@ -49,6 +49,7 @@
     "konva": "^9.2.0",
     "leaflet": "^1.9.4",
     "leaflet.heat": "^0.2.0",
+    "luxon": "^3.3.0",
     "moment": "^2.29.4",
     "mongoose": "^7.2.1",
     "mqtt": "^4.3.7",

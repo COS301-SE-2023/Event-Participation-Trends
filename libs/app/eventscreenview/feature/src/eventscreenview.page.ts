@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
-import Chart from 'chart.js/auto';
+import Chart, { ChartConfiguration } from 'chart.js/auto';
+import 'luxon';
 import 'chartjs-adapter-luxon';
 import 'chartjs-plugin-datalabels';
+
 import ChartStreaming from 'chartjs-plugin-streaming';
 
 
@@ -143,7 +145,7 @@ export class EventScreenViewPage {
       const userCountCtx = userCountCanvas.getContext('2d');
       if (userCountCtx) {
         const myChart = new Chart(
-          userCountCanvas,
+          userCountCtx,
           {
             type: 'doughnut',
             data: data,
@@ -207,7 +209,7 @@ export class EventScreenViewPage {
       const deviceCountCtx = deviceCountCanvas.getContext('2d');
       if (deviceCountCtx) {
         const myChart = new Chart(
-          deviceCountCanvas,
+          deviceCountCtx,
           {
             type: 'doughnut',
             data: data,
@@ -244,21 +246,6 @@ export class EventScreenViewPage {
     }
   }
 
-  onRefresh(chart: any) {
-    // // query your data source and get the array of {x: timestamp, y: value} objects
-    // var data = getLatestData();
-
-    // // append the new data array to the existing chart data
-    // chart.data.datasets[0].data.push(...data);
-
-    chart.config.data.datasets.forEach((dataset: any) => {
-      dataset.data.push({
-        x: Date.now(),
-        y: Math.random()
-      });
-    });
-  }
-
   renderUserCountDataStreaming() {
     const data = {
       datasets: [{
@@ -273,6 +260,48 @@ export class EventScreenViewPage {
       }]
     };
 
+    const config: ChartConfiguration = {
+      type: 'line',             // 'line', 'bar', 'bubble' and 'scatter' types are supported
+      data: {
+        labels: [''],             // empty at the beginning
+        datasets: [{
+          label: 'Users',
+          data: [0],              // empty at the beginning
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            type: 'realtime',   // x axis will auto-scroll from right to left
+            realtime: {         // per-axis options
+              duration: 20000,  // data in the past 20000 ms will be displayed
+              refresh: 2000,    // onRefresh callback will be called every 1000 ms
+              delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+    
+              // a callback to update datasets
+              onRefresh: chart => {
+    
+                // // query your data source and get the array of {x: timestamp, y: value} objects
+                // let data = getLatestData();
+    
+                // // append the new data array to the existing chart data
+                // chart.data.datasets[0].data.push(...data);
+
+                chart.config.data.datasets.forEach((dataset: any) => {
+                  dataset.data.push({
+                    x: Date.now(),
+                    y: Math.random()
+                  });
+                });
+
+                chart.update();
+              }
+            }
+          }
+        }
+      }
+    };
+
     const userCountDataStreamingCanvas = this.userCountDataStreamingChart.nativeElement;
 
     if (userCountDataStreamingCanvas) {
@@ -280,48 +309,10 @@ export class EventScreenViewPage {
       if (userCountDataStreamingCtx) {
         const myChart = new Chart(
           userCountDataStreamingCtx, 
-        {
-          type: 'line',             // 'line', 'bar', 'bubble' and 'scatter' types are supported
-          data: {
-            datasets: [{
-              label: 'Users',
-              data: []              // empty at the beginning
-            }]
-          },
-          options: {
-            scales: {
-              x: {
-                type: 'realtime',   // x axis will auto-scroll from right to left
-                realtime: {         // per-axis options
-                  duration: 20000,  // data in the past 20000 ms will be displayed
-                  refresh: 1000,    // onRefresh callback will be called every 1000 ms
-                  delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
-                  pause: false,     // chart is not paused
-                  ttl: undefined,   // data will be automatically deleted as it disappears off the chart
-                  frameRate: 30,    // data points are drawn 30 times every second
-        
-                  // a callback to update datasets
-                  onRefresh: chart => {
-        
-                    // // query your data source and get the array of {x: timestamp, y: value} objects
-                    // let data = getLatestData();
-        
-                    // // append the new data array to the existing chart data
-                    // chart.data.datasets[0].data.push(...data);
-
-                    chart.config.data.datasets.forEach((dataset: any) => {
-                      dataset.data.push({
-                        x: Date.now(),
-                        y: Math.random()
-                      });
-                    });
-                  }
-                }
-              }
-            }
-          }
-        });
+          config        
+        );
       }
     }
+
   }
 }
