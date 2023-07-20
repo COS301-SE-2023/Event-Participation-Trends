@@ -27,6 +27,10 @@ export class EventScreenViewPage {
   heatmap: any;
   windowWidth = window.innerWidth;
   windowHeight = window.innerHeight;
+  showToggle = false;
+  showHeatmap = false;
+  myHeatmap: any;
+  myHeatLayer: any;
   
   ngAfterViewInit() {
     // wait until the heatmap container is rendered
@@ -43,20 +47,52 @@ export class EventScreenViewPage {
     }, 1000);
   }
 
+  showToggleButton() {
+    this.showToggle = true;
+  }
+
+  hideToggleButton() {
+    this.showToggle = false;
+  }
+
+  toggleHeatmap() {
+    this.showHeatmap = !this.showHeatmap;
+
+    if (this.showHeatmap) {
+      const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();
+
+      this.myHeatLayer = L.heatLayer(
+        heatmapData,
+        {
+          radius: 25,
+          gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' },
+          minOpacity: 0.3
+        }
+      ).addTo(this.myHeatmap);
+  
+      // If we have the data we can determine the hotzone of the heatmap and add a red circle radius Marker to it
+      // determine hot zone and add a red circle radius Marker to it
+      // const hotZone = this.getHotZone(heatmapData);
+      // L.circleMarker(hotZone, { radius: 40, color: 'red', fillColor: 'red', fillOpacity: 0.45 }).addTo(map);
+    } else {
+      this.myHeatmap.removeLayer(this.myHeatLayer);
+    }
+  }
+
   renderHeatMap() {
-    const map = L.map(this.heatmapContainer.nativeElement).setView([0, 0], 13);
+    this.myHeatmap = L.map(this.heatmapContainer.nativeElement).setView([0, 0], 13);
 
     //disable zoom functionality
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-    map.dragging.disable();
+    this.myHeatmap.touchZoom.disable();
+    this.myHeatmap.doubleClickZoom.disable();
+    this.myHeatmap.scrollWheelZoom.disable();
+    this.myHeatmap.boxZoom.disable();
+    this.myHeatmap.keyboard.disable();
+    this.myHeatmap.dragging.disable();
 
     // disable zoom in and out buttons
-    map.removeControl(map.zoomControl);
-    map.removeControl(map.attributionControl);
+    this.myHeatmap.removeControl(this.myHeatmap.zoomControl);
+    this.myHeatmap.removeControl(this.myHeatmap.attributionControl);
 
 
     // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -68,26 +104,10 @@ export class EventScreenViewPage {
     // const imageBounds: L.LatLngBounds = map.getBounds();
     // get bounds of heatmap container
     const imageBounds: L.LatLngBounds = L.latLngBounds(
-      map.containerPointToLatLng(L.point(0, 0)),
-      map.containerPointToLatLng(L.point(this.heatmapContainer.nativeElement.offsetWidth, this.heatmapContainer.nativeElement.offsetHeight))
+      this.myHeatmap.containerPointToLatLng(L.point(0, 0)),
+      this.myHeatmap.containerPointToLatLng(L.point(this.heatmapContainer.nativeElement.offsetWidth, this.heatmapContainer.nativeElement.offsetHeight))
     );
-    L.imageOverlay(imageUrl, imageBounds).addTo(map);
-
-    const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();
-
-    const heat = L.heatLayer(
-      heatmapData,
-      {
-        radius: 25,
-        gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' },
-        minOpacity: 0.3
-      }
-    ).addTo(map);
-
-    // If we have the data we can determine the hotzone of the heatmap and add a red circle radius Marker to it
-    // determine hot zone and add a red circle radius Marker to it
-    // const hotZone = this.getHotZone(heatmapData);
-    // L.circleMarker(hotZone, { radius: 40, color: 'red', fillColor: 'red', fillOpacity: 0.45 }).addTo(map);
+    L.imageOverlay(imageUrl, imageBounds).addTo(this.myHeatmap);
   }
 
   getHotZone(heatmapData: (L.LatLng | L.HeatLatLngTuple)[]) {
