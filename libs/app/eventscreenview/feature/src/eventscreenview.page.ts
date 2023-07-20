@@ -236,7 +236,7 @@ export class EventScreenViewPage {
                         plugins: {
                             title: {
                               display: true,
-                              text: 'Active Devices vs Time of day', // Set the title of the graph
+                              text: 'Active Devices vs Time of day', 
                             },
                             legend:{
                                 display: false
@@ -244,19 +244,19 @@ export class EventScreenViewPage {
                           },
                         scales: {
                             x: {
-                                display: true, // Display x-axis labels
+                                display: true, 
                                 title: {
                                   display: true,
-                                  text: 'Time of day', // Set the X-axis label
+                                  text: 'Time of day',
                                 },
                               },
                               y: {
                                 display: true,
                                 title: {
                                   display: true,
-                                  text: 'Number of Active Devices', // Set the Y-axis label
+                                  text: 'Number of Active Devices', 
                                 },
-                                beginAtZero: true, // If you want the Y-axis to start at zero
+                                beginAtZero: true, 
                               },
                         }
                     },
