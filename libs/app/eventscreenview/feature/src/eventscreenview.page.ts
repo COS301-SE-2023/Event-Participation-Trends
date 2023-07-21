@@ -29,6 +29,7 @@ export class EventScreenViewPage {
   windowHeight = window.innerHeight;
   showToggle = false;
   showHeatmap = false;
+  showFlowmap = false;
   myHeatmap: any;
   myHeatLayer: any;
   oldHeatmapData: (L.LatLng | L.HeatLatLngTuple)[] = []
@@ -61,6 +62,10 @@ export class EventScreenViewPage {
 
   hideToggleButton() {
     this.showToggle = false;
+  }
+
+  toggleFlowmap() {
+    this.showFlowmap = !this.showFlowmap;
   }
 
   toggleHeatmap() {
