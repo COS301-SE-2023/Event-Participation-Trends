@@ -31,6 +31,7 @@ export class EventScreenViewPage {
   showHeatmap = false;
   myHeatmap: any;
   myHeatLayer: any;
+  oldHeatmapData: (L.LatLng | L.HeatLatLngTuple)[] = []
   
   ngAfterViewInit() {
     // wait until the heatmap container is rendered
@@ -45,6 +46,13 @@ export class EventScreenViewPage {
       this.renderTotalDeviceCount();
       this.renderUserCountDataStreaming();
     }, 1000);
+
+      setInterval(() => {
+        if (this.showHeatmap) {
+          const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();  
+          this.myHeatLayer.setLatLngs(heatmapData);
+        }
+      }, 500);
   }
 
   showToggleButton() {
@@ -125,7 +133,12 @@ export class EventScreenViewPage {
     return hotZone;
   }
 
-  generateHeatmapData() { 
+  generateHeatmapData() {
+    /*
+      Note: Most of the funtionality in this method is used for testing purposes only.
+      Once we have real data we can remove the testing code and replace it with the real data.
+    */
+
     const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [];
     const bounds = {
       north: 0.031,   // Latitude of the north boundary
@@ -134,13 +147,56 @@ export class EventScreenViewPage {
       west: -0.1235    // Longitude of the west boundary
     };
   
-    for (let i = 0; i < 1000; i++) {
-      const latitude = bounds.south + Math.random() * (bounds.north - bounds.south);
-      const longitude = bounds.west + Math.random() * (bounds.east - bounds.west);
-      const intensity = 0.5 + Math.random() * 0.5;
+    if (this.oldHeatmapData.length === 0)  {
+        for (let i = 0; i < 10; i++) {
+        const latitude = bounds.south + Math.random() * (bounds.north - bounds.south);
+        const longitude = bounds.west + Math.random() * (bounds.east - bounds.west);
+        const intensity = 0.5 + Math.random() * 0.5;
+    
+        this.oldHeatmapData.push([latitude, longitude, intensity]);
+      }
+    } 
+
+    // Function to generate a random number between min and max (inclusive)
+    const getRandomNumber = (min: number, max: number) => {
+      return Math.random() * (max - min) + min;
+    };
   
-      heatmapData.push([latitude, longitude, intensity]);
-    }
+    // Maximum distance a data point can be moved (adjust this value as needed)
+    const maxDisplacement = 0.0085; // Adjust this value to control the displacement
+  
+    this.oldHeatmapData.forEach((dataPoint: L.LatLng | L.HeatLatLngTuple) => {
+      // Check if dataPoint is L.LatLng or L.HeatLatLngTuple
+      if ('lat' in dataPoint && 'lng' in dataPoint) {
+        // It's an L.LatLng type
+        const latLngDataPoint = dataPoint as L.LatLng;
+    
+        const latDisplacement = getRandomNumber(-maxDisplacement, maxDisplacement);
+        const lngDisplacement = getRandomNumber(-maxDisplacement, maxDisplacement);
+    
+        latLngDataPoint.lat += latDisplacement; // Latitude
+        latLngDataPoint.lng += lngDisplacement; // Longitude
+    
+        // Make sure the updated data point stays within the defined bounds
+        latLngDataPoint.lat = Math.max(bounds.south, Math.min(bounds.north, latLngDataPoint.lat)); // Latitude
+        latLngDataPoint.lng = Math.max(bounds.west, Math.min(bounds.east, latLngDataPoint.lng)); // Longitude
+      } else {
+        // It's a HeatLatLngTuple type
+        const heatLatLngDataPoint = dataPoint as L.HeatLatLngTuple;
+    
+        const latDisplacement = getRandomNumber(-maxDisplacement, maxDisplacement);
+        const lngDisplacement = getRandomNumber(-maxDisplacement, maxDisplacement);
+    
+        heatLatLngDataPoint[0] += latDisplacement; // Latitude
+        heatLatLngDataPoint[1] += lngDisplacement; // Longitude
+    
+        // Make sure the updated data point stays within the defined bounds
+        heatLatLngDataPoint[0] = Math.max(bounds.south, Math.min(bounds.north, heatLatLngDataPoint[0])); // Latitude
+        heatLatLngDataPoint[1] = Math.max(bounds.west, Math.min(bounds.east, heatLatLngDataPoint[1])); // Longitude
+      }
+    });
+
+    heatmapData.push(...this.oldHeatmapData);
   
     return heatmapData;
   }
