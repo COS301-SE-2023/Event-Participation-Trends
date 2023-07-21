@@ -70,35 +70,79 @@ export class EventScreenViewPage {
     this.showFlowmap = !this.showFlowmap;
 
     if (this.showFlowmap) {
-      // use L.Gridlayer to create gridlines on the map
-      const myGrid = L.GridLayer.extend({
-        options: {
-          tileSize: 58.05,
-          opacity: 0.9,
-          zIndex: 1000,
-          bounds: this.myHeatmap.getBounds(),
-        },
-        createTile: (coords: any) => {
-          const tile = document.createElement('div');
-          const tileSize = this.myHeatmap.getPixelBounds().getSize();
-          tile.style.background = 'rgba(0, 0, 0, 0.1)';
-          tile.style.border = 'solid 1px rgba(0, 0, 0, 0.5)';
-          tile.style.fontSize = '10px';
-          tile.style.color = 'rgba(0, 0, 0, 0.5)';
-          tile.style.textAlign = 'center';
-          // tile.style.lineHeight = tileSize.y + 'px';
-          // tile.innerHTML = `[${coords.x}, ${coords.y}]`;
-          return tile;
+      // add arrow icons to every grid tile on the flowmap layer
+      const gridTiles = this.myFlowmapLayer.getContainer().children.item(0).children;
+      const pointsWithData = [];
+      
+      for (let i = 0; i < gridTiles.length; i++) {
+        const gridTile = gridTiles.item(i);
+        
+        //return all the data points within the grid tile using old heatmap data
+        const gridTileDataPoints = this.getAllDataPointsWithinGridTile(this.oldHeatmapData, gridTile);
+        if (gridTileDataPoints.length > 0) {
+          pointsWithData.push(gridTile);
         }
-      });
-
-      this.myFlowmapLayer = new myGrid();
-
-      this.myFlowmapLayer.addTo(this.myHeatmap);
-      this.myFlowmapLayer.bringToFront();
+      }
+      console.log(pointsWithData);
     } else {
-      this.myHeatmap.removeLayer(this.myFlowmapLayer);
+      // remove arrow icons from every grid tile on the flowmap layer
+      const gridTiles = this.myFlowmapLayer.getContainer().children.item(0).children;
+      
+      // for (let i = 0; i < gridTiles.length; i++) {
+      //   const gridTile = gridTiles.item(i);
+      //   const arrowIcon = gridTile.children.item(0);
+      //   gridTile.removeChild(arrowIcon);
+      // }
     }
+  }
+
+  getAllDataPointsWithinGridTile(dataPoints: (L.LatLng | L.HeatLatLngTuple)[], gridTile: HTMLDivElement) {
+    const datapoints: any[] = [];
+    const gridTileBounds = gridTile.getBoundingClientRect();
+    const gridTileCenter = {
+      x: gridTileBounds.left + gridTileBounds.width / 2,
+      y: gridTileBounds.top + gridTileBounds.height / 2
+    };
+
+    this.oldHeatmapData.forEach((dataPoint: (L.LatLng | L.HeatLatLngTuple)) => {
+      if ('lat' in dataPoint && 'lng' in dataPoint) {
+        // It's an L.LatLng type
+        const latLngDataPoint = dataPoint as L.LatLng;
+        const dataPointCenter = this.myHeatmap.latLngToContainerPoint(latLngDataPoint);
+        if (this.isPointWithinGridTile(dataPointCenter, gridTileCenter, gridTileBounds)) {
+          datapoints.push(dataPoint);
+        }
+      }
+      else {
+        // It's a HeatLatLngTuple type
+        const heatLatLngDataPoint = dataPoint as L.HeatLatLngTuple;
+        const dataPointCenter = this.myHeatmap.latLngToContainerPoint(L.latLng(heatLatLngDataPoint[0], heatLatLngDataPoint[1]));
+        if (this.isPointWithinGridTile(dataPointCenter, gridTileCenter, gridTileBounds)) {
+          datapoints.push(dataPoint);
+        }
+      }
+    });
+
+    return datapoints;
+  }
+
+  isPointWithinGridTile(dataPointCenter: any, gridTileCenter: any, gridTileBounds: any) {
+    const distance = Math.sqrt(Math.pow(dataPointCenter.x - gridTileCenter.x, 2) + Math.pow(dataPointCenter.y - gridTileCenter.y, 2));
+    const radius = gridTileBounds.width / 2;
+
+    return distance < radius;
+  }
+
+  addArrowIconToGridTile(gridTile: any) {
+    const arrowIcon = document.createElement('ion-icon');
+    arrowIcon.setAttribute('name', 'arrow-up-outline');
+    arrowIcon.style.fontSize = '20px';
+    arrowIcon.style.color = 'rgba(255, 0, 0, 1)';
+    arrowIcon.style.position = 'absolute';
+    arrowIcon.style.top = '50%';
+    arrowIcon.style.left = '50%';
+    arrowIcon.style.transform = 'translate(-50%, -50%)';
+    gridTile.appendChild(arrowIcon);
   }
 
   toggleHeatmap() {
@@ -157,22 +201,20 @@ export class EventScreenViewPage {
 
     const myGrid = L.GridLayer.extend({
       options: {
-        tileSize: 58.05,
+        tileSize: 28.05,
         opacity: 0.9,
         zIndex: 1000,
         bounds: this.myHeatmap.getBounds(),
       },
       createTile: (coords: any) => {
         const tile = document.createElement('div');
-        const tileSize = this.myHeatmap.getPixelBounds().getSize();
         // tile.style.background = 'rgba(209 213 219, 0.4)';
         tile.style.background = 'rgba(0, 0, 0, 0.1)';
         tile.style.border = 'solid 1px rgba(0, 0, 0, 0.2)';
         tile.style.fontSize = '10px';
         tile.style.color = 'rgba(0, 0, 0, 0.5)';
         tile.style.textAlign = 'center';
-        // tile.style.lineHeight = tileSize.y + 'px';
-        // tile.innerHTML = `[${coords.x}, ${coords.y}]`;
+
         return tile;
       }
     });
