@@ -19,6 +19,7 @@ export class EventScreenViewPage {
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('userCountDataStreamingChart') userCountDataStreamingChart!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('flowmapContainer') flowmapContainer!: ElementRef<HTMLDivElement>;
 
   isLoading = true;
   activeDevices = 25;
@@ -32,6 +33,7 @@ export class EventScreenViewPage {
   showFlowmap = false;
   myHeatmap: any;
   myHeatLayer: any;
+  myFlowmapLayer: any;
   oldHeatmapData: (L.LatLng | L.HeatLatLngTuple)[] = []
   
   ngAfterViewInit() {
@@ -66,6 +68,37 @@ export class EventScreenViewPage {
 
   toggleFlowmap() {
     this.showFlowmap = !this.showFlowmap;
+
+    if (this.showFlowmap) {
+      // use L.Gridlayer to create gridlines on the map
+      const myGrid = L.GridLayer.extend({
+        options: {
+          tileSize: 58.05,
+          opacity: 0.9,
+          zIndex: 1000,
+          bounds: this.myHeatmap.getBounds(),
+        },
+        createTile: (coords: any) => {
+          const tile = document.createElement('div');
+          const tileSize = this.myHeatmap.getPixelBounds().getSize();
+          tile.style.background = 'rgba(0, 0, 0, 0.1)';
+          tile.style.border = 'solid 1px rgba(0, 0, 0, 0.5)';
+          tile.style.fontSize = '10px';
+          tile.style.color = 'rgba(0, 0, 0, 0.5)';
+          tile.style.textAlign = 'center';
+          // tile.style.lineHeight = tileSize.y + 'px';
+          // tile.innerHTML = `[${coords.x}, ${coords.y}]`;
+          return tile;
+        }
+      });
+
+      this.myFlowmapLayer = new myGrid();
+
+      this.myFlowmapLayer.addTo(this.myHeatmap);
+      this.myFlowmapLayer.bringToFront();
+    } else {
+      this.myHeatmap.removeLayer(this.myFlowmapLayer);
+    }
   }
 
   toggleHeatmap() {
@@ -120,7 +153,34 @@ export class EventScreenViewPage {
       this.myHeatmap.containerPointToLatLng(L.point(0, 0)),
       this.myHeatmap.containerPointToLatLng(L.point(this.heatmapContainer.nativeElement.offsetWidth, this.heatmapContainer.nativeElement.offsetHeight))
     );
-    L.imageOverlay(imageUrl, imageBounds).addTo(this.myHeatmap);
+    L.imageOverlay(imageUrl, imageBounds, {zIndex: 0}).addTo(this.myHeatmap);
+
+    const myGrid = L.GridLayer.extend({
+      options: {
+        tileSize: 58.05,
+        opacity: 0.9,
+        zIndex: 1000,
+        bounds: this.myHeatmap.getBounds(),
+      },
+      createTile: (coords: any) => {
+        const tile = document.createElement('div');
+        const tileSize = this.myHeatmap.getPixelBounds().getSize();
+        // tile.style.background = 'rgba(209 213 219, 0.4)';
+        tile.style.background = 'rgba(0, 0, 0, 0.1)';
+        tile.style.border = 'solid 1px rgba(0, 0, 0, 0.2)';
+        tile.style.fontSize = '10px';
+        tile.style.color = 'rgba(0, 0, 0, 0.5)';
+        tile.style.textAlign = 'center';
+        // tile.style.lineHeight = tileSize.y + 'px';
+        // tile.innerHTML = `[${coords.x}, ${coords.y}]`;
+        return tile;
+      }
+    });
+
+    this.myFlowmapLayer = new myGrid();
+
+    this.myFlowmapLayer.addTo(this.myHeatmap);
+    this.myFlowmapLayer.bringToFront();
   }
 
   getHotZone(heatmapData: (L.LatLng | L.HeatLatLngTuple)[]) {

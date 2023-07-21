@@ -10,7 +10,7 @@
             <ion-toggle title="Toggle Heatmap" [hidden]="!showToggle" class="absolute right-3 top-3 opacity-40 hover:opacity-100" (click)="toggleHeatmap()"></ion-toggle>
             <ion-label [hidden]="!showToggle" class="text-xl text-ept-deep-grey absolute top-12 right-20 opacity-40 z-10">Flowmap</ion-label>
             <ion-toggle title="Toggle Flowmap" [hidden]="!showToggle" class="absolute right-3 top-12 opacity-40 hover:opacity-100" (click)="toggleFlowmap()"></ion-toggle>
-            <div #heatmapContainer class="w-full h-full z-0"></div>
+            <div #heatmapContainer #flowmapContainer class="w-full h-full z-0"></div>
         </div>
         <div class="border-2 border-ept-deep-grey rounded-md col-span-5 row-span-2">
             
