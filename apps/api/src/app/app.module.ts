@@ -27,6 +27,9 @@ import {
 } from '@event-participation-trends/api/sensorlinking';
 import { ScheduleModule } from '@nestjs/schedule';
 
+import {DatabaseModule} from '@event-participation-trends/api/database/feature';
+import { DatabaseConfigService } from '@event-participation-trends/api/database/feature';
+
 @Module({
   imports: [
     ConfigModule.forRoot(
@@ -40,13 +43,16 @@ import { ScheduleModule } from '@nestjs/schedule';
       secret: process.env['JWT_SECRET'],
       signOptions: { expiresIn: process.env['JWT_EXPIRE_TIME'] },
     }),
-    MongooseModule.forRoot(process.env['MONGO_ALTALS_CONNECTION_URL']),
+    MongooseModule.forRootAsync({
+        useClass: DatabaseConfigService
+    }),
     UserModule,
     EventModule,
     CqrsModule,
     CoreModule,
     ApiGuardsModule,
     SensorlinkingModule,
+    DatabaseModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController, PassportController],
