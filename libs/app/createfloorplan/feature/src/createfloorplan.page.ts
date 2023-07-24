@@ -960,7 +960,7 @@ export class CreateFloorPlanPage implements OnInit{
       event.preventDefault();
     }
 
-    setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text, line?: Konva.Line | Konva.Path): void {
+    setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text | Konva.Circle, line?: Konva.Line | Konva.Path): void {
       if(!this.preventCreatingWalls) return;
 
       this.transformer.detach();
