@@ -161,11 +161,17 @@ describe('UserController',()=>{
             TEST_EVENT.Manager = user[0]._id;
             
             await eventRepository.createEvent(TEST_EVENT);
+            const event = await eventRepository.getEventByName(TEST_EVENT.Name);
+
             const response = await request(httpServer).get('/event/getManagedEvents');
 
             expect(response.status).toBe(200);
             const res = objectSubset(TEST_EVENT,response.body.events);
             expect(res).toBe(true);
+
+            //cleanup
+            await userRepository.deleteUserById(user[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
         })
     })
 
