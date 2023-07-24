@@ -23,6 +23,7 @@ import {
   IEventId,
   IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
+  IGetEventFloorlayoutResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
@@ -168,6 +169,14 @@ export class AppApiService {
     });
   }
 
+  getEventFloorLayout(eventId: string): Observable<IGetEventFloorlayoutResponse> {
+    return this.http.get<IGetEventFloorlayoutResponse>(`/api/event/getEventFloorLayout?eventId=${eventId}`, {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
+    });
+  }
+
   sendViewRequest(eventId: IEventId): Observable<ISendViewRequestResponse> {
     return this.http.post<ISendViewRequestResponse>(
       '/api/event/sendViewRequest',
@@ -192,7 +201,7 @@ export class AppApiService {
         },
       })
     ).then((response) => {
-      return response.users[0].Requesters;
+      return response.users[0]?.Requesters || [];
     });
   }
 

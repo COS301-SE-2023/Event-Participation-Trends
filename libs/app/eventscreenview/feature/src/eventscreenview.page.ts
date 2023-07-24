@@ -20,6 +20,7 @@ export class EventScreenViewPage {
   @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('userCountDataStreamingChart') userCountDataStreamingChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('flowmapContainer') flowmapContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('totalDevicesBarChart') totalDevicesBarChart!: ElementRef<HTMLCanvasElement>;
 
   isLoading = true;
   activeDevices = 25;
@@ -76,6 +77,7 @@ export class EventScreenViewPage {
       this.renderTotalUserCount();
       this.renderTotalDeviceCount();
       this.renderUserCountDataStreaming();
+      this.renderTotalDevicesBarChart();
     }, 1000);
 
     
@@ -624,6 +626,66 @@ export class EventScreenViewPage {
         );
       }
     }
+  }
 
+  renderTotalDevicesBarChart(){
+    const data = {
+        labels: ['08:00', '09:00', '10:00', '10:00', '11:00'],
+        datasets: [{
+          data: [10, 20, 15, 25, 30],
+          backgroundColor: [
+            'rgb(34 197 94)',
+            '#FF0000',
+          ],
+          borderColor: [
+            'rgb(34 197 94)',
+            '#FF0000',
+          ],
+          borderWidth: 1,
+        }]
+      };
+    
+    const deviceBarChartCanvas = this.totalDevicesBarChart.nativeElement;
+
+    if (deviceBarChartCanvas) {
+        const deviceBarChartCtx = deviceBarChartCanvas.getContext('2d');
+        if (deviceBarChartCtx) {
+            const myChart = new Chart(
+                deviceBarChartCanvas,
+                {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        plugins: {
+                            title: {
+                              display: true,
+                              text: 'Active Devices vs Time of day', 
+                            },
+                            legend:{
+                                display: false
+                            }
+                          },
+                        scales: {
+                            x: {
+                                display: true, 
+                                title: {
+                                  display: true,
+                                  text: 'Time of day',
+                                },
+                              },
+                              y: {
+                                display: true,
+                                title: {
+                                  display: true,
+                                  text: 'Number of Active Devices', 
+                                },
+                                beginAtZero: true, 
+                              },
+                        }
+                    },
+                  }
+            );
+        }
+    }
   }
 }
