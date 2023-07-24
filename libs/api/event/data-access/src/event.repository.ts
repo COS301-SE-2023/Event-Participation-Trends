@@ -195,4 +195,9 @@ export class EventRepository {
         return await this.eventModel.find().select("Category").distinct("Category");
     }
 
+    async deleteEventbyId(eventId: Types.ObjectId){
+        return await this.eventModel.deleteOne(
+            {_id :{$eq: eventId}});
+    }
+
 }
