@@ -2168,6 +2168,7 @@ export class CreateFloorPlanPage implements OnInit{
 
             //update active sensor
             this.store.dispatch(new UpdateActiveSensor(request.id));
+            this.activeItem.setAttr('fill', 'lime');
           }
         });
     }
