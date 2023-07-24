@@ -43,7 +43,6 @@ import {Test} from '@nestjs/testing';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { AppModule } from '../../../../apps/api/src/app/app.module';
 import { Connection, Types } from 'mongoose';
-import { DatabaseService } from '@event-participation-trends/api/database/feature';
 import request from 'supertest';
 import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
@@ -101,7 +100,6 @@ function objectSubset(target: any, obj: any ): boolean{
 
 describe('UserController', ()=>{
     let moduleRef: any;
-    let connection: Connection;
     let httpServer: any;
     let app: any;
     let eventRepository: EventRepository;
@@ -127,7 +125,6 @@ describe('UserController', ()=>{
         app = moduleRef.createNestApplication();
         await app.init();
 
-        connection = moduleRef.get(DatabaseService).getConnection();
         httpServer = app.getHttpServer();
 
         eventRepository = moduleRef.get(EventRepository);
