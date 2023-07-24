@@ -25,9 +25,6 @@ export class EventScreenViewPage {
   activeDevices = 25;
   inactiveDevices = 5;
   diviceCountChart = null;
-  heatmap: any;
-  windowWidth = window.innerWidth;
-  windowHeight = window.innerHeight;
   showToggle = false;
   showHeatmap = false;
   showFlowmap = false;
