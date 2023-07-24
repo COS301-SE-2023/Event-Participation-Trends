@@ -99,6 +99,7 @@ function objectSubset(target: any, obj: any ): boolean{
 }
 
 describe('UserController',()=>{
+    let moduleRef: any;
     let connection: Connection;
     let httpServer: any;
     let app: any;
@@ -108,7 +109,7 @@ describe('UserController',()=>{
     beforeAll(async ()=>{
         process.env['NODE_ENV'] = "test";  
 
-        const moduleRef = await Test.createTestingModule({
+        moduleRef = await Test.createTestingModule({
             imports: [AppModule],
         })
         .overrideGuard(JwtGuard)
@@ -205,4 +206,61 @@ describe('UserController',()=>{
         })
     })
 
+    describe('getAllViewingEvents', ()=>{
+        it('Should return an array of events', async ()=>{
+            
+            const moduleRef = await Test.createTestingModule({
+                imports: [AppModule],
+            })
+            .overrideGuard(JwtGuard)
+            .useValue({
+            canActivate: (context) => {
+                context.switchToHttp().getRequest().user = {
+                email: process.env['TEST_USER_EMAIL_2'],
+                };
+                return true;
+            },
+            })
+            .overrideGuard(RbacGuard)
+            .useValue({ canActivate: () => true })
+            .overrideGuard(CsrfGuard)
+            .useValue({ canActivate: () => true })
+            .compile();
+
+            // Get the NestJS application instance and HTTP server
+            const app = moduleRef.createNestApplication();
+            await app.init();
+            const httpServer = app.getHttpServer();
+
+            //create manager
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+    
+            //create event
+            await eventRepository.createEvent(TEST_EVENT);
+            const event = await eventRepository.getEventByName(TEST_EVENT.Name);
+    
+            //create viewer
+            await userRepository.createUser(TEST_USER_2);
+            const viewer = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
+            
+            await userRepository.addViewingEvent(viewer[0]._id, event[0]._id);
+    
+            const response = await request(httpServer).get('/event/getAllViewingEvents');
+    
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_EVENT,response.body.events);
+            expect(res).toBe(true);
+    
+            //cleanup
+            await userRepository.deleteUserById(viewer[0]._id);
+            await userRepository.deleteUserById(manager[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
+
+            await app.close();
+        })
+    })
+
 })
+
