@@ -1086,7 +1086,7 @@ export class CreateFloorPlanPage implements OnInit{
 
         // do nothing if we mousedown on any shape
         if (e.target !== this.canvasContainer) {
-          if (e.target instanceof Konva.Image) {
+          if (e.target instanceof Konva.Circle) {
             const html5QrcodeScanner = new Html5QrcodeScanner(
               "reader",
               { fps: 15 },
