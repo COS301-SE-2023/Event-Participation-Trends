@@ -62,4 +62,9 @@ export class UserRepository {
             { $pull: { Viewing: eventID } });
     }
 
+    async deleteUserById(eventID: Types.ObjectId){
+        return await this.userModel.deleteOne(
+            {_id :{$eq: eventID}});
+    }
+
 }
