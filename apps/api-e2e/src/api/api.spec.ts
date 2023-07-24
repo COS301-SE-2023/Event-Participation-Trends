@@ -70,11 +70,19 @@ let TEST_EVENT: IEventDetails ={
     Manager: new Types.ObjectId()
 }
 
-const TEST_USER: IUser ={
-    Email: process.env['TEST_USER_EMAIL'],
+const TEST_USER_1: IUser ={
+    Email: process.env['TEST_USER_EMAIL_1'],
 	FirstName: "None",
 	LastName: "None",
-	Role: process.env['TEST_USER_ROLE'],
+	Role: process.env['TEST_USER_ROLE_1'],
+    Viewing: new Array<Types.ObjectId>()
+}
+
+const TEST_USER_2: IUser ={
+    Email: process.env['TEST_USER_EMAIL_2'],
+	FirstName: "None",
+	LastName: "None",
+	Role: process.env['TEST_USER_ROLE_2'],
     Viewing: new Array<Types.ObjectId>()
 }
 
@@ -105,7 +113,7 @@ describe('UserController',()=>{
         })
         .overrideGuard(JwtGuard)
         .useValue({ canActivate: (context) => {
-            context.switchToHttp().getRequest().user = { email: process.env['TEST_USER_EMAIL'] };
+            context.switchToHttp().getRequest().user = { email: process.env['TEST_USER_EMAIL_1'] };
             return true;
         } })
         .overrideGuard(RbacGuard)
@@ -125,9 +133,8 @@ describe('UserController',()=>{
     })
 
     afterAll(async ()=>{
-       // await connection.collection('Event').deleteMany({});
-        await app.close();
         process.env['NODE_ENV'] = "development";
+        await app.close();
     })
 
     describe('getAllEvents', ()=>{
@@ -143,17 +150,47 @@ describe('UserController',()=>{
 
     describe('getManagedEvents', ()=>{
         it('Should return an array of events', async ()=>{
-            await userRepository.createUser(TEST_USER);
+            await userRepository.createUser(TEST_USER_1);
             
-            const user = await userRepository.getUser(process.env['TEST_USER_EMAIL']);
+            const user = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
             TEST_EVENT.Manager = user[0]._id;
             
-            await eventRepository.createEvent(TEST_EVENT); 
+            await eventRepository.createEvent(TEST_EVENT);
             const response = await request(httpServer).get('/event/getManagedEvents');
 
             expect(response.status).toBe(200);
             const res = objectSubset(TEST_EVENT,response.body.events);
             expect(res).toBe(true);
+        })
+    })
+
+    describe('getAllViewRequests', ()=>{
+        it('Should return an array of Requesters', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+
+            await eventRepository.createEvent(TEST_EVENT); 
+            const event = await eventRepository.getEventByName(TEST_EVENT.Name);
+
+            //create event viewer
+            await userRepository.createUser(TEST_USER_2);
+            const viewer = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
+
+            await eventRepository.createViewRequest(viewer[0]._id,event[0]._id);
+            
+            //test endpoint
+            const response = await request(httpServer).get(`/event/getAllViewRequests?eventId=${event[0]._id}`);            
+
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_USER_2,response.body.users[0].Requesters);
+            expect(res).toBe(true);
+
+            //cleanup
+            await userRepository.deleteUserById(manager[0]._id);
+            await userRepository.deleteUserById(viewer[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
         })
     })
 
