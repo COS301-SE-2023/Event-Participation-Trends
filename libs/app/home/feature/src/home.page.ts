@@ -70,6 +70,10 @@ export class HomePage {
     return this.role;
   }
 
+  isViewer(): boolean {
+    return this.role === 'viewer';
+  }
+
   isLargeScreen = false;
 
   ngOnInit() {

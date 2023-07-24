@@ -31,6 +31,7 @@ export class SubPageNavPage implements OnInit{
     queryParamsHandling: string
   } | null = null;
   
+  public open = false;
   public username = '';
   public fullName = '';
   public profilePicUrl = '';
