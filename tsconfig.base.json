@@ -27,6 +27,9 @@
       "@event-participation-trends/api/core/feature": [
         "libs/api/core/feature/src/index.ts"
       ],
+      "@event-participation-trends/api/database/feature": [
+        "libs/api/database/feature/src/index.ts"
+      ],
       "@event-participation-trends/api/email/data-access": [
         "libs/api/email/data-access/src/index.ts"
       ],
