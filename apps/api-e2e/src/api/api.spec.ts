@@ -140,11 +140,16 @@ describe('UserController',()=>{
     describe('getAllEvents', ()=>{
         it('Should return an array of events', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
+            const event = await eventRepository.getEventByName(TEST_EVENT.Name);
+
             const response = await request(httpServer).get('/event/getAllEvents');
 
             expect(response.status).toBe(200);
             const res = objectSubset(TEST_EVENT,response.body.events);
             expect(res).toBe(true);
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id)
         })  
     })
 
