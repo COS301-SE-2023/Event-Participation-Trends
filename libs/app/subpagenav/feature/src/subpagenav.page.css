@@ -4,10 +4,18 @@ ion-tab-button {
     font-size: inherit;
   }
   
-  .tab-button.tab-selected,
-  .tab-button-no-border.tab-selected {
-    color: #facc15;
-  }
+.tab-button.tab-selected,
+.tab-button-no-border.tab-selected {
+color: #facc15;
+}
+
+.mobile {
+height: 150px;
+}
+
+.mobile-label {
+    font-size: 17px;
+}
 /* .nav-bar {
     background-color: #212121;
     height: 49px;

@@ -14,7 +14,8 @@ export class HomePage {
   usersSelected = true;
   viewSelected = false;
   compareSelected = false;
-
+  
+  public open = false;
   public role = Role.VIEWER;
   public username = '';
   public profilePicUrl = '';

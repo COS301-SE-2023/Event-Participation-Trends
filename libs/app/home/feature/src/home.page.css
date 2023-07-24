@@ -4,6 +4,21 @@ ion-tab-button {
   font-size: inherit;
 }
 
+ion-icon {
+    width: 40px;
+    height: 50px;
+    margin: 0;
+    padding: 0;
+}
+
+.mobile {
+    height: 150px;
+}
+
+.mobile-label {
+    font-size: 17px;
+}
+
 .tab-button.tab-selected,
 .tab-button-no-border.tab-selected {
   color: #facc15;
