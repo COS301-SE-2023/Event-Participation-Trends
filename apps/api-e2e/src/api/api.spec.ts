@@ -1,3 +1,4 @@
+/*
 import axios from 'axios';
 import { spawn } from 'child_process';
 
@@ -36,3 +37,99 @@ describe('GET /api', () => {
     apiServer.kill();
   });
 });
+
+*/
+import {Test} from '@nestjs/testing';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { AppModule } from '../../../../apps/api/src/app/app.module';
+import { Connection, Types } from 'mongoose';
+import { DatabaseService } from '@event-participation-trends/api/database/feature';
+import request from 'supertest';
+import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
+import { EventRepository } from '@event-participation-trends/api/event/data-access';
+import { UserRepository } from '@event-participation-trends/api/user/data-access';
+import { IEventDetails } from '@event-participation-trends/api/event/util';
+import { IUser } from '@event-participation-trends/api/user/util';
+
+//constants 
+// eslint-disable-next-line prefer-const
+let TEST_EVENT: IEventDetails ={
+    StartDate: new Date("2023-06-10T12:34:56.789Z"),
+    EndDate: new Date("2023-06-13T12:34:56.789Z"),
+    Name: "Testing Event",
+    Category: "Testing Category",
+    Location: {
+        Latitude: 0,
+        Longitude: 0,
+        StreetName: "None",
+        CityName: "None",
+        ProvinceName: "None",
+        CountryName: "None",
+        ZIPCode: "None"
+    },
+    Manager: new Types.ObjectId()
+}
+
+const TEST_USER: IUser ={
+    Email: process.env['TEST_USER_EMAIL'],
+	FirstName: "None",
+	LastName: "None",
+	Role: process.env['TEST_USER_ROLE'],
+    Viewing: new Array<Types.ObjectId>()
+}
+
+
+//helper functions
+function objectSubset(target: any, obj: any ): boolean{
+	for(const element of obj){
+		for (const key in target) 
+			// eslint-disable-next-line no-prototype-builtins
+			if ((target.hasOwnProperty(key) && element.hasOwnProperty(key) && element.key == target.key)) 
+				return true;
+	}
+    return false;
+}
+
+describe('UserController',()=>{
+    let connection: Connection;
+    let httpServer: any;
+    let app: any;
+    let eventRepository: EventRepository;
+    let userRepository: UserRepository;
+
+    beforeAll(async ()=>{
+        process.env['NODE_ENV'] = "test";  
+
+        const moduleRef = await Test.createTestingModule({
+            imports: [AppModule],
+        })
+        .overrideGuard(JwtGuard)
+        .useValue({ canActivate: (context) => {
+            context.switchToHttp().getRequest().user = { email: process.env['TEST_USER_EMAIL'] };
+            return true;
+        } })
+        .overrideGuard(RbacGuard)
+        .useValue({ canActivate: () => true })
+        .overrideGuard(CsrfGuard)
+        .useValue({ canActivate: () => true })
+        .compile();
+
+        app = moduleRef.createNestApplication();
+        await app.init();
+
+        connection = moduleRef.get(DatabaseService).getConnection();
+        httpServer = app.getHttpServer();
+
+        eventRepository = moduleRef.get(EventRepository);
+        userRepository = moduleRef.get(UserRepository);
+    })
+
+    afterAll(async ()=>{
+       // await connection.collection('Event').deleteMany({});
+        await app.close();
+        process.env['NODE_ENV'] = "development";
+    })
+
+
+
+})
