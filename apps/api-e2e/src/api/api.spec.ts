@@ -67,7 +67,8 @@ let TEST_EVENT: IEventDetails ={
         CountryName: "None",
         ZIPCode: "None"
     },
-    Manager: new Types.ObjectId()
+    Manager: new Types.ObjectId(),
+    Floorlayout: null
 }
 
 const TEST_USER_1: IUser ={
@@ -139,7 +140,7 @@ describe('UserController', ()=>{
     })
 
     describe('getEvent', ()=>{
-        it('Should return an array of events', async ()=>{
+        it('Should return an event object', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
             const event = await eventRepository.getEventByName(TEST_EVENT.Name);
 
@@ -276,6 +277,24 @@ describe('UserController', ()=>{
 
             await app.close();
         })
+    })
+
+
+    describe('getEventFloorLayout', ()=>{
+        it('Should return an array of events', async ()=>{
+            await eventRepository.createEvent(TEST_EVENT); 
+            const event = await eventRepository.getEventByName(TEST_EVENT.Name);
+
+            await eventRepository.updateEventFloorlayout(event[0]._id,"Test Floor Layout");
+
+            const response = await request(httpServer).get(`/event/getEventFloorLayout?eventId=${event[0]._id}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.floorlayout).toEqual("Test Floor Layout");
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id)
+        })  
     })
 
 
