@@ -247,7 +247,7 @@ export class CreateFloorPlanPage implements OnInit{
               x: 0,
               y: 0,
               text: 'Stall-' + this.stallCount,
-              fontSize: 2,
+              fontSize: 1.5,
               fontFamily: 'Calibri',
               fill: 'black',
               width: this.componentSize,
