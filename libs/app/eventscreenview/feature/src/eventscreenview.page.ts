@@ -34,8 +34,39 @@ export class EventScreenViewPage {
   myHeatmap: any;
   myHeatLayer: any;
   myFlowmapLayer: any;
-  oldHeatmapData: (L.LatLng | L.HeatLatLngTuple)[] = []
+  oldHeatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [];
+  gridTilesDataPoints: {gridTile: HTMLDivElement, datapoints: (L.LatLng | L.HeatLatLngTuple)[]}[] = [];
   
+  /**
+   * The variables within the below block are used to determine the corrdinates of the
+   * grid tiles on the flowmap layer. The grid tiles are used to determine the direction
+   * of the arrows on the flowmap layer.
+   * 
+   * If you change the values of them, your grid map and heatmap will not work correctly.
+   */
+  // ====================================
+  gridTileSize = 28.05;
+  mapZoomLevel = 1;
+
+  // center the map on the heatmap container such that the coordinates of the center point of the map is (0, 0)
+  mapCenter = L.latLng(0, 0);
+  
+  // set the bounds for the heatmap data points to be generated within (in x and y)
+  heatmapBounds : {
+    north: number,   // Latitude of the north boundary
+    south: number,   // Latitude of the south boundary
+    east: number,   // Longitude of the east boundary
+    west: number    // Longitude of the west boundary
+  } = {
+    north: 80,
+    south: -80,
+    east: 307,
+    west: -307 
+  };
+
+  detectionRadius = 3;
+  // ====================================
+
   ngAfterViewInit() {
     // wait until the heatmap container is rendered
     setTimeout(() => {
@@ -50,12 +81,24 @@ export class EventScreenViewPage {
       this.renderUserCountDataStreaming();
     }, 1000);
 
-      setInterval(() => {
-        if (this.showHeatmap) {
-          const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();  
+    
+    setInterval(() => {
+      const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();
+      if (this.showHeatmap) {
           this.myHeatLayer.setLatLngs(heatmapData);
         }
-      }, 500);
+
+      if (this.showFlowmap) {
+        // remove arrow icons from all gridtiles that have them
+        this.removeArrowIconsFromGridTiles();
+
+        // clear the gridTilesDataPoints array
+        this.gridTilesDataPoints = [];
+
+        // add arrow icons to every grid tile on the flowmap layer
+        this.addArrowIconsToGridTiles(heatmapData);
+      }
+    }, 500);
   }
 
   showToggleButton() {
@@ -71,30 +114,74 @@ export class EventScreenViewPage {
 
     if (this.showFlowmap) {
       // add arrow icons to every grid tile on the flowmap layer
-      const gridTiles = this.myFlowmapLayer.getContainer().children.item(0).children;
-      const pointsWithData = [];
-      
-      for (let i = 0; i < gridTiles.length; i++) {
-        const gridTile = gridTiles.item(i);
-        
-        //return all the data points within the grid tile using old heatmap data
-        const gridTileDataPoints = this.getAllDataPointsWithinGridTile(this.oldHeatmapData, gridTile);
-        if (gridTileDataPoints.length > 0) {
-          pointsWithData.push(gridTile);
-        }
-      }
-      console.log(pointsWithData);
-    } else {
-      // remove arrow icons from every grid tile on the flowmap layer
-      const gridTiles = this.myFlowmapLayer.getContainer().children.item(0).children;
-      
-      // for (let i = 0; i < gridTiles.length; i++) {
-      //   const gridTile = gridTiles.item(i);
-      //   const arrowIcon = gridTile.children.item(0);
-      //   gridTile.removeChild(arrowIcon);
-      // }
+      this.addArrowIconsToGridTiles();
+    } else {      
+      // remove arrow icons from all gridtiles that have them
+      this.removeArrowIconsFromGridTiles();
     }
   }
+
+  removeArrowIconsFromGridTiles() {
+    for (let i = 0; i < this.gridTilesDataPoints.length; i++) {
+      const gridTile = this.gridTilesDataPoints[i].gridTile;
+      const arrowIcon = gridTile.children.item(0);
+      if (arrowIcon) {
+        gridTile.removeChild(arrowIcon);
+      }
+    }
+  }
+
+  addArrowIconsToGridTiles(data: (L.LatLng | L.HeatLatLngTuple)[] = this.oldHeatmapData) {
+    const gridTiles = this.myFlowmapLayer.getContainer().children.item(0).children;
+
+    for (let i = 0; i < gridTiles.length; i++) {
+      const gridTile = gridTiles.item(i);
+      
+      //return all the data points within the grid tile using old heatmap data
+      const gridTileDataPoints = this.getAllDataPointsWithinGridTile(data, gridTile);
+      // if (gridTileDataPoints.length > 0) {
+      //   this.gridTilesDataPoints.push({gridTile: gridTile, datapoints: gridTileDataPoints});
+      // }
+      this.gridTilesDataPoints.push({gridTile: gridTile, datapoints: gridTileDataPoints});
+
+      // get average moving direction of all data points within the grid tile
+      const averageMovingDirection = this.getAverageMovingDirection(gridTileDataPoints);
+
+      this.addArrowIconToGridTile(gridTile, averageMovingDirection);
+    }
+    
+    // add an arrow icon to each grid tile that has data points within it
+    // this.gridTilesDataPoints.forEach((pointWithData: {gridTile: HTMLDivElement, datapoints: (L.LatLng | L.HeatLatLngTuple)[]}) => {
+    //   this.addArrowIconToGridTile(pointWithData.gridTile, this.getAverageMovingDirection(pointWithData.datapoints));
+    // });
+  }
+
+  getAverageMovingDirection(dataPoints: (L.LatLng | L.HeatLatLngTuple)[]) {
+    let movingAngle = 0;
+    let totalMovingDirectionForward = 0;
+    let totalMovingDirectionRight = 0;
+
+    dataPoints.forEach((dataPoint: (L.LatLng | L.HeatLatLngTuple)) => {
+      if ('lat' in dataPoint && 'lng' in dataPoint) {
+        // It's an L.LatLng type
+        const latLngDataPoint = dataPoint as L.LatLng;
+        totalMovingDirectionForward += latLngDataPoint.lat;
+        totalMovingDirectionRight += latLngDataPoint.lng;
+      }
+      else {
+        // It's a HeatLatLngTuple type
+        const heatLatLngDataPoint = dataPoint as L.HeatLatLngTuple;
+        totalMovingDirectionForward += heatLatLngDataPoint[0];
+        totalMovingDirectionRight += heatLatLngDataPoint[1];
+      }
+    });
+
+    movingAngle = Math.atan2(totalMovingDirectionForward, totalMovingDirectionRight) * 180 / Math.PI;
+
+    movingAngle = movingAngle < 0 ? 360 + movingAngle : movingAngle;
+    
+    return movingAngle;
+  } 
 
   getAllDataPointsWithinGridTile(dataPoints: (L.LatLng | L.HeatLatLngTuple)[], gridTile: HTMLDivElement) {
     const datapoints: any[] = [];
@@ -108,7 +195,11 @@ export class EventScreenViewPage {
       if ('lat' in dataPoint && 'lng' in dataPoint) {
         // It's an L.LatLng type
         const latLngDataPoint = dataPoint as L.LatLng;
-        const dataPointCenter = this.myHeatmap.latLngToContainerPoint(latLngDataPoint);
+        let dataPointCenter = this.myHeatmap.latLngToContainerPoint(latLngDataPoint);
+        dataPointCenter = {
+          x: dataPointCenter.x / this.gridTileSize,
+          y: dataPointCenter.y / this.gridTileSize
+        }
         if (this.isPointWithinGridTile(dataPointCenter, gridTileCenter, gridTileBounds)) {
           datapoints.push(dataPoint);
         }
@@ -116,24 +207,27 @@ export class EventScreenViewPage {
       else {
         // It's a HeatLatLngTuple type
         const heatLatLngDataPoint = dataPoint as L.HeatLatLngTuple;
-        const dataPointCenter = this.myHeatmap.latLngToContainerPoint(L.latLng(heatLatLngDataPoint[0], heatLatLngDataPoint[1]));
+        let dataPointCenter = this.myHeatmap.latLngToContainerPoint(L.latLng(heatLatLngDataPoint[0], heatLatLngDataPoint[1]));
+        dataPointCenter = {
+          x: dataPointCenter.x / this.gridTileSize,
+          y: dataPointCenter.y / this.gridTileSize
+        }
         if (this.isPointWithinGridTile(dataPointCenter, gridTileCenter, gridTileBounds)) {
           datapoints.push(dataPoint);
         }
       }
     });
-
     return datapoints;
   }
 
   isPointWithinGridTile(dataPointCenter: any, gridTileCenter: any, gridTileBounds: any) {
-    const distance = Math.sqrt(Math.pow(dataPointCenter.x - gridTileCenter.x, 2) + Math.pow(dataPointCenter.y - gridTileCenter.y, 2));
-    const radius = gridTileBounds.width / 2;
-
+    const distance = Math.sqrt(Math.pow(dataPointCenter.x - (gridTileCenter.x / this.gridTileSize), 2) + Math.pow(dataPointCenter.y - (gridTileCenter.y / this.gridTileSize), 2));
+    const radius = this.detectionRadius;
+ 
     return distance < radius;
   }
 
-  addArrowIconToGridTile(gridTile: any) {
+  addArrowIconToGridTile(gridTile: any, rotation: number) {
     const arrowIcon = document.createElement('ion-icon');
     arrowIcon.setAttribute('name', 'arrow-up-outline');
     arrowIcon.style.fontSize = '20px';
@@ -142,6 +236,9 @@ export class EventScreenViewPage {
     arrowIcon.style.top = '50%';
     arrowIcon.style.left = '50%';
     arrowIcon.style.transform = 'translate(-50%, -50%)';
+    //first transform to default rotation
+    arrowIcon.style.transform += ' rotate(0deg)';
+    arrowIcon.style.transform += ` rotate(${rotation}deg)`;
     gridTile.appendChild(arrowIcon);
   }
 
@@ -149,14 +246,14 @@ export class EventScreenViewPage {
     this.showHeatmap = !this.showHeatmap;
 
     if (this.showHeatmap) {
-      const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();
+      // const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.oldHeatmapData.length > 0 ? this.oldHeatmapData : this.generateHeatmapData();
 
       this.myHeatLayer = L.heatLayer(
-        heatmapData,
+        [],
         {
-          radius: 25,
+          radius: 10,
           gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' },
-          minOpacity: 0.3
+          minOpacity: 0.6
         }
       ).addTo(this.myHeatmap);
   
@@ -170,7 +267,7 @@ export class EventScreenViewPage {
   }
 
   renderHeatMap() {
-    this.myHeatmap = L.map(this.heatmapContainer.nativeElement).setView([0, 0], 13);
+    this.myHeatmap = L.map(this.heatmapContainer.nativeElement).setView(this.mapCenter, this.mapZoomLevel);
 
     //disable zoom functionality
     this.myHeatmap.touchZoom.disable();
@@ -178,7 +275,7 @@ export class EventScreenViewPage {
     this.myHeatmap.scrollWheelZoom.disable();
     this.myHeatmap.boxZoom.disable();
     this.myHeatmap.keyboard.disable();
-    this.myHeatmap.dragging.disable();
+    // this.myHeatmap.dragging.disable();
 
     // disable zoom in and out buttons
     this.myHeatmap.removeControl(this.myHeatmap.zoomControl);
@@ -199,15 +296,41 @@ export class EventScreenViewPage {
     );
     L.imageOverlay(imageUrl, imageBounds, {zIndex: 0}).addTo(this.myHeatmap);
 
+    //set the heatmapData bounds
+    this.heatmapBounds = {
+      north: imageBounds.getNorth(),   // Latitude of the north boundary
+      south: imageBounds.getSouth(),   // Latitude of the south boundary
+      east: imageBounds.getEast(),   // Longitude of the east boundary
+      west: imageBounds.getWest()    // Longitude of the west boundary
+    };
+
     const myGrid = L.GridLayer.extend({
       options: {
-        tileSize: 28.05,
+        tileSize: this.gridTileSize,
         opacity: 0.9,
         zIndex: 1000,
-        bounds: this.myHeatmap.getBounds(),
+        bounds: L.latLngBounds(
+          this.myHeatmap.containerPointToLatLng(L.point(0, 0)),
+          this.myHeatmap.containerPointToLatLng(L.point(this.heatmapContainer.nativeElement.offsetWidth, this.heatmapContainer.nativeElement.offsetHeight))         
+        ),
+      },
+      // Override _tileCoordsToBounds function
+      _tileCoordsToBounds: function (coords: any) {
+        const tileSize = this.getTileSize();
+        const nwPoint = coords.scaleBy(tileSize);
+        const sePoint = nwPoint.add(tileSize);
+        const nw = this._map.unproject(nwPoint, coords.z);
+        const se = this._map.unproject(sePoint, coords.z);
+        return L.latLngBounds(nw, se);
+      },
+      // By default, the container for a whole zoom level worth of visible tiles
+      // has a "pointer-events: none" CSS property. Override this whenever a new
+      // level container is created. This is needed for pointer (mouse) interaction.
+      _onCreateLevel: function(level: any) {
+        level.el.style.pointerEvents = 'inherit';
       },
       createTile: (coords: any) => {
-        const tile = document.createElement('div');
+        const tile = L.DomUtil.create('div', 'grid-tile');
         // tile.style.background = 'rgba(209 213 219, 0.4)';
         tile.style.background = 'rgba(0, 0, 0, 0.1)';
         tile.style.border = 'solid 1px rgba(0, 0, 0, 0.2)';
@@ -222,7 +345,13 @@ export class EventScreenViewPage {
     this.myFlowmapLayer = new myGrid();
 
     this.myFlowmapLayer.addTo(this.myHeatmap);
-    this.myFlowmapLayer.bringToFront();
+
+    // // functionality to log the coordinates of the mouse pointer on the heatmap container
+    // this.myHeatmap.addEventListener('mousemove', (event: any) => {
+    //   const latLng = this.myHeatmap.mouseEventToLatLng(event.originalEvent);
+    //   console.log(latLng);
+    //   console.log('X,Y: ' + event.originalEvent.clientX + ', ' + event.originalEvent.clientY);
+    // });
   }
 
   getHotZone(heatmapData: (L.LatLng | L.HeatLatLngTuple)[]) {
@@ -241,23 +370,25 @@ export class EventScreenViewPage {
   }
 
   generateHeatmapData() {
+    // return the point 0, 0
+    // return [L.latLng(0, 0)];
     /*
       Note: Most of the funtionality in this method is used for testing purposes only.
       Once we have real data we can remove the testing code and replace it with the real data.
     */
 
     const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [];
-    const bounds = {
-      north: 0.031,   // Latitude of the north boundary
-      south: -0.0315,   // Latitude of the south boundary
-      east: 0.123,   // Longitude of the east boundary
-      west: -0.1235    // Longitude of the west boundary
-    };
+    // const bounds = {
+    //   north: 0.031,   // Latitude of the north boundary
+    //   south: -0.0315,   // Latitude of the south boundary
+    //   east: 0.123,   // Longitude of the east boundary
+    //   west: -0.1235    // Longitude of the west boundary
+    // };
   
     if (this.oldHeatmapData.length === 0)  {
-        for (let i = 0; i < 10; i++) {
-        const latitude = bounds.south + Math.random() * (bounds.north - bounds.south);
-        const longitude = bounds.west + Math.random() * (bounds.east - bounds.west);
+        for (let i = 0; i < 50; i++) {
+        const latitude = 0 + Math.random() * (this.heatmapBounds.north + this.heatmapBounds.south);
+        const longitude = 0 + Math.random() * (this.heatmapBounds.east + this.heatmapBounds.west);
         const intensity = 0.5 + Math.random() * 0.5;
     
         this.oldHeatmapData.push([latitude, longitude, intensity]);
@@ -270,7 +401,7 @@ export class EventScreenViewPage {
     };
   
     // Maximum distance a data point can be moved (adjust this value as needed)
-    const maxDisplacement = 0.0085; // Adjust this value to control the displacement
+    const maxDisplacement = 10; // Adjust this value to control the displacement
   
     this.oldHeatmapData.forEach((dataPoint: L.LatLng | L.HeatLatLngTuple) => {
       // Check if dataPoint is L.LatLng or L.HeatLatLngTuple
@@ -285,8 +416,8 @@ export class EventScreenViewPage {
         latLngDataPoint.lng += lngDisplacement; // Longitude
     
         // Make sure the updated data point stays within the defined bounds
-        latLngDataPoint.lat = Math.max(bounds.south, Math.min(bounds.north, latLngDataPoint.lat)); // Latitude
-        latLngDataPoint.lng = Math.max(bounds.west, Math.min(bounds.east, latLngDataPoint.lng)); // Longitude
+        latLngDataPoint.lat = Math.max(this.heatmapBounds.south, Math.min(this.heatmapBounds.north, latLngDataPoint.lat)); // Latitude
+        latLngDataPoint.lng = Math.max(this.heatmapBounds.west, Math.min(this.heatmapBounds.east, latLngDataPoint.lng)); // Longitude
       } else {
         // It's a HeatLatLngTuple type
         const heatLatLngDataPoint = dataPoint as L.HeatLatLngTuple;
@@ -298,8 +429,8 @@ export class EventScreenViewPage {
         heatLatLngDataPoint[1] += lngDisplacement; // Longitude
     
         // Make sure the updated data point stays within the defined bounds
-        heatLatLngDataPoint[0] = Math.max(bounds.south, Math.min(bounds.north, heatLatLngDataPoint[0])); // Latitude
-        heatLatLngDataPoint[1] = Math.max(bounds.west, Math.min(bounds.east, heatLatLngDataPoint[1])); // Longitude
+        heatLatLngDataPoint[0] = Math.max(this.heatmapBounds.south, Math.min(this.heatmapBounds.north, heatLatLngDataPoint[0])); // Latitude
+        heatLatLngDataPoint[1] = Math.max(this.heatmapBounds.west, Math.min(this.heatmapBounds.east, heatLatLngDataPoint[1])); // Longitude
       }
     });
 
@@ -325,7 +456,7 @@ export class EventScreenViewPage {
     const userCountCanvas = this.totalUserCountChart.nativeElement;
 
     if (userCountCanvas) {
-      const userCountCtx = userCountCanvas.getContext('2d');
+      const userCountCtx = userCountCanvas.getContext('2d', { willReadFrequently: true });
       if (userCountCtx) {
         const myChart = new Chart(
           userCountCtx,
@@ -389,7 +520,7 @@ export class EventScreenViewPage {
     const deviceCountCanvas = this.totalDeviceCountChart.nativeElement;
 
     if (deviceCountCanvas) {
-      const deviceCountCtx = deviceCountCanvas.getContext('2d');
+      const deviceCountCtx = deviceCountCanvas.getContext('2d', { willReadFrequently: true });
       if (deviceCountCtx) {
         const myChart = new Chart(
           deviceCountCtx,
@@ -488,7 +619,7 @@ export class EventScreenViewPage {
     const userCountDataStreamingCanvas = this.userCountDataStreamingChart.nativeElement;
 
     if (userCountDataStreamingCanvas) {
-      const userCountDataStreamingCtx = userCountDataStreamingCanvas.getContext('2d');
+      const userCountDataStreamingCtx = userCountDataStreamingCanvas.getContext('2d', { willReadFrequently: true });
       if (userCountDataStreamingCtx) {
         const myChart = new Chart(
           userCountDataStreamingCtx, 
