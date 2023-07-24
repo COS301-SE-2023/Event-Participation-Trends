@@ -98,7 +98,7 @@ function objectSubset(target: any, obj: any ): boolean{
     return false;
 }
 
-describe('UserController',()=>{
+describe('UserController', ()=>{
     let moduleRef: any;
     let connection: Connection;
     let httpServer: any;
@@ -138,7 +138,23 @@ describe('UserController',()=>{
         await app.close();
     })
 
-    describe('getAllEvents', ()=>{
+    describe('getEvent', ()=>{
+        it('Should return an array of events', async ()=>{
+            await eventRepository.createEvent(TEST_EVENT); 
+            const event = await eventRepository.getEventByName(TEST_EVENT.Name);
+
+            const response = await request(httpServer).get(`/event/getEvent?eventId=${event[0]._id}`);
+
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_EVENT,[response.body.event]);
+            expect(res).toBe(true);
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id)
+        })  
+    })
+
+    describe('getAllEvents',  ()=>{
         it('Should return an array of events', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
             const event = await eventRepository.getEventByName(TEST_EVENT.Name);
@@ -154,7 +170,7 @@ describe('UserController',()=>{
         })  
     })
 
-    describe('getManagedEvents', ()=>{
+    describe('getManagedEvents',  ()=>{
         it('Should return an array of events', async ()=>{
             await userRepository.createUser(TEST_USER_1);
             
@@ -176,7 +192,7 @@ describe('UserController',()=>{
         })
     })
 
-    describe('getAllViewRequests', ()=>{
+    describe('getAllViewRequests',  ()=>{
         it('Should return an array of Requesters', async ()=>{
             //create event manager and event
             await userRepository.createUser(TEST_USER_1);
@@ -206,9 +222,9 @@ describe('UserController',()=>{
         })
     })
 
-    describe('getAllViewingEvents', ()=>{
+    describe('getAllViewingEvents',  ()=>{
         it('Should return an array of events', async ()=>{
-            
+
             const moduleRef = await Test.createTestingModule({
                 imports: [AppModule],
             })
@@ -261,6 +277,7 @@ describe('UserController',()=>{
             await app.close();
         })
     })
+
 
 })
 
