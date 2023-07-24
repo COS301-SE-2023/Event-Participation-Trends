@@ -138,8 +138,23 @@ describe('UserController',()=>{
             expect(response.status).toBe(200);
             const res = objectSubset(TEST_EVENT,response.body.events);
             expect(res).toBe(true);
+        })  
+    })
+
+    describe('getManagedEvents', ()=>{
+        it('Should return an array of events', async ()=>{
+            await userRepository.createUser(TEST_USER);
+            
+            const user = await userRepository.getUser(process.env['TEST_USER_EMAIL']);
+            TEST_EVENT.Manager = user[0]._id;
+            
+            await eventRepository.createEvent(TEST_EVENT); 
+            const response = await request(httpServer).get('/event/getManagedEvents');
+
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_EVENT,response.body.events);
+            expect(res).toBe(true);
         })
-        
     })
 
 })
