@@ -130,6 +130,16 @@ describe('UserController',()=>{
         process.env['NODE_ENV'] = "development";
     })
 
+    describe('getAllEvents', ()=>{
+        it('Should return an array of events', async ()=>{
+            await eventRepository.createEvent(TEST_EVENT); 
+            const response = await request(httpServer).get('/event/getAllEvents');
 
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_EVENT,response.body.events);
+            expect(res).toBe(true);
+        })
+        
+    })
 
 })
