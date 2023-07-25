@@ -47,6 +47,7 @@ import request from 'supertest';
 import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
+import { GlobalRepository } from '@event-participation-trends/api/global/data-access';
 import { IEvent, IPosition, Position } from '@event-participation-trends/api/event/util';
 import { IUser } from '@event-participation-trends/api/user/util';
 
@@ -104,6 +105,44 @@ function objectSubset(target: any, obj: any ): boolean{
 	}
     return false;
 }
+
+describe('GlobalController', ()=>{
+    let moduleRef: any;
+    let httpServer: any;
+    let app: any;
+    let globalRepository: GlobalRepository;
+
+    beforeAll(async ()=>{
+        process.env['NODE_ENV'] = "test";  
+
+        moduleRef = await Test.createTestingModule({
+            imports: [AppModule],
+        })
+        .overrideGuard(JwtGuard)
+        .useValue({ canActivate: (context) => {
+            context.switchToHttp().getRequest().user = { email: process.env['TEST_USER_EMAIL_1'] };
+            return true;
+        } })
+        .overrideGuard(RbacGuard)
+        .useValue({ canActivate: () => true })
+        .overrideGuard(CsrfGuard)
+        .useValue({ canActivate: () => true })
+        .compile();
+
+        app = moduleRef.createNestApplication();
+        await app.init();
+
+        httpServer = app.getHttpServer();
+
+        globalRepository = moduleRef.get(GlobalRepository);
+    })
+
+    afterAll(async ()=>{
+        //process.env['NODE_ENV'] = "development";
+        await app.close();
+    })
+
+});
 
 describe('EventController', ()=>{
     let moduleRef: any;
