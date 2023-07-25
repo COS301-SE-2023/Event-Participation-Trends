@@ -414,7 +414,7 @@ describe('UserController', ()=>{
         })
         .overrideGuard(JwtGuard)
         .useValue({ canActivate: (context) => {
-            context.switchToHttp().getRequest().user = { email: process.env['TEST_USER_EMAIL_1'] };
+            context.switchToHttp().getRequest().user = { email: process.env['ADMIN_EMAIL'] };
             return true;
         } })
         .overrideGuard(RbacGuard)
@@ -436,5 +436,20 @@ describe('UserController', ()=>{
         await app.close();
     })
     
+    describe('getAllUsers', ()=>{
+        it('Should return an array of Users', async ()=>{
+            await userRepository.createUser(TEST_USER_2); 
+            const user = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
+
+            const response = await request(httpServer).get("/user/getAllUsers");
+
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_USER_2,response.body.users);
+            expect(res).toBe(true);
+
+            //cleanup
+            await userRepository.deleteUserById(user[0]._id)
+        })  
+    })
 
 });
