@@ -34,6 +34,7 @@ export class EventScreenViewPage {
   myFlowmapLayer: any;
   oldHeatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [];
   gridTilesDataPoints: {gridTile: HTMLDivElement, datapoints: (L.LatLng | L.HeatLatLngTuple)[]}[] = [];
+  hotzoneMarker: any;
   
   /**
    * The variables within the below block are used to determine the corrdinates of the
@@ -85,6 +86,11 @@ export class EventScreenViewPage {
       const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();
       if (this.showHeatmap) {
           this.myHeatLayer.setLatLngs(heatmapData);
+
+          // If we have the data we can determine the hotzone of the heatmap and add a red circle radius Marker to it
+          // determine hot zone and add a red circle radius Marker to it
+          // const hotZone = this.getHotZone(heatmapData);
+          // this.hotzoneMarker.setLatLng(hotZone);
         }
 
       if (this.showFlowmap) {
@@ -146,7 +152,9 @@ export class EventScreenViewPage {
       // get average moving direction of all data points within the grid tile
       const averageMovingDirection = this.getAverageMovingDirection(gridTileDataPoints);
 
-      this.addArrowIconToGridTile(gridTile, averageMovingDirection);
+      const childIcon = gridTile.children.item(0);
+
+      this.addArrowIconToGridTile(gridTile, averageMovingDirection, childIcon);
     }
     
     // add an arrow icon to each grid tile that has data points within it
@@ -226,19 +234,31 @@ export class EventScreenViewPage {
     return distance < radius;
   }
 
-  addArrowIconToGridTile(gridTile: any, rotation: number) {
-    const arrowIcon = document.createElement('ion-icon');
-    arrowIcon.setAttribute('name', 'arrow-up-outline');
-    arrowIcon.style.fontSize = '20px';
-    arrowIcon.style.color = 'rgba(255, 0, 0, 1)';
-    arrowIcon.style.position = 'absolute';
-    arrowIcon.style.top = '50%';
-    arrowIcon.style.left = '50%';
-    arrowIcon.style.transform = 'translate(-50%, -50%)';
-    //first transform to default rotation
-    arrowIcon.style.transform += ' rotate(0deg)';
-    arrowIcon.style.transform += ` rotate(${rotation}deg)`;
-    gridTile.appendChild(arrowIcon);
+  addArrowIconToGridTile(gridTile: any, rotation: number, icon: HTMLIonIconElement | null | undefined) {
+    if (!icon) {
+      const arrowIcon = document.createElement('ion-icon');
+      arrowIcon.setAttribute('name', 'arrow-up-outline');
+      arrowIcon.style.fontSize = '20px';
+      arrowIcon.style.color = 'rgba(255, 0, 0, 1)';
+      arrowIcon.style.position = 'absolute';
+      arrowIcon.style.top = '50%';
+      arrowIcon.style.left = '50%';
+      arrowIcon.style.transform = 'translate(-50%, -50%)';
+      //first transform to default rotation
+      arrowIcon.style.transform += ' rotate(0deg)';
+      if (rotation) {
+        arrowIcon.style.transform += ` rotate(${rotation}deg)`;
+      }
+      gridTile.appendChild(arrowIcon);
+    }
+    else {
+      icon.style.transform = 'translate(-50%, -50%)';
+      //first transform to default rotation
+      icon.style.transform += ' rotate(0deg)';
+      if (rotation) {
+        icon.style.transform += ` rotate(${rotation}deg)`;
+      }
+    }
   }
 
   toggleHeatmap() {
@@ -255,11 +275,6 @@ export class EventScreenViewPage {
           minOpacity: 0.6
         }
       ).addTo(this.myHeatmap);
-  
-      // If we have the data we can determine the hotzone of the heatmap and add a red circle radius Marker to it
-      // determine hot zone and add a red circle radius Marker to it
-      // const hotZone = this.getHotZone(heatmapData);
-      // L.circleMarker(hotZone, { radius: 40, color: 'red', fillColor: 'red', fillOpacity: 0.45 }).addTo(map);
     } else {
       this.myHeatmap.removeLayer(this.myHeatLayer);
     }
@@ -274,17 +289,11 @@ export class EventScreenViewPage {
     this.myHeatmap.scrollWheelZoom.disable();
     this.myHeatmap.boxZoom.disable();
     this.myHeatmap.keyboard.disable();
-    // this.myHeatmap.dragging.disable();
+    this.myHeatmap.dragging.disable();
 
     // disable zoom in and out buttons
     this.myHeatmap.removeControl(this.myHeatmap.zoomControl);
     this.myHeatmap.removeControl(this.myHeatmap.attributionControl);
-
-
-    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //   attribution: 'Map data &copy; OpenStreetMap contributors',
-    //   maxZoom: 18
-    // }).addTo(map);
 
     const imageUrl = 'assets/stage (3).png';
     // const imageBounds: L.LatLngBounds = map.getBounds();
@@ -351,6 +360,13 @@ export class EventScreenViewPage {
     //   console.log(latLng);
     //   console.log('X,Y: ' + event.originalEvent.clientX + ', ' + event.originalEvent.clientY);
     // });
+
+    // this.hotzoneMarker = L.circleMarker([0, 0], {
+    //   color: 'red',
+    //   fillColor: '#f03',
+    //   fillOpacity: 0.5,
+    //   radius: 10
+    // }).addTo(this.myHeatmap);
   }
 
   getHotZone(heatmapData: (L.LatLng | L.HeatLatLngTuple)[]) {
@@ -529,6 +545,11 @@ export class EventScreenViewPage {
             options: {
               responsive: true,
               cutout: '80%',
+              plugins: {
+                tooltip: {
+                  enabled: false
+                },
+              }
             },
             plugins: [
               {
@@ -663,7 +684,10 @@ export class EventScreenViewPage {
                             },
                             legend:{
                                 display: false
-                            }
+                            },
+                            tooltip: {
+                                enabled: false
+                            },
                           },
                         scales: {
                             x: {
