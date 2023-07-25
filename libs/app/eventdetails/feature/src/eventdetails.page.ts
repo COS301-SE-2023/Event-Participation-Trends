@@ -1,5 +1,5 @@
 import { Time } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
@@ -28,6 +28,10 @@ export class EventDetailsPage {
   public location = '';
   public category = '';
   public name = '';
+  screenTooSmall = false;
+  alert: HTMLIonAlertElement | null = null;
+  isLoading = false;
+
   constructor(
     appApiService: AppApiService, 
     private readonly route: ActivatedRoute,
@@ -131,24 +135,40 @@ export class EventDetailsPage {
   }
 
   openCreateFloorplan() {
-    if (window.innerWidth < 1052) {
+    if (this.screenTooSmall) {
       this.presentAlert();
-      return;
     }
-    //get event if from url
-    const queryParams = { m: false, id: this.event._id, queryParamsHandling: 'merge' };
-    this.router.navigate(['/event/createfloorplan'], { queryParams });
+    else {
+      this.isLoading = true;
+      //get event if from url
+      const queryParams = { m: false, id: this.event._id, queryParamsHandling: 'merge' };
+
+      this.router.navigate(['/event/createfloorplan'], { queryParams });
+    }
   }
 
   async presentAlert() {
-    const alert = await this.alertController.create({
+    this.alert = await this.alertController.create({
       header:'Screen too small',
       message:'Please use a larger screen to create a floor plan',
       buttons: [{text: 'OK', role: 'confirm', handler: () => {
-        alert.dismiss();
+        this.alert?.dismiss();
       }}]
     });
     
-    await alert.present();
+    await this.alert.present();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.checkScreenWidth();
+  }
+
+  checkScreenWidth(): void {
+    this.screenTooSmall = window.innerWidth < 1052;
+  }
+
+  ngAfterViewInit() {
+    this.checkScreenWidth();
   }
 }

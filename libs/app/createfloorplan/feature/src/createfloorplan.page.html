@@ -3,6 +3,13 @@
   class="bg-[url('assets/blob-scene-haikei-dark.svg')] fixed opacity-75 top-0 left-0 w-screen h-screen z-0"
 ></div>
 <ion-content [fullscreen]="true">
+  <div *ngIf="isLoading" class="flex flex-col justify-center items-center w-full h-full z-10">
+    <ion-spinner
+      name="bubbles"
+      class="text-ept-bumble-yellow w-24 h-24"
+    ></ion-spinner>
+    <ion-label>Loading Content...</ion-label>
+  </div>
   <div class="grid grid-cols-12 gap-3 p-3 h-full">
     <div
       class="tool-menu col-span-2 rounded-lg bg-white md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative"
