@@ -79,6 +79,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Users')"
+        selected="{{usersSelected}}"
       >
         <ion-label ngClass="mobile-label">Users</ion-label>
       </ion-tab-button>
@@ -89,6 +90,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('View')"
+        selected="{{viewSelected}}"
       >
         <ion-label ngClass="mobile-label">Events</ion-label>
       </ion-tab-button>
@@ -99,6 +101,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Compare Events')"
+        selected="{{compareSelected}}"
       >
         <ion-label ngClass="mobile-label">Compare</ion-label>
       </ion-tab-button>
@@ -161,7 +164,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Users')"
-        (selected)="usersSelected"
+        selected="{{usersSelected}}"
       >
         <ion-label ngClass="tab-text">Users</ion-label>
       </ion-tab-button>
@@ -177,6 +180,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('View')"
+        selected="{{viewSelected}}"
       >
         <ion-label>Events</ion-label>
       </ion-tab-button>
@@ -192,6 +196,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Compare Events')"
+        selected="{{compareSelected}}"
       >
         <ion-label>Compare</ion-label>
       </ion-tab-button>

@@ -10,9 +10,9 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./home.page.css'],
 })
 export class HomePage {
-  selected = 'Users';
-  usersSelected = true;
-  viewSelected = false;
+  selected = 'Event';
+  usersSelected = false;
+  viewSelected = true;
   compareSelected = false;
   
   public open = false;
