@@ -400,3 +400,41 @@ describe('EventController', ()=>{
     })
 })
 
+describe('UserController', ()=>{
+    let moduleRef: any;
+    let httpServer: any;
+    let app: any;
+    let userRepository: UserRepository;
+
+    beforeAll(async ()=>{
+        process.env['NODE_ENV'] = "test";  
+
+        moduleRef = await Test.createTestingModule({
+            imports: [AppModule],
+        })
+        .overrideGuard(JwtGuard)
+        .useValue({ canActivate: (context) => {
+            context.switchToHttp().getRequest().user = { email: process.env['TEST_USER_EMAIL_1'] };
+            return true;
+        } })
+        .overrideGuard(RbacGuard)
+        .useValue({ canActivate: () => true })
+        .overrideGuard(CsrfGuard)
+        .useValue({ canActivate: () => true })
+        .compile();
+
+        app = moduleRef.createNestApplication();
+        await app.init();
+
+        httpServer = app.getHttpServer();
+
+        userRepository = moduleRef.get(UserRepository);
+    })
+
+    afterAll(async ()=>{
+        //process.env['NODE_ENV'] = "development";
+        await app.close();
+    })
+    
+
+});
