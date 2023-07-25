@@ -121,7 +121,7 @@ describe('GlobalController', ()=>{
     let globalRepository: GlobalRepository;
 
     beforeAll(async ()=>{
-        process.env['NODE_ENV'] = "test";  
+        process.env['ENVIRONMENT'] = "test";  
 
         moduleRef = await Test.createTestingModule({
             imports: [AppModule],
@@ -146,7 +146,7 @@ describe('GlobalController', ()=>{
     })
 
     afterAll(async ()=>{
-        //process.env['NODE_ENV'] = "development";
+        //process.env['ENVIRONMENT'] = "development";
         await app.close();
     })
     
@@ -174,7 +174,7 @@ describe('EventController', ()=>{
     let userRepository: UserRepository;
 
     beforeAll(async ()=>{
-        process.env['NODE_ENV'] = "test";  
+        process.env['ENVIRONMENT'] = "test";  
 
         moduleRef = await Test.createTestingModule({
             imports: [AppModule],
@@ -200,7 +200,7 @@ describe('EventController', ()=>{
     })
 
     afterAll(async ()=>{
-        //process.env['NODE_ENV'] = "development";
+        //process.env['ENVIRONMENT'] = "development";
         await app.close();
     })
 
@@ -407,7 +407,7 @@ describe('UserController', ()=>{
     let userRepository: UserRepository;
 
     beforeAll(async ()=>{
-        process.env['NODE_ENV'] = "test";  
+        process.env['ENVIRONMENT'] = "test";  
 
         moduleRef = await Test.createTestingModule({
             imports: [AppModule],
@@ -432,7 +432,7 @@ describe('UserController', ()=>{
     })
 
     afterAll(async ()=>{
-        //process.env['NODE_ENV'] = "development";
+        //process.env['ENVIRONMENT'] = "development";
         await app.close();
     })
     
