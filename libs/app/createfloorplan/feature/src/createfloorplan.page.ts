@@ -130,6 +130,7 @@ export class CreateFloorPlanPage implements OnInit{
     currentPage!: string;
     prevPage!: string;
     alertPresented = false;
+    isLoading = true;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -745,6 +746,10 @@ export class CreateFloorPlanPage implements OnInit{
             });
           });
           }, 6);
+          
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 1500);
     }
     
     handleScaleAndDrag(scaleBy:number, e?: any, direction?: 'in' | 'out'): void {
@@ -1879,15 +1884,23 @@ export class CreateFloorPlanPage implements OnInit{
       
       shouldStackVertically = false;
 
-      @HostListener('window:resize')
-      onWindowResize() {
-        this.checkScreenWidth();
-      }
+      // @HostListener('window:resize')
+      // onWindowResize() {
+      //   if (this.currentPage === '/event/createfloorplan') {
+      //     this.checkScreenWidth();
+      //   }
+      // }
+    @HostListener('window:beforeunload', ['$event'])
+    onBeforeUnload($event: any) {
+      this.isLoading = true;
+    }
 
       // set the grid lines when the window is resized
     @HostListener('window:resize', ['$event'])
     onResize(event: any) {
-      this.checkScreenWidth();
+      if (this.currentPage === '/event/createfloorplan') {
+        this.checkScreenWidth();
+      }
       // remove gridlines and then add them again
       this.removeGridLines();
       const width = this.canvasParent.nativeElement.offsetWidth;
@@ -1972,8 +1985,8 @@ export class CreateFloorPlanPage implements OnInit{
           }}]
         });
 
-        await alert.present();
         this.alertPresented = true;
+        await alert.present();
       }
 
       adjustJSONData(json: Record<string, any>): void {
