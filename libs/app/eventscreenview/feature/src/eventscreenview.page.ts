@@ -7,6 +7,9 @@ import 'chartjs-adapter-luxon';
 import 'chartjs-plugin-datalabels';
 
 import ChartStreaming from 'chartjs-plugin-streaming';
+import { AppApiService } from '@event-participation-trends/app/api';
+import { ActivatedRoute } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 
 @Component({
@@ -35,6 +38,12 @@ export class EventScreenViewPage {
   oldHeatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [];
   gridTilesDataPoints: {gridTile: HTMLDivElement, datapoints: (L.LatLng | L.HeatLatLngTuple)[]}[] = [];
   hotzoneMarker: any;
+
+  newAverageData: {
+    oldAvg: (L.LatLng | L.HeatLatLngTuple),
+    newAvg: (L.LatLng | L.HeatLatLngTuple)
+  }[] = [];
+  eventId = null;
   
   /**
    * The variables within the below block are used to determine the corrdinates of the
@@ -66,6 +75,17 @@ export class EventScreenViewPage {
   detectionRadius = 3;
   // ====================================
 
+  constructor(
+    private readonly appApiService: AppApiService,
+    private readonly route: ActivatedRoute,
+  ) {}
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.eventId = params['id'];
+    });
+  }
+
   ngAfterViewInit() {
     // wait until the heatmap container is rendered
     setTimeout(() => {
@@ -83,7 +103,9 @@ export class EventScreenViewPage {
 
     
     setInterval(() => {
-      const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData();
+      const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData(); // for testing purposes
+      // const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.getAverageData();
+      this.getAverageData();
       if (this.showHeatmap) {
           this.myHeatLayer.setLatLngs(heatmapData);
 
@@ -95,7 +117,7 @@ export class EventScreenViewPage {
 
       if (this.showFlowmap) {
         // remove arrow icons from all gridtiles that have them
-        this.removeArrowIconsFromGridTiles();
+        // this.removeArrowIconsFromGridTiles();
 
         // clear the gridTilesDataPoints array
         this.gridTilesDataPoints = [];
@@ -103,7 +125,23 @@ export class EventScreenViewPage {
         // add arrow icons to every grid tile on the flowmap layer
         this.addArrowIconsToGridTiles(heatmapData);
       }
-    }, 500);
+    }, 5000);
+  }
+
+  getAverageData() {
+    // extract event id from url
+    const eventId = this.eventId;
+    
+    // get the current date
+    const endTime = new Date();
+    // get the date 5 seconds ago
+    const startTime = new Date(endTime.getTime() - 5000);
+    
+    const response = this.appApiService.getEventDevicePosition(eventId, startTime, endTime);
+
+    response.then((data: any) => {
+      console.log(data);
+    });
   }
 
   showToggleButton() {
@@ -604,6 +642,11 @@ export class EventScreenViewPage {
         }]
       },
       options: {
+        plugins: {
+          tooltip: {
+            enabled: false
+          }
+        },
         scales: {
           x: {
             type: 'realtime',   // x axis will auto-scroll from right to left
