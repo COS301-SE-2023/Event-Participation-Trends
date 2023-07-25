@@ -22,8 +22,8 @@
       <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>
       <ion-label>Loading Content...</ion-label>
     </div>
-    <div *ngIf="!isLoading" class="grid grid-cols-3 px-7">
-      <div class="col-span-1 flex items-center">
+    <div *ngIf="!isLoading" class="grid grid-cols-3 px-6 mx-7">
+      <!-- <div class="col-span-1 flex items-center">
         <ion-refresher slot="fixed" [pullMin]="30" [pullMax]="70" (ionRefresh)="handleRefresh($event)">
           <ion-refresher-content 
             pullingIcon="arrow-down-circle-outline"
@@ -31,6 +31,11 @@
             class="absolute left-4 text-ept-bumble-yellow"
           ></ion-refresher-content>
         </ion-refresher>
+      </div> -->
+      <div
+        class="col-span-4 md:col-span-1 flex items-center justify-self-center md:justify-self-start"
+      >
+        <p class="text-2xl text-ept-deep-grey">Events</p>
       </div>
       <span
         ngClass="sidebar-content"
