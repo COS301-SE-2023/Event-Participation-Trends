@@ -50,6 +50,7 @@ import { UserRepository } from '@event-participation-trends/api/user/data-access
 import { GlobalRepository } from '@event-participation-trends/api/global/data-access';
 import { IEvent, IPosition, Position } from '@event-participation-trends/api/event/util';
 import { IUser } from '@event-participation-trends/api/user/util';
+import { IGlobal } from '@event-participation-trends/api/global/util';
 
 //constants 
 // eslint-disable-next-line prefer-const
@@ -93,6 +94,13 @@ const TEST_DEVICE_POSITION: IPosition ={
     x: 0,
     y: 0,
     timestamp: new Date()
+}
+
+const TEST_GLOBAL: IGlobal ={
+    SensorIdToMacs: [{
+        eventSensorId: "test01",
+        mac: "00:00:00:00:00:00"
+    }]
 }
 
 //helper functions
@@ -142,7 +150,7 @@ describe('GlobalController', ()=>{
         await app.close();
     })
 
-});
+})
 
 describe('EventController', ()=>{
     let moduleRef: any;
