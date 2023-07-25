@@ -3,7 +3,7 @@ import { get } from 'http';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import {Html5QrcodeScanner, Html5QrcodeScannerState} from "html5-qrcode";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
@@ -11,8 +11,10 @@ import { Select, Store } from '@ngxs/store';
 import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@event-participation-trends/app/createfloorplan/data-access';
 import { Observable } from 'rxjs';
 import { AddSensor, RemoveSensor, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
-import { IonInput } from '@ionic/angular';
+import { AlertController, IonInput, NavController } from '@ionic/angular';
 import { NumberSymbol } from '@angular/common';
+import { SubPageNavState } from '@event-participation-trends/app/subpagenav/data-access';
+import { SetSubPageNav } from '@event-participation-trends/app/subpagenav/util';
 
 type KonvaTypes = Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path | Konva.Circle | Konva.Label;
 
@@ -29,6 +31,8 @@ interface DroppedItem {
 export class CreateFloorPlanPage implements OnInit{
   @Select(CreateFloorPlanState.getSensors) sensors$!: Observable<ISensorState[] | undefined>; 
   @Select(CreateFloorPlanState.getActiveSensor) activeSensor$!: Observable<ISensorState | null>;
+  @Select(SubPageNavState.currentPage) currentPage$!: Observable<string | null>;
+  @Select(SubPageNavState.prevPage) prevPage$!: Observable<string | null>;
     @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLDivElement>;
     @ViewChild('canvasParent', { static: false }) canvasParent!: ElementRef<HTMLDivElement>;
     @ViewChild('dustbin', { static: false }) dustbinElement!: ElementRef<HTMLImageElement>;
@@ -116,6 +120,16 @@ export class CreateFloorPlanPage implements OnInit{
     prevSelectionGroup !: Konva.Group;
     selected : Konva.Shape[] = [];
     stallCount = 1;
+    isLargeScreen = false;
+    screenTooSmall = false;
+    params: {
+      m: string,
+      id: string,
+      queryParamsHandling: string
+    } | null = null;
+    currentPage!: string;
+    prevPage!: string;
+    alertPresented = false;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -125,12 +139,21 @@ export class CreateFloorPlanPage implements OnInit{
       private readonly appApiService: AppApiService,
       private readonly route: ActivatedRoute,
       private readonly formBuilder: FormBuilder, 
-      private readonly store: Store
+      private readonly store: Store,
+      private alertController: AlertController,
+      private navController: NavController,  
+      private router: Router, 
     ) {
       for (let i = 1; i < 5; i++) {
         const snap = this.initialGridSize / i;
         this.snaps.push(snap);
       }
+  
+      this.params = {
+        m: this.route.snapshot.queryParams['m'],
+        id: this.route.snapshot.queryParams['id'],
+        queryParamsHandling: this.route.snapshot.queryParams['queryParamsHandling']
+      };
     }
 
     adjustValue(value: number) {
@@ -1893,8 +1916,8 @@ export class CreateFloorPlanPage implements OnInit{
     }
     
       ngOnInit() : void {
+        this.alertPresented = false;
         this.checkScreenWidth();
-
         this.macAddressForm = this.formBuilder.group({
           macAddressBlock1: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
           macAddressBlock2: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
@@ -1903,10 +1926,54 @@ export class CreateFloorPlanPage implements OnInit{
           macAddressBlock5: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
           macAddressBlock6: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
         });
+
+        this.router.events.subscribe((val) => {
+          this.currentPage = this.router.url.split('?')[0];
+    
+          //check if url contains 'm=true'
+          if (this.router.url.includes('m=')) {
+            this.prevPage = this.currentPage === '/event/createfloorplan' ? '/event/eventdetails' : '/home';
+          }
+          else {
+            this.prevPage = this.currentPage === '/event/createfloorplan' ? '/event/addevent' : '/home';
+          }
+            
+            this.store.dispatch(new SetSubPageNav(this.currentPage, this.prevPage));
+        });
       }
     
       checkScreenWidth() {
         this.shouldStackVertically = window.innerWidth < 1421;
+        this.isLargeScreen = window.innerWidth > 1421;
+        this.screenTooSmall = window.innerWidth < 1052;
+
+        console.log(window.innerWidth, this.alertPresented)
+
+        if (this.screenTooSmall && !this.alertPresented) {
+          this.presentAlert();
+        }
+      }
+
+      async presentAlert() {
+        const alert = await this.alertController.create({
+          header:'Screen too small',
+          message:'Please use a larger screen to create a floor plan',
+          buttons: [{text: 'OK', role: 'confirm', handler: () => {
+            //change query params
+            const queryParams : NavigationExtras = {
+              queryParams: {
+                m: this.currentPage === '/event/createfloorplan' && this.prevPage === '/event/eventdetails' ? 'true' : 'false',
+                id: this.params?.id,
+                queryParamsHandling: 'merge',
+              },
+            };
+            this.navController.navigateBack(this.prevPage, queryParams);
+            this.alertPresented = false;
+          }}]
+        });
+
+        await alert.present();
+        this.alertPresented = true;
       }
 
       adjustJSONData(json: Record<string, any>): void {

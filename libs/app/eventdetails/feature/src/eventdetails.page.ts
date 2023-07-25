@@ -6,6 +6,7 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { Redirect } from '@nestjs/common';
 import { IEvent, IEventDetails, IUpdateEventDetailsRequest } from '@event-participation-trends/api/event/util';
 import { promisify } from 'util';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'event-participation-trends-eventdetails',
@@ -27,7 +28,12 @@ export class EventDetailsPage {
   public location = '';
   public category = '';
   public name = '';
-  constructor(appApiService: AppApiService, private readonly route: ActivatedRoute, private router: Router) {
+  constructor(
+    appApiService: AppApiService, 
+    private readonly route: ActivatedRoute,
+    private router: Router,
+    private alertController: AlertController,
+    ) {
     this.initialText = 'Initial text value';
     this.inviteEmail = '';
     this.appApiService = appApiService;
@@ -125,8 +131,24 @@ export class EventDetailsPage {
   }
 
   openCreateFloorplan() {
+    if (window.innerWidth < 1052) {
+      this.presentAlert();
+      return;
+    }
     //get event if from url
     const queryParams = { m: false, id: this.event._id, queryParamsHandling: 'merge' };
     this.router.navigate(['/event/createfloorplan'], { queryParams });
+  }
+
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      header:'Screen too small',
+      message:'Please use a larger screen to create a floor plan',
+      buttons: [{text: 'OK', role: 'confirm', handler: () => {
+        alert.dismiss();
+      }}]
+    });
+    
+    await alert.present();
   }
 }
