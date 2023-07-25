@@ -283,7 +283,6 @@ describe('EventController', ()=>{
         })
     })
 
-
     describe('getEventFloorLayout', ()=>{
         it('Should return an string represention of a FloorLayout', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
@@ -302,7 +301,7 @@ describe('EventController', ()=>{
     })
 
     describe('getEventDevicePosition', ()=>{
-        it('Should return an event object', async ()=>{
+        it('Should return an array of positions', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
             const event = await eventRepository.getEventByName(TEST_EVENT.Name);
             await eventRepository.addDevicePosition(event[0]._id, [TEST_DEVICE_POSITION]);
@@ -324,6 +323,19 @@ describe('EventController', ()=>{
         })  
     })
     
+    describe('getAllEventCategories', ()=>{
+        it('Should return an array of categories', async ()=>{
+            await eventRepository.createEvent(TEST_EVENT); 
+            const event = await eventRepository.getEventByName(TEST_EVENT.Name);
 
+            const response = await request(httpServer).get("/event/getAllEventCategories");
+
+            expect(response.status).toBe(200);
+            expect(response.body.categories[0]).toBe(TEST_EVENT.Category);
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id)
+        })  
+    })
 })
 
