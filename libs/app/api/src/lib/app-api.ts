@@ -23,6 +23,7 @@ import {
   IEventId,
   IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
+  IGetEventDevicePositionResponse,
   IGetEventFloorlayoutResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
@@ -331,14 +332,14 @@ export class AppApiService {
     });
   }
 
-  async getEventDevicePosition(eventId: string | null, startTime: Date | null | undefined, endTime: Date | null | undefined): Promise<IPosition[] | undefined | null> {
+  async getEventDevicePosition(eventId: string | null, startTime: Date | null | undefined, endTime: Date | null | undefined): Promise<IGetEventDevicePositionResponse | undefined | null> {
     // copy startTime up to "GMT+0000"
-    const startTimeString = startTime?.toString().slice(0, 24);
+    const startTimeString = startTime?.toString().slice(0, 33);
     // copy endTime up to "GMT+0000"
-    const endTimeString = endTime?.toString().slice(0, 24);
+    const endTimeString = endTime?.toString().slice(0, 33);
 
     return firstValueFrom(
-      this.http.get<IPosition[]>(
+      this.http.get<IGetEventDevicePositionResponse>(
         `/api/event/getEventDevicePosition?eventId=${eventId}&startTime=${startTimeString}&endTime=${endTimeString}`,
         {
           headers: {
