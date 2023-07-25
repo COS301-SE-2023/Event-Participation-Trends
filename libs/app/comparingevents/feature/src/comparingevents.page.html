@@ -1,7 +1,10 @@
+<div
+  class="bg-[url('assets/blob-scene-haikei-dark.svg')] fixed opacity-75 top-0 left-0 w-screen h-screen z-0"
+></div>
 <ion-content
-  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+  class="bg-cover bg-no-repeat bg-center bg-fixed h-full"
 >
-  <div class="backdrop-blur-[6px] h-full"  [ngClass]="{'items-center flex justify-center': isLoading, 'grid grid-cols-3': !isLoading}">
+  <div class="h-full"  [ngClass]="{'items-center flex justify-center': isLoading, 'grid grid-cols-3': !isLoading}">
     <div *ngIf="isLoading" class="flex flex-col justify-center items-center">
       <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>
       <ion-label>Loading Content...</ion-label>
