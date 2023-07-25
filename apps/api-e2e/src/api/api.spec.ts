@@ -149,8 +149,22 @@ describe('GlobalController', ()=>{
         //process.env['NODE_ENV'] = "development";
         await app.close();
     })
+    
+    describe('getGlobal', ()=>{
+        it('Should return an array of eventSensorId and macs pairs', async ()=>{
+            await globalRepository.createGlobal(TEST_GLOBAL); 
 
-})
+            const response = await request(httpServer).get("/global/getGlobal?sensorIdToMacs='true'");
+
+            expect(response.status).toBe(200);
+            expect(response.body.sensorIdToMacs).toEqual(TEST_GLOBAL.SensorIdToMacs);
+
+            //cleanup
+            await globalRepository.deleteGlobal();
+        })  
+    })
+
+});
 
 describe('EventController', ()=>{
     let moduleRef: any;
