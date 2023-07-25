@@ -42,17 +42,17 @@ describe('GET /api', () => {
 import {Test} from '@nestjs/testing';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { AppModule } from '../../../../apps/api/src/app/app.module';
-import { Connection, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import request from 'supertest';
 import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/guards';
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
-import { IEventDetails } from '@event-participation-trends/api/event/util';
+import { IEvent, IPosition, Position } from '@event-participation-trends/api/event/util';
 import { IUser } from '@event-participation-trends/api/user/util';
 
 //constants 
 // eslint-disable-next-line prefer-const
-let TEST_EVENT: IEventDetails ={
+let TEST_EVENT: IEvent ={
     StartDate: new Date("2023-06-10T12:34:56.789Z"),
     EndDate: new Date("2023-06-13T12:34:56.789Z"),
     Name: "Testing Event",
@@ -67,7 +67,8 @@ let TEST_EVENT: IEventDetails ={
         ZIPCode: "None"
     },
     Manager: new Types.ObjectId(),
-    Floorlayout: null
+    FloorLayout: null,
+    Devices: Array<Position>(),
 }
 
 const TEST_USER_1: IUser ={
@@ -86,6 +87,12 @@ const TEST_USER_2: IUser ={
     Viewing: new Array<Types.ObjectId>()
 }
 
+const TEST_DEVICE_POSITION: IPosition ={
+    id: 0,
+    x: 0,
+    y: 0,
+    timestamp: new Date()
+}
 
 //helper functions
 function objectSubset(target: any, obj: any ): boolean{
@@ -98,7 +105,7 @@ function objectSubset(target: any, obj: any ): boolean{
     return false;
 }
 
-describe('UserController', ()=>{
+describe('EventController', ()=>{
     let moduleRef: any;
     let httpServer: any;
     let app: any;
@@ -132,7 +139,7 @@ describe('UserController', ()=>{
     })
 
     afterAll(async ()=>{
-        process.env['NODE_ENV'] = "development";
+        //process.env['NODE_ENV'] = "development";
         await app.close();
     })
 
@@ -278,7 +285,7 @@ describe('UserController', ()=>{
 
 
     describe('getEventFloorLayout', ()=>{
-        it('Should return an array of events', async ()=>{
+        it('Should return an string represention of a FloorLayout', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
             const event = await eventRepository.getEventByName(TEST_EVENT.Name);
 
@@ -294,6 +301,29 @@ describe('UserController', ()=>{
         })  
     })
 
+    describe('getEventDevicePosition', ()=>{
+        it('Should return an event object', async ()=>{
+            await eventRepository.createEvent(TEST_EVENT); 
+            const event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            await eventRepository.addDevicePosition(event[0]._id, [TEST_DEVICE_POSITION]);
+
+            const startTime = (new Date(TEST_DEVICE_POSITION.timestamp.setHours(TEST_DEVICE_POSITION.timestamp.getHours() -4))).toString();
+            const endTime = (new Date(TEST_DEVICE_POSITION.timestamp.setHours(TEST_DEVICE_POSITION.timestamp.getHours() +6))).toString();
+            const eventId = <string> <unknown> (event[0]._id);
+
+            const URI='/event/getEventDevicePosition?eventId='+eventId+'&startTime="'+startTime+'"&endTime="'+endTime+'"';
+
+            const response = await request(httpServer).get(URI);
+
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_DEVICE_POSITION,response.body.positions);
+            expect(res).toBe(true);
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id)
+        })  
+    })
+    
 
 })
 
