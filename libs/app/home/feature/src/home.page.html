@@ -76,6 +76,11 @@
         <ion-label ngClass="mobile-label">Users</ion-label>
       </ion-tab-button>
 
+      <div
+        *ngIf="allowUsers()"
+        class="h-3/6 min-h-[1em] w-[3px] bg-[#252527] bg-opacity-90 dark:opacity-100 self-center rounded-full"
+      ></div>
+
       <ion-tab-button
         *ngIf="allowView()"
         tab="viewevents"
@@ -86,6 +91,11 @@
       >
         <ion-label ngClass="mobile-label">Events</ion-label>
       </ion-tab-button>
+
+      <div
+        *ngIf="allowCompare()"
+        class="h-3/6 min-h-[1em] w-[3px] bg-[#252527] bg-opacity-90 dark:opacity-100 self-center rounded-full"
+      ></div>
 
       <ion-tab-button
         *ngIf="allowCompare()"
