@@ -10,6 +10,7 @@ import ChartStreaming from 'chartjs-plugin-streaming';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
 import { IGetEventDevicePositionResponse, IPosition } from '@event-participation-trends/api/event/util';
+import { set } from 'mongoose';
 
 interface IAverageDataFound {
   id: number | null | undefined,
@@ -56,10 +57,15 @@ export class EventScreenViewPage {
     detectedThisRun: boolean
   }[] = [];
   eventId = null;
+  totalUsersDetected = 0;
+  averageDataDetectedThisRun: IAverageDataFound[] = [];
 
   //testing data points with real data using time variables below
-  startTime = new Date(2023, 6, 20, 8, 42, 14).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
-  endTime = new Date(2023, 6, 20, 8, 42, 19).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+  // startTime = new Date(2023, 6, 20, 8, 42, 14).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+  // endTime = new Date(2023, 6, 20, 8, 42, 19).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+  // Lukas Se Kamer Event times  
+  startTime = new Date(2023, 6, 26, 6, 52, 0).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+  endTime = new Date(2023, 6, 26, 6, 53, 5).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
 
   /**
    * The variables within the below block are used to determine the corrdinates of the
@@ -88,7 +94,7 @@ export class EventScreenViewPage {
     west: -307 
   };
 
-  detectionRadius = 2.5;
+  detectionRadius = 3;
   // ====================================
 
   constructor(
@@ -140,13 +146,14 @@ export class EventScreenViewPage {
     setInterval(() => {
       // const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData(); // for testing purposes
       this.getAverageData();
-      this.averageDataFound = this.generateRandomData(100);
+      // this.averageDataFound = this.generateRandomData(100);
       
       // remove all data points that were not detected this run
-      const averageDataDetectedThisRun = this.averageDataFound.filter((averageDataPoint: IAverageDataFound) => averageDataPoint.detectedThisRun); 
+      this.averageDataDetectedThisRun = this.averageDataFound.filter((averageDataPoint: IAverageDataFound) => averageDataPoint.detectedThisRun); 
+      this.totalUsersDetected = this.averageDataDetectedThisRun.length;
 
       // convert averageDataDetectedThisRun to heatmap data using the new data points
-      const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = averageDataDetectedThisRun.map((averageDataPoint: IAverageDataFound) => averageDataPoint.latLng.newDataPoint);
+      const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.averageDataDetectedThisRun.map((averageDataPoint: IAverageDataFound) => averageDataPoint.latLng.newDataPoint);
 
       if (this.showHeatmap) {
         this.myHeatLayer.setLatLngs(heatmapData);
@@ -162,10 +169,10 @@ export class EventScreenViewPage {
         this.gridTilesDataPoints = [];
 
         // add arrow icons to every grid tile on the flowmap layer
-        this.addIconsToGridTiles(averageDataDetectedThisRun);
+        this.addIconsToGridTiles(this.averageDataDetectedThisRun);
 
         //remove all grid tiles if there are no data
-        if (averageDataDetectedThisRun.length === 0) {
+        if (this.averageDataDetectedThisRun.length === 0) {
           this.removeArrowIconsFromGridTiles();
         }
       }
@@ -599,7 +606,7 @@ export class EventScreenViewPage {
     this.myHeatmap.removeControl(this.myHeatmap.zoomControl);
     this.myHeatmap.removeControl(this.myHeatmap.attributionControl);
 
-    const imageUrl = 'assets/stage (3).png';
+    const imageUrl = 'assets/LukasSeKamerEvent.jpeg';
     // const imageBounds: L.LatLngBounds = map.getBounds();
     // get bounds of heatmap container
     const imageBounds: L.LatLngBounds = L.latLngBounds(
@@ -762,7 +769,7 @@ export class EventScreenViewPage {
     const data = {
       datasets: [{
         label: 'Total Users',
-        data: [100],
+        data: [0],
         backgroundColor: [
           '#0000FF',
         ],
@@ -789,7 +796,7 @@ export class EventScreenViewPage {
                 tooltip: {
                   enabled: false
                 },
-              } 
+              },          
             },
             plugins: [
               {
@@ -816,6 +823,11 @@ export class EventScreenViewPage {
             ]
           }
         );
+
+        setInterval(() => {
+          myChart.data.datasets[0].data[0] = this.totalUsersDetected;
+          myChart.update();
+        });
       }
     }
   }
@@ -933,7 +945,7 @@ export class EventScreenViewPage {
                 chart.config.data.datasets.forEach((dataset: any) => {
                   dataset.data.push({
                     x: Date.now(),
-                    y: Math.random()
+                    y: this.totalUsersDetected
                   });
                 });
 
