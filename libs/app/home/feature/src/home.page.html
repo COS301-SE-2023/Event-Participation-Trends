@@ -64,7 +64,7 @@
     [ngClass]="{'top-[-100px]': !open, 'top-[50px]': open}"
     class="mobile absolute w-screen bg-ept-deep-grey backdrop-blur-md drop-shadow-lg text-ept-off-white sm:hidden transition-all ease-in duration-300 grid grid-rows-2 justify-items-end justify-end"
   >
-    <div class="justify-items-start justify-start w-screen flex bg-transparent">
+    <div class="justify-items-around justify-center w-screen flex bg-transparent">
       <ion-tab-button
         *ngIf="allowUsers()"
         tab="usermanagement"
@@ -156,7 +156,7 @@
 
       <div
         *ngIf="allowUsers()"
-        class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
+        class="h-3/6 min-h-[1em] w-[3px] bg-[#252527] bg-opacity-90 dark:opacity-100 self-center rounded-full"
       ></div>
 
       <ion-tab-button
@@ -172,7 +172,7 @@
 
       <div
         *ngIf="allowCompare()"
-        class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
+        class="h-3/6 min-h-[1em] w-[3px] bg-[#252527] bg-opacity-90 dark:opacity-100 self-center rounded-full"
       ></div>
 
       <ion-tab-button
