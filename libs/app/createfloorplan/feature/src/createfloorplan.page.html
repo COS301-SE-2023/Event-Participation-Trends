@@ -168,7 +168,7 @@
                 [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
                 (input)="updateWidth($event)"
                 [disabled]="!preventCreatingWalls || activeItem == null || !selectedWall"
-                [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || selectedSensor}"
+                [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem == null || selectedSensor || !selectedWall}"
               >
             </div>
             <div class="mt-3">
