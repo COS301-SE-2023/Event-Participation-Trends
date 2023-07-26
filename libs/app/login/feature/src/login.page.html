@@ -23,12 +23,13 @@
       <div class="login-section float-right lg:w-1/3 sm:w-1/2 md:mx-10 mb-20 md:mb-0 transition-all duration-300">
         <div class="login-content flex flex-col justify-center items-center">
           <ion-text color="none" ngClass="login-text">Log in/Sign up using a Google account</ion-text>
-          <ion-button href="/api/auth/google"
-            class="bg-ept-deep-grey rounded-xl text-ept-bumble-yellow mt-5 hover:scale-105 transition-all duration-300 h-auto p-2"
+          <a href="/api/auth/google"
+            id="google-login-button"
+            class="bg-ept-deep-grey rounded-xl text-ept-bumble-yellow mt-5 hover:scale-105 transition-all duration-300 h-auto p-2 flex items-center"
             color="none" (click)="continueWithGoogle()">
-            <ion-icon ngClass="button-logo" name="logo-google" slot="start"></ion-icon>
-            <ion-label ngClass="button-text" class="font-semibold text-lg">Log in with Google</ion-label>
-          </ion-button>
+            <ion-icon ngClass="button-logo m-1 mr-0" name="logo-google" slot="start"></ion-icon>
+            <ion-label ngClass="button-text" class="font-semibold text-xl mx-2">LOG IN WITH GOOGLE</ion-label>
+          </a>
         </div>
       </div>
     </div>
