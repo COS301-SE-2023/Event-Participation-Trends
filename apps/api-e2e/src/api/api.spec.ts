@@ -50,7 +50,8 @@ import { UserRepository } from '@event-participation-trends/api/user/data-access
 import { GlobalRepository } from '@event-participation-trends/api/global/data-access';
 import { IEvent, IPosition, Position } from '@event-participation-trends/api/event/util';
 import { IUser } from '@event-participation-trends/api/user/util';
-import { IGlobal } from '@event-participation-trends/api/global/util';
+import { ICreateGlobalRequest, IGlobal } from '@event-participation-trends/api/global/util';
+import { promisify } from 'util';
 
 //constants 
 // eslint-disable-next-line prefer-const
@@ -102,6 +103,8 @@ const TEST_GLOBAL: IGlobal ={
         mac: "00:00:00:00:00:00"
     }]
 }
+
+const SLEEP = promisify(setTimeout);
 
 //helper functions
 function objectSubset(target: any, obj: any ): boolean{
@@ -158,6 +161,30 @@ describe('GlobalController', ()=>{
 
             expect(response.status).toBe(200);
             expect(response.body.sensorIdToMacs).toEqual(TEST_GLOBAL.SensorIdToMacs);
+
+            //cleanup
+            await globalRepository.deleteGlobal();
+        })  
+    })
+
+    describe('createGlobal', ()=>{
+        it('Should set a global object in the database', async ()=>{
+            const expectedRequest: ICreateGlobalRequest ={
+                sensorIdToMacs: TEST_GLOBAL.SensorIdToMacs
+            };
+
+            const response = await request(httpServer).post("/global/createGlobal").send(expectedRequest);
+            expect(response.body.status).toEqual("success");
+
+            //due to delayed persistance wait
+            let global = await globalRepository.getGlobal();
+            while(global.length == 0){
+                global = await globalRepository.getGlobal();
+                await SLEEP(500);
+            }
+
+            const res = objectSubset(expectedRequest.sensorIdToMacs[0],[global[0].SensorIdToMacs[0]]);
+            expect(res).toBe(true);
 
             //cleanup
             await globalRepository.deleteGlobal();
