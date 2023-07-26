@@ -5,39 +5,31 @@
     class="bg-ept-deep-grey backdrop-blur-md drop-shadow-lg text-ept-off-white grid-cols-3 px-4 grid sm:hidden z-30"
   >
     <div id="title" class="col-span-2 main-title flex justify-self-start">
-      <ion-label
-        ngClass="title-text"
-        class="text-xl font-semibold"
+      <ion-label ngClass="title-text" class="text-xl font-semibold"
         >EPT
-        <sub
-          ><ion-text color="medium">/ {{getRole()}}</ion-text></sub
-        ></ion-label
-      >
+      </ion-label>
     </div>
 
-    <div *ngIf="isViewer()" class="justify-self-end">
-      <ion-button
-      (click)="openProfile($event)"
-      ngClass="profile-section"
-      class="flex justify-self-end"
-      [ngClass]="{'col-span-1': isViewer(), 'col-span-2':!isViewer()}"
-      >
+    <div class="flex justify-self-end"
+    *ngIf="isViewer()"
+    >
+      <div class="self-center text-xl">{{username}}</div>
+      <div class="self-end text-gray-400 ml-1 text-[15px]">/ {{role}}</div>
       <ion-icon
-      *ngIf="faultyImage"
-      slot="end"
-      name="person-circle"
-      class="w-[40px] h-[40px] rounded-full"
-      alt="profile picture"
+        *ngIf="faultyImage"
+        slot="end"
+        name="person-circle"
+        class="w-[40px] h-[40px] rounded-full"
+        alt="profile picture"
       ></ion-icon>
       <img
         *ngIf="!faultyImage"
         slot="end"
         src="{{profilePicUrl}}"
-        class="w-[35px] h-[35px] rounded-full ml-2"
+        class="w-[35px] h-[35px] rounded-full ml-2 hover:scale-[115%] transition-all duration-200"
         alt="profile picture"
-        />
-        <ion-label ngClass="profile-name">{{username}}</ion-label>
-      </ion-button>
+        (click)="openProfile($event)"
+      />
     </div>
 
     <div class="justify-self-end flex" *ngIf="!isViewer()">
@@ -107,11 +99,10 @@
       </ion-tab-button>
     </div>
 
-    <ion-button
-      (click)="openProfile($event)"
-      ngClass="profile-section"
-      class="profile-mobile"
+    <div class="flex justify-self-end mr-4"
     >
+      <div class="self-center text-xl">{{username}}</div>
+      <div class="self-end text-gray-400 ml-1 text-[15px]">/ {{role}}</div>
       <ion-icon
         *ngIf="faultyImage"
         slot="end"
@@ -123,11 +114,11 @@
         *ngIf="!faultyImage"
         slot="end"
         src="{{profilePicUrl}}"
-        class="w-[35px] h-[35px] rounded-full ml-2"
+        class="w-[35px] h-[35px] rounded-full ml-2 hover:scale-[115%] transition-all duration-200"
         alt="profile picture"
+        (click)="openProfile($event)"
       />
-      <ion-label ngClass="profile-name">{{username}}</ion-label>
-    </ion-button>
+    </div>
   </ion-tab-bar>
   <!-- larger -->
   <ion-tab-bar
@@ -140,19 +131,13 @@
         class="hidden 1032:block sm:text-md md:text-xl font-semibold"
         [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
         >Event Participation Trends
-        <sub
-          ><ion-text color="medium">/ {{getRole()}}</ion-text></sub
-        ></ion-label
-      >
+      </ion-label>
       <ion-label
         ngClass="title-text"
         class="block 1032:hidden sm:text-md md:text-xl font-semibold"
         [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
         >EPT
-        <sub
-          ><ion-text color="medium">/ {{getRole()}}</ion-text></sub
-        ></ion-label
-      >
+      </ion-label>
     </div>
 
     <div
@@ -202,7 +187,28 @@
       </ion-tab-button>
     </div>
 
-    <ion-button
+    <div class="flex justify-self-end"
+    >
+      <div class="self-center text-xl">{{username}}</div>
+      <div class="self-end text-gray-400 ml-1 text-[15px]">/ {{role}}</div>
+      <ion-icon
+        *ngIf="faultyImage"
+        slot="end"
+        name="person-circle"
+        class="w-[40px] h-[40px] rounded-full"
+        alt="profile picture"
+      ></ion-icon>
+      <img
+        *ngIf="!faultyImage"
+        slot="end"
+        src="{{profilePicUrl}}"
+        class="w-[35px] h-[35px] rounded-full ml-2 hover:scale-[115%] transition-all duration-200"
+        alt="profile picture"
+        (click)="openProfile($event)"
+      />
+    </div>
+
+    <!-- <ion-button
       (click)="openProfile($event)"
       ngClass="profile-section"
       class="flex justify-self-end"
@@ -222,6 +228,6 @@
         alt="profile picture"
       />
       <ion-label ngClass="profile-name">{{username}}</ion-label>
-    </ion-button>
+    </ion-button> -->
   </ion-tab-bar>
 </ion-tabs>
