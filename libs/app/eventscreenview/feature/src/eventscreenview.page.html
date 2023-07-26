@@ -43,13 +43,5 @@
                 <canvas #totalDeviceCountChart></canvas>
             </div>
         </div>
-        <ion-toast
-            [isOpen]="averageDataDetectedThisRun.length > 0 && (showHeatmap || showFlowmap)"
-            message="Unable to render heatmap or flowmap due to insufficient data."
-            [duration]="3000"
-            class="text-center"
-            color="danger"
-            position="bottom"
-        ></ion-toast>
     </div>
 </div>
