@@ -34,3 +34,25 @@
   }
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+  margin: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffffff00;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #878787 !important;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+

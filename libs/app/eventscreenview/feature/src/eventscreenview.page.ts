@@ -907,6 +907,9 @@ export class EventScreenViewPage {
         borderColor: [
           '#0000FF',
         ],
+        color: [
+          '#FFFFFF',
+        ]
       }]
     };
 

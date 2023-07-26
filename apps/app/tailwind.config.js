@@ -7,6 +7,10 @@ module.exports = {
     join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
+  plugins: [
+    // ...
+    require('tailwind-scrollbar'),
+  ],
   important: true,
   theme: {
     extend: {
@@ -14,6 +18,7 @@ module.exports = {
         '1032': '1032px',
         '1124': '1124px',
         '1310': '1310px',
+        '1480': '1480px',
       },
       colors: {
         "ept-deep-grey": "#101010",
@@ -22,5 +27,4 @@ module.exports = {
       },
     },
   },
-  plugins: [],
 };

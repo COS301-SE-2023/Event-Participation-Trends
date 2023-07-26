@@ -1,5 +1,8 @@
-<ion-content
-  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+<div
+  class="bg-[url('assets/blob-scene-haikei-dark.svg')] fixed opacity-75 top-0 left-0 w-screen h-screen z-0"
+></div>
+<div
+  class="bg-cover bg-no-repeat bg-center bg-fixed h-full overflow-y-scroll z-10"
 >
   <ion-toast
     [isOpen]="didRefresh && newEventsFound"
@@ -17,13 +20,19 @@
     color="warning"
     position="top"
   ></ion-toast>
-  <div class="backdrop-blur-[6px] min-h-full h-fit" [ngClass]="{'items-center flex justify-center': isLoading}">
+  <div
+    class="min-h-full h-fit"
+    [ngClass]="{'items-center flex justify-center': isLoading}"
+  >
     <div *ngIf="isLoading" class="flex flex-col justify-center items-center">
-      <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>
+      <ion-spinner
+        name="bubbles"
+        class="text-ept-bumble-yellow w-24 h-24"
+      ></ion-spinner>
       <ion-label>Loading Content...</ion-label>
     </div>
-    <div *ngIf="!isLoading" class="grid grid-cols-3 px-7">
-      <div class="col-span-1 flex items-center">
+    <div *ngIf="!isLoading" class="grid grid-cols-3 px-6 mx-7">
+      <!-- <div class="col-span-1 flex items-center">
         <ion-refresher slot="fixed" [pullMin]="30" [pullMax]="70" (ionRefresh)="handleRefresh($event)">
           <ion-refresher-content 
             pullingIcon="arrow-down-circle-outline"
@@ -31,6 +40,11 @@
             class="absolute left-4 text-ept-bumble-yellow"
           ></ion-refresher-content>
         </ion-refresher>
+      </div> -->
+      <div
+        class="col-span-4 mt-5 1032:mt-0 md:col-span-1 flex items-center justify-self-center md:justify-self-start"
+      >
+        <p class="text-3xl text-white">Events</p>
       </div>
       <span
         ngClass="sidebar-content"
@@ -54,7 +68,7 @@
     >
       <ion-card
         *ngFor="let event of managedEvents()"
-        class="h-56 m-8 rounded-lg md:rounded-xl bg-white bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:scale-105 hover:cursor-pointer hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]"
+        class="h-56 m-8 rounded-lg md:rounded-xl backdrop-blur-[4px] bg-white bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all hover:scale-105 hover:cursor-pointer hover:bg-opacity-100 hover:shadow-[0px_5px_15px_5px_rgba(0,0,0,0.2)]"
         (click)="openEvent(event)"
       >
         <ion-card-content
@@ -70,8 +84,7 @@
           <p
             class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium bg-transparent"
             [innerHTML]="highlightText(event.Name, searchValue)"
-          >
-          </p>
+          ></p>
           <div
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all bg-transparent"
           >
@@ -124,8 +137,7 @@
           <p
             class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
             [innerHTML]="highlightText(event.Name, searchValue)"
-          >
-          </p>
+          ></p>
           <div
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
           >
@@ -156,8 +168,7 @@
           <p
             class="p-4 text-xl md:text-2xl self-start duration-300 transition-all font-medium"
             [innerHTML]="highlightText(event.Name, searchValue)"
-          >
-          </p>
+          ></p>
           <div
             class="flex flex-col items-start text-left justify-end h-full duration-300 transition-all"
           >
@@ -172,4 +183,4 @@
       </ion-card>
     </div>
   </div>
-</ion-content>
+</div>

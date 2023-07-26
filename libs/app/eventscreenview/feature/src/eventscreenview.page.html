@@ -1,31 +1,34 @@
 <!-- <subpagenav [currentPage]="'/home/eventscreenview'"></subpagenav> -->
-<ion-content class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full">
-    <div *ngIf="isLoading" class="backdrop-blur-[6px] h-full flex flex-col justify-center items-center">
+<div
+  class="bg-[url('assets/blob-scene-haikei-dark.svg')] fixed opacity-75 top-0 left-0 w-screen h-screen z-0"
+></div>
+<div class="bg-cover bg-no-repeat bg-center bg-fixed h-full">
+    <div *ngIf="isLoading" class="h-full flex flex-col justify-center items-center">
         <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>
         <ion-label>Loading Content...</ion-label>
     </div>
     <div *ngIf="!isLoading" class="backdrop-blur-[6px] h-full grid grid-cols-12 grid-rows-5 gap-3 p-2">
-        <div class="relative border-2 border-ept-deep-grey rounded-md col-span-12 row-span-3" (mouseleave)="hideToggleButton()" (mouseover)="showToggleButton()">
+        <div class="relative col-span-12 row-span-3 bg-ept-off-white rounded-lg" (mouseleave)="hideToggleButton()" (mouseover)="showToggleButton()">
             <ion-label [hidden]="!showToggle" class="text-xl text-ept-deep-grey absolute top-3 right-20 opacity-40 z-10">Heatmap</ion-label>
             <ion-toggle title="Toggle Heatmap" [hidden]="!showToggle" class="absolute right-3 top-3 opacity-40 hover:opacity-100" (click)="toggleHeatmap()"></ion-toggle>
             <ion-label [hidden]="!showToggle" class="text-xl text-ept-deep-grey absolute top-12 right-20 opacity-40 z-10">Flowmap</ion-label>
             <ion-toggle title="Toggle Flowmap" [hidden]="!showToggle" class="absolute right-3 top-12 opacity-40 hover:opacity-100" (click)="toggleFlowmap()"></ion-toggle>
             <div #heatmapContainer #flowmapContainer class="w-full h-full z-0"></div>
         </div>
-        <div class="border-2 border-ept-deep-grey rounded-md col-span-5 row-span-2">
+        <div class=" bg-ept-off-white rounded-md col-span-5 row-span-2">
             <canvas #totalDevicesBarChart class="w-full"></canvas>
         </div>
         
-        <div class="border-2 border-ept-deep-grey rounded-md col-span-5 row-span-2">
+        <div class="bg-ept-off-white rounded-md col-span-5 row-span-2">
             <canvas #userCountDataStreamingChart class="w-full"></canvas>
         </div>
         
-        <div class="bg-gray-300 bg-opacity-40  py-2 px-4 border-2 border-ept-deep-grey rounded-md col-span-2 row-span-1 flex flex-row justify-evenly">
+        <div class="bg-ept-off-white py-2 px-4 rounded-md col-span-2 row-span-1 flex flex-row justify-evenly">
             <ion-label class="text-ept-deep-grey text-2xl self-center">Total Users</ion-label>
             <canvas #totalUserCountChart></canvas>
         </div>
 
-        <div class="bg-gray-300 bg-opacity-40  p-2 border-2 border-ept-deep-grey rounded-md col-span-2 row-span-1 flex flex-row justify-evenly">
+        <div class="bg-ept-off-white p-2 rounded-md col-span-2 row-span-1 flex flex-row justify-evenly">
             <div class="grid grid-rows-2">
                 <div>
                     <ion-icon name="radio-button-on-outline" color="success"></ion-icon>
@@ -49,4 +52,4 @@
             position="bottom"
         ></ion-toast>
     </div>
-</ion-content>
+</div>

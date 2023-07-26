@@ -1,8 +1,147 @@
 <ion-tabs>
+  <!-- mobile -->
   <ion-tab-bar
     slot="top"
     color="none"
-    class="bg-black bg-opacity-90 backdrop-blur-md drop-shadow-lg text-ept-off-white grid grid-cols-3 px-4"
+    class="grid bg-ept-deep-grey backdrop-blur-md drop-shadow-lg text-ept-off-white sm:hidden grid-cols-3 px-4 z-30"
+  >
+    <div class="main-title flex justify-self-start col-span-2">
+      <ion-button
+        slot="start"
+        color="none"
+        fill="clear"
+        ngClass="back-button"
+        (click)="goBack()"
+        routerDirection="back"
+        class="text-ept-off-white text-1xl"
+      >
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        <ion-text>Back</ion-text>
+      </ion-button>
+      <ion-label
+        ngClass="title-text"
+        class="block 1310:hidden text-xl font-semibold self-center"
+        [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
+        >EPT
+        <sub
+          ><ion-text color="medium">/ {{getRole()}}</ion-text></sub
+        ></ion-label
+      >
+    </div>
+
+    <div *ngIf="!showTabs">
+      <ion-button
+      (click)="openProfile($event)"
+      ngClass="profile-section"
+      class="flex justify-self-end"
+      [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}"
+      >
+      <ion-icon
+      *ngIf="faultyImage"
+      slot="end"
+      name="person-circle"
+      class="w-[40px] h-[40px] rounded-full"
+      alt="profile picture"
+      ></ion-icon>
+      <img
+        *ngIf="!faultyImage"
+        slot="end"
+        src="{{profilePicUrl}}"
+        class="w-[35px] h-[35px] rounded-full ml-2"
+        alt="profile picture"
+        />
+        <ion-label ngClass="profile-name">{{username}}</ion-label>
+      </ion-button>
+    </div>
+
+    <div class="justify-self-end flex" *ngIf="showTabs">
+      <button
+        class="text-ept-off-white w-10 h-10 relative focus:outline-none bg-transparent"
+        (click)="open = !open"
+      >
+        <span class="sr-only">Open main menu</span>
+        <div
+          class="block w-5 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        >
+          <span
+            aria-hidden="true"
+            class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+            [ngClass]="{'rotate-45': open,' -translate-y-1.5': !open }"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+            [ngClass]="{'opacity-0': open } "
+          ></span>
+          <span
+            aria-hidden="true"
+            class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+            [ngClass]="{'-rotate-45': open, ' translate-y-1.5': !open}"
+          ></span>
+        </div>
+      </button>
+    </div>
+  </ion-tab-bar>
+
+  <ion-tab-bar
+    [ngClass]="{'top-[-100px]': !open, 'top-[50px]': open && showTabs, 'top-[0px]': open && !showTabs}"
+    class="mobile absolute w-screen bg-ept-deep-grey backdrop-blur-md drop-shadow-lg text-ept-off-white sm:hidden transition-all ease-in duration-300 grid grid-rows-2 justify-items-end justify-end"
+  >
+    <div class="justify-items-start justify-around w-screen flex bg-transparent">
+      <ion-tab-button
+        tab="dashboard"
+        ngClass="tab-button"
+        class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
+        (click)="selectTab('Dashboard')"
+        selected="{{dashboardSelected}}"
+      >
+        <ion-label>Dashboard</ion-label>
+      </ion-tab-button>
+
+      <div
+        class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
+      ></div>
+
+      <ion-tab-button
+        tab="eventdetails"
+        ngClass="tab-button"
+        class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
+        (click)="selectTab('Event Details')"
+        selected="{{detailsSelected}}"
+      >
+        <ion-label ngClass="tab-text">Event Details</ion-label>
+      </ion-tab-button>
+    </div>
+
+    <ion-button
+      (click)="openProfile($event)"
+      ngClass="profile-section"
+      class="flex justify-self-end"
+      [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}"
+    >
+      <ion-icon
+        *ngIf="faultyImage"
+        slot="end"
+        name="person-circle"
+        class="w-[40px] h-[40px] rounded-full"
+        alt="profile picture"
+      ></ion-icon>
+      <img
+        *ngIf="!faultyImage"
+        slot="end"
+        src="{{profilePicUrl}}"
+        class="w-[35px] h-[35px] rounded-full ml-2"
+        alt="profile picture"
+      />
+      <ion-label ngClass="profile-name">{{username}}</ion-label>
+    </ion-button>
+  </ion-tab-bar>
+
+  <!-- larger -->
+  <ion-tab-bar
+    slot="top"
+    color="none"
+    class="hidden sm:grid bg-ept-deep-grey backdrop-blur-md drop-shadow-lg text-ept-off-white grid-cols-3 px-4"
   >
     <div class="main-title flex justify-self-start col-span-1">
       <ion-button
@@ -19,24 +158,34 @@
       </ion-button>
       <ion-label
         ngClass="title-text"
-        class="sm:text-lg md:text-xl font-semibold pt-2"
-        [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
+        class="hidden 1310:block 1310:text-lg 1480:text-xl font-semibold pt-2"
         >Event Participation Trends
         <sub
-          ><ion-text color="medium" class="lg:text-sm">/ {{getRole()}}</ion-text></sub
+          ><ion-text color="medium" class="lg:text-sm"
+            >/ {{getRole()}}</ion-text
+          ></sub
+        ></ion-label
+      >
+      <ion-label
+        ngClass="title-text"
+        class="block 1310:hidden text-xl font-semibold self-center"
+        [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
+        >EPT
+        <sub
+          ><ion-text color="medium">/ {{getRole()}}</ion-text></sub
         ></ion-label
       >
     </div>
-
     <div
       *ngIf="showTabs"
       class="flex justify-center items-center bg-transparent text-inherit text-md h-full col-span-1"
     >
       <ion-tab-button
-      tab="dashboard"
+        tab="dashboard"
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Dashboard')"
+        selected="{{dashboardSelected}}"
       >
         <ion-label>Dashboard</ion-label>
       </ion-tab-button>
@@ -47,18 +196,35 @@
 
       <ion-tab-button
         tab="eventdetails"
-          ngClass="tab-button"
-          class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
-          (click)="selectTab('Event Details')"
-          (selected)="detailsSelected"
-        >
-          <ion-label ngClass="tab-text">Event Details</ion-label>
+        ngClass="tab-button"
+        class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
+        (click)="selectTab('Event Details')"
+        selected="{{detailsSelected}}"
+      >
+        <ion-label ngClass="tab-text">Event Details</ion-label>
       </ion-tab-button>
     </div>
 
-    <ion-button (click)="openProfile($event)" ngClass="profile-section" class="flex justify-self-end" [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}">
-      <ion-icon *ngIf="faultyImage" slot="end" name="person-circle" class="w-[40px] h-[40px] rounded-full" alt="profile picture"></ion-icon>
-      <img *ngIf="!faultyImage" slot="end" src="{{profilePicUrl}}" class="w-[35px] h-[35px] rounded-full ml-2" alt="profile picture">
+    <ion-button
+      (click)="openProfile($event)"
+      ngClass="profile-section"
+      class="flex justify-self-end"
+      [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}"
+    >
+      <ion-icon
+        *ngIf="faultyImage"
+        slot="end"
+        name="person-circle"
+        class="w-[40px] h-[40px] rounded-full"
+        alt="profile picture"
+      ></ion-icon>
+      <img
+        *ngIf="!faultyImage"
+        slot="end"
+        src="{{profilePicUrl}}"
+        class="w-[35px] h-[35px] rounded-full ml-2"
+        alt="profile picture"
+      />
       <ion-label ngClass="profile-name">{{username}}</ion-label>
     </ion-button>
   </ion-tab-bar>
