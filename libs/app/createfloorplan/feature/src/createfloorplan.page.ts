@@ -382,6 +382,8 @@ export class CreateFloorPlanPage implements OnInit{
     setMouseEvents(element: KonvaTypes): void {
       element.on('dragmove', () => {
         this.activeItem = element;
+        this.selectedTextBox = (this.activeItem instanceof Konva.Text || 
+                                (this.activeItem instanceof Konva.Group && this.activeItem?.hasName('stall'))) ? true : false;
         this.setTransformer(this.activeItem, undefined);
 
         this.setTooltipVisibility(element, false);
@@ -603,7 +605,7 @@ export class CreateFloorPlanPage implements OnInit{
 
             this.canvasContainer = new Konva.Stage({
               container: '#canvasElement',
-              width: width*0.9783,
+              width: width*0.995,                   //0.9783
               height: window.innerHeight-100,      //height*0.92,       
             });
 
@@ -1906,7 +1908,7 @@ export class CreateFloorPlanPage implements OnInit{
       const width = this.canvasParent.nativeElement.offsetWidth;
 
       this.canvasContainer.setAttrs({
-        width: width*0.9783,
+        width: width*0.995,  //0.9783
         height: this.initialHeight,
       });
       this.createGridLines();
