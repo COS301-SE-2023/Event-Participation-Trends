@@ -8,7 +8,6 @@ import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices'
 import { AppModule } from './app/app.module';
 import cookieParser = require('cookie-parser');
-import helmet from 'helmet';
 import { MqttModule } from './app/mqtt.module';
 
 async function bootstrap() {
