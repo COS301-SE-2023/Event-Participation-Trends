@@ -93,6 +93,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Dashboard')"
+        selected="{{dashboardSelected}}"
       >
         <ion-label>Dashboard</ion-label>
       </ion-tab-button>
@@ -106,7 +107,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Event Details')"
-        (selected)="detailsSelected"
+        selected="{{detailsSelected}}"
       >
         <ion-label ngClass="tab-text">Event Details</ion-label>
       </ion-tab-button>
@@ -184,6 +185,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Dashboard')"
+        selected="{{dashboardSelected}}"
       >
         <ion-label>Dashboard</ion-label>
       </ion-tab-button>
@@ -197,7 +199,7 @@
         ngClass="tab-button"
         class="bg-inherit hover:text-ept-bumble-yellow duration-300 transition-all"
         (click)="selectTab('Event Details')"
-        (selected)="detailsSelected"
+        selected="{{detailsSelected}}"
       >
         <ion-label ngClass="tab-text">Event Details</ion-label>
       </ion-tab-button>

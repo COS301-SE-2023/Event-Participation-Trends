@@ -1,5 +1,5 @@
 ion-tab-button {
-    --color-selected: none;
+    --color-selected: #facc15;
     --color: none;
     font-size: inherit;
 }
