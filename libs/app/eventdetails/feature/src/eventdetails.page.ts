@@ -31,6 +31,8 @@ export class EventDetailsPage {
   screenTooSmall = false;
   alert: HTMLIonAlertElement | null = null;
   isLoading = false;
+  showRed = false;
+  floorplanExists = false;
 
   constructor(
     appApiService: AppApiService, 
@@ -62,6 +64,12 @@ export class EventDetailsPage {
         this.name = this.event.Name;
         appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
           this.accessRequests = users;
+        });
+
+        appApiService.getEventFloorLayout(this.event._id).subscribe((response) => {
+          if(response.floorlayout !== ''){
+            this.floorplanExists = true;
+          }
         });
       })
     });
@@ -170,5 +178,24 @@ export class EventDetailsPage {
 
   ngAfterViewInit() {
     this.checkScreenWidth();
+  }
+
+  async confirmAlert() {
+    const confirmAlert = await this.alertController.create({
+      header:'Warning',
+      message:'Are you sure you want to delete this event?',
+      buttons: [{text: 'Cancel', role: 'cancel', handler: () => {
+        confirmAlert.dismiss();
+      }}, {text: 'Delete', role: 'confirm', handler: () => {
+        this.appApiService.updateFloorLayout(this.event._id, '').subscribe((response) => {
+          console.log(response);
+          if(response.status === 'success'){
+            this.floorplanExists = false;
+          }
+        });
+      }}]
+    });
+    
+    await confirmAlert.present(); 
   }
 }
