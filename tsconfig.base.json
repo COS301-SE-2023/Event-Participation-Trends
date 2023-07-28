@@ -85,15 +85,9 @@
         "libs/api/viewer/util/src/index.ts"
       ],
       "@event-participation-trends/app/api": ["libs/app/api/src/index.ts"],
-      "@event-participation-trends/app/modals/data-access": [
-        "libs/app/modals/data-access/src/index.ts"
+      "@event-participation-trends/app/landing": [
+        "libs/app/landing/src/index.ts"
       ],
-      "@event-participation-trends/app/modals/feature": [
-        "libs/app/modals/feature/src/index.ts"
-      ],
-      "@event-participation-trends/app/modals/util": [
-        "libs/app/modals/util/src/index.ts"
-      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
