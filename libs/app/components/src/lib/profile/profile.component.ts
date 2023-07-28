@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'event-participation-trends-profile',
@@ -15,7 +16,7 @@ export class ProfileComponent implements OnInit {
   public img_url = '';
   public role = '';
 
-  constructor(private appApiService: AppApiService) {}
+  constructor(private appApiService: AppApiService, private cookieService: CookieService) {}
 
   async ngOnInit() {
     this.name = await this.appApiService.getFullName();
@@ -55,5 +56,18 @@ export class ProfileComponent implements OnInit {
     setTimeout(() => {
       modal?.classList.add('hidden');
     }, 300);
+  }
+
+  logout() {
+    this.pressButton('#logout-button');
+    
+    // clear cookie
+    this.cookieService.delete('jwt');
+    this.cookieService.delete('csrf');
+
+    this.closeModal();
+
+    // redirect to login page
+    window.location.href = '/';
   }
 }
