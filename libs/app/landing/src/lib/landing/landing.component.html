@@ -1,6 +1,6 @@
 <div
   #gradient
-  class="fixed top-0 left-0 h-screen w-screen transition-all duration-500 radial-gradient(at ${xPos*100}% ${yPos*100}%, #22242C, #101010) -z-50"
+  class="fixed top-0 left-0 h-screen w-screen radial-gradient(at ${xPos*100}% ${yPos*100}%, #22242C, #101010) -z-50"
 ></div>
 <div class="flex w-full justify-center z-50">
   <div
@@ -201,13 +201,25 @@
     id="login"
     class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-center items-center"
     *ngIf="!loggedIn"
-  >
-    <div>
+  > 
+    <div class="mb-16">
       <div class="text-6xl font-semibold font-poppins mb-8">
-        Login To Continue
+        Login with Google
       </div>
       <div class="flex justify-center">
         <!-- button -->
+            <div id="g_id_onload"
+            data-client_id="830414824400-jc7meusocfclk7rf6t6a5jjeq5mquo7o.apps.googleusercontent.com"
+            data-login_uri="http://localhost:4200/api/auth/google">
+         </div>
+         <div class="g_id_signin"
+            data-type="standard"
+            data-size="large"
+            data-theme="outline"
+            data-text="sign_in_with"
+            data-shape="rectangular"
+            data-logo_alignment="left">
+         </div>
       </div>
     </div>
   </div>

@@ -8,7 +8,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 export class LandingComponent implements AfterViewInit, OnInit {
   @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
 
-  public loggedIn = true;
+  public loggedIn = false;
   public name = 'Lukas';
   public img_url = 'https://avatars.githubusercontent.com/u/11546742?v=4';
 
