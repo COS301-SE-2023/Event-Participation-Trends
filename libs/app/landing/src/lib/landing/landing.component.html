@@ -12,7 +12,7 @@
     >
       Event Participation Trends
       <a href="/home">
-          <div class="btn bg-ept-navy-blue rounded-full w-12 h-10 flex justify-center items-center border-none ml-3 mb-1" *ngIf="loggedIn">
+          <div class="btn hover:bg-ept-navy-blue rounded-full w-12 h-10 flex justify-center items-center border-none ml-3 mb-1" *ngIf="loggedIn">
               <ng-icon name="heroHome" class="text-ept-blue-grey text-3xl"></ng-icon>
             </div>
         </a>
@@ -39,20 +39,22 @@
   </div>
 </div>
 <div
-  class="snap snap-y snap-mandatory scroll-smooth w-full h-screen overflow-y-scroll text-white"
+  class="snap snap-y snap-mandatory scroll-smooth w-full h-screen overflow-y-scroll text-white overflow-x-hidden"
 >
   <div
     id="welcome"
     class="snap-start min-h-screen w-full mt-[15vh] mb-[50vh] px-6 pt-16 flex justify-normal items-center"
   >
     <div class="w-full grid grid-cols-12">
-      <div class="mx-24 col-span-8 ml-36 mb-8 font-montserrat">
+      <div class=" col-span-7 ml-36 mr-10 mt-24  font-montserrat">
         <div class="text-6xl font-semibold my-6">
           Welcome to <br />
+          <span class="text-ept-bumble-yellow">Event </span> 
           <span
             class="bg-gradient-to-r from-ept-bumble-yellow to-ept-blue-grey text-transparent bg-clip-text"
-            >Event Participation Trends</span
+            >Participation</span
           >
+          <span class="text-ept-bumble-yellow"> Trends</span>
         </div>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
@@ -62,7 +64,13 @@
         occaecat cupidatat non proident, sunt in culpa qui officia deserunt
         mollit anim id est laborum.
       </div>
-      <div>Image</div>
+      <div class="w-full h-full col-span-5">
+        <div class="w-[50vw] h-[40vw] rounded-[100%] rotate-[-14deg] bg-ept-blue-grey flex justify-center items-center">
+            <div class="rotate-[14deg] mr-48 mb-16">
+                <span class="loading loading-dots loading-lg text-ept-navy-blue"></span>
+            </div>
+        </div>
+      </div>
     </div>
   </div>
   <div
