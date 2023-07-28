@@ -11,8 +11,8 @@ export class LandingComponent implements AfterViewInit {
     document.addEventListener("mousemove", (event) => {
       const xPos = event.clientX / window.innerWidth;
       const yPos = event.clientY / window.innerHeight;
-      this.gradient.nativeElement.style.backgroundImage = `radial-gradient(at ${xPos*100}% ${yPos*100}%, #22242C, #101010)`;
+      this.gradient.nativeElement.style.backgroundImage = `radial-gradient(at ${xPos*100}% ${yPos*100}%, #1d1f26, #101010)`;
     });
-    this.gradient.nativeElement.style.backgroundImage = `radial-gradient(at 50% 50%, #22242C, #101010)`;
+    this.gradient.nativeElement.style.backgroundImage = `radial-gradient(at 50% 50%, #1d1f26, #101010)`;
   }
 }
