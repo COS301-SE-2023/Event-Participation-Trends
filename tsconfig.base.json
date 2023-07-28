@@ -85,6 +85,9 @@
         "libs/api/viewer/util/src/index.ts"
       ],
       "@event-participation-trends/app/api": ["libs/app/api/src/index.ts"],
+      "@event-participation-trends/app/components": [
+        "libs/app/components/src/index.ts"
+      ],
       "@event-participation-trends/app/home": ["libs/app/home/src/index.ts"],
       "@event-participation-trends/app/landing": [
         "libs/app/landing/src/index.ts"
