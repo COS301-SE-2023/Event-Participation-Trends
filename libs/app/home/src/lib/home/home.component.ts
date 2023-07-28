@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { OnInit } from '@angular/core';
+import { ProfileComponent } from '@event-participation-trends/app/components';
 
 enum Tab {
   Events = 'events',
@@ -30,6 +31,18 @@ export class HomeComponent implements OnInit {
   async ngOnInit() {
     this.username = await this.appApiService.getUserName();
     this.img_url = await this.appApiService.getProfilePicUrl();
+  }
+
+  showModal() {
+    const modal = document.querySelector("#profile-modal");
+
+    modal?.classList.remove("hidden");
+  }
+
+  closeModal() {
+    const modal = document.querySelector("#profile-modal");
+
+    modal?.classList.add("hidden");
   }
 
   events() {
