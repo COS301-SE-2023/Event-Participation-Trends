@@ -528,6 +528,98 @@ describe('EventController', ()=>{
         })  
     })
 
+    describe('updateEventFloorlayout', ()=>{
+        it('Should update an events floor layout', async ()=>{
+            await userRepository.createUser(TEST_USER_1);
+            const user = await userRepository.getUser(TEST_USER_1.Email);
+            
+            TEST_EVENT.Manager = user[0]._id;
+            await eventRepository.createEvent(TEST_EVENT); 
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            await eventRepository.updateEventFloorlayout(event[0]._id,"Current Floor Layout");
+
+            const requestObj = {
+                eventId: event[0]._id,
+                floorlayout: "New FloorLayout",
+            }
+
+            const response = await request(httpServer).post("/event/updateEventFloorlayout").send(requestObj);
+            expect(response.body.status).toBe("success");
+            
+            event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            
+            if(event[0].FloorLayout != "New FloorLayout")
+                await SLEEP(1000);
+
+            expect(event[0].FloorLayout).toBe("New FloorLayout");
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id)
+            await userRepository.deleteUserById(user[0]._id);
+        })  
+    })
+
+    describe('sendViewRequest',  ()=>{
+        it('Should send a view request', async ()=>{
+            
+            const moduleRef = await Test.createTestingModule({
+                imports: [AppModule],
+            })
+            .overrideGuard(JwtGuard)
+            .useValue({
+                canActivate: (context) => {
+                context.switchToHttp().getRequest().user = {
+                email: process.env['TEST_USER_EMAIL_2'],
+                };
+                return true;
+            },
+            })
+            .overrideGuard(RbacGuard)
+            .useValue({ canActivate: () => true })
+            .overrideGuard(CsrfGuard)
+            .useValue({ canActivate: () => true })
+            .compile();
+
+            // Get the NestJS application instance and HTTP server
+            const app = moduleRef.createNestApplication();
+            await app.init();
+            const httpServer = app.getHttpServer();
+
+            //create event manager
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+            TEST_EVENT.Requesters = new Array<Types.ObjectId>();
+
+            //create event viewer
+            await userRepository.createUser(TEST_USER_2);
+            const viewer = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
+
+            //create event
+            await eventRepository.createEvent(TEST_EVENT); 
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            
+            //test endpoint
+            const response = await request(httpServer).post(`/event/sendViewRequest`).send({
+                eventId: <string> <unknown> event[0]._id
+            });            
+            expect(response.body.status).toBe("success");
+
+            event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            if(event[0].Requesters.length == 0)
+                SLEEP(1000);
+
+            const requesters = await eventRepository.getRequesters(event[0]._id);
+            expect(requesters[0].Requesters[0]).toEqual(viewer[0]._id);
+
+            //cleanup
+            await userRepository.deleteUserById(manager[0]._id);
+            await userRepository.deleteUserById(viewer[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
+
+            await app.close();
+        })
+    })    
 })
 
 describe('UserController', ()=>{
