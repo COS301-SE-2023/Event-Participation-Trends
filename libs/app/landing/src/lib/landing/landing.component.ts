@@ -17,8 +17,10 @@ export class LandingComponent implements AfterViewInit, OnInit {
   public img_url = '';
 
   async ngOnInit() {
-    const username = await this.appApiService.getUserName();
-    this.loggedIn = username !== '';
+    this.username = await this.appApiService.getUserName();
+    this.loggedIn = this.username !== '';
+    console.log(this.loggedIn);
+    console.log(this.username);
     if(!this.loggedIn){
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
