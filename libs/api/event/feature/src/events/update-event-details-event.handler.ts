@@ -71,7 +71,7 @@ export class UpdateEventDetialsEventHandler implements IEventHandler<UpdateEvent
             if(eventDoc[0].Manager != null && eventDoc[0].Manager != undefined)
                 userDoc = await this.userRepository.getUserById(eventDoc[0].Manager); 
 
-            if(userDoc != undefined && userDoc != null)
+            if(userDoc != undefined && userDoc != null && userDoc[0])
                 this.emailService.sendEmail(
                     userDoc[0].Email || "", 
                     EmailSubject.EVENT_DETAILS_UPDATED,
