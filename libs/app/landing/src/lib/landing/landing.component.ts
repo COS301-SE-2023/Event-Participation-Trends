@@ -6,24 +6,30 @@ import { AppApiService } from '@event-participation-trends/app/api';
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css'],
 })
-export class LandingComponent implements AfterViewInit {
+export class LandingComponent implements AfterViewInit, OnInit {
   @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
+  @ViewChild('head') head!: ElementRef<HTMLHeadElement>;
 
-  constructor(private appApiService: AppApiService) {
-    this.appApiService.getUserName().subscribe((response)=>{
-      this.username = response.username || '';
-      if (this.username !== '') {
-        this.loggedIn = true;
-      }
-    });    
-    this.appApiService.getProfilePicUrl().subscribe((response)=>{
-      this.img_url = response.url || '';
-    });
-  }
+  constructor(private appApiService: AppApiService) {}
 
   public loggedIn = false;
   public username = '';
   public img_url = '';
+
+  async ngOnInit() {
+    const username = await this.appApiService.getUserName();
+    this.loggedIn = username !== '';
+    if(!this.loggedIn){
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      document.getElementsByTagName('head')[0]?.appendChild(script);
+    }
+    else{
+      this.img_url = await this.appApiService.getProfilePicUrl();
+    }
+  }  
 
   ngAfterViewInit() {
     document.addEventListener("mousemove", (event) => {
