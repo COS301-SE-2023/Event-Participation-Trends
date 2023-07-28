@@ -17,7 +17,6 @@
     "@angular/platform-browser": "~16.0.0",
     "@angular/platform-browser-dynamic": "~16.0.0",
     "@angular/router": "~16.0.0",
-    "@ionic/angular": "^7.0.7",
     "@nestjs/common": "^9.1.1",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.1.1",
