@@ -9,7 +9,6 @@ jobs:
         steps:
             - name: Checkout Code
             - uses: actions/checkout@v2
-            - uses: actions/checkout@v2
             - run: echo "${{ secrets.DOTENVFILE }}" > .env
             - run: 'yarn install'
             - run: 'yarn nx run-many --target=lint --all --parallel --skip-nx-cache'
