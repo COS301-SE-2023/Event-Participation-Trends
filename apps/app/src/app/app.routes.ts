@@ -5,5 +5,9 @@ export const appRoutes: Route[] = [
     {
         path: '',
         component: LandingComponent
+    },
+    {
+        path: 'home',
+        loadChildren: () => import('@event-participation-trends/app/home').then(m => m.AppHomeModule)
     }
 ];
