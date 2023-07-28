@@ -19,8 +19,6 @@ export class LandingComponent implements AfterViewInit, OnInit {
   async ngOnInit() {
     this.username = await this.appApiService.getUserName();
     this.loggedIn = this.username !== '';
-    console.log(this.loggedIn);
-    console.log(this.username);
     if(!this.loggedIn){
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
