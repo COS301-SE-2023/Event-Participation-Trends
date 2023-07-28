@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AppApiService } from '@event-participation-trends/app/api';
 
 @Component({
   selector: 'event-participation-trends-landing',
@@ -8,9 +9,21 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 export class LandingComponent implements AfterViewInit, OnInit {
   @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
 
+  constructor(private appApiService: AppApiService) {
+    this.appApiService.getUserName().subscribe((response)=>{
+      this.username = response.username || '';
+      if (this.username !== '') {
+        this.loggedIn = true;
+      }
+    });    
+    this.appApiService.getProfilePicUrl().subscribe((response)=>{
+      this.img_url = response.url || '';
+    });
+  }
+
   public loggedIn = false;
-  public name = 'Lukas';
-  public img_url = 'https://avatars.githubusercontent.com/u/11546742?v=4';
+  public username = '';
+  public img_url = '';
 
   ngOnInit() {
     console.log('LandingComponent.ngOnInit()');

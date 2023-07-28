@@ -7,23 +7,29 @@
     id="landing-nav"
     class="fixed w-full top-0 flex justify-between text-white text-xl my-3 font-semibold"
   >
-    <div class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex items-center z-50">
+    <div
+      class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex items-center z-50"
+    >
       Event Participation Trends
     </div>
-    <div class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
-        *ngIf="loggedIn"
+    <div
+      class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
+      *ngIf="loggedIn"
     >
-      <div>{{name}}</div>
+      <div>{{ username }}</div>
       <div class="avatar">
         <div class="w-14 ml-3 mask mask-hexagon">
-          <img src="{{img_url}}" />
+          <img src="{{ img_url }}" />
         </div>
       </div>
     </div>
-    <div class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
-        *ngIf="!loggedIn"
+    <div
+      class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
+      *ngIf="!loggedIn"
     >
+      <a href="#login">
         <div class="btn">Log In</div>
+      </a>
       <!-- button -->
     </div>
   </div>
@@ -201,25 +207,27 @@
     id="login"
     class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-center items-center"
     *ngIf="!loggedIn"
-  > 
+  >
     <div class="mb-16">
       <div class="text-6xl font-semibold font-poppins mb-8">
         Login with Google
       </div>
       <div class="flex justify-center">
         <!-- button -->
-            <div id="g_id_onload"
-            data-client_id="830414824400-jc7meusocfclk7rf6t6a5jjeq5mquo7o.apps.googleusercontent.com"
-            data-login_uri="/api/auth/google">
-         </div>
-         <div class="g_id_signin"
-            data-type="standard"
-            data-size="large"
-            data-theme="outline"
-            data-text="sign_in_with"
-            data-shape="rectangular"
-            data-logo_alignment="left">
-         </div>
+        <div
+          id="g_id_onload"
+          data-client_id="830414824400-jc7meusocfclk7rf6t6a5jjeq5mquo7o.apps.googleusercontent.com"
+          data-login_uri="/api/auth/google"
+        ></div>
+        <div
+          class="g_id_signin"
+          data-type="standard"
+          data-size="large"
+          data-theme="outline"
+          data-text="sign_in_with"
+          data-shape="rectangular"
+          data-logo_alignment="left"
+        ></div>
       </div>
     </div>
   </div>
