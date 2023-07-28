@@ -4,28 +4,39 @@
 
 
 
-
-<div class="h-full w-full flex flex-col overflow-auto">
-  <div class="sticky top-0 flex justify-center items-center pb-3 z-40">
-    <div class="py-3 px-20 bg-ept-off-white text-ept-deep-grey rounded-3xl mt-6">
+<div class="h-full w-full flex flex-col">
+  <div class="top-0 flex justify-center items-center z-20">
+    <div
+      class="absolute mt-20 py-3 px-20 bg-ept-off-white text-ept-deep-grey rounded-3xl"
+    >
       Search bar
     </div>
   </div>
   <div
-    class="relative h-full flex-grow grid grid-cols-4 px-3"
+    class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-16"
     *ngIf="isAdmin()"
   >
     <div
-      class="m-3 p-5 h-52 bg-ept-navy-blue rounded-2xl flex flex-col justify-between"
+      class="m-3 p-5 h-52 bg-ept-navy-blue rounded-2xl flex flex-col justify-between hover:scale-105 hover:bg-[#2b2e38] transition-all duration-300 cursor-pointer"
       *ngFor="let event of all_events"
     >
       <div class="text-2xl font-poppins font-semibold">{{ event.Name }}</div>
       <div>
-        <div class="font-montserrat text-base text-ept-blue-grey">
-          {{ event.Location?.CityName }}
+        <div class="flex justify-between">
+          <div class="text-ept-blue-grey text-sm font-montserrat">Location</div>
+          <div
+            class="font-montserrat text-base font-semibold text-ept-off-white"
+          >
+            {{ event.Location?.CityName }}
+          </div>
         </div>
-        <div class="font-montserrat text-base text-ept-blue-grey">
-          {{ event.Category }}
+        <div class="flex justify-between">
+            <div class="text-ept-blue-grey text-sm font-montserrat">Category</div>
+          <div
+            class="font-montserrat text-base font-semibold text-ept-off-white"
+          >
+            {{ event.Category }}
+          </div>
         </div>
       </div>
     </div>
