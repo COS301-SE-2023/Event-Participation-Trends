@@ -52,6 +52,7 @@ import { ICreateEventRequest, IEvent, IFloorLayout, IPosition, IViewEvent, Posit
 import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { ICreateGlobalRequest, IGlobal } from '@event-participation-trends/api/global/util';
 import { promisify } from 'util';
+import { UpdateEventDetails } from '@event-participation-trends/api/event/feature';
 
 //constants 
 // eslint-disable-next-line prefer-const
@@ -71,6 +72,23 @@ let TEST_EVENT: IEvent ={
     },
     Manager: new Types.ObjectId(),
     FloorLayout: null,
+   // Devices: Array<Position>(),
+}
+
+const UPDATED_TEST_EVENT: IEvent ={
+    StartDate: new Date("2023-06-10T12:34:56.789Z"),
+    EndDate: new Date("2023-06-13T12:34:56.789Z"),
+    Name: "New Testing Event",
+    Category: "New Testing Category",
+    Location: {
+        Latitude: 1,
+        Longitude: 1,
+        StreetName: "New StreetName",
+        CityName: "New CityName",
+        ProvinceName: "New ProvinceName",
+        CountryName: "New CountryName",
+        ZIPCode: "New ZIPCode"
+    },
    // Devices: Array<Position>(),
 }
 
@@ -475,6 +493,40 @@ describe('EventController', ()=>{
         })  
     })
 
+    describe('updateEventDetails', ()=>{
+        it('Should update an events details', async ()=>{
+            await eventRepository.createEvent(TEST_EVENT); 
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+
+            const requestObj = {
+                eventId: event[0]._id,
+                eventDetails: UPDATED_TEST_EVENT,
+            }
+
+            const response = await request(httpServer).post("/event/updateEventDetails").send(requestObj);
+            expect(response.body.status).toBe("success");
+            
+            event = await eventRepository.getEventByName(UPDATED_TEST_EVENT.Name);
+            while(event.length == 0){
+                event = await eventRepository.getEventByName(UPDATED_TEST_EVENT.Name);
+                SLEEP(50);
+            }
+
+            const temp: IEvent = {
+                StartDate: event[0].StartDate,
+                EndDate: event[0].EndDate,
+                Name: event[0].Name,
+                Category: event[0].Category,
+                Location: event[0].Location,
+            }
+
+            const res = objectSubset(UPDATED_TEST_EVENT,[temp]);
+            expect(res).toBe(true);
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id)
+        })  
+    })
 
 })
 
