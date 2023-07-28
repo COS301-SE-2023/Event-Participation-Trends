@@ -2,15 +2,20 @@
   #gradient
   class="fixed top-0 left-0 h-screen w-screen radial-gradient(at ${xPos*100}% ${yPos*100}%, #22242C, #101010) -z-50"
 ></div>
-<div class="flex w-full justify-center z-50">
+<div class="flex w-full justify-center z-50 fixed top-0">
   <div
     id="landing-nav"
-    class="fixed w-full top-0 flex justify-between text-white text-xl my-3 font-semibold"
+    class="flex w-full justify-between text-white text-xl my-3 font-semibold"
   >
     <div
       class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex items-center z-50"
     >
       Event Participation Trends
+      <a href="/home">
+          <div class="btn bg-ept-navy-blue rounded-full w-12 h-10 flex justify-center items-center border-none ml-3 mb-1" *ngIf="loggedIn">
+              <ng-icon name="heroHome" class="text-ept-blue-grey text-3xl"></ng-icon>
+            </div>
+        </a>
     </div>
     <div
       class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
@@ -214,23 +219,25 @@
       </div>
       <div class="flex justify-center">
         <!-- button -->
-        <div id="g_id_onload"
-            data-client_id="830414824400-jc7meusocfclk7rf6t6a5jjeq5mquo7o.apps.googleusercontent.com"
-            data-context="signin"
-            data-ux_mode="popup"
-            data-login_uri="/api/auth/google"
-            data-auto_select="true"
-            data-itp_support="true">
-        </div>
+        <div
+          id="g_id_onload"
+          data-client_id="830414824400-jc7meusocfclk7rf6t6a5jjeq5mquo7o.apps.googleusercontent.com"
+          data-context="signin"
+          data-ux_mode="popup"
+          data-login_uri="/api/auth/google"
+          data-auto_select="true"
+          data-itp_support="true"
+        ></div>
 
-        <div class="g_id_signin"
-            data-type="standard"
-            data-shape="pill"
-            data-theme="filled_black"
-            data-text="signin_with"
-            data-size="large"
-            data-logo_alignment="left">
-        </div>
+        <div
+          class="g_id_signin"
+          data-type="standard"
+          data-shape="pill"
+          data-theme="filled_black"
+          data-text="signin_with"
+          data-size="large"
+          data-logo_alignment="left"
+        ></div>
       </div>
     </div>
   </div>
@@ -248,7 +255,7 @@
           <div
             class="btn border-none bg-ept-navy-blue font-poppins font-semibold text-ept-blue-grey rounded-2xl text-2xl"
           >
-          <ng-icon name="heroHome" class="text-ept-bumble-yellow"></ng-icon>
+            <ng-icon name="heroHome" class="text-ept-bumble-yellow"></ng-icon>
             Home
           </div>
         </a>

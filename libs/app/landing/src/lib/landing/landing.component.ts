@@ -6,7 +6,7 @@ import { AppApiService } from '@event-participation-trends/app/api';
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css'],
 })
-export class LandingComponent implements AfterViewInit, OnInit {
+export class LandingComponent implements AfterViewInit {
   @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
 
   constructor(private appApiService: AppApiService) {
@@ -24,10 +24,6 @@ export class LandingComponent implements AfterViewInit, OnInit {
   public loggedIn = false;
   public username = '';
   public img_url = '';
-
-  ngOnInit() {
-    console.log('LandingComponent.ngOnInit()');
-  }  
 
   ngAfterViewInit() {
     document.addEventListener("mousemove", (event) => {
