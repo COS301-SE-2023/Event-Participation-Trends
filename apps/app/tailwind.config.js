@@ -7,6 +7,7 @@ module.exports = {
     themes: [],
   },
   content: [
+    './src/**/*.{html,js,ts}',
     join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
@@ -14,7 +15,6 @@ module.exports = {
     // ...
     require("daisyui"),
   ],
-  important: true,
   theme: {
     fontFamily: {
       'poppins': ['Poppins', 'Arial'],
