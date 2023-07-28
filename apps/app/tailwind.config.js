@@ -3,6 +3,9 @@ const { join } = require('path');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  daisyui: {
+    themes: [],
+  },
   content: [
     join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
     ...createGlobPatternsForDependencies(__dirname),
@@ -10,6 +13,7 @@ module.exports = {
   plugins: [
     // ...
     require('tailwind-scrollbar'),
+    require("daisyui"),
   ],
   important: true,
   theme: {

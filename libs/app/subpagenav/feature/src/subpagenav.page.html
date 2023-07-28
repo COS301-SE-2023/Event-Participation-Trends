@@ -30,28 +30,26 @@
     </div>
 
     <div *ngIf="!showTabs">
-      <ion-button
-      (click)="openProfile($event)"
-      ngClass="profile-section"
-      class="flex justify-self-end"
-      [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}"
-      >
+      <div class="flex justify-self-end"
+    >
+      <div class="self-center text-xl">{{username}}</div>
+      <div class="self-end text-gray-400 ml-1 text-[15px]">/ {{role}}</div>
       <ion-icon
-      *ngIf="faultyImage"
-      slot="end"
-      name="person-circle"
-      class="w-[40px] h-[40px] rounded-full"
-      alt="profile picture"
+        *ngIf="faultyImage"
+        slot="end"
+        name="person-circle"
+        class="w-[40px] h-[40px] rounded-full"
+        alt="profile picture"
       ></ion-icon>
       <img
         *ngIf="!faultyImage"
         slot="end"
         src="{{profilePicUrl}}"
-        class="w-[35px] h-[35px] rounded-full ml-2"
+        class="w-[35px] h-[35px] rounded-full ml-2 hover:scale-[115%] transition-all duration-200"
         alt="profile picture"
-        />
-        <ion-label ngClass="profile-name">{{username}}</ion-label>
-      </ion-button>
+        (click)="openProfile($event)"
+      />
+    </div>
     </div>
 
     <div class="justify-self-end flex" *ngIf="showTabs">
@@ -99,7 +97,7 @@
       </ion-tab-button>
 
       <div
-        class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
+        class="h-3/6 min-h-[1em] w-[3px] bg-[#252527] bg-opacity-90 dark:opacity-100 self-center rounded-full"
       ></div>
 
       <ion-tab-button
@@ -113,12 +111,10 @@
       </ion-tab-button>
     </div>
 
-    <ion-button
-      (click)="openProfile($event)"
-      ngClass="profile-section"
-      class="flex justify-self-end"
-      [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}"
+    <div class="flex justify-self-end mr-4"
     >
+      <div class="self-center text-xl">{{username}}</div>
+      <div class="self-end text-gray-400 ml-1 text-[15px]">/ {{role}}</div>
       <ion-icon
         *ngIf="faultyImage"
         slot="end"
@@ -130,11 +126,11 @@
         *ngIf="!faultyImage"
         slot="end"
         src="{{profilePicUrl}}"
-        class="w-[35px] h-[35px] rounded-full ml-2"
+        class="w-[35px] h-[35px] rounded-full ml-2 hover:scale-[115%] transition-all duration-200"
         alt="profile picture"
+        (click)="openProfile($event)"
       />
-      <ion-label ngClass="profile-name">{{username}}</ion-label>
-    </ion-button>
+    </div>
   </ion-tab-bar>
 
   <!-- larger -->
@@ -191,7 +187,7 @@
       </ion-tab-button>
 
       <div
-        class="h-4/6 min-h-[1em] w-[1px] bg-ept-off-white bg-opacity-90 dark:opacity-100 self-center"
+        class="h-3/6 min-h-[1em] w-[3px] bg-[#252527] bg-opacity-90 dark:opacity-100 self-center rounded-full"
       ></div>
 
       <ion-tab-button
@@ -205,12 +201,10 @@
       </ion-tab-button>
     </div>
 
-    <ion-button
-      (click)="openProfile($event)"
-      ngClass="profile-section"
-      class="flex justify-self-end"
-      [ngClass]="{'col-span-1': showTabs, 'col-span-2':!showTabs}"
+    <div class="flex justify-self-end"
     >
+      <div class="self-center text-xl">{{username}}</div>
+      <div class="self-end text-gray-400 ml-1 text-[15px]">/ {{role}}</div>
       <ion-icon
         *ngIf="faultyImage"
         slot="end"
@@ -222,10 +216,10 @@
         *ngIf="!faultyImage"
         slot="end"
         src="{{profilePicUrl}}"
-        class="w-[35px] h-[35px] rounded-full ml-2"
+        class="w-[35px] h-[35px] rounded-full ml-2 hover:scale-[115%] transition-all duration-200"
         alt="profile picture"
+        (click)="openProfile($event)"
       />
-      <ion-label ngClass="profile-name">{{username}}</ion-label>
-    </ion-button>
+    </div>
   </ion-tab-bar>
 </ion-tabs>
