@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ViewEventsPageComponent } from './view-events-page.component';
+import { AllEventsPageComponent } from './all-events-page.component';
 
-describe('ViewEventsPageComponent', () => {
-  let component: ViewEventsPageComponent;
-  let fixture: ComponentFixture<ViewEventsPageComponent>;
+describe('AllEventsPageComponent', () => {
+  let component: AllEventsPageComponent;
+  let fixture: ComponentFixture<AllEventsPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ViewEventsPageComponent],
+      imports: [AllEventsPageComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ViewEventsPageComponent);
+    fixture = TestBed.createComponent(AllEventsPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

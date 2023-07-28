@@ -1,2 +1,2 @@
 export * from './lib/profile/profile.component';
-export * from './lib/view-events-page/view-events-page.component';
+export * from './lib/all-events-page/all-events-page.component';
