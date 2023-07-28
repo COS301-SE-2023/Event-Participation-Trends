@@ -479,15 +479,13 @@ describe('EventController', ()=>{
 })
 
 describe('UserController', ()=>{
-    let moduleRef: any;
     let httpServer: any;
     let app: any;
     let userRepository: UserRepository;
 
     beforeAll(async ()=>{
-        process.env['ENVIRONMENT'] = "test";  
 
-        moduleRef = await Test.createTestingModule({
+        const moduleRef = await Test.createTestingModule({
             imports: [AppModule],
         })
         .overrideGuard(JwtGuard)
@@ -504,9 +502,9 @@ describe('UserController', ()=>{
         app = moduleRef.createNestApplication();
         await app.init();
 
-        httpServer = app.getHttpServer();
+        httpServer = await app.getHttpServer();
 
-        userRepository = moduleRef.get(UserRepository);
+        userRepository = await moduleRef.get(UserRepository);
     })
 
     afterAll(async ()=>{
@@ -538,7 +536,7 @@ describe('UserController', ()=>{
             })
             .overrideGuard(JwtGuard)
             .useValue({
-            canActivate: (context) => {
+                canActivate: (context) => {
                 context.switchToHttp().getRequest().user = {
                 email: process.env['ADMIN_EMAIL'],
                 };
@@ -566,16 +564,13 @@ describe('UserController', ()=>{
             }
 
             const response = await request(httpServer).post("/user/updateUserRole").send(requestObj);
-            console.log(response.body);
             expect(response.body.status).toEqual("success");
 
-            let user = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
+            const user = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
             
-            //due to delayed presistance need to wait
-            while(user[0].Role != Role.MANAGER){
-                user = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
-                await SLEEP(50);
-            }
+            //delayed persistence has posiblilty that not immedietly changed in DB hence wait
+            if(user[0].Role != Role.MANAGER)
+                await SLEEP(1000);
 
             expect(user[0].Role).toBe(Role.MANAGER);
 
@@ -584,5 +579,5 @@ describe('UserController', ()=>{
             await app.close();
         })  
     })
-
+    
 });
