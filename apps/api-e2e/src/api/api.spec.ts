@@ -49,7 +49,7 @@ import { EventRepository } from '@event-participation-trends/api/event/data-acce
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
 import { GlobalRepository } from '@event-participation-trends/api/global/data-access';
 import { ICreateEventRequest, IEvent, IFloorLayout, IPosition, IViewEvent, Position } from '@event-participation-trends/api/event/util';
-import { IUser } from '@event-participation-trends/api/user/util';
+import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { ICreateGlobalRequest, IGlobal } from '@event-participation-trends/api/global/util';
 import { promisify } from 'util';
 
@@ -127,17 +127,6 @@ function objectSubset(target: any, obj: any ): boolean{
 	}
 	
 	return true;
-    /*
-	for(const element of obj){
-		for (const key in target) 
-			// eslint-disable-next-line no-prototype-builtins
-			if ((target.hasOwnProperty(key) && element.hasOwnProperty(key) && element.key == target.key)) 
-				return true;
-	}
-    console.log(target);
-    console.log(obj);
-    return false;
-    */
 }
 
 describe('GlobalController', ()=>{
@@ -538,6 +527,61 @@ describe('UserController', ()=>{
 
             //cleanup
             await userRepository.deleteUserById(user[0]._id)
+        })  
+    })
+
+    describe('updateUserRole', ()=>{
+        it('Should update user role', async ()=>{
+            
+            const moduleRef = await Test.createTestingModule({
+                imports: [AppModule],
+            })
+            .overrideGuard(JwtGuard)
+            .useValue({
+            canActivate: (context) => {
+                context.switchToHttp().getRequest().user = {
+                email: process.env['ADMIN_EMAIL'],
+                };
+                return true;
+            },
+            })
+            .overrideGuard(RbacGuard)
+            .useValue({ canActivate: () => true })
+            .overrideGuard(CsrfGuard)
+            .useValue({ canActivate: () => true })
+            .compile();
+
+            // Get the NestJS application instance and HTTP server
+            const app = moduleRef.createNestApplication();
+            await app.init();
+            const httpServer = app.getHttpServer();
+
+            await userRepository.createUser(TEST_USER_2); 
+
+            const requestObj= {
+                update: {
+                    UserEmail: process.env['TEST_USER_EMAIL_2'],
+                    UpdateRole: Role.MANAGER,
+                }
+            }
+
+            const response = await request(httpServer).post("/user/updateUserRole").send(requestObj);
+            console.log(response.body);
+            expect(response.body.status).toEqual("success");
+
+            let user = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
+            
+            //due to delayed presistance need to wait
+            while(user[0].Role != Role.MANAGER){
+                user = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
+                await SLEEP(50);
+            }
+
+            expect(user[0].Role).toBe(Role.MANAGER);
+
+            //cleanup
+            await userRepository.deleteUserById(user[0]._id);
+            await app.close();
         })  
     })
 

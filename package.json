@@ -5,7 +5,8 @@
   "scripts": {
     "compile": "cd rust-lib && wasm-pack build --target nodejs && cd .. && yarn install --force",
     "start:dev": "yarn concurrently \"yarn nx serve app\" \"yarn nx serve api\"",
-    "test": "jest --testTimeout=10000"
+    "test": "jest --testTimeout=10000",
+    "test:e2e" : "jest --testTimeout=10000 apps/api-e2e/src/api/api.spec.ts"
   },
   "private": true,
   "dependencies": {
