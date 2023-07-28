@@ -8,4 +8,6 @@ import { CommonModule } from '@angular/common';
   templateUrl: './view-events-page.component.html',
   styleUrls: ['./view-events-page.component.css'],
 })
-export class ViewEventsPageComponent {}
+export class ViewEventsPageComponent {
+  
+}
