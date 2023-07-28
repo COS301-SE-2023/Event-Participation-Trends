@@ -2146,6 +2146,27 @@
   dependencies:
     tslib "2.5.0"
 
+"@ng-icons/core@^25.1.0":
+  version "25.1.0"
+  resolved "https://registry.yarnpkg.com/@ng-icons/core/-/core-25.1.0.tgz#71f02c042492b30d322a933f8514fea725128620"
+  integrity sha512-odZhHaIv/AtZBpkQI3RHgZwpPAfUD55bDche4fADfQmUbF8vWUCHJp81G4wk7pi57IajJTm095a1xjn4CFK6yw==
+  dependencies:
+    tslib "^2.2.0"
+
+"@ng-icons/heroicons@^25.1.0":
+  version "25.1.0"
+  resolved "https://registry.yarnpkg.com/@ng-icons/heroicons/-/heroicons-25.1.0.tgz#61945f080b1ee42743d409ee84e7052a16fd7816"
+  integrity sha512-m4lFu44MbNx8yEy3EUuOTUH0X3e+SJF/6Qt3b3gMz43sDEihZCGMQJxynDWxM8lpaaGjA0dU0lyMwZdEAsU2Ww==
+  dependencies:
+    tslib "^2.2.0"
+
+"@ng-icons/material-icons@^25.1.0":
+  version "25.1.0"
+  resolved "https://registry.yarnpkg.com/@ng-icons/material-icons/-/material-icons-25.1.0.tgz#3c07421b5675876603bde75f1dc435cc6496e8dd"
+  integrity sha512-rGnLyUmue8cvygLAKARERy37nHZv3v4XPtSqRBsy+ZjytKqJZU2Zoxy6sstLiGIKtYVsZcmRh6XvLq5OncxYmQ==
+  dependencies:
+    tslib "^2.2.0"
+
 "@ngtools/webpack@16.0.2":
   version "16.0.2"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-16.0.2.tgz#185c6dcb4cdf5851b3c050dc166b0baa2a1df9d0"
@@ -3986,7 +4007,7 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-autoprefixer@10.4.14, autoprefixer@^10.4.9:
+autoprefixer@10.4.14, autoprefixer@^10.4.0, autoprefixer@^10.4.9:
   version "10.4.14"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.4.14.tgz#e28d49902f8e759dd25b153264e862df2705f79d"
   integrity sha512-FQzyfOsTlwVzjHxKEqRIAdJx9niO6VCBCoEwax/VLSoQF29ggECcPuBqUMZ+u8jCZOPSy8b8/8KnuFbp0SaFZQ==
@@ -10914,6 +10935,11 @@ symbol-tree@^3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
+
+tailwind-scrollbar@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/tailwind-scrollbar/-/tailwind-scrollbar-3.0.4.tgz#a04489b3fdc706ed2ea7d3695df063391b1a9ec5"
+  integrity sha512-X/QBsn/C5u9x6/YvTc1Zo7b09Gqs5BfDe0UK/8LDQUv8IEBKF+p2ISTRwvAr50MH0hn/wTyCEOann7uXoa1/2Q==
 
 tailwindcss@^3:
   version "3.3.3"
