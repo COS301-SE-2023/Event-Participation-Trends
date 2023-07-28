@@ -13,7 +13,7 @@ export class LandingComponent implements AfterViewInit {
     this.appApiService.getUserName().subscribe((response)=>{
       this.username = response.username || '';
       if (this.username !== '') {
-        this.loggedIn = false;
+        this.loggedIn = true;
       }
     });    
     this.appApiService.getProfilePicUrl().subscribe((response)=>{
