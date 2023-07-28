@@ -13,7 +13,7 @@
         </div>
         <div #navlinks class="font-poppins font-semibold mt-8 m-3">
           <div
-            id="events_link"
+            id="events-link"
             (click)="events()"
             class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
             [ngClass]="{
@@ -25,7 +25,7 @@
             Events
           </div>
           <div
-            id="compare_link"
+            id="compare-link"
             (click)="compare()"
             class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
             [ngClass]="{
@@ -37,7 +37,7 @@
             Compare
           </div>
           <div
-            id="users_link"
+            id="users-link"
             (click)="users()"
             class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
             [ngClass]="{
@@ -54,15 +54,15 @@
         <div
           class="mb-2 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-start items-center"
         >
-          <div class="avatar" (click)="showModal()">
-            <div class="w-14 ml-3 mask mask-hexagon">
+          <div id="profile-picture" class="avatar" (click)="profile_press()">
+            <div class="w-14 ml-3 mask mask-hexagon hover:scale-105 transition-all duration-300 cursor-pointer">
               <img src="{{ img_url }}" />
             </div>
           </div>
-          <div class="text-2xl font-poppins font-semibold ml-3" (click)="showModal()">
+          <div id="username" class="text-2xl font-poppins font-semibold ml-3 hover:scale-105 transition-all duration-300 cursor-pointer select-none" (click)="profile_press()">
             {{ username }}
           </div>
-          <span class="text-sm text-ept-blue-grey mt-5 ml-2" (click)="showModal()">
+          <span class="text-sm text-ept-blue-grey mt-5 ml-2">
             / {{ role }}</span
           >
         </div>
@@ -70,4 +70,4 @@
 </div>
 </div>
 </div>
-<event-participation-trends-profile class="" id="profile-modal"></event-participation-trends-profile>
+<event-participation-trends-profile class="transition-all duration-300 hidden opacity-0" id="profile-modal"></event-participation-trends-profile>

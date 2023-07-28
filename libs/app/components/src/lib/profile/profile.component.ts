@@ -11,7 +11,6 @@ import { AppApiService } from '@event-participation-trends/app/api';
   styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
-
   public name = '';
   public img_url = '';
   public role = '';
@@ -39,10 +38,22 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  closeModal() {
-    const modal = document.querySelector("#profile-modal");
+  pressButton(id: string) {
+    const target = document.querySelector(id);
 
-    modal?.classList.add("hidden");
+    target?.classList.add('hover:scale-90');
+    setTimeout(() => {
+      target?.classList.remove('hover:scale-90');
+    }, 100);
   }
 
+  closeModal() {
+    this.pressButton('#close-button');
+    const modal = document.querySelector('#profile-modal');
+
+    modal?.classList.add('opacity-0');
+    setTimeout(() => {
+      modal?.classList.add('hidden');
+    }, 300);
+  }
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { OnInit } from '@angular/core';
 import { ProfileComponent } from '@event-participation-trends/app/components';
+import { timeout } from 'rxjs';
 
 enum Tab {
   Events = 'events',
@@ -34,47 +35,41 @@ export class HomeComponent implements OnInit {
   }
 
   showModal() {
-    const modal = document.querySelector("#profile-modal");
+    const modal = document.querySelector('#profile-modal');
 
-    modal?.classList.remove("hidden");
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
   }
 
-  closeModal() {
-    const modal = document.querySelector("#profile-modal");
+  pressButton(id: string) {
+    const target = document.querySelector(id);
 
-    modal?.classList.add("hidden");
+    target?.classList.add('hover:scale-90');
+    setTimeout(() => {
+      target?.classList.remove('hover:scale-90');
+    }, 100);
   }
 
   events() {
-    const mouseTarget = document.querySelector("#events_link");
-
-    console.log(mouseTarget);
-
-    mouseTarget?.classList.add("hover:scale-90");
-    setTimeout(() => {
-      mouseTarget?.classList.remove("hover:scale-90");
-    }, 100);
+    this.pressButton('#events-link');
   }
 
   users() {
-    const mouseTarget = document.querySelector("#users_link");
-
-    console.log(mouseTarget);
-
-    mouseTarget?.classList.add("hover:scale-90");
-    setTimeout(() => {
-      mouseTarget?.classList.remove("hover:scale-90");
-    }, 100);
+    this.pressButton('#users-link');
   }
 
   compare() {
-    const mouseTarget = document.querySelector("#compare_link");
+    this.pressButton('#compare-link');
+  }
 
-    console.log(mouseTarget);
+  profile_press() {
+    this.pressButton('#profile-picture');
+    this.pressButton('#username');
 
-    mouseTarget?.classList.add("hover:scale-90");
     setTimeout(() => {
-      mouseTarget?.classList.remove("hover:scale-90");
+    this.showModal();
     }, 100);
   }
 
