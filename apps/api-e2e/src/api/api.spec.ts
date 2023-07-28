@@ -48,7 +48,7 @@ import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
 import { GlobalRepository } from '@event-participation-trends/api/global/data-access';
-import { IEvent, IPosition, Position } from '@event-participation-trends/api/event/util';
+import { ICreateEventRequest, IEvent, IFloorLayout, IPosition, IViewEvent, Position } from '@event-participation-trends/api/event/util';
 import { IUser } from '@event-participation-trends/api/user/util';
 import { ICreateGlobalRequest, IGlobal } from '@event-participation-trends/api/global/util';
 import { promisify } from 'util';
@@ -71,7 +71,7 @@ let TEST_EVENT: IEvent ={
     },
     Manager: new Types.ObjectId(),
     FloorLayout: null,
-    Devices: Array<Position>(),
+   // Devices: Array<Position>(),
 }
 
 const TEST_USER_1: IUser ={
@@ -108,13 +108,36 @@ const SLEEP = promisify(setTimeout);
 
 //helper functions
 function objectSubset(target: any, obj: any ): boolean{
+		
+	for(const element of obj){
+		for (const key in target){
+			// eslint-disable-next-line no-prototype-builtins
+			if (target.hasOwnProperty(key)){
+                // eslint-disable-next-line no-prototype-builtins
+				if(target.hasOwnProperty(key) && element.hasOwnProperty(key)){
+					if( element.key != target.key){
+						return false;
+                    }
+                }else{
+					return false;
+                }
+			}
+				
+		}
+	}
+	
+	return true;
+    /*
 	for(const element of obj){
 		for (const key in target) 
 			// eslint-disable-next-line no-prototype-builtins
 			if ((target.hasOwnProperty(key) && element.hasOwnProperty(key) && element.key == target.key)) 
 				return true;
 	}
+    console.log(target);
+    console.log(obj);
     return false;
+    */
 }
 
 describe('GlobalController', ()=>{
@@ -246,7 +269,7 @@ describe('EventController', ()=>{
             await eventRepository.deleteEventbyId(event[0]._id)
         })  
     })
-
+   
     describe('getAllEvents',  ()=>{
         it('Should return an array of events', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
@@ -262,7 +285,7 @@ describe('EventController', ()=>{
             await eventRepository.deleteEventbyId(event[0]._id)
         })  
     })
-
+ 
     describe('getManagedEvents',  ()=>{
         it('Should return an array of events', async ()=>{
             await userRepository.createUser(TEST_USER_1);
@@ -410,7 +433,7 @@ describe('EventController', ()=>{
             await eventRepository.deleteEventbyId(event[0]._id)
         })  
     })
-    
+
     describe('getAllEventCategories', ()=>{
         it('Should return an array of categories', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
@@ -425,6 +448,45 @@ describe('EventController', ()=>{
             await eventRepository.deleteEventbyId(event[0]._id)
         })  
     })
+
+    describe('createEvent', ()=>{
+        it('Should create an event in the Database', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+
+            const response = await request(httpServer).post("/event/createEvent").send(TEST_EVENT);
+            expect(response.body.status).toEqual("success");
+
+            //due to delayed persistance wait
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            while(event.length == 0){
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+                await SLEEP(50);
+            }
+
+            //due to async have to unwrap
+            const temp: IEvent = {
+                StartDate: event[0].StartDate,
+                EndDate: event[0].EndDate,
+                Name: event[0].Name,
+                Category: event[0].Category,
+                Location: event[0].Location,
+                Manager: event[0].Manager,
+                FloorLayout: <IFloorLayout> {JSON_DATA: event[0].FloorLayout},
+            }
+
+            const res = objectSubset(TEST_EVENT,[temp]);
+            expect(res).toBe(true);
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id);
+            await userRepository.deleteUserById(manager[0]._id);
+        })  
+    })
+
+
 })
 
 describe('UserController', ()=>{
