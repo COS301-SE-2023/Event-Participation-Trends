@@ -6,7 +6,7 @@
   class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-9 overflow-hidden"
 >
   <div class="col-span-2 w-full h-screen">
-    <div class="bg-ept-deep-grey h-screen grid grid-rows-2 content-between">
+    <div class="bg-ept-deep-grey h-screen grid grid-rows-2 content-between border-r-4 border-ept-navy-blue">
       <div #top>
         <div class="text-ept-off-white font-poppins font-semibold text-2xl p-3">
           Event Participation Trends
@@ -55,19 +55,28 @@
           class="mb-2 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-start items-center"
         >
           <div id="profile-picture" class="avatar" (click)="profile_press()">
-            <div class="w-14 ml-3 mask mask-hexagon hover:scale-105 transition-all duration-300 cursor-pointer">
+            <div
+              class="w-14 ml-3 mask mask-hexagon hover:scale-105 transition-all duration-300 cursor-pointer"
+            >
               <img src="{{ img_url }}" />
             </div>
           </div>
-          <div id="username" class="text-2xl font-poppins font-semibold ml-3 hover:scale-105 transition-all duration-300 cursor-pointer select-none" (click)="profile_press()">
+          <div
+            id="username"
+            class="text-2xl font-poppins font-semibold ml-3 hover:scale-105 transition-all duration-300 cursor-pointer select-none"
+            (click)="profile_press()"
+          >
             {{ username }}
           </div>
           <span class="text-sm text-ept-blue-grey mt-5 ml-2">
             / {{ role }}</span
           >
         </div>
+      </div>
     </div>
+  </div>
 </div>
-</div>
-</div>
-<event-participation-trends-profile class="transition-all duration-300 hidden opacity-0" id="profile-modal"></event-participation-trends-profile>
+<event-participation-trends-profile
+  class="transition-all duration-300 hidden opacity-0"
+  id="profile-modal"
+></event-participation-trends-profile>
