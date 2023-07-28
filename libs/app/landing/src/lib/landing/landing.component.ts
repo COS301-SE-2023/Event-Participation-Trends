@@ -1,14 +1,20 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'event-participation-trends-landing',
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css'],
 })
-export class LandingComponent implements AfterViewInit {
+export class LandingComponent implements AfterViewInit, OnInit {
   @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
 
-  public loggedIn = false;
+  public loggedIn = true;
+  public name = 'Lukas';
+  public img_url = 'https://avatars.githubusercontent.com/u/11546742?v=4';
+
+  ngOnInit() {
+    console.log('LandingComponent.ngOnInit()');
+  }  
 
   ngAfterViewInit() {
     document.addEventListener("mousemove", (event) => {

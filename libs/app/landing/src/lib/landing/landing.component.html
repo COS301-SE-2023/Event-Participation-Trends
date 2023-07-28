@@ -2,15 +2,30 @@
   #gradient
   class="fixed top-0 left-0 h-screen w-screen transition-all duration-500 radial-gradient(at ${xPos*100}% ${yPos*100}%, #22242C, #101010) -z-50"
 ></div>
-<div class="flex w-full justify-center">
+<div class="flex w-full justify-center z-50">
   <div
     id="landing-nav"
     class="fixed w-full top-0 flex justify-between text-white text-xl my-3 font-semibold"
   >
-    <div class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3">
+    <div class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex items-center z-50">
       Event Participation Trends
     </div>
-    <div class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3">User</div>
+    <div class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
+        *ngIf="loggedIn"
+    >
+      <div>{{name}}</div>
+      <div class="avatar">
+        <div class="w-14 ml-3 mask mask-hexagon">
+          <img src="{{img_url}}" />
+        </div>
+      </div>
+    </div>
+    <div class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
+        *ngIf="!loggedIn"
+    >
+        <div class="btn">Log In</div>
+      <!-- button -->
+    </div>
   </div>
 </div>
 <div
@@ -100,47 +115,7 @@
       </div>
       <div class="grid grid-cols-2 mx-[15vw]">
         <div>
-        <div class="my-2 mx-1">
-          <div
-            class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
-          >
-            <input type="checkbox" />
-            <div class="collapse-title text-xl font-medium">
-              <span class="text-ept-off-white font-poppins"
-                >Where do I get the physical sensors?</span
-              >
-            </div>
-            <div class="collapse-content">
-              <div class="text-ept-off-white font-montserrat">
-                You can contact the team via the emails specified at the end of
-                the page. The sensors are ESP32-C3 boards with a custom case,
-                battery and firmware
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="my-2 mx-1">
-          <div
-            class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
-          >
-            <input type="checkbox" />
-            <div class="collapse-title text-xl font-medium">
-              <span class="text-ept-off-white font-poppins"
-                >Where do I get the physical sensors?</span
-              >
-            </div>
-            <div class="collapse-content">
-              <div class="text-ept-off-white font-montserrat">
-                You can contact the team via the emails specified at the end of
-                the page. The sensors are ESP32-C3 boards with a custom case,
-                battery and firmware
-              </div>
-            </div>
-          </div>
-        </div>
-    </div>
-    <div>
-        <div class="my-2 mx-1">
+          <div class="my-2 mx-1">
             <div
               class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
             >
@@ -152,9 +127,9 @@
               </div>
               <div class="collapse-content">
                 <div class="text-ept-off-white font-montserrat">
-                  You can contact the team via the emails specified at the end of
-                  the page. The sensors are ESP32-C3 boards with a custom case,
-                  battery and firmware
+                  You can contact the team via the emails specified at the end
+                  of the page. The sensors are ESP32-C3 boards with a custom
+                  case, battery and firmware
                 </div>
               </div>
             </div>
@@ -171,9 +146,49 @@
               </div>
               <div class="collapse-content">
                 <div class="text-ept-off-white font-montserrat">
-                  You can contact the team via the emails specified at the end of
-                  the page. The sensors are ESP32-C3 boards with a custom case,
-                  battery and firmware
+                  You can contact the team via the emails specified at the end
+                  of the page. The sensors are ESP32-C3 boards with a custom
+                  case, battery and firmware
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="my-2 mx-1">
+            <div
+              class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
+            >
+              <input type="checkbox" />
+              <div class="collapse-title text-xl font-medium">
+                <span class="text-ept-off-white font-poppins"
+                  >Where do I get the physical sensors?</span
+                >
+              </div>
+              <div class="collapse-content">
+                <div class="text-ept-off-white font-montserrat">
+                  You can contact the team via the emails specified at the end
+                  of the page. The sensors are ESP32-C3 boards with a custom
+                  case, battery and firmware
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="my-2 mx-1">
+            <div
+              class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
+            >
+              <input type="checkbox" />
+              <div class="collapse-title text-xl font-medium">
+                <span class="text-ept-off-white font-poppins"
+                  >Where do I get the physical sensors?</span
+                >
+              </div>
+              <div class="collapse-content">
+                <div class="text-ept-off-white font-montserrat">
+                  You can contact the team via the emails specified at the end
+                  of the page. The sensors are ESP32-C3 boards with a custom
+                  case, battery and firmware
                 </div>
               </div>
             </div>
@@ -182,30 +197,78 @@
       </div>
     </div>
   </div>
-  <div id="login" class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-center items-center">
+  <div
+    id="login"
+    class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-center items-center"
+    *ngIf="!loggedIn"
+  >
     <div>
-        <div class="text-6xl font-semibold font-poppins mb-8">Login To Continue</div>
-        <div class="flex justify-center">
-            <!-- button -->
-        </div>
+      <div class="text-6xl font-semibold font-poppins mb-8">
+        Login To Continue
+      </div>
+      <div class="flex justify-center">
+        <!-- button -->
+      </div>
     </div>
   </div>
-  <div id="contact" class="snap-start min-h-screen w-full mb-[20vh] px-6 pt-16 flex justify-center items-center">
+  <div
+    id="continue"
+    class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-center items-center"
+    *ngIf="loggedIn"
+  >
     <div>
-        <div class="flex justify-center">
-            <div class="text-6xl font-semibold font-poppins mb-8">Contact Us</div>
+      <div class="text-6xl font-semibold font-poppins mb-8">
+        Continue To Home
+      </div>
+      <div class="flex justify-center">
+        <!-- button -->
+      </div>
+    </div>
+  </div>
+  <div
+    id="contact"
+    class="snap-start min-h-screen w-full mb-[20vh] px-6 pt-16 flex justify-center items-center"
+  >
+    <div>
+      <div class="flex justify-center">
+        <div class="text-6xl font-semibold font-poppins mb-8">Contact Us</div>
+      </div>
+      <div class="flex justify-center">
+        <div class="grid grid-cols-2">
+          <div class="font-montserrat text-2xl my-3">
+            <span class="text-ept-bumble-yellow">lukas</span
+            ><span class="font-semibold">@</span
+            ><span class="text-ept-blue-grey">eventparticipationtrends</span
+            >.co.za
+          </div>
+          <div class="font-montserrat text-2xl my-3">
+            <span class="text-ept-bumble-yellow">stefan</span
+            ><span class="font-semibold">@</span
+            ><span class="text-ept-blue-grey">eventparticipationtrends</span
+            >.co.za
+          </div>
+          <div class="font-montserrat text-2xl my-3">
+            <span class="text-ept-bumble-yellow">arno</span
+            ><span class="font-semibold">@</span
+            ><span class="text-ept-blue-grey">eventparticipationtrends</span
+            >.co.za
+          </div>
+          <div class="font-montserrat text-2xl my-3">
+            <span class="text-ept-bumble-yellow">reuben</span
+            ><span class="font-semibold">@</span
+            ><span class="text-ept-blue-grey">eventparticipationtrends</span
+            >.co.za
+          </div>
         </div>
-        <div class="flex justify-center">
-            <div class="grid grid-cols-2">
-                <div class="font-montserrat text-2xl my-3"><span class="text-ept-bumble-yellow">lukas</span><span class="font-semibold">@</span><span class="text-ept-blue-grey">eventparticipationtrends</span>.co.za</div>
-                <div class="font-montserrat text-2xl my-3"><span class="text-ept-bumble-yellow">stefan</span><span class="font-semibold">@</span><span class="text-ept-blue-grey">eventparticipationtrends</span>.co.za</div>
-                <div class="font-montserrat text-2xl my-3"><span class="text-ept-bumble-yellow">arno</span><span class="font-semibold">@</span><span class="text-ept-blue-grey">eventparticipationtrends</span>.co.za</div>
-                <div class="font-montserrat text-2xl my-3"><span class="text-ept-bumble-yellow">reuben</span><span class="font-semibold">@</span><span class="text-ept-blue-grey">eventparticipationtrends</span>.co.za</div>
-            </div>
+      </div>
+      <div class="flex justify-center">
+        <div class="font-montserrat text-2xl my-3">
+          <span class="text-ept-bumble-yellow">luca</span
+          ><span class="font-semibold">@</span
+          ><span class="text-ept-blue-grey">eventparticipationtrends</span
+          >.co.za
         </div>
-        <div class="flex justify-center">
-            <div class="font-montserrat text-2xl my-3"><span class="text-ept-bumble-yellow">luca</span><span class="font-semibold">@</span><span class="text-ept-blue-grey">eventparticipationtrends</span>.co.za</div>
-        </div>
+      </div>
     </div>
   </div>
 </div>
