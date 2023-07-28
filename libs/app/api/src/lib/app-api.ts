@@ -87,12 +87,18 @@ export class AppApiService {
   }
 
   async getUserName(): Promise<string> {
-    const response = await firstValueFrom(this.http.get<IGetUserNameResponse>('/api/user/getUserName', {
-      headers: {
-        'x-csrf-token': this.cookieService.get('csrf'),
-      },
-    }));
-    return response.username || "";
+    try{
+      const response = await firstValueFrom(this.http.get<IGetUserNameResponse>('/api/user/getUserName', {
+        headers: {
+          'x-csrf-token': this.cookieService.get('csrf'),
+        },
+      }).pipe());
+      return response.username || "";
+    }
+    catch(error){
+      console.log(error);
+      return '';
+    }
   }
 
   async getFullName(): Promise<string> {
