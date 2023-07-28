@@ -16,6 +16,10 @@ module.exports = {
   ],
   important: true,
   theme: {
+    fontFamily: {
+      'poppins': ['Poppins', 'Arial'],
+      'montserrat': ['Montserrat', 'Arial'],
+    },
     extend: {
       screens: {
         '1032': '1032px',
