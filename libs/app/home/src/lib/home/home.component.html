@@ -1,1 +1,72 @@
-<p>home works!</p>
+<div
+  #gradient
+  class="fixed top-0 left-0 h-screen w-screen bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue -z-50"
+></div>
+<div
+  class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-9 overflow-hidden"
+>
+  <div class="col-span-2 w-full h-screen">
+    <div class="bg-ept-deep-grey h-screen grid grid-rows-2 content-between">
+      <div #top>
+        <div class="text-ept-off-white font-poppins font-semibold text-2xl p-3">
+          Event Participation Trends
+        </div>
+        <div #navlinks class="font-poppins font-semibold mt-8 m-3">
+          <div
+            id="events_link"
+            (click)="events()"
+            class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
+            [ngClass]="{
+              'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
+                onEvents(),
+              'hover:bg-ept-navy-blue hover:scale-105': !onEvents()
+            }"
+          >
+            Events
+          </div>
+          <div
+            id="compare_link"
+            (click)="compare()"
+            class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
+            [ngClass]="{
+              'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
+                onCompare(),
+              'hover:bg-ept-navy-blue hover:scale-105': !onCompare()
+            }"
+          >
+            Compare
+          </div>
+          <div
+            id="users_link"
+            (click)="users()"
+            class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
+            [ngClass]="{
+              'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
+                onUsers(),
+              'hover:bg-ept-navy-blue hover:scale-105': !onUsers()
+            }"
+          >
+            Users
+          </div>
+        </div>
+      </div>
+      <div #user class="self-end">
+        <div
+          class="mb-2 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-start items-center"
+        >
+          <div class="avatar">
+            <div class="w-14 ml-3 mask mask-hexagon">
+              <img src="{{ img_url }}" />
+            </div>
+          </div>
+          <div class="text-2xl font-poppins font-semibold ml-3">
+            {{ username }}
+          </div>
+          <span class="text-sm text-ept-blue-grey mt-5 ml-2">
+            / {{ role }}</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
