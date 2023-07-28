@@ -30,6 +30,10 @@ export class EventRepository {
         return await this.eventModel.find({Name: {$eq: eventName}}).select("-Devices");
     }
 
+    async getEventByNameVerbose(eventName: string){
+        return await this.eventModel.find({Name: {$eq: eventName}});
+    }
+
     async getEventById(eventID: Types.ObjectId){
         return await this.eventModel.find({_id: {$eq: eventID}}).select("-Devices");
     }
