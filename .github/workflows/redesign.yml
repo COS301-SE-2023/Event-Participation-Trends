@@ -1,0 +1,23 @@
+name: Deploys, everything has already been tested
+on:
+  push:
+    branches:
+      - redesign_dev
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - run: echo "${{ secrets.DOTENVFILE }}" > .env
+      - run: 'yarn install'
+      - run: 'yarn nx run-many --target=lint --all --parallel --skip-nx-cache'
+      - run: 'yarn nx run-many --target=build --all --parallel --skip-nx-cache'
+      - name: Connect to server and trigger update
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST}}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            sudo /root/redesign.sh
