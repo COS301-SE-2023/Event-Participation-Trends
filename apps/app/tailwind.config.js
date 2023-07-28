@@ -31,6 +31,8 @@ module.exports = {
         "ept-deep-grey": "#101010",
         "ept-bumble-yellow": "#facc15",
         "ept-off-white": "#F5F5F5",
+        "ept-blue-grey": "#B1B8D4",
+        "ept-navy-blue": "#22242A",
       },
     },
   },
