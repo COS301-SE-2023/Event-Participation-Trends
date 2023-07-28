@@ -7,6 +7,9 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 })
 export class LandingComponent implements AfterViewInit {
   @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
+
+  public loggedIn = false;
+
   ngAfterViewInit() {
     document.addEventListener("mousemove", (event) => {
       const xPos = event.clientX / window.innerWidth;
