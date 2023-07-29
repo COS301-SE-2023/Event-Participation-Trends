@@ -3,7 +3,7 @@
     <input
       type="text"
       placeholder="Type here"
-      class="w-full max-w-xs absolute mt-20 py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
+      class="w-full max-w-xs absolute mt-24 py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
       [(ngModel)]="search"
     />
   </div>
@@ -22,7 +22,7 @@
     <span class="loading loading-spinner loading-lg"></span>
   </div>
   <div
-    class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-16 transition-opacity duration-500"
+    class="relative grid grid-cols-4 px-3 overflow-x-auto overflow-y-scroll pt-20 transition-opacity duration-500"
     [ngClass]="{ 'opacity-0': !show }"
     *ngIf="isAdmin()"
   >
@@ -52,7 +52,7 @@
     </div>
   </div>
   <div
-    class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-16 transition-opacity duration-500"
+    class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-20 transition-opacity duration-500"
     [ngClass]="{ 'opacity-0': !show }"
     *ngIf="!isAdmin()"
   >

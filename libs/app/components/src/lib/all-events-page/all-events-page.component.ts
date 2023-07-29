@@ -16,7 +16,6 @@ import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
   providers: [provideIcons({ heroLockClosedSolid, heroInboxSolid })],
 })
 export class AllEventsPageComponent implements OnInit {
-
   constructor(private appApiService: AppApiService) {}
 
   public all_events: any[] = [];
@@ -29,11 +28,10 @@ export class AllEventsPageComponent implements OnInit {
   public show = false;
 
   async ngOnInit() {
-
     this.role = await this.appApiService.getRole();
 
     //! Remove this line
-    this.role = 'viewer';
+    // this.role = 'viewer';
 
     this.all_events = await this.appApiService.getAllEvents();
     this.my_events = await this.appApiService.getManagedEvents();
@@ -56,8 +54,15 @@ export class AllEventsPageComponent implements OnInit {
     }, 300);
   }
 
-  emptySearch() : boolean {
-    return this.get_subscribed_events().length == 0 && this.get_non_subscribed_events().length == 0;
+  emptySearch(): boolean {
+    if (this.role == 'admin') {
+      return this.get_all_events().length == 0;
+    } else {
+      return (
+        this.get_subscribed_events().length == 0 &&
+        this.get_non_subscribed_events().length == 0
+      );
+    }
   }
 
   hasAccess(event: any): boolean {
@@ -70,7 +75,7 @@ export class AllEventsPageComponent implements OnInit {
     return false;
   }
 
-  get_all_events() : any[] {
+  get_all_events(): any[] {
     return this.all_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.search.toLowerCase())
@@ -78,7 +83,7 @@ export class AllEventsPageComponent implements OnInit {
     });
   }
 
-  get_subscribed_events() : any[] {
+  get_subscribed_events(): any[] {
     return this.subscribed_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.search.toLowerCase())
@@ -105,5 +110,4 @@ export class AllEventsPageComponent implements OnInit {
   isViewer() {
     return this.role === 'viewer';
   }
-
 }
