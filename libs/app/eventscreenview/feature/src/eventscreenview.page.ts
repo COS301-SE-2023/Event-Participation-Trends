@@ -11,6 +11,9 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
 import { IGetEventDevicePositionResponse, IPosition } from '@event-participation-trends/api/event/util';
 import { set } from 'mongoose';
+import { Select, Store } from '@ngxs/store';
+import { EventScreenViewState } from '@event-participation-trends/app/eventscreenview/data-access';
+import { Observable } from 'rxjs';
 
 interface IAverageDataFound {
   id: number | null | undefined,
@@ -27,6 +30,8 @@ interface IAverageDataFound {
   styleUrls: ['./eventscreenview.page.css'],
 })
 export class EventScreenViewPage {
+  @Select(EventScreenViewState.currentTime) currentTime$!: Observable<string>;
+
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
@@ -94,6 +99,7 @@ export class EventScreenViewPage {
   constructor(
     private readonly appApiService: AppApiService,
     private readonly route: ActivatedRoute,
+    private readonly store: Store
   ) {}
 
   ngOnInit() {
@@ -115,6 +121,8 @@ export class EventScreenViewPage {
         this.heatmapBounds = L.latLngBounds(L.latLng(this.mapCenter), L.latLng(this.convertXYToLatLng(response.boundaries.right, response.boundaries.bottom)));
       }
     });
+
+    // this.store.dispatch()
   }
 
   ngAfterViewInit() {
