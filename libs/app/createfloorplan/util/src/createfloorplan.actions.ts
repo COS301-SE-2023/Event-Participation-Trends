@@ -1,7 +1,7 @@
 import Konva from "konva";
 
 interface ISensorState {
-    object: Konva.Image,
+    object: Konva.Circle,
     isLinked: boolean,
 }
 
