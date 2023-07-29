@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { IEvent } from '@event-participation-trends/api/event/util';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'event-participation-trends-all-events-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './all-events-page.component.html',
   styleUrls: ['./all-events-page.component.css'],
 })
@@ -17,7 +18,9 @@ export class AllEventsPageComponent implements OnInit {
 
   public all_events: IEvent[] = [];
   public subscribed_events: IEvent[] = [];
-  public role = 'viewer';
+  public non_subscribed_events: IEvent[] = [];
+  public role = 'admin';
+  public search = '';
 
   async ngOnInit() {
 
@@ -27,8 +30,37 @@ export class AllEventsPageComponent implements OnInit {
 
     if (this.role !== 'admin') {
       this.subscribed_events = await this.appApiService.getSubscribedEvents();
+      this.non_subscribed_events = this.all_events.filter((event) => {
+        return !this.subscribed_events.some((subscribed_event) => {
+          return subscribed_event.Name === event.Name;
+        });
+      });
     }
 
+  }
+
+  get_all_events() {
+    return this.all_events.filter((event) => {
+      return event.Name
+        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
+        : false;
+    });
+  }
+
+  get_subscribed_events() {
+    return this.subscribed_events.filter((event) => {
+      return event.Name
+        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
+        : false;
+    });
+  }
+
+  get_non_subscribed_events() {
+    return this.non_subscribed_events.filter((event) => {
+      return event.Name
+        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
+        : false;
+    });
   }
 
   isAdmin() {

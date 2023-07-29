@@ -6,13 +6,7 @@
 
 <div class="h-full w-full flex flex-col">
   <div class="top-0 flex justify-center items-center z-20">
-    <div
-      class="flex justify-start absolute mt-20 py-3 w-80 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
-    >
-    <div class="pl-5">
-        Search bar
-    </div>
-    </div>
+    <input type="text" placeholder="Type here" class="input w-full max-w-xs absolute mt-20 py-3 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] border-none" [(ngModel)]="search" />
   </div>
   <div
     class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-16"
@@ -20,7 +14,7 @@
   >
     <div
       class="m-3 p-5 h-52 bg-ept-navy-blue rounded-2xl flex flex-col justify-between hover:scale-105 hover:bg-[#2b2e38] transition-all duration-300 cursor-pointer"
-      *ngFor="let event of all_events"
+      *ngFor="let event of get_all_events()"
     >
       <div class="text-2xl font-poppins font-semibold">{{ event.Name }}</div>
       <div>
