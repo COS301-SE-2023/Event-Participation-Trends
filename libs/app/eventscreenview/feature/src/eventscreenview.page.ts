@@ -14,6 +14,7 @@ import { set } from 'mongoose';
 import { Select, Store } from '@ngxs/store';
 import { EventScreenViewState } from '@event-participation-trends/app/eventscreenview/data-access';
 import { Observable } from 'rxjs';
+import { SetEventScreenViewEndTime, SetEventScreenViewStartTime, SetEventScreenViewTime } from '@event-participation-trends/app/eventscreenview/util';
 
 interface IAverageDataFound {
   id: number | null | undefined,
@@ -31,6 +32,8 @@ interface IAverageDataFound {
 })
 export class EventScreenViewPage {
   @Select(EventScreenViewState.currentTime) currentTime$!: Observable<string>;
+  @Select(EventScreenViewState.startTime) startTime$!: Observable<string>;
+  @Select(EventScreenViewState.endTime) endTime$!: Observable<string>;
 
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
@@ -39,6 +42,7 @@ export class EventScreenViewPage {
   @ViewChild('flowmapContainer') flowmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalDevicesBarChart') totalDevicesBarChart!: ElementRef<HTMLCanvasElement>;
 
+  currentTimeIsSet = false;
   isLoading = true;
   activeDevices = 25;
   inactiveDevices = 5;
@@ -107,28 +111,57 @@ export class EventScreenViewPage {
       this.eventId = params['id'];
     });
 
-    if (this.eventId) this.appApiService.getFloorplanBoundaries(this.eventId).then((response) => {
-      if (response.boundaries) {
-        const center = {
-          x: (response.boundaries.left + response.boundaries.right) / 2,
-          y: (response.boundaries.top + response.boundaries.bottom) / 2
-        };
+    if (this.eventId) {
+      this.appApiService.getFloorplanBoundaries(this.eventId).then((response) => {
+        if (response.boundaries) {
+          const center = {
+            x: (response.boundaries.left + response.boundaries.right) / 2,
+            y: (response.boundaries.top + response.boundaries.bottom) / 2
+          };
 
-        this.mapCenter = L.latLng(this.convertXYToLatLng(center.x, center.y));
-        this.mapXYCenter = [center.x, center.y];
-        this.mapWidth = response.boundaries.right - response.boundaries.left;
-        this.mapHeight = response.boundaries.bottom - response.boundaries.top;
-        this.heatmapBounds = L.latLngBounds(L.latLng(this.mapCenter), L.latLng(this.convertXYToLatLng(response.boundaries.right, response.boundaries.bottom)));
-      }
-    });
+          this.mapCenter = L.latLng(this.convertXYToLatLng(center.x, center.y));
+          this.mapXYCenter = [center.x, center.y];
+          this.mapWidth = response.boundaries.right - response.boundaries.left;
+          this.mapHeight = response.boundaries.bottom - response.boundaries.top;
+          this.heatmapBounds = L.latLngBounds(L.latLng(this.mapCenter), L.latLng(this.convertXYToLatLng(response.boundaries.right, response.boundaries.bottom)));
+        }
+      });
 
-    // this.store.dispatch()
+      // get event
+      this.appApiService.getEvent({eventId: this.eventId}).subscribe((response) => {
+        if (response) {
+          const eventStartDate = response.StartDate;
+          const eventEndDate = response.EndDate;
+
+          // convert the event start and end dates to a string in the format of a Date object
+          const eventStartTime = eventStartDate?.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+          const eventEndTime = eventEndDate?.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+
+          //set the start and end times of the event
+          this.store.dispatch(new SetEventScreenViewStartTime(eventStartTime));
+          this.store.dispatch(new SetEventScreenViewEndTime(eventEndTime));
+
+          // check if we already set the current time
+          this.currentTime$.subscribe((currentTime) => {
+            this.currentTimeIsSet = currentTime !== null ? true : false;
+          });
+        }
+      });
+    }
   }
 
   ngAfterViewInit() {
     // wait until the heatmap container is rendered
     setTimeout(() => {
       this.isLoading = false;
+      if (!this.currentTimeIsSet) {
+        // set current time to start time
+        this.startTime$.subscribe((startTime) => {
+          if (startTime === null) {
+            this.store.dispatch(new SetEventScreenViewTime(startTime));
+          }
+        });
+      }
     }, 1000);
     
     setTimeout(() => {
