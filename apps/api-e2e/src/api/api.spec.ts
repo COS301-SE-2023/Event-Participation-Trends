@@ -720,6 +720,57 @@ describe('EventController', ()=>{
         })  
     })
    
+    describe('removeViewerFromEvent', ()=>{
+        it('should remove a viewer from an event', async ()=>{
+                        
+            //create event viewer
+            await userRepository.createUser(TEST_USER_2);
+            let viewer = await userRepository.getUser(TEST_USER_2.Email);
+
+            //create event manager
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(TEST_USER_1.Email);
+            TEST_EVENT.Manager = manager[0]._id;
+            TEST_EVENT.Requesters = new Array<Types.ObjectId>(viewer[0]._id);
+            TEST_EVENT.Viewers = new Array<Types.ObjectId>(manager[0]._id);
+            
+            await eventRepository.createEvent(TEST_EVENT); 
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+
+            expect(event[0].Requesters[0]).toEqual(viewer[0]._id);
+
+            const response = await request(httpServer).post(`/event/removeViewerFromEvent`).send({
+                userEmail: TEST_USER_2.Email,
+                eventId: <string> <unknown> event[0]._id
+            });
+            expect(response.body.status).toBe("success");
+
+            //due to delayed persistance must wait
+            event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            while(event[0].Viewers.length != 1){
+                SLEEP(500);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
+
+            expect(event[0].Viewers.length).toEqual(1);
+            expect(event[0].Viewers[0]).toEqual(manager[0]._id);
+
+            viewer = await userRepository.getUser(TEST_USER_2.Email);
+            while(viewer[0].Viewing.length != 0){
+                SLEEP(500);
+                viewer = await userRepository.getUser(TEST_USER_2.Email);
+            }
+
+            expect(viewer[0].Viewing.length).toEqual(0);
+            
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id);
+            await userRepository.deleteUserById(viewer[0]._id);
+            await userRepository.deleteUserById(manager[0]._id);
+        
+        })  
+    })
+
 })
 
 describe('UserController', ()=>{
