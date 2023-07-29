@@ -391,7 +391,9 @@ export class CreateFloorPlanPage implements OnInit{
                                 (this.activeItem instanceof Konva.Group && this.activeItem?.hasName('stall'))) ? true : false;
         this.setTransformer(this.activeItem, undefined);
 
-        this.setTooltipVisibility(element, false);
+        if (element instanceof Konva.Group || element instanceof Konva.Circle) {
+          this.setTooltipVisibility(element, false);
+        }
 
         if (this.activeItem instanceof Konva.Circle) {
           this.selectedSensor = true;
@@ -411,7 +413,6 @@ export class CreateFloorPlanPage implements OnInit{
 
         if (this.activeItem instanceof Konva.Group) {
           this.transformer.nodes([this.activeItem]);
-          console.log(this.activeItem)
           this.canvas.draw();
         }
         
@@ -433,14 +434,18 @@ export class CreateFloorPlanPage implements OnInit{
       });
       element.on('mouseenter', () => {
         document.body.style.cursor = 'move';
-        this.setTooltipVisibility(element, true);
-        setTimeout(() => {
-          this.setTooltipVisibility(element, false);
-        }, 2000);
+        if (!this.maxReached && (element instanceof Konva.Group || element instanceof Konva.Circle)) {
+          this.setTooltipVisibility(element, true);
+          setTimeout(() => {
+            this.setTooltipVisibility(element, false);
+          }, 2000);
+        }
       });
       element.on('mouseleave', () => {
         document.body.style.cursor = 'default';
-        this.setTooltipVisibility(element, false);
+        if (element instanceof Konva.Group || element instanceof Konva.Circle) {
+          this.setTooltipVisibility(element, false);
+        }
       });
 
       if (element instanceof Konva.Text && (element.getAttr('name') === 'textBox' || element.getAttr('name') === 'stallName')) {
@@ -597,10 +602,6 @@ export class CreateFloorPlanPage implements OnInit{
     ngAfterViewInit(): void {
         // wait for elements to render before initializing fabric canvas
         setTimeout(() => {
-            // this.loadFloorLayout().subscribe((object) => {
-            //   this.canvasObject = object;
-            // })
-            console.log(this.canvasObject);
             this.displayedSnap = this.initialSnap;
             this.zoomOutDisabled = true;
             const canvasParent = this.canvasParent;
@@ -617,18 +618,6 @@ export class CreateFloorPlanPage implements OnInit{
               this.canvas = this.canvasObject['canvas'] as Konva.Layer;
             }
 
-            // if (!this.canvasContainer) {
-            //   this.canvasContainer = new Konva.Stage({
-            //     container: '#canvasElement',
-            //     width: width*0.995,                  //was width*0.9783,
-            //     height: window.innerHeight-100,      //height*0.92,       
-            //   });
-
-            //   this.initialHeight = this.canvasContainer.height();
-            // }
-            // if (!this.canvas) {
-            //   this.canvas = new Konva.Layer();
-            // }
             this.canvasContainer = new Konva.Stage({
               container: '#canvasElement',
               width: width*0.995,                  //was width*0.9783,
@@ -647,8 +636,6 @@ export class CreateFloorPlanPage implements OnInit{
                   return;
                 }
                 const json = JSON.parse(res.floorlayout);
-                console.log(json)
-                // this.revertJSONData(json);
                 const width = this.canvasParent.nativeElement.offsetWidth;
                 this.canvasContainer = new Konva.Stage({
                   container: '#canvasElement',
@@ -656,7 +643,6 @@ export class CreateFloorPlanPage implements OnInit{
                   height: window.innerHeight-100,
                 });
                 this.canvas = Konva.Node.create(json, 'container');
-                console.log('canvas', this.canvas)
 
                 this.canvas.children?.forEach(child => {
                   let type : KonvaTypes;
@@ -668,13 +654,13 @@ export class CreateFloorPlanPage implements OnInit{
                       break;
                     case 'Path':
                       type = new Konva.Path(child.getAttrs());
+                      this.currentPathStrokeWidth = type.getAttr('strokeWidth');
                       break;
                     case 'Circle':
                       type = new Konva.Circle(child.getAttrs());
                       tooltip = this.addTooltip(type, type.getAttr('x'), type.getAttr('y'));
                       this.tooltips.push(tooltip);
                       this.sensors?.push({object: type, isLinked: type.getAttr('fill') === 'red' ? false : true});
-                      console.log(this.sensors)
                       this.store.dispatch(new AddSensor(type));                      
                       break;
                     case 'Group':
@@ -755,6 +741,9 @@ export class CreateFloorPlanPage implements OnInit{
 
     defaultBehaviour(newCanvas: Konva.Layer): void {
       this.canvas = newCanvas;
+      this.tooltips.forEach(tooltip => {
+        this.canvas.add(tooltip);
+      });
       this.canvasContainer.add(this.canvas);
       this.canvasContainer.draw();
 
@@ -889,8 +878,10 @@ export class CreateFloorPlanPage implements OnInit{
           this.updateLabelSize(0.5, this.maxReached);
         }
         else {
+          this.maxReached = true;
           this.tooltipAllowedVisible = false;
           this.setAllTootipsVisibility(false);
+          this.updateLabelSize(0.5, this.maxReached);
         }
         this.setZoomInDisabled(this.displayedSnap);
         this.setZoomOutDisabled(this.displayedSnap);
@@ -910,13 +901,15 @@ export class CreateFloorPlanPage implements OnInit{
         
         this.updateStrokeWidths(2);
         if (newScale < 8) {
-          this.maxReached = oldScale >= 8 ? true : false; 
+          this.maxReached = oldScale >= 8 ? true : false;
           this.tooltipAllowedVisible = true;
           this.updateLabelSize(2, this.maxReached);
+          this.maxReached = false;
         }
         else {
           this.tooltipAllowedVisible = false;
           this.setAllTootipsVisibility(false);
+          this.updateLabelSize(0.5, this.maxReached);
         }
         this.setZoomInDisabled(this.displayedSnap);
         this.setZoomOutDisabled(this.displayedSnap);
@@ -944,7 +937,7 @@ export class CreateFloorPlanPage implements OnInit{
         if (this.canvas && this.canvas.children) {
           this.canvas.children?.forEach((child: any) => {
             if (child instanceof Konva.Path) {
-              const prevWidth = this.currentPathStrokeWidth === 0 ? child.getAttr('strokeWidth') : this.currentPathStrokeWidth;
+              const prevWidth = child.getAttr('strokeWidth');
               child.strokeWidth(prevWidth * scale);
               this.currentPathStrokeWidth = prevWidth * scale;
             }
