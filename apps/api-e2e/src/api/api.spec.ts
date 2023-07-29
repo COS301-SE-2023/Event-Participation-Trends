@@ -698,14 +698,14 @@ describe('EventController', ()=>{
 
             expect(event[0].Requesters.length).toEqual(0);
 
-            if(event[0].Viewers.length != 2){
+            while(event[0].Viewers.length != 2){
                 SLEEP(1000);
                 event = await eventRepository.getEventByName(TEST_EVENT.Name);
             }
 
             expect(event[0].Viewers[1]).toEqual(viewer[0]._id);
 
-            if(viewer[0].Viewing.length == 0){
+            while(viewer[0].Viewing.length == 0){
                 SLEEP(1000);
                 viewer = await userRepository.getUser(TEST_USER_2.Email);
             }
@@ -942,4 +942,6 @@ describe('UserController: jwt tests', ()=>{
             expect(response.body.url).toEqual("https://test_url");
         })  
     })
+
+
 });
