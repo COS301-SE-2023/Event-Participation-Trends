@@ -75,26 +75,19 @@ export class EventScreenViewPage {
    * If you change the values of them, your grid map and heatmap will not work correctly.
    */
   // ====================================
-  gridTileSize = 28.05;
+  gridTileSize = 40.05;
   mapZoomLevel = 1;
 
   // center the map on the heatmap container such that the coordinates of the center point of the map is (0, 0)
   mapCenter = L.latLng(0, 0);
+  mapXYCenter = [0,0];
+  mapWidth = 0;
+  mapHeight = 0;
   
   // set the bounds for the heatmap data points to be generated within (in x and y)
-  heatmapBounds : {
-    north: number,   // Latitude of the north boundary
-    south: number,   // Latitude of the south boundary
-    east: number,   // Longitude of the east boundary
-    west: number    // Longitude of the west boundary
-  } = {
-    north: 80,
-    south: -80,
-    east: 307,
-    west: -307 
-  };
+  heatmapBounds : L.LatLngBounds = L.latLngBounds(L.latLng(0, 0), L.latLng(0, 0));
 
-  detectionRadius = 3;
+  detectionRadius = 2;
   // ====================================
 
   constructor(
@@ -106,6 +99,21 @@ export class EventScreenViewPage {
     this.route.queryParams.subscribe(params => {
       this.eventId = params['id'];
     });
+
+    if (this.eventId) this.appApiService.getFloorplanBoundaries(this.eventId).then((response) => {
+      if (response.boundaries) {
+        const center = {
+          x: (response.boundaries.left + response.boundaries.right) / 2,
+          y: (response.boundaries.top + response.boundaries.bottom) / 2
+        };
+        console.log("test:" + this.convertXYToLatLng(1100, 450));
+        this.mapCenter = L.latLng(this.convertXYToLatLng(center.x, center.y));
+        this.mapXYCenter = [center.x, center.y];
+        this.mapWidth = response.boundaries.right - response.boundaries.left;
+        this.mapHeight = response.boundaries.bottom - response.boundaries.top;
+        this.heatmapBounds = L.latLngBounds(L.latLng(this.mapCenter), L.latLng(this.convertXYToLatLng(response.boundaries.right, response.boundaries.bottom)));
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -115,6 +123,7 @@ export class EventScreenViewPage {
     }, 1000);
     
     setTimeout(() => {
+
       Chart.register(ChartStreaming);
       this.renderHeatMap();
       this.renderTotalUserCount();
@@ -154,6 +163,7 @@ export class EventScreenViewPage {
 
       // convert averageDataDetectedThisRun to heatmap data using the new data points
       const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.averageDataDetectedThisRun.map((averageDataPoint: IAverageDataFound) => averageDataPoint.latLng.newDataPoint);
+      // const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [L.latLng(145, 335)]
 
       if (this.showHeatmap) {
         this.myHeatLayer.setLatLngs(heatmapData);
@@ -177,6 +187,25 @@ export class EventScreenViewPage {
         }
       }
     }, 5000);
+  }
+
+  convertXYToLatLng(x: number, y: number): [number, number] {
+    // Step 1: Determine the bounds of your (x, y) coordinate system
+    const xMin = 0; // Minimum x-value of your coordinate system
+    const xMax = 1140; // Maximum x-value of your coordinate system
+    const yMin = 0; // Minimum y-value of your coordinate system
+    const yMax = 460; // Maximum y-value of your coordinate system
+  
+    // Step 2: Scale and shift (x, y) to match desired latitude and longitude ranges
+    const latMin = -90; // Minimum desired latitude
+    const latMax = 90; // Maximum desired latitude
+    const lngMin = -180; // Minimum desired longitude
+    const lngMax = 180; // Maximum desired longitude
+  
+    const latitude = latMin + ((y - yMin) / (yMax - yMin)) * (latMax - latMin);
+    const longitude = lngMin + ((x - xMin) / (xMax - xMin)) * (lngMax - lngMin);
+  
+    return [latitude, longitude];
   }
 
   // Function to generate a random number within a given range
@@ -261,6 +290,11 @@ export class EventScreenViewPage {
     response.then((data: IGetEventDevicePositionResponse | null | undefined) => {
       if (data?.positions) {
         this.averageDataFound = this.updateHeatmapData(data.positions);
+
+        //log the x and y coordinates of the average data points
+        // data.positions.forEach((position: IPosition) => {
+        //   console.log(`averageX: ${position.x}, averageY: ${position.y}`);
+        // });
       }
     });
   }
@@ -268,11 +302,11 @@ export class EventScreenViewPage {
   updateHeatmapData(positions: IPosition[]) {
     if (this.averageDataFound.length === 0) {
       positions.forEach((position: IPosition) => {
-        const [averageX, averageY] = this.calculateAverageXandY(positions, position);
+        const latLng = this.calculateAverageXandY(positions, position);
 
         // convert x and y coordinates to lat and lng coordinates
-        const latLng = this.myHeatmap.containerPointToLatLng(L.point(averageX, averageY));
-        
+        // const latLng = L.latLng(this.convertXYToLatLng(averageX, averageY));
+        console.log(latLng);
         // add new average data point to the averageDataFound array
         this.averageDataFound.push({
           id: position.id, 
@@ -293,10 +327,10 @@ export class EventScreenViewPage {
 
       //determine new/old positions detected this run
       positions.forEach((position: IPosition) => {
-        const [averageX, averageY] = this.calculateAverageXandY(positions, position);
+        const latLng = this.calculateAverageXandY(positions, position);
 
         // convert x and y coordinates to lat and lng coordinates
-        const latLng = this.myHeatmap.containerPointToLatLng(L.point(averageX, averageY));
+        // const latLng = this.myHeatmap.containerPointToLatLng(L.point(averageX, averageY));
 
         // determine if there already exists an average data point with the same id
         const existingPoint = this.averageDataFound.find((averageDataPoint: IAverageDataFound) => {
@@ -330,28 +364,53 @@ export class EventScreenViewPage {
     }
   }
 
-  calculateAverageXandY(positions: IPosition[], position: IPosition) {
+  calculateAverageXandY(positions: IPosition[], position: IPosition): L.LatLng {
     // retrieve all data postions with the same id
     const positionsWithSameId = positions.filter((pos: IPosition) => pos.id === position.id);
 
-    // calculate average x and y coordinates of all data positions with the same id
-    const averageX = positionsWithSameId.reduce((acc: number, curr: IPosition) => {
-      if (curr.x) {
-        return acc + curr.x;
+    // // calculate average x and y coordinates of all data positions with the same id
+    // const averageX = positionsWithSameId.reduce((acc: number, curr: IPosition) => {
+    //   if (curr.x) {
+    //     return acc + curr.x;
+    //   } else {
+    //     return acc;
+    //   }
+    // }, 0) / positionsWithSameId.length;
+
+    // const averageY = positionsWithSameId.reduce((acc: number, curr: IPosition) => {
+    //   if (curr.y) {
+    //     return acc + curr.y;
+    //   } else {
+    //     return acc;
+    //   }
+    // }, 0) / positionsWithSameId.length;
+
+    const positionsWithSameId_LatLng: L.LatLng[] = [];
+    positionsWithSameId.map((pos: IPosition) => {
+      if (pos.x != null && pos.y != null) {
+        let latLng = L.latLng(this.convertXYToLatLng(pos.x, pos.y));
+        latLng = L.latLng(latLng);
+        positionsWithSameId_LatLng.push(latLng);
+      }
+    });
+
+    const averageX = positionsWithSameId_LatLng.reduce((acc: number, curr: {lat: number, lng: number}) => {
+      if (curr.lng) {
+        return acc + curr.lng;
       } else {
         return acc;
       }
-    }, 0) / positionsWithSameId.length;
+    }, 0) / positionsWithSameId_LatLng.length;
 
-    const averageY = positionsWithSameId.reduce((acc: number, curr: IPosition) => {
-      if (curr.y) {
-        return acc + curr.y;
+    const averageY = positionsWithSameId_LatLng.reduce((acc: number, curr: {lat: number, lng: number}) => {
+      if (curr.lat) {
+        return acc + curr.lat;
       } else {
         return acc;
       }
-    }, 0) / positionsWithSameId.length;
+    }, 0) / positionsWithSameId_LatLng.length;
 
-    return [averageX, averageY];
+    return L.latLng(averageX, averageY);
   }
 
   showToggleButton() {
@@ -592,22 +651,23 @@ export class EventScreenViewPage {
   }
 
   renderHeatMap() {
+    console.log(this.mapCenter)
     this.myHeatmap = L.map(this.heatmapContainer.nativeElement).setView(this.mapCenter, this.mapZoomLevel);
-
+    console.log(this.heatmapBounds);
     //disable zoom functionality
     this.myHeatmap.touchZoom.disable();
     this.myHeatmap.doubleClickZoom.disable();
     this.myHeatmap.scrollWheelZoom.disable();
     this.myHeatmap.boxZoom.disable();
     this.myHeatmap.keyboard.disable();
-    this.myHeatmap.dragging.disable();
+    // this.myHeatmap.dragging.disable();
 
     // disable zoom in and out buttons
     this.myHeatmap.removeControl(this.myHeatmap.zoomControl);
     this.myHeatmap.removeControl(this.myHeatmap.attributionControl);
 
     const imageUrl = 'assets/LukasSeKamerEvent.jpeg';
-    // const imageBounds: L.LatLngBounds = map.getBounds();
+    // const imageBounds: L.LatLngBounds = this.myHeatmap.getBounds();
     // get bounds of heatmap container
     const imageBounds: L.LatLngBounds = L.latLngBounds(
       this.myHeatmap.containerPointToLatLng(L.point(0, 0)),
@@ -615,23 +675,12 @@ export class EventScreenViewPage {
     );
     L.imageOverlay(imageUrl, imageBounds, {zIndex: 0}).addTo(this.myHeatmap);
 
-    //set the heatmapData bounds
-    this.heatmapBounds = {
-      north: imageBounds.getNorth(),   // Latitude of the north boundary
-      south: imageBounds.getSouth(),   // Latitude of the south boundary
-      east: imageBounds.getEast(),   // Longitude of the east boundary
-      west: imageBounds.getWest()    // Longitude of the west boundary
-    };
-
     const myGrid = L.GridLayer.extend({
       options: {
         tileSize: this.gridTileSize,
         opacity: 0.9,
         zIndex: 1000,
-        bounds: L.latLngBounds(
-          this.myHeatmap.containerPointToLatLng(L.point(0, 0)),
-          this.myHeatmap.containerPointToLatLng(L.point(this.heatmapContainer.nativeElement.offsetWidth, this.heatmapContainer.nativeElement.offsetHeight))         
-        ),
+        bounds: imageBounds,
       },
       // Override _tileCoordsToBounds function
       _tileCoordsToBounds: function (coords: any) {
@@ -665,12 +714,12 @@ export class EventScreenViewPage {
 
     this.myFlowmapLayer.addTo(this.myHeatmap);
 
-    // // functionality to log the coordinates of the mouse pointer on the heatmap container
-    // this.myHeatmap.addEventListener('mousemove', (event: any) => {
-    //   const latLng = this.myHeatmap.mouseEventToLatLng(event.originalEvent);
-    //   console.log(latLng);
-    //   console.log('X,Y: ' + event.originalEvent.clientX + ', ' + event.originalEvent.clientY);
-    // });
+    // functionality to log the coordinates of the mouse pointer on the heatmap container
+    this.myHeatmap.addEventListener('mousemove', (event: any) => {
+      const latLng = this.myHeatmap.mouseEventToLatLng(event.originalEvent);
+      console.log(latLng);
+      console.log('X,Y: ' + event.originalEvent.clientX + ', ' + event.originalEvent.clientY);
+    });
 
     // this.hotzoneMarker = L.circleMarker([0, 0], {
     //   color: 'red',
@@ -713,8 +762,8 @@ export class EventScreenViewPage {
   
     if (this.oldHeatmapData.length === 0)  {
         for (let i = 0; i < 50; i++) {
-        const latitude = 0 + Math.random() * (this.heatmapBounds.north + this.heatmapBounds.south);
-        const longitude = 0 + Math.random() * (this.heatmapBounds.east + this.heatmapBounds.west);
+        const latitude = 0 + Math.random() * (this.heatmapBounds.getNorth() + this.heatmapBounds.getSouth());
+        const longitude = 0 + Math.random() * (this.heatmapBounds.getEast() + this.heatmapBounds.getWest());
         const intensity = 0.5 + Math.random() * 0.5;
     
         this.oldHeatmapData.push([latitude, longitude, intensity]);
@@ -742,8 +791,8 @@ export class EventScreenViewPage {
         latLngDataPoint.lng += lngDisplacement; // Longitude
     
         // Make sure the updated data point stays within the defined bounds
-        latLngDataPoint.lat = Math.max(this.heatmapBounds.south, Math.min(this.heatmapBounds.north, latLngDataPoint.lat)); // Latitude
-        latLngDataPoint.lng = Math.max(this.heatmapBounds.west, Math.min(this.heatmapBounds.east, latLngDataPoint.lng)); // Longitude
+        latLngDataPoint.lat = Math.max(this.heatmapBounds.getSouth(), Math.min(this.heatmapBounds.getNorth(), latLngDataPoint.lat)); // Latitude
+        latLngDataPoint.lng = Math.max(this.heatmapBounds.getWest(), Math.min(this.heatmapBounds.getEast(), latLngDataPoint.lng)); // Longitude
       } else {
         // It's a HeatLatLngTuple type
         const heatLatLngDataPoint = dataPoint as L.HeatLatLngTuple;
@@ -755,8 +804,8 @@ export class EventScreenViewPage {
         heatLatLngDataPoint[1] += lngDisplacement; // Longitude
     
         // Make sure the updated data point stays within the defined bounds
-        heatLatLngDataPoint[0] = Math.max(this.heatmapBounds.south, Math.min(this.heatmapBounds.north, heatLatLngDataPoint[0])); // Latitude
-        heatLatLngDataPoint[1] = Math.max(this.heatmapBounds.west, Math.min(this.heatmapBounds.east, heatLatLngDataPoint[1])); // Longitude
+        heatLatLngDataPoint[0] = Math.max(this.heatmapBounds.getSouth(), Math.min(this.heatmapBounds.getNorth(), heatLatLngDataPoint[0])); // Latitude
+        heatLatLngDataPoint[1] = Math.max(this.heatmapBounds.getWest(), Math.min(this.heatmapBounds.getEast(), heatLatLngDataPoint[1])); // Longitude
       }
     });
 

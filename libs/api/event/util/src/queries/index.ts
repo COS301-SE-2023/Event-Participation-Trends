@@ -8,3 +8,4 @@ export * from './get-event-floorlayout.request';
 export * from './get-event-device-position.query';
 export * from './get-event-categories.query';
 export * from './get-managed-event-categories.query';
+export * from './get-floorplan-boundaries.query';

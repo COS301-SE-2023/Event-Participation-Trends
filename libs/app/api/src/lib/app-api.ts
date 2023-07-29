@@ -25,6 +25,7 @@ import {
   IGetAllEventsResponse,
   IGetEventDevicePositionResponse,
   IGetEventFloorlayoutResponse,
+  IGetFloorplanBoundariesResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
@@ -341,6 +342,21 @@ export class AppApiService {
     return firstValueFrom(
       this.http.get<IGetEventDevicePositionResponse>(
         `/api/event/getEventDevicePosition?eventId=${eventId}&startTime=${startTimeString}&endTime=${endTimeString}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response;
+    });
+  }
+
+  async getFloorplanBoundaries(eventId: string) : Promise<IGetFloorplanBoundariesResponse> {
+    return firstValueFrom(
+      this.http.get<IGetFloorplanBoundariesResponse>(
+        `/api/event/getFloorplanBoundaries?eventId=${eventId}`,
         {
           headers: {
             'x-csrf-token': this.cookieService.get('csrf'),
