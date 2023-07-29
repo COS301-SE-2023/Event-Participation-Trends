@@ -928,7 +928,7 @@ describe('UserController: jwt tests', ()=>{
     })
 
     describe('getUserName', ()=>{
-        it('Should return a users role', async ()=>{
+        it('Should return a users Name', async ()=>{
             const response = await request(httpServer).get("/user/getUserName");
 
             expect(response.body.username).toEqual(TEST_USER_2.FirstName);
@@ -936,12 +936,21 @@ describe('UserController: jwt tests', ()=>{
     })
 
     describe('getProfilePicUrl', ()=>{
-        it('Should return a users role', async ()=>{
+        it('Should return a user picture URL', async ()=>{
             const response = await request(httpServer).get("/user/getProfilePicUrl");
 
             expect(response.body.url).toEqual("https://test_url");
         })  
     })
+
+    describe('getFullName', ()=>{
+        it('Should return a users role', async ()=>{
+            const response = await request(httpServer).get("/user/getFullName");
+
+            expect(response.body.fullName).toEqual(TEST_USER_2.FirstName +' '+ TEST_USER_2.LastName);
+        })  
+    })
+
 
 
 });
