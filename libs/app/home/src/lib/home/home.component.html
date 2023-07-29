@@ -26,6 +26,20 @@
                 onEvents(),
               'hover:bg-ept-navy-blue hover:scale-105': !onEvents()
             }"
+            *ngIf="!isManager()"
+          >
+            Events
+          </div>
+          <div
+            id="events-link"
+            (click)="events()"
+            class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
+            [ngClass]="{
+              'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
+                onEvents(),
+              'hover:bg-ept-navy-blue hover:scale-105': !onEvents()
+            }"
+            *ngIf="isManager()"
           >
             Events
           </div>

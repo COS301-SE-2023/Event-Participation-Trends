@@ -5,8 +5,7 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { IEvent } from '@event-participation-trends/api/event/util';
 import { FormsModule } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroLockClosedSolid } from '@ng-icons/heroicons/solid';
-import { matLockOutline } from '@ng-icons/material-icons/outline'
+import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
 
 @Component({
   selector: 'event-participation-trends-all-events-page',
@@ -14,7 +13,7 @@ import { matLockOutline } from '@ng-icons/material-icons/outline'
   imports: [CommonModule, FormsModule, NgIconComponent],
   templateUrl: './all-events-page.component.html',
   styleUrls: ['./all-events-page.component.css'],
-  providers: [provideIcons({ heroLockClosedSolid, matLockOutline })],
+  providers: [provideIcons({ heroLockClosedSolid, heroInboxSolid })],
 })
 export class AllEventsPageComponent implements OnInit {
 
@@ -57,6 +56,10 @@ export class AllEventsPageComponent implements OnInit {
     }, 300);
   }
 
+  emptySearch() : boolean {
+    return this.get_subscribed_events().length == 0 && this.get_non_subscribed_events().length == 0;
+  }
+
   hasAccess(event: any): boolean {
     for (let i = 0; i < this.subscribed_events.length; i++) {
       if (this.subscribed_events[i]._id == event._id) {
@@ -67,7 +70,7 @@ export class AllEventsPageComponent implements OnInit {
     return false;
   }
 
-  get_all_events() {
+  get_all_events() : any[] {
     return this.all_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.search.toLowerCase())
@@ -75,7 +78,7 @@ export class AllEventsPageComponent implements OnInit {
     });
   }
 
-  get_subscribed_events() {
+  get_subscribed_events() : any[] {
     return this.subscribed_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.search.toLowerCase())

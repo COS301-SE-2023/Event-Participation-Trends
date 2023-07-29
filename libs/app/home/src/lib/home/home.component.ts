@@ -34,6 +34,10 @@ export class HomeComponent implements OnInit {
     this.img_url = await this.appApiService.getProfilePicUrl();
   }
 
+  isManager(): boolean {
+    return this.role === Role.Manager;
+  }
+
   showModal() {
     const modal = document.querySelector('#profile-modal');
 

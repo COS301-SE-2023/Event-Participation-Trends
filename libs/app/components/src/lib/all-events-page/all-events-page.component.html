@@ -3,9 +3,16 @@
     <input
       type="text"
       placeholder="Type here"
-      class="input w-full max-w-xs absolute mt-20 py-3 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] border-none"
+      class="w-full max-w-xs absolute mt-20 py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
       [(ngModel)]="search"
     />
+  </div>
+  <div
+    class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 -z-20"
+    *ngIf="!loading && emptySearch()"
+  >
+      <ng-icon name="heroInboxSolid" class="text-6xl"></ng-icon>
+      <div class="font-poppins text-xl mt-3">Looks like there's nothing here...</div>
   </div>
   <div
     class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200 -z-10"
