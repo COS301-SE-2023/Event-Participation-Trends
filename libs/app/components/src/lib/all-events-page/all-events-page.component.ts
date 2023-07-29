@@ -31,7 +31,7 @@ export class AllEventsPageComponent implements OnInit {
     this.role = await this.appApiService.getRole();
 
     //! Remove this line
-    // this.role = 'viewer';
+    this.role = 'manager';
 
     this.all_events = await this.appApiService.getAllEvents();
     this.my_events = await this.appApiService.getManagedEvents();
