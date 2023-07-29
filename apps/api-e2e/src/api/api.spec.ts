@@ -919,6 +919,18 @@ describe('UserController: jwt tests', ()=>{
         await app.close();
     })
 
+    describe('getRole', ()=>{
+        it('Should return a users role', async ()=>{
+            await userRepository.createUser(TEST_USER_2); 
+            const user = await userRepository.getUser(TEST_USER_2.Email);
 
+            const response = await request(httpServer).get("/user/getRole");
+
+            expect(response.body.userRole).toEqual(TEST_USER_2.Role);
+
+            //cleanup
+            await userRepository.deleteUserById(user[0]._id)
+        })  
+    })
 
 });
