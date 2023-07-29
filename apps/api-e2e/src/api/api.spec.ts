@@ -927,4 +927,11 @@ describe('UserController: jwt tests', ()=>{
         })  
     })
 
+    describe('getUserName', ()=>{
+        it('Should return a users role', async ()=>{
+            const response = await request(httpServer).get("/user/getUserName");
+
+            expect(response.body.username).toEqual(TEST_USER_2.FirstName);
+        })  
+    })
 });
