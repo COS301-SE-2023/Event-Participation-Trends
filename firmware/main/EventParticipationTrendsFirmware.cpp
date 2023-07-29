@@ -30,12 +30,12 @@
 #include "lwip/sys.h"
 #include "esp_timer.h"
 #include "esp_system.h"
-#include <vector>
-#include <unordered_map>
-#include <string>
-// include for get_mac_address
+#include "driver/gpio.h"
 #include "esp_wifi.h"
 
+#include <unordered_map>
+#include <string>
+#include <vector>
 #include <unordered_map>
 #include <string>
 #include <mutex>
@@ -44,6 +44,15 @@ std::mutex macs_mutex;
 std::unordered_map<std::string, int> macs;
 std::string global_mac_addr = "";
 std::string data = "";
+
+static void flashLed(){
+    static bool ledState = false;
+    ledState = !ledState;
+    gpio_set_level(GPIO_NUM_10, ledState);
+    vTaskDelay(150 / portTICK_PERIOD_MS);
+    ledState = !ledState;
+    gpio_set_level(GPIO_NUM_10, ledState);
+}
 
 static void SendBufferTask(void*){
     ESP_LOGI("MQTT", "Sending to MQTT");
@@ -86,6 +95,7 @@ static void SendBufferAsSingleJsonArray(void*){
     mqtt_publish_sensor(data.c_str());
     macs.clear();
     macs_mutex.unlock();
+    flashLed();
     vTaskDelete(NULL);
 }
 
@@ -136,6 +146,8 @@ extern "C" void app_main(void)
                         - Wait for the client to be initialized in separate task.
                 - Initialize MQTT when we receive an ip.
     */
+    gpio_reset_pin(GPIO_NUM_10);
+    gpio_set_direction(GPIO_NUM_10, GPIO_MODE_OUTPUT);
     ESP_LOGI("OTA", "THIS IS VERSION 2.0.0");
     uint8_t mac[6];
     esp_efuse_mac_get_default(mac);
