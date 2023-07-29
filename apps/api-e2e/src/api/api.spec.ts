@@ -951,6 +951,12 @@ describe('UserController: jwt tests', ()=>{
         })  
     })
 
+    describe('getEmail', ()=>{
+        it('Should return a users email', async ()=>{
+            const response = await request(httpServer).get("/user/getEmail");
 
+            expect(response.body.email).toEqual(TEST_USER_2.Email);
+        })  
+    })
 
 });
