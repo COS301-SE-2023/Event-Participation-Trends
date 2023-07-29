@@ -548,8 +548,10 @@ describe('EventController', ()=>{
             
             event = await eventRepository.getEventByName(TEST_EVENT.Name);
             
-            if(event[0].FloorLayout != "New FloorLayout")
+            if(event[0].FloorLayout != "New FloorLayout"){
                 await SLEEP(1000);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
 
             expect(event[0].FloorLayout).toBe("New FloorLayout");
 
@@ -606,8 +608,10 @@ describe('EventController', ()=>{
             expect(response.body.status).toBe("success");
 
             event = await eventRepository.getEventByName(TEST_EVENT.Name);
-            if(event[0].Requesters.length == 0)
+            if(event[0].Requesters.length == 0){
                 SLEEP(1000);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
 
             const requesters = await eventRepository.getRequesters(event[0]._id);
             expect(requesters[0].Requesters[0]).toEqual(viewer[0]._id);
@@ -620,6 +624,46 @@ describe('EventController', ()=>{
             await app.close();
         })
     })    
+
+    describe('declineViewRequest', ()=>{
+        it('should decline a View Request', async ()=>{
+                        
+            //create event viewer
+            await userRepository.createUser(TEST_USER_2);
+            const viewer = await userRepository.getUser(process.env['TEST_USER_EMAIL_2']);
+
+            //create event manager
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+            TEST_EVENT.Requesters = new Array<Types.ObjectId>(viewer[0]._id);
+            
+            await eventRepository.createEvent(TEST_EVENT); 
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+
+            expect(event[0].Requesters[0]).toEqual(viewer[0]._id);
+
+            const response = await request(httpServer).post(`/event/declineViewRequest`).send({
+                userEmail: TEST_USER_2.Email,
+                eventId: <string> <unknown> event[0]._id
+            });
+            expect(response.body.status).toBe("success");
+
+            event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            if(event[0].Requesters.length != 0){
+                SLEEP(1000);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
+
+            expect(event[0].Requesters.length).toEqual(0);
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event[0]._id);
+            await userRepository.deleteUserById(viewer[0]._id);
+            await userRepository.deleteUserById(manager[0]._id);
+        })  
+    })
+   
 })
 
 describe('UserController', ()=>{
