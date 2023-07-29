@@ -650,8 +650,8 @@ describe('EventController', ()=>{
             expect(response.body.status).toBe("success");
 
             event = await eventRepository.getEventByName(TEST_EVENT.Name);
-            if(event[0].Requesters.length != 0){
-                SLEEP(1000);
+            while(event[0].Requesters.length != 0){
+                SLEEP(500);
                 event = await eventRepository.getEventByName(TEST_EVENT.Name);
             }
 
@@ -932,6 +932,14 @@ describe('UserController: jwt tests', ()=>{
             const response = await request(httpServer).get("/user/getUserName");
 
             expect(response.body.username).toEqual(TEST_USER_2.FirstName);
+        })  
+    })
+
+    describe('getProfilePicUrl', ()=>{
+        it('Should return a users role', async ()=>{
+            const response = await request(httpServer).get("/user/getProfilePicUrl");
+
+            expect(response.body.url).toEqual("https://test_url");
         })  
     })
 });
