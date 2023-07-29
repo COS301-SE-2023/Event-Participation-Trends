@@ -47,6 +47,7 @@ export class EventScreenViewPage {
   oldHeatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [];
   gridTilesDataPoints: {gridTile: HTMLDivElement, datapoints: IAverageDataFound[]}[] = [];
   hotzoneMarker: any;
+  streamingUserCountChart: Chart | null = null;
 
   averageDataFound: {
     id: number | null | undefined,
@@ -106,7 +107,7 @@ export class EventScreenViewPage {
           x: (response.boundaries.left + response.boundaries.right) / 2,
           y: (response.boundaries.top + response.boundaries.bottom) / 2
         };
-        console.log("test:" + this.convertXYToLatLng(1100, 450));
+
         this.mapCenter = L.latLng(this.convertXYToLatLng(center.x, center.y));
         this.mapXYCenter = [center.x, center.y];
         this.mapWidth = response.boundaries.right - response.boundaries.left;
@@ -160,10 +161,18 @@ export class EventScreenViewPage {
       // remove all data points that were not detected this run
       this.averageDataDetectedThisRun = this.averageDataFound.filter((averageDataPoint: IAverageDataFound) => averageDataPoint.detectedThisRun); 
       this.totalUsersDetected = this.averageDataDetectedThisRun.length;
+      
+      const newData = this.totalUsersDetected;
+      const newTime = new Date(this.startTime).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+
+      // add new label and data to the chart
+      this.streamingUserCountChart?.data.labels?.push(newTime);
+      // add new data to the chart
+      this.streamingUserCountChart?.data.datasets[0].data?.push(newData);
+      this.streamingUserCountChart?.update();
 
       // convert averageDataDetectedThisRun to heatmap data using the new data points
       const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.averageDataDetectedThisRun.map((averageDataPoint: IAverageDataFound) => averageDataPoint.latLng.newDataPoint);
-      // const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = [L.latLng(145, 335)]
 
       if (this.showHeatmap) {
         this.myHeatLayer.setLatLngs(heatmapData);
@@ -275,8 +284,7 @@ export class EventScreenViewPage {
 
   getAverageData() {
     // extract event id from url
-    const eventId = this.eventId;
-    
+    const eventId = this.eventId;  
     // increase start time and end time variables by 5 seconds
     this.startTime = this.endTime;
     const newStartTime = new Date(this.startTime);
@@ -306,7 +314,6 @@ export class EventScreenViewPage {
 
         // convert x and y coordinates to lat and lng coordinates
         // const latLng = L.latLng(this.convertXYToLatLng(averageX, averageY));
-        console.log(latLng);
         // add new average data point to the averageDataFound array
         this.averageDataFound.push({
           id: position.id, 
@@ -651,9 +658,8 @@ export class EventScreenViewPage {
   }
 
   renderHeatMap() {
-    console.log(this.mapCenter)
     this.myHeatmap = L.map(this.heatmapContainer.nativeElement).setView(this.mapCenter, this.mapZoomLevel);
-    console.log(this.heatmapBounds);
+
     //disable zoom functionality
     this.myHeatmap.touchZoom.disable();
     this.myHeatmap.doubleClickZoom.disable();
@@ -715,11 +721,11 @@ export class EventScreenViewPage {
     this.myFlowmapLayer.addTo(this.myHeatmap);
 
     // functionality to log the coordinates of the mouse pointer on the heatmap container
-    this.myHeatmap.addEventListener('mousemove', (event: any) => {
-      const latLng = this.myHeatmap.mouseEventToLatLng(event.originalEvent);
-      console.log(latLng);
-      console.log('X,Y: ' + event.originalEvent.clientX + ', ' + event.originalEvent.clientY);
-    });
+    // this.myHeatmap.addEventListener('mousemove', (event: any) => {
+    //   const latLng = this.myHeatmap.mouseEventToLatLng(event.originalEvent);
+    //   console.log(latLng);
+    //   console.log('X,Y: ' + event.originalEvent.clientX + ', ' + event.originalEvent.clientY);
+    // });
 
     // this.hotzoneMarker = L.circleMarker([0, 0], {
     //   color: 'red',
@@ -962,10 +968,13 @@ export class EventScreenViewPage {
       }]
     };
 
+    // set the format of the start time of the event to be displayed on the x-axis in the format of 'HH:mm:ss'
+    const startOfEvent = new Date(this.startTime).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+
     const config: ChartConfiguration = {
       type: 'line',             // 'line', 'bar', 'bubble' and 'scatter' types are supported
       data: {
-        labels: [''],             // empty at the beginning
+        labels: [startOfEvent],             // empty at the beginning
         datasets: [{
           label: 'Users',
           data: [0],              // empty at the beginning
@@ -976,35 +985,6 @@ export class EventScreenViewPage {
           tooltip: {
             enabled: false
           }
-        },
-        scales: {
-          x: {
-            type: 'realtime',   // x axis will auto-scroll from right to left
-            realtime: {         // per-axis options
-              duration: 20000,  // data in the past 20000 ms will be displayed
-              refresh: 2000,    // onRefresh callback will be called every 1000 ms
-              delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
-    
-              // a callback to update datasets
-              onRefresh: chart => {
-    
-                // // query your data source and get the array of {x: timestamp, y: value} objects
-                // let data = getLatestData();
-    
-                // // append the new data array to the existing chart data
-                // chart.data.datasets[0].data.push(...data);
-
-                chart.config.data.datasets.forEach((dataset: any) => {
-                  dataset.data.push({
-                    x: Date.now(),
-                    y: this.totalUsersDetected
-                  });
-                });
-
-                chart.update();
-              }
-            }
-          }
         }
       }
     };
@@ -1014,10 +994,24 @@ export class EventScreenViewPage {
     if (userCountDataStreamingCanvas) {
       const userCountDataStreamingCtx = userCountDataStreamingCanvas.getContext('2d', { willReadFrequently: true });
       if (userCountDataStreamingCtx) {
-        const myChart = new Chart(
+        this.streamingUserCountChart = new Chart(
           userCountDataStreamingCtx, 
           config        
         );
+
+        // randomly add new data
+        // setInterval(() => {
+        //   const newData = this.totalUsersDetected;
+        //   const newTime = new Date(this.startTime).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+
+        //   // add new label and data to the chart
+        //   this.streamingUserCountChart?.data.labels?.push(newTime);
+
+        //   // add new data to the chart
+        //   this.streamingUserCountChart?.data.datasets.forEach((dataset) => {
+        //     dataset.data.push(newData);
+        //   });
+        // }, 1000);
       }
     }
   }
