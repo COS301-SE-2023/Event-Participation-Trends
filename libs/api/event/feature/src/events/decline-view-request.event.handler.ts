@@ -26,11 +26,12 @@ export class DeclineViewRequestEventHandler implements IEventHandler<DeclineView
             const eventDoc = await this.eventRepository.getEventById(event.event.eventId);
 
             //notify user via Email
-            this.emailService.sendEmail(
-                event.event.userEmail || "", 
-                EmailSubject.REJECT_VIEW_REQUEST,
-                EmailContent.REJECT_VIEW_REQUEST_CONTENT+ eventDoc[0].Name
-            )
+            if(eventDoc && eventDoc[0] && eventDoc[0].Name)
+                this.emailService.sendEmail(
+                    event.event.userEmail || "", 
+                    EmailSubject.REJECT_VIEW_REQUEST,
+                    EmailContent.REJECT_VIEW_REQUEST_CONTENT+ eventDoc[0].Name
+                )
         }
     }
 }
