@@ -24,11 +24,12 @@ export class RemoveViewerFromEventEventHandler implements IEventHandler<RemoveVi
             const eventDoc = await this.eventRepository.getEventById(event.event.eventId);
 
             //notify user via Email
-            this.emailService.sendEmail(
-                event.event.userEmail || "", 
-                EmailSubject.REVOKE_VIEW_ACCESS,
-                EmailContent.REVOKE_VIEW_ACCESS_CONTENT+ eventDoc[0].Name
-            )
+            if(eventDoc && eventDoc[0] && eventDoc[0].Name)
+                this.emailService.sendEmail(
+                    event.event.userEmail || "", 
+                    EmailSubject.REVOKE_VIEW_ACCESS,
+                    EmailContent.REVOKE_VIEW_ACCESS_CONTENT+ eventDoc[0].Name
+                )
         }
     }
 }
