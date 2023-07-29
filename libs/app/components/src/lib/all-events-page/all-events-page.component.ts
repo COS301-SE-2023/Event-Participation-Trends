@@ -4,39 +4,65 @@ import { OnInit } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { IEvent } from '@event-participation-trends/api/event/util';
 import { FormsModule } from '@angular/forms';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroLockClosedSolid } from '@ng-icons/heroicons/solid';
+import { matLockOutline } from '@ng-icons/material-icons/outline'
 
 @Component({
   selector: 'event-participation-trends-all-events-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgIconComponent],
   templateUrl: './all-events-page.component.html',
   styleUrls: ['./all-events-page.component.css'],
+  providers: [provideIcons({ heroLockClosedSolid, matLockOutline })],
 })
 export class AllEventsPageComponent implements OnInit {
 
   constructor(private appApiService: AppApiService) {}
 
-  public all_events: IEvent[] = [];
-  public subscribed_events: IEvent[] = [];
-  public non_subscribed_events: IEvent[] = [];
-  public role = 'admin';
+  public all_events: any[] = [];
+  public subscribed_events: any[] = [];
+  public non_subscribed_events: any[] = [];
+  public my_events: any[] = [];
+  public role = 'viewer';
   public search = '';
 
   async ngOnInit() {
 
     this.role = await this.appApiService.getRole();
 
+    //! Remove this line
+    this.role = 'viewer';
+
     this.all_events = await this.appApiService.getAllEvents();
+    this.my_events = await this.appApiService.getManagedEvents();
 
     if (this.role !== 'admin') {
       this.subscribed_events = await this.appApiService.getSubscribedEvents();
-      this.non_subscribed_events = this.all_events.filter((event) => {
-        return !this.subscribed_events.some((subscribed_event) => {
-          return subscribed_event.Name === event.Name;
-        });
+      this.non_subscribed_events = this.all_events.filter((event: any) => {
+        return (
+          !this.hasAccess(event) &&
+          this.my_events.filter((my_event) => {
+            return my_event._id == event._id;
+          }).length == 0
+        );
       });
+
+      console.log(this.subscribed_events);
+      console.log(this.non_subscribed_events);
     }
 
+
+  }
+
+  hasAccess(event: any): boolean {
+    for (let i = 0; i < this.subscribed_events.length; i++) {
+      if (this.subscribed_events[i]._id == event._id) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   get_all_events() {
