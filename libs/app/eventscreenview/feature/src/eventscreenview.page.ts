@@ -666,7 +666,7 @@ export class EventScreenViewPage {
     this.myHeatmap.scrollWheelZoom.disable();
     this.myHeatmap.boxZoom.disable();
     this.myHeatmap.keyboard.disable();
-    // this.myHeatmap.dragging.disable();
+    this.myHeatmap.dragging.disable();
 
     // disable zoom in and out buttons
     this.myHeatmap.removeControl(this.myHeatmap.zoomControl);
@@ -976,7 +976,6 @@ export class EventScreenViewPage {
       data: {
         labels: [startOfEvent],             // empty at the beginning
         datasets: [{
-          label: 'Users',
           data: [0],              // empty at the beginning
         }]
       },
@@ -984,8 +983,32 @@ export class EventScreenViewPage {
         plugins: {
           tooltip: {
             enabled: false
+          },
+          legend: {
+            display: false,
+          },
+          title: {
+            display: true,
+            text: 'Users Detected'
           }
-        }
+        },
+        scales: {
+          x: {
+              display: true, 
+              title: {
+                display: true,
+                text: 'Time of day',
+              },
+            },
+            y: {
+              display: true,
+              title: {
+                display: true,
+                text: 'Users Detected', 
+              },
+              beginAtZero: true, 
+            },
+      }
       }
     };
 
@@ -998,20 +1021,6 @@ export class EventScreenViewPage {
           userCountDataStreamingCtx, 
           config        
         );
-
-        // randomly add new data
-        // setInterval(() => {
-        //   const newData = this.totalUsersDetected;
-        //   const newTime = new Date(this.startTime).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
-
-        //   // add new label and data to the chart
-        //   this.streamingUserCountChart?.data.labels?.push(newTime);
-
-        //   // add new data to the chart
-        //   this.streamingUserCountChart?.data.datasets.forEach((dataset) => {
-        //     dataset.data.push(newData);
-        //   });
-        // }, 1000);
       }
     }
   }
