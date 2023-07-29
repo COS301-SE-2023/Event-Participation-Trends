@@ -94,8 +94,8 @@ const UPDATED_TEST_EVENT: IEvent ={
 
 const TEST_USER_1: IUser ={
     Email: process.env['TEST_USER_EMAIL_1'],
-	FirstName: "None",
-	LastName: "None",
+	FirstName: "Test Name",
+	LastName: "Test Lastname",
 	Role: process.env['TEST_USER_ROLE_1'],
     Viewing: new Array<Types.ObjectId>()
 }
@@ -874,5 +874,51 @@ describe('UserController', ()=>{
             await app.close();
         })  
     })
-    
+
+});
+
+
+describe('UserController: jwt tests', ()=>{
+    let httpServer: any;
+    let app: any;
+    let userRepository: UserRepository;
+
+    beforeAll(async ()=>{
+
+        const moduleRef = await Test.createTestingModule({
+            imports: [AppModule],
+        })
+        .overrideGuard(JwtGuard)
+        .useValue({ canActivate: (context) => {
+            context.switchToHttp().getRequest().user = {
+                email: TEST_USER_2.Email,
+                role: TEST_USER_2.Role,
+                firstName: TEST_USER_2.FirstName,
+                lastName: TEST_USER_2.LastName, 
+                picture: "https://test_url"
+
+            };
+            return true;
+        } })
+        .overrideGuard(RbacGuard)
+        .useValue({ canActivate: () => true })
+        .overrideGuard(CsrfGuard)
+        .useValue({ canActivate: () => true })
+        .compile();
+
+        app = moduleRef.createNestApplication();
+        await app.init();
+
+        httpServer = await app.getHttpServer();
+
+        userRepository = await moduleRef.get(UserRepository);
+    })
+
+    afterAll(async ()=>{
+        //process.env['ENVIRONMENT'] = "development";
+        await app.close();
+    })
+
+
+
 });
