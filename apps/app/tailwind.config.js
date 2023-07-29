@@ -21,6 +21,16 @@ module.exports = {
       'montserrat': ['Montserrat', 'Arial'],
     },
     extend: {
+      keyframes: {
+        bounce: {
+          '0%, 100%' : {
+            transform: 'translateY(-5%)',
+          },
+          '50%' : {
+            transform: 'translateY(0)',
+          }
+        }
+      },
       screens: {
         '1032': '1032px',
         '1124': '1124px',

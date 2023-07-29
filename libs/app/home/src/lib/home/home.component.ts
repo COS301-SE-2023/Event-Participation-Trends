@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { OnInit } from '@angular/core';
+import { OnInit, AfterViewInit } from '@angular/core';
 import { ProfileComponent } from '@event-participation-trends/app/components';
 import { timeout } from 'rxjs';
 
@@ -21,7 +21,9 @@ enum Role {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
+  @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
+  
   public tab = Tab.Events;
   public role = Role.Admin;
   public username = '';
@@ -32,6 +34,15 @@ export class HomeComponent implements OnInit {
   async ngOnInit() {
     this.username = await this.appApiService.getUserName();
     this.img_url = await this.appApiService.getProfilePicUrl();
+  }
+
+  ngAfterViewInit() {
+    document.addEventListener("mousemove", (event) => {
+      const xPos = event.clientX / window.innerWidth;
+      const yPos = event.clientY / window.innerHeight;
+      this.gradient.nativeElement.style.backgroundImage = `radial-gradient(at ${xPos*100}% ${yPos*100}%, #1d1f26, #101010)`;
+    });
+    this.gradient.nativeElement.style.backgroundImage = `radial-gradient(at 50% 50%, #1d1f26, #101010)`;
   }
 
   isManager(): boolean {

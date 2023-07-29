@@ -6,17 +6,28 @@
   class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-9 grid-rows-1 overflow-hidden"
 >
   <div class="col-span-2 w-full h-screen">
-    <div class="bg-ept-deep-grey h-screen grid grid-rows-2 content-between border-r-4 border-ept-navy-blue">
+    <div
+      class="bg-ept-deep-grey h-screen grid grid-rows-2 content-between border-r-4 border-ept-navy-blue"
+    >
       <div #top>
-        <div class="hidden avatar placeholder m-5">
-            <div class="bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue rounded-full w-[5.5rem] mask mask-hexagon text-ept-bumble-yellow">
+        <div class="flex justify-center">
+          <!-- <div class="avatar placeholder mt-4">
+            <div
+              class="bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue rounded-full w-[5.5rem] mask mask-hexagon text-ept-bumble-yellow"
+            >
               <span class="text-3xl font-poppins font-bold">
                 <span class="text-ept-bumble-yellow">E</span>
-                <span class="bg-gradient-to-r to-80% from-ept-bumble-yellow to-ept-blue-grey bg-clip-text text-transparent">P</span>
-                <span class="text-ept-blue-grey">T</span></span>
+                <span
+                  class="bg-gradient-to-r to-80% from-ept-bumble-yellow to-ept-blue-grey bg-clip-text text-transparent"
+                  >P</span
+                >
+                <span class="text-ept-blue-grey">T</span></span
+              >
             </div>
-          </div> 
-        <div #navlinks class="font-poppins font-semibold mt-8 m-3">
+          </div> -->
+          <div class="mt-4 font-poppins font-semibold text-2xl mx-4">Event Participation Trends</div>
+        </div>
+        <div #navlinks class="font-poppins font-semibold mt-6 m-3">
           <div
             id="events-link"
             (click)="events()"
@@ -94,7 +105,10 @@
       </div>
     </div>
   </div>
-  <div class="col-span-7">
+  <div
+    #gradient
+    class="col-span-7 radial-gradient(at ${xPos*100}% ${yPos*100}%, #22242C, #101010)"
+  >
     <router-outlet></router-outlet>
   </div>
 </div>
