@@ -26,6 +26,8 @@ export class AllEventsPageComponent implements OnInit {
   public my_events: any[] = [];
   public role = 'viewer';
   public search = '';
+  public loading = true;
+  public show = false;
 
   async ngOnInit() {
 
@@ -47,12 +49,12 @@ export class AllEventsPageComponent implements OnInit {
           }).length == 0
         );
       });
-
-      console.log(this.subscribed_events);
-      console.log(this.non_subscribed_events);
     }
 
-
+    this.loading = false;
+    setTimeout(() => {
+      this.show = true;
+    }, 300);
   }
 
   hasAccess(event: any): boolean {

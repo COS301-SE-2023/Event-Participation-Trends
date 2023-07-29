@@ -1,4 +1,4 @@
-<div class="h-full w-full flex flex-col">
+<div class="h-full w-full relative flex flex-col">
   <div class="top-0 flex justify-center items-center z-20">
     <input
       type="text"
@@ -8,7 +8,15 @@
     />
   </div>
   <div
-    class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-16"
+    class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200 -z-10"
+    [ngClass]="{ 'opacity-0': !loading }"
+    *ngIf="!show"
+  >
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+  <div
+    class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-16 transition-opacity duration-500"
+    [ngClass]="{ 'opacity-0': !show }"
     *ngIf="isAdmin()"
   >
     <div
@@ -37,7 +45,8 @@
     </div>
   </div>
   <div
-    class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-16"
+    class="relative h-full flex-grow grid grid-cols-4 px-3 overflow-auto pt-16 transition-opacity duration-500"
+    [ngClass]="{ 'opacity-0': !show }"
     *ngIf="!isAdmin()"
   >
     <div
