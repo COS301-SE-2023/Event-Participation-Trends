@@ -2,8 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
-import 'luxon';
-import 'chartjs-adapter-luxon';
+
 import 'chartjs-plugin-datalabels';
 
 import ChartStreaming from 'chartjs-plugin-streaming';
@@ -46,6 +45,7 @@ export class EventScreenViewPage {
   startTime = "";
   currentTime = "";
   endTime = "";
+  startOfTimeInterval = "";
   isLoading = true;
   activeDevices = 25;
   inactiveDevices = 5;
@@ -163,6 +163,14 @@ export class EventScreenViewPage {
             this.store.dispatch(new SetEventScreenViewTime(startTime));
             this.startTime = startTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
             this.currentTime = new Date(startTime.getTime() + 5000).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+            this.startOfTimeInterval = startTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+          }
+        });
+
+        // set end time
+        this.endTime$.subscribe((endTime) => {
+          if (endTime) {
+            this.endTime = endTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
           }
         });
       }
@@ -207,7 +215,7 @@ export class EventScreenViewPage {
       this.totalUsersDetected = this.averageDataDetectedThisRun.length;
       
       const newData = this.totalUsersDetected;
-      const newTime = new Date(this.startTime).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+      const newTime = new Date(this.startOfTimeInterval).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
 
       // add new label and data to the chart
       this.streamingUserCountChart?.data.labels?.push(newTime);
@@ -334,15 +342,14 @@ export class EventScreenViewPage {
     this.currentTime$.subscribe((currentTime: Date) => {
       this.currentTime = currentTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
     });
-
-    const startOfInterval = new Date(this.startTime);
+    const startOfInterval = new Date(this.startOfTimeInterval);
     let endOfInterval: Date;
-    if (this.currentTime === this.startTime) {
+    if (this.currentTime === this.startOfTimeInterval) {
       endOfInterval = new Date(startOfInterval.getTime() + 5000);
-      this.startTime = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+      this.startOfTimeInterval = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
     } else {
       endOfInterval = new Date(this.currentTime);
-      this.startTime = this.currentTime;
+      this.startOfTimeInterval = this.currentTime;
     }
 
     // set new current time
@@ -358,6 +365,7 @@ export class EventScreenViewPage {
         this.averageDataFound = this.updateHeatmapData(data.positions);
       }
     });
+
   }
 
   updateHeatmapData(positions: IPosition[]) {
@@ -1005,22 +1013,6 @@ export class EventScreenViewPage {
   }
 
   renderUserCountDataStreaming() {
-    const data = {
-      datasets: [{
-        label: 'Users',
-        data: [],
-        backgroundColor: [
-          '#0000FF',
-        ],
-        borderColor: [
-          '#0000FF',
-        ],
-        color: [
-          '#FFFFFF',
-        ]
-      }]
-    };
-
     // set the format of the start time of the event to be displayed on the x-axis in the format of 'HH:mm:ss'
     const startOfEvent = new Date(this.startTime).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
 
@@ -1042,7 +1034,7 @@ export class EventScreenViewPage {
           },
           title: {
             display: true,
-            text: 'Users Detected'
+            text: 'Users Detected vs Time of Day'
           }
         },
         scales: {
@@ -1079,17 +1071,57 @@ export class EventScreenViewPage {
   }
 
   renderTotalDevicesBarChart(){
+    const labels = [];
+    const datasetData = [];
+    let startHours = 0;
+    let endHours = 0;
+    let startMinutes = 0;
+
+    // set hours of event labels in "HH:mm" format
+    startHours = new Date(this.startTime).getHours();
+    startMinutes = new Date(this.startTime).getMinutes();
+    endHours = new Date(this.endTime).getHours();    
+
+    // set the number of hours of the event
+    let hoursOfEvent = 0;
+
+    if (startHours > endHours) {
+      hoursOfEvent = (24 - startHours) + endHours;
+    } else {
+      hoursOfEvent = endHours - startHours;
+    }
+
+    // set the labels of the x-axis
+    for (let i = 0; i <= hoursOfEvent; i++) {
+      // check if the minutes are less than 10, if so, add a 0 in front of the minutes
+      if (startMinutes < 10 && startHours < 10) {
+        labels.push(`${startHours + i}:0${startMinutes}`);
+      } else if (startMinutes < 10 && startHours >= 10) {
+        labels.push(`${startHours + i}:0${startMinutes}}`);
+      } else if (startHours < 10 && startMinutes >= 10) {
+        labels.push(`${startHours + i}:${startMinutes}`);
+      } else {
+        labels.push(`${startHours + i}:${startMinutes}`);
+      } 
+    }
+
+    const randomData = [];
+    for (let i = 0; i < labels.length; i++) {
+      randomData.push({
+        x: labels[i],
+        y: Math.floor(Math.random() * 100)
+      });
+    }
+
+
     const data = {
-        labels: ['08:00', '09:00', '10:00', '10:00', '11:00'],
         datasets: [{
-          data: [10, 20, 15, 25, 30],
+          data: randomData,
           backgroundColor: [
-            'rgb(34 197 94)',
-            '#FF0000',
+            'rgb(34 197 94)'
           ],
           borderColor: [
-            'rgb(34 197 94)',
-            '#FF0000',
+            'rgb(34 197 94)'
           ],
           borderWidth: 1,
         }]
@@ -1098,47 +1130,47 @@ export class EventScreenViewPage {
     const deviceBarChartCanvas = this.totalDevicesBarChart.nativeElement;
 
     if (deviceBarChartCanvas) {
-        const deviceBarChartCtx = deviceBarChartCanvas.getContext('2d');
-        if (deviceBarChartCtx) {
-            const myChart = new Chart(
-                deviceBarChartCanvas,
-                {
-                    type: 'bar',
-                    data: data,
-                    options: {
-                        plugins: {
-                            title: {
-                              display: true,
-                              text: 'Active Devices vs Time of day', 
-                            },
-                            legend:{
-                                display: false
-                            },
-                            tooltip: {
-                                enabled: false
-                            },
-                          },
-                        scales: {
-                            x: {
-                                display: true, 
-                                title: {
-                                  display: true,
-                                  text: 'Time of day',
-                                },
-                              },
-                              y: {
-                                display: true,
-                                title: {
-                                  display: true,
-                                  text: 'Number of Active Devices', 
-                                },
-                                beginAtZero: true, 
-                              },
-                        }
-                    },
+      const deviceBarChartCtx = deviceBarChartCanvas.getContext('2d');
+      if (deviceBarChartCtx) {
+        const myChart = new Chart(
+          deviceBarChartCanvas,
+          {
+            type: 'bar',
+            data: data,
+            options: {
+              plugins: {
+                  title: {
+                    display: true,
+                    text: 'Active Devices vs Time of day', 
+                  },
+                  legend:{
+                      display: false
+                  },
+                  tooltip: {
+                    enabled: false
                   }
-            );
-        }
+                },
+              scales: {
+                x: {
+                  display: true, 
+                    title: {
+                    display: true,
+                    text: 'Time of day',
+                  },
+                },
+                y: {
+                  display: true,
+                  title: {
+                    display: true,
+                    text: 'Number of Active Devices', 
+                  },
+                  beginAtZero: true, 
+                },
+              }
+            },
+          }
+        );
+      }
     }
   }
 }
