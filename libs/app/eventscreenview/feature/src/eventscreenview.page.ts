@@ -13,7 +13,7 @@ import { set } from 'mongoose';
 import { Select, Store } from '@ngxs/store';
 import { EventScreenViewState } from '@event-participation-trends/app/eventscreenview/data-access';
 import { Observable } from 'rxjs';
-import { SetEventScreenViewEndTime, SetEventScreenViewStartTime, SetEventScreenViewTime } from '@event-participation-trends/app/eventscreenview/util';
+import { SetEndTime, SetStartTime, SetCurrentTime, UpdateUsersDetectedPerHour } from '@event-participation-trends/app/eventscreenview/util';
 
 interface IAverageDataFound {
   id: number | null | undefined,
@@ -46,6 +46,11 @@ export class EventScreenViewPage {
   currentTime = "";
   endTime = "";
   startOfTimeInterval = "";
+  startHours = 0;
+  startMinutes = 0;
+  endHours = 0;
+  eventHours: string[] = []; // labels for the chart
+
   isLoading = true;
   activeDevices = 25;
   inactiveDevices = 5;
@@ -140,8 +145,8 @@ export class EventScreenViewPage {
           if (eventEndDate) eventEndDate = new Date(eventEndDate);
 
           //set the start and end times of the event
-          this.store.dispatch(new SetEventScreenViewStartTime(eventStartDate));
-          this.store.dispatch(new SetEventScreenViewEndTime(eventEndDate));
+          this.store.dispatch(new SetStartTime(eventStartDate));
+          this.store.dispatch(new SetEndTime(eventEndDate));
 
           // check if we already set the current time
           this.currentTime$.subscribe((currentTime) => {
@@ -160,7 +165,7 @@ export class EventScreenViewPage {
         // set current time to start time
         this.startTime$.subscribe((startTime) => {
           if (startTime) {
-            this.store.dispatch(new SetEventScreenViewTime(startTime));
+            this.store.dispatch(new SetCurrentTime(startTime));
             this.startTime = startTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
             this.currentTime = new Date(startTime.getTime() + 5000).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
             this.startOfTimeInterval = startTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
@@ -173,6 +178,45 @@ export class EventScreenViewPage {
             this.endTime = endTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
           }
         });
+
+        // set hours of event labels in "HH:mm" format
+        this.startHours = new Date(this.startTime).getHours();
+        this.startMinutes = new Date(this.startTime).getMinutes();
+        this.endHours = new Date(this.endTime).getHours();
+
+        // set the number of hours of the event
+        let hoursOfEvent = 0;
+        if (this.startHours > this.endHours) {
+          hoursOfEvent = (24 - this.startHours) + this.endHours;
+        } else {
+          hoursOfEvent = this.endHours - this.startHours;
+        }
+        // set the labels of the x-axis
+        for (let i = 0; i <= hoursOfEvent; i++) {
+          // check if the minutes are less than 10, if so, add a 0 in front of the minutes
+          if (this.startMinutes < 10 && this.startHours < 10) {
+            this.eventHours.push(`${this.startHours + i}:0${this.startMinutes}`);
+          } else if (this.startMinutes < 10 && this.startHours >= 10) {
+            this.eventHours.push(`${this.startHours + i}:0${this.startMinutes}}`);
+          } else if (this.startHours < 10 && this.startMinutes >= 10) {
+            this.eventHours.push(`${this.startHours + i}:${this.startMinutes}`);
+          } else {
+            this.eventHours.push(`${this.startHours + i}:${this.startMinutes}`);
+          } 
+        }
+
+        const usersDetectedPerHour: {time: string, detected: number}[] = [];
+        for (let i = 0; i < hoursOfEvent; i++) {
+          usersDetectedPerHour.push(
+            {
+              time: this.eventHours[i],
+              detected: 0
+            }
+          )
+        }
+
+        // set the number of users detected per hour
+        this.store.dispatch(new UpdateUsersDetectedPerHour(usersDetectedPerHour));
       }
     }, 1000);
     
@@ -353,7 +397,7 @@ export class EventScreenViewPage {
     }
 
     // set new current time
-    this.store.dispatch(new SetEventScreenViewTime(endOfInterval));
+    this.store.dispatch(new SetCurrentTime(endOfInterval));
 
     endOfInterval.setSeconds(endOfInterval.getSeconds() + 5);
     this.endTime = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '');
@@ -1071,44 +1115,10 @@ export class EventScreenViewPage {
   }
 
   renderTotalDevicesBarChart(){
-    const labels = [];
-    const datasetData = [];
-    let startHours = 0;
-    let endHours = 0;
-    let startMinutes = 0;
-
-    // set hours of event labels in "HH:mm" format
-    startHours = new Date(this.startTime).getHours();
-    startMinutes = new Date(this.startTime).getMinutes();
-    endHours = new Date(this.endTime).getHours();    
-
-    // set the number of hours of the event
-    let hoursOfEvent = 0;
-
-    if (startHours > endHours) {
-      hoursOfEvent = (24 - startHours) + endHours;
-    } else {
-      hoursOfEvent = endHours - startHours;
-    }
-
-    // set the labels of the x-axis
-    for (let i = 0; i <= hoursOfEvent; i++) {
-      // check if the minutes are less than 10, if so, add a 0 in front of the minutes
-      if (startMinutes < 10 && startHours < 10) {
-        labels.push(`${startHours + i}:0${startMinutes}`);
-      } else if (startMinutes < 10 && startHours >= 10) {
-        labels.push(`${startHours + i}:0${startMinutes}}`);
-      } else if (startHours < 10 && startMinutes >= 10) {
-        labels.push(`${startHours + i}:${startMinutes}`);
-      } else {
-        labels.push(`${startHours + i}:${startMinutes}`);
-      } 
-    }
-
     const randomData = [];
-    for (let i = 0; i < labels.length; i++) {
+    for (let i = 0; i < this.eventHours.length; i++) {
       randomData.push({
-        x: labels[i],
+        x: this.eventHours[i],
         y: Math.floor(Math.random() * 100)
       });
     }

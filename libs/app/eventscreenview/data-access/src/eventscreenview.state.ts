@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
-  SetEventScreenViewEndTime,
-  SetEventScreenViewStartTime,
+  SetEndTime,
+  SetStartTime,
   SetEventScreenViewState,
-  SetEventScreenViewTime,
+  SetCurrentTime,
+  UpdateUsersDetectedPerHour,
 } from '@event-participation-trends/app/eventscreenview/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 
@@ -12,6 +13,7 @@ export interface IEventScreenViewStateModel {
   currentTime: Date | undefined | null;
   startTime: Date | undefined | null;
   endTime: Date | undefined | null;
+  usersDetectedPerHour: {time: string, detected: number}[] | undefined | null;
 }
 
 @State<IEventScreenViewStateModel>({
@@ -20,6 +22,7 @@ export interface IEventScreenViewStateModel {
     currentTime: null,
     startTime: null,
     endTime: null,
+    usersDetectedPerHour: null,
   },
 })
 @Injectable()
@@ -50,13 +53,14 @@ export class EventScreenViewState {
       currentTime: newState.currentTime,
       startTime: newState.startTime,
       endTime: newState.endTime,
+      usersDetectedPerHour: newState.usersDetectedPerHour,
     });
   }
 
-  @Action(SetEventScreenViewTime)
-  setEventScreenViewTime(
+  @Action(SetCurrentTime)
+  setCurrentTime(
     ctx: StateContext<IEventScreenViewStateModel>,
-    { currentTime }: SetEventScreenViewTime
+    { currentTime }: SetCurrentTime
   ) {
     try {
       const state = ctx.getState();
@@ -72,10 +76,10 @@ export class EventScreenViewState {
     }
   }
 
-  @Action(SetEventScreenViewStartTime)
-  setEventScreenViewStartTime(
+  @Action(SetStartTime)
+  setStartTime(
     ctx: StateContext<IEventScreenViewStateModel>,
-    { startTime }: SetEventScreenViewStartTime
+    { startTime }: SetStartTime
   ) {
     try {
       const state = ctx.getState();
@@ -90,10 +94,10 @@ export class EventScreenViewState {
     }
   }
 
-  @Action(SetEventScreenViewEndTime)
-  setEventScreenViewEndTime(
+  @Action(SetEndTime)
+  setEndTime(
     ctx: StateContext<IEventScreenViewStateModel>,
-    { endTime }: SetEventScreenViewEndTime
+    { endTime }: SetEndTime
   ) {
     try {
       const state = ctx.getState();
@@ -101,6 +105,25 @@ export class EventScreenViewState {
       const newState = {
         ...state,
         endTime: endTime,
+      };
+
+      return ctx.dispatch(new SetEventScreenViewState(newState));
+    } catch (error) {
+      return this.store.dispatch(new SetError((error as Error).message));
+    }
+  }
+
+  @Action(UpdateUsersDetectedPerHour)
+  updateUsersDetectedPerHour(
+    ctx: StateContext<IEventScreenViewStateModel>,
+    { usersDetectedPerHour }: UpdateUsersDetectedPerHour
+  ) {
+    try {
+      const state = ctx.getState();
+
+      const newState = {
+        ...state,
+        usersDetectedPerHour: usersDetectedPerHour,
       };
 
       return ctx.dispatch(new SetEventScreenViewState(newState));
