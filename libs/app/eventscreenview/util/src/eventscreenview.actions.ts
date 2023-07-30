@@ -1,7 +1,7 @@
 interface IEventScreenViewStateModel {
-    currentTime: string | undefined;
-    startTime: string | undefined;
-    endTime: string | undefined;
+    currentTime: Date | undefined | null;
+    startTime: Date | undefined | null;
+    endTime: Date | undefined | null;
 }
 
 export class SetEventScreenViewState {
@@ -11,15 +11,15 @@ export class SetEventScreenViewState {
 
 export class SetEventScreenViewTime {
     static readonly type = '[EventScreenView] SetEventScreenViewTime';
-    constructor(public newTime: string) {}
+    constructor(public currentTime: Date | undefined | null) {}
 }
 
 export class SetEventScreenViewStartTime {
     static readonly type = '[EventScreenView] SetEventScreenViewStartTime';
-    constructor(public startTime: string | undefined) {}
+    constructor(public startTime: Date | undefined | null) {}
 }
 
 export class SetEventScreenViewEndTime {
     static readonly type = '[EventScreenView] SetEventScreenViewEndTime';
-    constructor(public endTime: string | undefined) {}
+    constructor(public endTime: Date | undefined | null) {}
 }

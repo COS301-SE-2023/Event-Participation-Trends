@@ -9,7 +9,7 @@ import 'chartjs-plugin-datalabels';
 import ChartStreaming from 'chartjs-plugin-streaming';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
-import { IGetEventDevicePositionResponse, IPosition } from '@event-participation-trends/api/event/util';
+import { IGetEventDevicePositionResponse, IGetEventResponse, IPosition } from '@event-participation-trends/api/event/util';
 import { set } from 'mongoose';
 import { Select, Store } from '@ngxs/store';
 import { EventScreenViewState } from '@event-participation-trends/app/eventscreenview/data-access';
@@ -31,9 +31,9 @@ interface IAverageDataFound {
   styleUrls: ['./eventscreenview.page.css'],
 })
 export class EventScreenViewPage {
-  @Select(EventScreenViewState.currentTime) currentTime$!: Observable<string>;
-  @Select(EventScreenViewState.startTime) startTime$!: Observable<string>;
-  @Select(EventScreenViewState.endTime) endTime$!: Observable<string>;
+  @Select(EventScreenViewState.currentTime) currentTime$!: Observable<Date>;
+  @Select(EventScreenViewState.startTime) startTime$!: Observable<Date>;
+  @Select(EventScreenViewState.endTime) endTime$!: Observable<Date>;
 
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
@@ -130,16 +130,15 @@ export class EventScreenViewPage {
       // get event
       this.appApiService.getEvent({eventId: this.eventId}).subscribe((response) => {
         if (response) {
-          const eventStartDate = response.StartDate;
-          const eventEndDate = response.EndDate;
-
-          // convert the event start and end dates to a string in the format of a Date object
-          const eventStartTime = eventStartDate?.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
-          const eventEndTime = eventEndDate?.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+          let eventStartDate = response.event.StartDate;
+          let eventEndDate = response.event.EndDate;
+          
+          if (eventStartDate) eventStartDate = new Date(eventStartDate);
+          if (eventEndDate) eventEndDate = new Date(eventEndDate);
 
           //set the start and end times of the event
-          this.store.dispatch(new SetEventScreenViewStartTime(eventStartTime));
-          this.store.dispatch(new SetEventScreenViewEndTime(eventEndTime));
+          this.store.dispatch(new SetEventScreenViewStartTime(eventStartDate));
+          this.store.dispatch(new SetEventScreenViewEndTime(eventEndDate));
 
           // check if we already set the current time
           this.currentTime$.subscribe((currentTime) => {
@@ -157,7 +156,7 @@ export class EventScreenViewPage {
       if (!this.currentTimeIsSet) {
         // set current time to start time
         this.startTime$.subscribe((startTime) => {
-          if (startTime === null) {
+          if (startTime) {
             this.store.dispatch(new SetEventScreenViewTime(startTime));
           }
         });

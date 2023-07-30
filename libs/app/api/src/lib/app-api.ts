@@ -25,6 +25,7 @@ import {
   IGetAllEventsResponse,
   IGetEventDevicePositionResponse,
   IGetEventFloorlayoutResponse,
+  IGetEventResponse,
   IGetFloorplanBoundariesResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
@@ -124,8 +125,8 @@ export class AppApiService {
     );
   }
 
-  getEvent(eventId: IEventId): Observable<IEvent> {
-    return this.http.get<IEvent>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
+  getEvent(eventId: IEventId): Observable<IGetEventResponse> {
+    return this.http.get<IGetEventResponse>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
       headers: {
         'x-csrf-token': this.cookieService.get('csrf'),
       },

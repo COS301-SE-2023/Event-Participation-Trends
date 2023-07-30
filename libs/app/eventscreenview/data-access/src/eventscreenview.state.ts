@@ -4,17 +4,17 @@ import { SetEventScreenViewEndTime, SetEventScreenViewStartTime, SetEventScreenV
 import { SetError } from '@event-participation-trends/app/error/util';
 
 export interface IEventScreenViewStateModel {
-    currentTime: string | undefined;
-    startTime: string | undefined;
-    endTime: string | undefined;
+    currentTime: Date | undefined | null;
+    startTime: Date | undefined | null;
+    endTime: Date | undefined | null;
 }
 
 @State<IEventScreenViewStateModel>({
     name: 'eventscreenview',
     defaults: {
-        currentTime: '',
-        startTime: '',
-        endTime: ''
+        currentTime: null,
+        startTime: null,
+        endTime: null
     }
 })
 
@@ -43,18 +43,20 @@ export class EventScreenViewState {
     @Action(SetEventScreenViewState)
     setEventScreenViewState(ctx: StateContext<IEventScreenViewStateModel>, { newState }: SetEventScreenViewState) {
         ctx.patchState({
-            currentTime: newState.currentTime
+            currentTime: newState.currentTime,
+            startTime: newState.startTime,
+            endTime: newState.endTime
         });
     }
 
     @Action(SetEventScreenViewTime)
-    setEventScreenViewTime(ctx: StateContext<IEventScreenViewStateModel>, { newTime }: SetEventScreenViewTime) {
+    setEventScreenViewTime(ctx: StateContext<IEventScreenViewStateModel>, { currentTime }: SetEventScreenViewTime) {
         try {
             const state = ctx.getState();
 
             const newState = {
                 ...state,
-                currentTime: newTime
+                currentTime: currentTime
             };
 
             return ctx.dispatch(new SetEventScreenViewState(newState));
@@ -67,7 +69,6 @@ export class EventScreenViewState {
     setEventScreenViewStartTime(ctx: StateContext<IEventScreenViewStateModel>, { startTime }: SetEventScreenViewStartTime) {
         try {
             const state = ctx.getState();
-
             const newState = {
                 ...state,
                 startTime: startTime
