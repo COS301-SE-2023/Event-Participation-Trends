@@ -11,7 +11,7 @@ import { Select, Store } from '@ngxs/store';
 import { CreateFloorPlanState, CreateFloorPlanStateModel, ISensorState } from '@event-participation-trends/app/createfloorplan/data-access';
 import { Observable } from 'rxjs';
 import { AddSensor, RemoveSensor, SetSensors, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/createfloorplan/util';
-import { AlertController, IonInput, NavController } from '@ionic/angular';
+import { AlertController, IonInput, LoadingController, NavController, ToastController } from '@ionic/angular';
 import { NumberSymbol } from '@angular/common';
 import { SubPageNavState } from '@event-participation-trends/app/subpagenav/data-access';
 import { SetSubPageNav } from '@event-participation-trends/app/subpagenav/util';
@@ -135,6 +135,7 @@ export class CreateFloorPlanPage implements OnInit{
     canvasObject!: {canvasContainer: Konva.Stage | null, canvas: Konva.Layer | null};
     prevSelections: Konva.Shape[] = [];
     emptiedSelection = false;
+    STALL_IMAGE_URL = 'assets/stall-icon.png';
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -147,6 +148,8 @@ export class CreateFloorPlanPage implements OnInit{
       private readonly store: Store,
       private alertController: AlertController,
       private navController: NavController,  
+      private loadingController: LoadingController,
+      private toastController: ToastController,
       private router: Router, 
     ) {
       for (let i = 1; i < 5; i++) {
@@ -681,6 +684,7 @@ export class CreateFloorPlanPage implements OnInit{
                 });
 
               this.defaultBehaviour(newCanvas);
+              this.moveSensorsAndTooltipsToTop();
             });
           });
           }, 6);
@@ -690,12 +694,23 @@ export class CreateFloorPlanPage implements OnInit{
         }, 1500);
     }
 
+    moveSensorsAndTooltipsToTop(): void {
+      this.sensors?.forEach(sensor => {
+        sensor.object.moveToTop();
+      });
+      this.tooltips.forEach(tooltip => {
+        tooltip.moveToTop();
+      });
+    }
+
     addGroupChildren(type: Konva.Group, child: Konva.Group | Shape<ShapeConfig>): void {
-      let image : Konva.Image;
       type.children = (child as Konva.Group).children;
-      // remove image object form type.children
       type.children = type.children?.filter(child => child.getClassName() !== 'Image');
-      Konva.Image.fromURL("", (img) => {
+      Konva.Image.fromURL(this.STALL_IMAGE_URL, (img) => {
+      const imgSrc = img.image();
+      img = new Konva.Image({
+        image: imgSrc,
+      });
         img.setAttrs({
           x: 0,
           y: 0,
@@ -708,35 +723,34 @@ export class CreateFloorPlanPage implements OnInit{
           fill: 'white',
           opacity: 1,
         });
-        image = new Konva.Image({
-          image: img.image(),
+        
+        const oldText = type.getChildren().find(child => child instanceof Konva.Text) as Konva.Text;
+        type.children = type.children?.filter(child => child.getClassName() !== 'Text');
+        const newText = new Konva.Text({
+          id: 'stallName',
+          name: 'stallName',
+          x: 0,
+          y: 0,
+          text: 'Stall-' + this.stallCount++,
+          fontSize: 1.5,
+          fontFamily: 'Calibri',
+          fill: 'black',
+          width: this.componentSize,
+          height: this.componentSize,
+          align: 'center',
+          verticalAlign: 'middle',
+          padding: 3,
+          cursor: 'move',
         });
-        (type as Konva.Group).add(image);
+        
+        newText.setAttr('text', oldText.getAttr('text'));
+  
+        (type as Konva.Group).add(img);
+        (type as Konva.Group).add(newText);
+  
+        const tooltip = this.addTooltip(newText, type.getAttr('x'), type.getAttr('y'));
+        this.tooltips.push(tooltip);
       });
-      const newText = new Konva.Text({
-        id: 'stallName',
-        name: 'stallName',
-        x: 0,
-        y: 0,
-        text: 'Stall-' + this.stallCount++,
-        fontSize: 1.5,
-        fontFamily: 'Calibri',
-        fill: 'black',
-        width: this.componentSize,
-        height: this.componentSize,
-        align: 'center',
-        verticalAlign: 'middle',
-        padding: 3,
-        cursor: 'move',
-      });
-      
-      const oldText = type.getChildren().find(child => child instanceof Konva.Text) as Konva.Text;
-      newText.setAttr('text', oldText.getAttr('text'));
-      type.children = type.children?.filter(child => child.getClassName() !== 'Text');
-      (type as Konva.Group).add(newText);
-
-      const tooltip = this.addTooltip(newText, type.getAttr('x'), type.getAttr('y'));
-      this.tooltips.push(tooltip);
     }
 
     defaultBehaviour(newCanvas: Konva.Layer): void {
@@ -2102,7 +2116,7 @@ export class CreateFloorPlanPage implements OnInit{
         });
       }
 
-      saveFloorLayout(): void {
+      async saveFloorLayout() {
         // remove grid lines from the JSON data
         const json = this.canvas.toObject();
 
@@ -2132,55 +2146,38 @@ export class CreateFloorPlanPage implements OnInit{
           console.log(res);
         });
 
-        // save an image of the canvas
-        const dataUrl = this.canvasContainer.toDataURL({ pixelRatio: 3 });
-        this.downloadURI(dataUrl, 'stage.png');
+        const loading = await this.loadingController.create({
+          message: 'Saving floor layout...',
+          spinner: 'circles'
+        });
+        await loading.present();
 
+        setTimeout(() => {
+          loading.dismiss();
+          this.presentToastSuccess('bottom', 'Floor layout saved successfully');
+          // save an image of the canvas
+          const dataUrl = this.canvasContainer.toDataURL({ pixelRatio: 3 });
+          this.downloadURI(dataUrl, 'floorplan.png');
+          this.router.navigate(
+            ['/event/eventdetails'], 
+            { queryParams: {
+              id: this.params?.id,
+              queryParamsHandling: 'merge',
+            }}
+          );
+        }, 1500);
       }
 
-      // loadFloorLayout(): Observable<{canvasContainer: Konva.Stage | null, canvas: Konva.Layer | null}> {
-      //   // subscribe to params and get the event id
-      //   let eventId = '';
-        
-      //   this.route.queryParams.subscribe(params => {
-      //     eventId = params['id'];
-      //   });
-
-      //   return new Observable(observer => {
-      //     // get the JSON data from the database
-      //   this.appApiService.getEventFloorLayout(eventId).subscribe((res: any) => {
-      //     if (res.floorlayout === null || res.floorlayout === '') {
-      //       observer.next({ canvasContainer: null, canvas: null }); // You can handle the null case or return an error
-      //       observer.complete();
-      //       return;
-      //     }
-      //     const json = JSON.parse(res.floorlayout);
-      //     console.log(json)
-      //     // this.revertJSONData(json);
-      //     const width = this.canvasParent.nativeElement.offsetWidth;
-      //     this.canvas = new Konva.Layer();
-      //     this.canvasContainer = new Konva.Stage({
-      //       container: '#canvasElement',
-      //       width: width*0.995, //was 0.9783
-      //       height: window.innerHeight-100,
-      //     });
-      //     this.canvas = Konva.Node.create(json, 'container');
-
-      //     // json.children.forEach((child: any) => {
-      //     //   const posX = child.attrs.x;
-      //     //   const posY = child.attrs.y;
-      //     //   this.addKonvaObject(child, posX, posY);
-      //     // });
-
-      //     this.canvasContainer.add(this.canvas);
-      //     // this.createGridLines();
-      //     // this.canvas.draw();
-
-      //     observer.next({ canvasContainer: this.canvasContainer, canvas: this.canvas });
-      //     observer.complete();
-      //   });
-      //   })
-      // }
+    async presentToastSuccess(position: 'top' | 'middle' | 'bottom', message: string) {
+      const toast = await this.toastController.create({
+        message: message,
+        duration: 2500,
+        position: position,
+        color: 'success',
+      });
+  
+      await toast.present();
+    }
 
       downloadURI(uri: string, name: string) {
         const link = document.createElement('a');
