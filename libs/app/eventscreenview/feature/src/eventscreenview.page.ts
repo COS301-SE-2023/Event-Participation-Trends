@@ -43,6 +43,9 @@ export class EventScreenViewPage {
   @ViewChild('totalDevicesBarChart') totalDevicesBarChart!: ElementRef<HTMLCanvasElement>;
 
   currentTimeIsSet = false;
+  startTime = "";
+  currentTime = "";
+  endTime = "";
   isLoading = true;
   activeDevices = 25;
   inactiveDevices = 5;
@@ -74,8 +77,8 @@ export class EventScreenViewPage {
   // startTime = new Date(2023, 6, 20, 8, 42, 14).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
   // endTime = new Date(2023, 6, 20, 8, 42, 19).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
   // Lukas Se Kamer Event times  
-  startTime = new Date(2023, 6, 26, 6, 52, 0).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
-  endTime = new Date(2023, 6, 26, 6, 53, 5).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+  // startTime = new Date(2023, 6, 26, 6, 52, 0).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+  // endTime = new Date(2023, 6, 26, 6, 53, 5).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
 
   /**
    * The variables within the below block are used to determine the corrdinates of the
@@ -158,13 +161,14 @@ export class EventScreenViewPage {
         this.startTime$.subscribe((startTime) => {
           if (startTime) {
             this.store.dispatch(new SetEventScreenViewTime(startTime));
+            this.startTime = startTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+            this.currentTime = new Date(startTime.getTime() + 5000).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
           }
         });
       }
     }, 1000);
     
     setTimeout(() => {
-
       Chart.register(ChartStreaming);
       this.renderHeatMap();
       this.renderTotalUserCount();
@@ -325,24 +329,33 @@ export class EventScreenViewPage {
   getAverageData() {
     // extract event id from url
     const eventId = this.eventId;  
-    // increase start time and end time variables by 5 seconds
-    this.startTime = this.endTime;
-    const newStartTime = new Date(this.startTime);
-    // increase end time by 5 seconds and determine if any other time measure needs to increase if the new time is greater than 60
-    const newEndTime = new Date(this.endTime);
-    newEndTime.setSeconds(newEndTime.getSeconds() + 5);
-    this.endTime = newEndTime.toString().replace(/( [A-Z]{3,4})$/, '');
 
-    const response = this.appApiService.getEventDevicePosition(eventId, newStartTime, newEndTime);
+    // set current time
+    this.currentTime$.subscribe((currentTime: Date) => {
+      this.currentTime = currentTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+    });
+
+    const startOfInterval = new Date(this.startTime);
+    let endOfInterval: Date;
+    if (this.currentTime === this.startTime) {
+      endOfInterval = new Date(startOfInterval.getTime() + 5000);
+      this.startTime = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+    } else {
+      endOfInterval = new Date(this.currentTime);
+      this.startTime = this.currentTime;
+    }
+
+    // set new current time
+    this.store.dispatch(new SetEventScreenViewTime(endOfInterval));
+
+    endOfInterval.setSeconds(endOfInterval.getSeconds() + 5);
+    this.endTime = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '');
+
+    const response = this.appApiService.getEventDevicePosition(eventId, startOfInterval, endOfInterval);
 
     response.then((data: IGetEventDevicePositionResponse | null | undefined) => {
       if (data?.positions) {
         this.averageDataFound = this.updateHeatmapData(data.positions);
-
-        //log the x and y coordinates of the average data points
-        // data.positions.forEach((position: IPosition) => {
-        //   console.log(`averageX: ${position.x}, averageY: ${position.y}`);
-        // });
       }
     });
   }
