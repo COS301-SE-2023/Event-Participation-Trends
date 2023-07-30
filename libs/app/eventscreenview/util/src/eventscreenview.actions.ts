@@ -3,6 +3,7 @@ interface IEventScreenViewStateModel {
     startTime: Date | undefined | null;
     endTime: Date | undefined | null;
     usersDetectedPerHour: {time: string, detected: number}[] | undefined | null;
+    streamingChartData: {labels: string[], data: number[]} | undefined | null;
 }
 
 export class SetEventScreenViewState {
@@ -28,4 +29,9 @@ export class SetEndTime {
 export class UpdateUsersDetectedPerHour {
     static readonly type = '[EventScreenView] UpdateUsersDetectedPerHour';
     constructor(public usersDetectedPerHour: {time: string, detected: number}[] | undefined | null) {}
+}
+
+export class SetStreamingChartData {
+    static readonly type = '[EventScreenView] SetStreamingChartData';
+    constructor(public streamingChartData: {labels: string[], data: number[]} | undefined | null) {}
 }

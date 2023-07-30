@@ -6,6 +6,7 @@ import {
   SetEventScreenViewState,
   SetCurrentTime,
   UpdateUsersDetectedPerHour,
+  SetStreamingChartData,
 } from '@event-participation-trends/app/eventscreenview/util';
 import { SetError } from '@event-participation-trends/app/error/util';
 
@@ -14,6 +15,7 @@ export interface IEventScreenViewStateModel {
   startTime: Date | undefined | null;
   endTime: Date | undefined | null;
   usersDetectedPerHour: {time: string, detected: number}[] | undefined | null;
+    streamingChartData: {labels: string[], data: number[]} | undefined | null;
 }
 
 @State<IEventScreenViewStateModel>({
@@ -23,6 +25,7 @@ export interface IEventScreenViewStateModel {
     startTime: null,
     endTime: null,
     usersDetectedPerHour: null,
+    streamingChartData: {labels: [], data: []},
   },
 })
 @Injectable()
@@ -44,6 +47,16 @@ export class EventScreenViewState {
     return state.endTime;
   }
 
+    @Selector()
+    static usersDetectedPerHour(state: IEventScreenViewStateModel) {
+        return state.usersDetectedPerHour;
+    }
+
+    @Selector()
+    static streamingChartData(state: IEventScreenViewStateModel) {
+        return state.streamingChartData;
+    }
+
   @Action(SetEventScreenViewState)
   setEventScreenViewState(
     ctx: StateContext<IEventScreenViewStateModel>,
@@ -54,6 +67,7 @@ export class EventScreenViewState {
       startTime: newState.startTime,
       endTime: newState.endTime,
       usersDetectedPerHour: newState.usersDetectedPerHour,
+        streamingChartData: newState.streamingChartData,
     });
   }
 
@@ -131,4 +145,23 @@ export class EventScreenViewState {
       return this.store.dispatch(new SetError((error as Error).message));
     }
   }
+
+  @Action(SetStreamingChartData)
+    setStreamingChartData(
+        ctx: StateContext<IEventScreenViewStateModel>,
+        { streamingChartData }: SetStreamingChartData
+    ) {
+        try {
+        const state = ctx.getState();
+    
+        const newState = {
+            ...state,
+            streamingChartData: streamingChartData,
+        };
+    
+        return ctx.dispatch(new SetEventScreenViewState(newState));
+        } catch (error) {
+        return this.store.dispatch(new SetError((error as Error).message));
+        }
+    }
 }

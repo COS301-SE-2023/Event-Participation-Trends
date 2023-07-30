@@ -2,18 +2,19 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
+import Konva from 'konva';
 
 import 'chartjs-plugin-datalabels';
 
 import ChartStreaming from 'chartjs-plugin-streaming';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
-import { IGetEventDevicePositionResponse, IGetEventResponse, IPosition } from '@event-participation-trends/api/event/util';
+import { IGetEventDevicePositionResponse, IGetEventFloorlayoutResponse, IGetEventResponse, IPosition } from '@event-participation-trends/api/event/util';
 import { set } from 'mongoose';
 import { Select, Store } from '@ngxs/store';
 import { EventScreenViewState } from '@event-participation-trends/app/eventscreenview/data-access';
 import { Observable } from 'rxjs';
-import { SetEndTime, SetStartTime, SetCurrentTime, UpdateUsersDetectedPerHour } from '@event-participation-trends/app/eventscreenview/util';
+import { SetEndTime, SetStartTime, SetCurrentTime, UpdateUsersDetectedPerHour, SetStreamingChartData } from '@event-participation-trends/app/eventscreenview/util';
 
 interface IAverageDataFound {
   id: number | null | undefined,
@@ -33,6 +34,8 @@ export class EventScreenViewPage {
   @Select(EventScreenViewState.currentTime) currentTime$!: Observable<Date>;
   @Select(EventScreenViewState.startTime) startTime$!: Observable<Date>;
   @Select(EventScreenViewState.endTime) endTime$!: Observable<Date>;
+  @Select(EventScreenViewState.usersDetectedPerHour) usersDetectedPerHour$!: Observable<{time: string, detected: number}[]>;
+  @Select(EventScreenViewState.streamingChartData) streamingChartData$!: Observable<{labels: string[], data: number[]}>;
 
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
@@ -41,7 +44,6 @@ export class EventScreenViewPage {
   @ViewChild('flowmapContainer') flowmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalDevicesBarChart') totalDevicesBarChart!: ElementRef<HTMLCanvasElement>;
 
-  currentTimeIsSet = false;
   startTime = "";
   currentTime = "";
   endTime = "";
@@ -50,6 +52,10 @@ export class EventScreenViewPage {
   startMinutes = 0;
   endHours = 0;
   eventHours: string[] = []; // labels for the chart
+  userDetectedPerHour: {time: string, detected: number}[] = []; // data for the chart
+  usersDetectedPer5seconds: {time: string, detected: number}[] = []; // data for the chart
+  streamingChartData: {labels: string[], data: number[]} = {labels: [], data: []};
+  hasFloorplan = false;
 
   isLoading = true;
   activeDevices = 25;
@@ -74,7 +80,7 @@ export class EventScreenViewPage {
     },
     detectedThisRun: boolean
   }[] = [];
-  eventId = null;
+  eventId = '';
   totalUsersDetected = 0;
   averageDataDetectedThisRun: IAverageDataFound[] = [];
 
@@ -115,119 +121,106 @@ export class EventScreenViewPage {
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.eventId = params['id'];
-    });
-
-    if (this.eventId) {
-      this.appApiService.getFloorplanBoundaries(this.eventId).then((response) => {
-        if (response.boundaries) {
-          const center = {
-            x: (response.boundaries.left + response.boundaries.right) / 2,
-            y: (response.boundaries.top + response.boundaries.bottom) / 2
-          };
-
-          this.mapCenter = L.latLng(this.convertXYToLatLng(center.x, center.y));
-          this.mapXYCenter = [center.x, center.y];
-          this.mapWidth = response.boundaries.right - response.boundaries.left;
-          this.mapHeight = response.boundaries.bottom - response.boundaries.top;
-          this.heatmapBounds = L.latLngBounds(L.latLng(this.mapCenter), L.latLng(this.convertXYToLatLng(response.boundaries.right, response.boundaries.bottom)));
-        }
+      this.route.queryParams.subscribe(params => {
+        this.eventId = params['id'];
       });
 
-      // get event
-      this.appApiService.getEvent({eventId: this.eventId}).subscribe((response) => {
-        if (response) {
-          let eventStartDate = response.event.StartDate;
-          let eventEndDate = response.event.EndDate;
-          
-          if (eventStartDate) eventStartDate = new Date(eventStartDate);
-          if (eventEndDate) eventEndDate = new Date(eventEndDate);
+      if (this.eventId) {
+        this.appApiService.getFloorplanBoundaries(this.eventId).then((response) => {
+          if (response && response.boundaries) {
+            this.hasFloorplan = true;
+            const center = {
+              x: (response.boundaries.left + response.boundaries.right) / 2,
+              y: (response.boundaries.top + response.boundaries.bottom) / 2
+            };
 
-          //set the start and end times of the event
-          this.store.dispatch(new SetStartTime(eventStartDate));
-          this.store.dispatch(new SetEndTime(eventEndDate));
+            this.mapCenter = L.latLng(this.convertXYToLatLng(center.x, center.y));
+            this.mapXYCenter = [center.x, center.y];
+            this.mapWidth = response.boundaries.right - response.boundaries.left;
+            this.mapHeight = response.boundaries.bottom - response.boundaries.top;
+            this.heatmapBounds = L.latLngBounds(L.latLng(this.mapCenter), L.latLng(this.convertXYToLatLng(response.boundaries.right, response.boundaries.bottom)));
+          }
+        });
 
-          // check if we already set the current time
-          this.currentTime$.subscribe((currentTime) => {
-            this.currentTimeIsSet = currentTime !== null ? true : false;
-          });
-        }
-      });
-    }
+        // get event
+        this.appApiService.getEvent({eventId: this.eventId}).subscribe((response) => {
+          if (response) {
+            let eventStartDate = response.event.StartDate;
+            let eventEndDate = response.event.EndDate;
+            
+            if (eventStartDate) {
+              eventStartDate = new Date(eventStartDate);
+              this.store.dispatch(new SetStartTime(eventStartDate));
+              this.startTime = eventStartDate.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+              this.startOfTimeInterval = eventStartDate.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+            }
+            if (eventEndDate) {
+              eventEndDate = new Date(eventEndDate);
+              this.store.dispatch(new SetEndTime(eventEndDate));
+              this.endTime = eventEndDate.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+            }
+
+            // set current time to real world current time
+            this.store.dispatch(new SetCurrentTime(new Date()));
+            this.currentTime = new Date().toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+          }
+        });
+      }      
   }
 
   ngAfterViewInit() {
-    // wait until the heatmap container is rendered
-    setTimeout(() => {
+     // wait until the heatmap container is rendered
+     setTimeout(() => {
       this.isLoading = false;
-      if (!this.currentTimeIsSet) {
-        // set current time to start time
-        this.startTime$.subscribe((startTime) => {
-          if (startTime) {
-            this.store.dispatch(new SetCurrentTime(startTime));
-            this.startTime = startTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
-            this.currentTime = new Date(startTime.getTime() + 5000).toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
-            this.startOfTimeInterval = startTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
-          }
-        });
 
-        // set end time
-        this.endTime$.subscribe((endTime) => {
-          if (endTime) {
-            this.endTime = endTime.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
-          }
-        });
-
-        // set hours of event labels in "HH:mm" format
-        this.startHours = new Date(this.startTime).getHours();
-        this.startMinutes = new Date(this.startTime).getMinutes();
-        this.endHours = new Date(this.endTime).getHours();
-
-        // set the number of hours of the event
-        let hoursOfEvent = 0;
-        if (this.startHours > this.endHours) {
-          hoursOfEvent = (24 - this.startHours) + this.endHours;
-        } else {
-          hoursOfEvent = this.endHours - this.startHours;
-        }
-        // set the labels of the x-axis
-        for (let i = 0; i <= hoursOfEvent; i++) {
-          // check if the minutes are less than 10, if so, add a 0 in front of the minutes
-          if (this.startMinutes < 10 && this.startHours < 10) {
-            this.eventHours.push(`${this.startHours + i}:0${this.startMinutes}`);
-          } else if (this.startMinutes < 10 && this.startHours >= 10) {
-            this.eventHours.push(`${this.startHours + i}:0${this.startMinutes}}`);
-          } else if (this.startHours < 10 && this.startMinutes >= 10) {
-            this.eventHours.push(`${this.startHours + i}:${this.startMinutes}`);
-          } else {
-            this.eventHours.push(`${this.startHours + i}:${this.startMinutes}`);
-          } 
-        }
-
-        const usersDetectedPerHour: {time: string, detected: number}[] = [];
-        for (let i = 0; i < hoursOfEvent; i++) {
-          usersDetectedPerHour.push(
-            {
-              time: this.eventHours[i],
-              detected: 0
-            }
-          )
-        }
-
-        // set the number of users detected per hour
-        this.store.dispatch(new UpdateUsersDetectedPerHour(usersDetectedPerHour));
+      // set hours of event labels in "HH:mm" format
+      this.startHours = new Date(this.startTime).getHours();
+      this.startMinutes = new Date(this.startTime).getMinutes();
+      this.endHours = new Date(this.endTime).getHours();
+  
+      // set the number of hours of the event
+      let hoursOfEvent = 0;
+      if (this.startHours > this.endHours) {
+        hoursOfEvent = (24 - this.startHours) + this.endHours;
+      } else {
+        hoursOfEvent = this.endHours - this.startHours;
       }
-    }, 1000);
-    
-    setTimeout(() => {
-      Chart.register(ChartStreaming);
-      this.renderHeatMap();
-      this.renderTotalUserCount();
-      this.renderTotalDeviceCount();
-      this.renderUserCountDataStreaming();
-      this.renderTotalDevicesBarChart();
-    }, 1000);
+      // set the labels of the x-axis
+      for (let i = 0; i <= hoursOfEvent; i++) {
+        // check if the minutes are less than 10, if so, add a 0 in front of the minutes
+        if (this.startMinutes < 10 && this.startHours < 10) {
+          this.eventHours.push(`${this.startHours + i}:0${this.startMinutes}`);
+        } else if (this.startMinutes < 10 && this.startHours >= 10) {
+          this.eventHours.push(`${this.startHours + i}:0${this.startMinutes}`);
+        } else if (this.startHours < 10 && this.startMinutes >= 10) {
+          this.eventHours.push(`${this.startHours + i}:${this.startMinutes}`);
+        } else {
+          this.eventHours.push(`${this.startHours + i}:${this.startMinutes}`);
+        } 
+      }
+
+      for (let i = 0; i < hoursOfEvent; i++) {
+        this.userDetectedPerHour.push(
+          {
+            time: this.eventHours[i],
+            detected: 0
+          }
+        )
+      }
+  
+      this.store.dispatch(new UpdateUsersDetectedPerHour(this.userDetectedPerHour));
+  
+       // get average data points up to the current time to load heatmap
+       this.getAverageDatapointsUptoNow();   
+       setTimeout(() => {
+         Chart.register(ChartStreaming);
+         if (this.hasFloorplan) this.renderHeatMap();
+         this.renderTotalUserCount();
+         this.renderTotalDeviceCount();
+         this.renderUserCountDataStreaming();
+         this.renderTotalDevicesBarChart();
+       }, 1000);
+    }, 1000);    
 
     // const eventSource = new EventSource();
 
@@ -249,46 +242,70 @@ export class EventScreenViewPage {
     //   console.log('SSE Connection Open');
     // };
 
-    setInterval(() => {
-      // const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData(); // for testing purposes
-      this.getAverageData();
-      // this.averageDataFound = this.generateRandomData(100);
-      
-      // remove all data points that were not detected this run
-      this.averageDataDetectedThisRun = this.averageDataFound.filter((averageDataPoint: IAverageDataFound) => averageDataPoint.detectedThisRun); 
-      this.totalUsersDetected = this.averageDataDetectedThisRun.length;
-      
-      const newData = this.totalUsersDetected;
-      const newTime = new Date(this.startOfTimeInterval).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+    const streamingInterval = setInterval(() => {
+      if (new Date(this.currentTime) > new Date(this.endTime)) {
+        clearInterval(streamingInterval);
+      } else {
+        // const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.generateHeatmapData(); // for testing purposes
+        this.getAverageData();
+        // this.averageDataFound = this.generateRandomData(100);
+        
+        // remove all data points that were not detected this run
+        this.averageDataDetectedThisRun = this.averageDataFound.filter((averageDataPoint: IAverageDataFound) => averageDataPoint.detectedThisRun); 
+        this.totalUsersDetected = this.averageDataDetectedThisRun.length;
 
-      // add new label and data to the chart
-      this.streamingUserCountChart?.data.labels?.push(newTime);
-      // add new data to the chart
-      this.streamingUserCountChart?.data.datasets[0].data?.push(newData);
-      this.streamingUserCountChart?.update();
+        this.currentTime$.subscribe((currentTime) => {
+          if (currentTime) {
+            // check to see in which time interval the current time is
+            const timeIndex = currentTime.getHours() - this.startHours;
+            this.usersDetectedPerHour$.subscribe((usersDetectedPerHour) => {
+              if (usersDetectedPerHour) {
+                usersDetectedPerHour[timeIndex].detected = this.totalUsersDetected;
+              }
 
-      // convert averageDataDetectedThisRun to heatmap data using the new data points
-      const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.averageDataDetectedThisRun.map((averageDataPoint: IAverageDataFound) => averageDataPoint.latLng.newDataPoint);
+              this.store.dispatch(new UpdateUsersDetectedPerHour(usersDetectedPerHour));
+            });
+          }
+        });
 
-      if (this.showHeatmap) {
-        this.myHeatLayer.setLatLngs(heatmapData);
+        const newData = this.totalUsersDetected;
+        const newTime = new Date(this.currentTime).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+        console.log(newTime);
+        // add new label and data to the chart
+        this.streamingUserCountChart?.data.labels?.push(newTime);
+        // add new data to the chart
+        this.streamingUserCountChart?.data.datasets[0].data?.push(newData);
+        this.streamingUserCountChart?.update();
 
-        // If we have the data we can determine the hotzone of the heatmap and add a red circle radius Marker to it
-        // determine hot zone and add a red circle radius Marker to it
-        // const hotZone = this.getHotZone(heatmapData);
-        // this.hotzoneMarker.setLatLng(hotZone);
-      }
+        // add new data to the streamingChartData
+        this.streamingChartData.labels.push(newTime);
+        this.streamingChartData.data.push(newData);
+        // update the streamingChartData in the store
+        this.store.dispatch(new SetStreamingChartData(this.streamingChartData));
 
-      if (this.showFlowmap) {
-        // clear the gridTilesDataPoints array
-        this.gridTilesDataPoints = [];
+        // convert averageDataDetectedThisRun to heatmap data using the new data points
+        const heatmapData: (L.LatLng | L.HeatLatLngTuple)[] = this.averageDataDetectedThisRun.map((averageDataPoint: IAverageDataFound) => averageDataPoint.latLng.newDataPoint);
 
-        // add arrow icons to every grid tile on the flowmap layer
-        this.addIconsToGridTiles(this.averageDataDetectedThisRun);
+        if (this.showHeatmap) {
+          this.myHeatLayer.setLatLngs(heatmapData);
 
-        //remove all grid tiles if there are no data
-        if (this.averageDataDetectedThisRun.length === 0) {
-          this.removeArrowIconsFromGridTiles();
+          // If we have the data we can determine the hotzone of the heatmap and add a red circle radius Marker to it
+          // determine hot zone and add a red circle radius Marker to it
+          // const hotZone = this.getHotZone(heatmapData);
+          // this.hotzoneMarker.setLatLng(hotZone);
+        }
+
+        if (this.showFlowmap) {
+          // clear the gridTilesDataPoints array
+          this.gridTilesDataPoints = [];
+
+          // add arrow icons to every grid tile on the flowmap layer
+          this.addIconsToGridTiles(this.averageDataDetectedThisRun);
+
+          //remove all grid tiles if there are no data
+          if (this.averageDataDetectedThisRun.length === 0) {
+            this.removeArrowIconsFromGridTiles();
+          }
         }
       }
     }, 5000);
@@ -377,6 +394,99 @@ export class EventScreenViewPage {
     return dataPoints;
   }
 
+  getAverageDatapointsUptoNow() {
+    const eventId = this.eventId;
+    const startOfInterval = new Date(this.startOfTimeInterval);
+    let endInterval = new Date(this.currentTime);
+    const endTime = new Date(this.endTime);
+
+    if (endInterval >= endTime) {
+      endInterval = endTime;
+    }
+
+    //make one api call
+    const response = this.appApiService.getEventDevicePosition(eventId, startOfInterval, endInterval);
+    response.then((res) => {
+      if (res?.positions) {
+        this.averageDataFound = this.getGroupedDatapoints(res.positions);
+
+        // set streaming chart data
+        this.usersDetectedPer5seconds.forEach((dataPoint) => {
+          this.streamingChartData.labels.push(dataPoint.time);
+          this.streamingChartData.data.push(dataPoint.detected);
+        });
+
+        this.store.dispatch(new SetStreamingChartData(this.streamingChartData));
+      }
+    });    
+  }
+
+  getGroupedDatapoints(datapoints: IPosition[]) {
+    // run through the list of datapoints and group them in a 5 second interval based on the object's 'timestamp' property
+    const groupedDatapoints = this.groupDatapoints(datapoints);
+
+    // calculate the average position of each group of datapoints
+    this.averageDataFound = [];
+
+    groupedDatapoints.forEach((group) => {
+      group.forEach((position: IPosition) => {
+        const latLng = this.calculateAverageXandY(group, position);
+  
+        // convert x and y coordinates to lat and lng coordinates
+        // const latLng = L.latLng(this.convertXYToLatLng(averageX, averageY));
+        // add new average data point to the averageDataFound array
+        this.averageDataFound.push({
+          id: position.id, 
+          latLng: {
+          oldDataPoint: latLng,
+          newDataPoint: latLng
+          },
+          detectedThisRun: true
+        });
+      });
+    });
+
+    return this.averageDataFound;
+  }
+
+  groupDatapoints(datapoints: IPosition[]): IPosition[][] {
+    const groupedDatapoints: IPosition[][] = [];
+    let group: IPosition[] = [];
+    let currentTimestamp = new Date(this.startOfTimeInterval);
+    for (const datapoint of datapoints) {
+      if (datapoint.timestamp) {
+        const timestamp = new Date(datapoint.timestamp);
+        if (timestamp.getTime() - currentTimestamp.getTime() <= 5000) {
+          group.push(datapoint);
+        } else {
+          groupedDatapoints.push(group);
+
+          // add total users detected in this group to the totalUsersDetected array
+          this.usersDetectedPer5seconds.push({
+            time: `${currentTimestamp.getHours()}:${currentTimestamp.getMinutes()}:${currentTimestamp.getSeconds()}`,
+            detected: group.length,
+          });
+
+          // add data group in the correct hour
+          const hour = currentTimestamp.getHours();
+          if (this.userDetectedPerHour[hour]) {
+            this.userDetectedPerHour[hour].detected += group.length;
+          } else {
+            this.userDetectedPerHour[hour] = {
+              time: `${currentTimestamp.getHours()}:00`,
+              detected: group.length,
+            };
+          }
+
+          group = [];
+          group.push(datapoint);
+          currentTimestamp = timestamp;
+        }
+      }
+    }
+    return groupedDatapoints;
+  }
+
 
   getAverageData() {
     // extract event id from url
@@ -390,20 +500,19 @@ export class EventScreenViewPage {
     let endOfInterval: Date;
     if (this.currentTime === this.startOfTimeInterval) {
       endOfInterval = new Date(startOfInterval.getTime() + 5000);
-      this.startOfTimeInterval = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
     } else {
       endOfInterval = new Date(this.currentTime);
       this.startOfTimeInterval = this.currentTime;
     }
-
+    this.endTime = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '');
+    
+    const response = this.appApiService.getEventDevicePosition(eventId, startOfInterval, endOfInterval);
+    
     // set new current time
     this.store.dispatch(new SetCurrentTime(endOfInterval));
-
-    endOfInterval.setSeconds(endOfInterval.getSeconds() + 5);
-    this.endTime = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '');
-
-    const response = this.appApiService.getEventDevicePosition(eventId, startOfInterval, endOfInterval);
-
+    
+    this.startOfTimeInterval = endOfInterval.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
+  
     response.then((data: IGetEventDevicePositionResponse | null | undefined) => {
       if (data?.positions) {
         this.averageDataFound = this.updateHeatmapData(data.positions);
@@ -777,14 +886,18 @@ export class EventScreenViewPage {
     this.myHeatmap.removeControl(this.myHeatmap.zoomControl);
     this.myHeatmap.removeControl(this.myHeatmap.attributionControl);
 
+    // The line below loads a snapshot of the floor layout
+    this.getImageFromJSONData(this.eventId);
+
     const imageUrl = 'assets/LukasSeKamerEvent.jpeg';
+    // const imageUrl = 'assets/ReubenTestingEvent.png';
     // const imageBounds: L.LatLngBounds = this.myHeatmap.getBounds();
     // get bounds of heatmap container
     const imageBounds: L.LatLngBounds = L.latLngBounds(
       this.myHeatmap.containerPointToLatLng(L.point(0, 0)),
       this.myHeatmap.containerPointToLatLng(L.point(this.heatmapContainer.nativeElement.offsetWidth, this.heatmapContainer.nativeElement.offsetHeight))
     );
-    L.imageOverlay(imageUrl, imageBounds, {zIndex: 0}).addTo(this.myHeatmap);
+    // L.imageOverlay(imageUrl, imageBounds, {zIndex: 0}).addTo(this.myHeatmap);
 
     const myGrid = L.GridLayer.extend({
       options: {
@@ -838,6 +951,34 @@ export class EventScreenViewPage {
     //   fillOpacity: 0.5,
     //   radius: 10
     // }).addTo(this.myHeatmap);
+  }
+
+  getImageFromJSONData(eventId: string) {
+    const response = this.appApiService.getEventFloorLayout(eventId);
+    response.subscribe((res: IGetEventFloorlayoutResponse) => {
+      // use the response to create an image
+      const stage = new Konva.Stage({
+        container: 'heatmapContainer',
+        width: this.heatmapContainer.nativeElement.offsetWidth,
+        height: this.heatmapContainer.nativeElement.offsetHeight
+      });
+
+      // create node from JSON string
+      const layer: Konva.Layer = Konva.Node.create(res.floorlayout, 'heatmapContainer');
+      // add the node to the layer
+      stage.add(layer);
+
+      // set the src of the image to the image url
+      layer.toDataURL({
+        callback: (dataUrl: string) => {
+          const imageBounds: L.LatLngBounds = L.latLngBounds(
+            this.myHeatmap.containerPointToLatLng(L.point(0, 0)),
+            this.myHeatmap.containerPointToLatLng(L.point(this.heatmapContainer.nativeElement.offsetWidth, this.heatmapContainer.nativeElement.offsetHeight))
+          );
+          L.imageOverlay(dataUrl, imageBounds, {zIndex: 0}).addTo(this.myHeatmap);
+        }
+      });
+    });
   }
 
   getHotZone(heatmapData: (L.LatLng | L.HeatLatLngTuple)[]) {
@@ -1057,15 +1198,23 @@ export class EventScreenViewPage {
   }
 
   renderUserCountDataStreaming() {
-    // set the format of the start time of the event to be displayed on the x-axis in the format of 'HH:mm:ss'
-    const startOfEvent = new Date(this.startTime).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+    const chartData: number[] = [];
+    const chartLabels: string[] = [];
+
+    this.streamingChartData.data.forEach((dataPoint) => {
+      chartData.push(dataPoint);
+    });
+
+    this.streamingChartData.labels.forEach((label, index) => {
+      chartLabels[index] = label;
+    });
 
     const config: ChartConfiguration = {
       type: 'line',             // 'line', 'bar', 'bubble' and 'scatter' types are supported
       data: {
-        labels: [startOfEvent],             // empty at the beginning
+        labels: chartLabels,             // empty at the beginning
         datasets: [{
-          data: [0],              // empty at the beginning
+          data: chartData,              // empty at the beginning
         }]
       },
       options: {
@@ -1078,7 +1227,7 @@ export class EventScreenViewPage {
           },
           title: {
             display: true,
-            text: 'Users Detected vs Time of Day'
+            text: 'Users Detected vs Time of Day (per 5 seconds)'
           }
         },
         scales: {
@@ -1097,10 +1246,9 @@ export class EventScreenViewPage {
               },
               beginAtZero: true, 
             },
-      }
+        }
       }
     };
-
     const userCountDataStreamingCanvas = this.userCountDataStreamingChart.nativeElement;
 
     if (userCountDataStreamingCanvas) {
@@ -1112,21 +1260,33 @@ export class EventScreenViewPage {
         );
       }
     }
+
   }
 
   renderTotalDevicesBarChart(){
-    const randomData = [];
-    for (let i = 0; i < this.eventHours.length; i++) {
-      randomData.push({
-        x: this.eventHours[i],
-        y: Math.floor(Math.random() * 100)
-      });
-    }
+    // const randomData = [];
+    // for (let i = 0; i < this.eventHours.length; i++) {
+    //   randomData.push({
+    //     x: this.eventHours[i],
+    //     y: Math.floor(Math.random() * 100)
+    //   });
+    // }
 
+    const chartData: {
+      x: string,
+      y: number
+    }[] = [];
+
+    this.userDetectedPerHour.forEach((timeData) => {
+      chartData.push({
+        x: timeData.time,
+        y: timeData.detected
+      });
+    });
 
     const data = {
         datasets: [{
-          data: randomData,
+          data: chartData,
           backgroundColor: [
             'rgb(34 197 94)'
           ],
@@ -1151,7 +1311,7 @@ export class EventScreenViewPage {
               plugins: {
                   title: {
                     display: true,
-                    text: 'Active Devices vs Time of day', 
+                    text: 'Users Detected vs Time of day (per hour)', 
                   },
                   legend:{
                       display: false
@@ -1172,7 +1332,7 @@ export class EventScreenViewPage {
                   display: true,
                   title: {
                     display: true,
-                    text: 'Number of Active Devices', 
+                    text: 'Number of Users Detected', 
                   },
                   beginAtZero: true, 
                 },
