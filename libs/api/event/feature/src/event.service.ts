@@ -32,13 +32,36 @@ import {
     IGetEventRequest,
     IGetEventResponse,
     GetEventQuery,
+    IUpdateFloorlayoutRequest,
+    IUpdateFloorlayoutResponse,
+    UpdateFloorlayoutCommand,
+    IGetEventFloorlayoutRequest,
+    IGetEventFloorlayoutResponse,
+    GetEventFloorlayoutQuery,
+    IAddDevicePositionRequest,
+    IAddDevicePositionResponse,
+    AddDevicePositionCommand,
+    IAddViewerRequest,
+    IAddViewerResponse,
+    AddViewerCommand,
+    IGetEventDevicePositionRequest,
+    IGetEventDevicePositionResponse,
+    GetEventDevicePositionQuery,
+    IGetAllEventCategoriesResponse,
+    GetAllEventCategoriesQuery,
+    IGetManagedEventCategoriesRequest,
+    GetManagedEventCategoriesQuery,
+    IGetManagedEventCategoriesResponse,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 @Injectable()
 export class EventService {
-    constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
+    constructor(
+        private readonly commandBus: CommandBus, 
+        private readonly queryBus: QueryBus
+    ) {}
 
     async createEvent(request: ICreateEventRequest) {
         return await this.commandBus.execute<CreateEventCommand, ICreateEventResponse>(new CreateEventCommand(request));
@@ -81,6 +104,50 @@ export class EventService {
     }
 
     async getEvent(request: IGetEventRequest) {
-        return await this.queryBus.execute<GetEventQuery, IGetEventRequest>(new GetEventQuery(request));
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    // Stalls
+    async getAllEventStalls(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    async getEventStall(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    async createEventStall(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+
+    async updateEventStall(request: IGetEventRequest) {
+        return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
+    }
+    async updateEventFloorLayout(request: IUpdateFloorlayoutRequest){
+        return await this.commandBus.execute<UpdateFloorlayoutCommand, IUpdateFloorlayoutResponse>(new UpdateFloorlayoutCommand(request));
+    }
+
+    async getEventFloorLayout(request: IGetEventFloorlayoutRequest) {
+        return await this.queryBus.execute<GetEventFloorlayoutQuery, IGetEventFloorlayoutResponse>(new GetEventFloorlayoutQuery(request));
+    }
+
+    async addDevicePosition(request: IAddDevicePositionRequest){
+        return await this.commandBus.execute<AddDevicePositionCommand, IAddDevicePositionResponse>(new AddDevicePositionCommand(request));
+    }
+
+    async addEventViewer(request: IAddViewerRequest){
+        return await this.commandBus.execute<AddViewerCommand, IAddViewerResponse>(new AddViewerCommand(request));
+    }
+
+    async getEventDevicePosition(request: IGetEventDevicePositionRequest) {
+        return await this.queryBus.execute<GetEventDevicePositionQuery, IGetEventDevicePositionResponse>(new GetEventDevicePositionQuery(request));
+    }
+
+    async getAllEventCategories() {
+        return await this.queryBus.execute<GetAllEventCategoriesQuery, IGetAllEventCategoriesResponse>(new GetAllEventCategoriesQuery());
+    }
+
+    async getManagedEventCategories(request: IGetManagedEventCategoriesRequest) {
+        return await this.queryBus.execute<GetManagedEventCategoriesQuery, IGetManagedEventCategoriesResponse>(new GetManagedEventCategoriesQuery(request));
     }
 }

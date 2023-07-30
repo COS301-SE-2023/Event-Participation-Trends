@@ -1,7 +1,7 @@
 import { 
     IEventDetails, 
     CreateEventEvent, 
-    UpdateEventDetialsEvent,
+    UpdateFloorlayoutEvent,
     } from '@event-participation-trends/api/event/util';
 import {
     IEventLocation,
@@ -17,12 +17,17 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
         public Category?: string | undefined | null,
         public Location?: IEventLocation | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
+        public Floorlayout?: string | undefined | null,
     ){
         super();
     }
 
     create() {
         this.apply(new CreateEventEvent(this.toJSON()));
+    }
+
+    update(){
+        this.apply(new UpdateFloorlayoutEvent(this.toJSON()));
     }
 
     static fromData(event: IEventDetails): EventDetails {
@@ -33,6 +38,7 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
             event.Category,
             event.Location,
             event.Manager,
+            event.Floorlayout,
         );
         return instance;
     }
@@ -45,6 +51,7 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
             Category: this.Category,
             Location: this.Location,
             Manager: this.Manager,
+            Floorlayout: this.Floorlayout,
         };
     }
 }

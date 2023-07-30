@@ -21,6 +21,10 @@ ion-item {
     --background: inherit;
 }
 
+ion-refresher ion-refresher-content {
+  --color: rgb(0 0 255 / var(--tw-text-opacity)) !important;
+}
+
 /* .main-grid {
   display: grid;
   grid-template-columns: 3fr 1fr;

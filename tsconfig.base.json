@@ -36,6 +36,15 @@
       "@event-participation-trends/api/event/util": [
         "libs/api/event/util/src/index.ts"
       ],
+      "@event-participation-trends/api/global/data-access": [
+        "libs/api/global/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/api/global/feature": [
+        "libs/api/global/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/global/util": [
+        "libs/api/global/util/src/index.ts"
+      ],
       "@event-participation-trends/api/guards": [
         "libs/api/guards/src/index.ts"
       ],
@@ -50,6 +59,12 @@
       ],
       "@event-participation-trends/api/passport": [
         "libs/api/passport/src/index.ts"
+      ],
+      "@event-participation-trends/api/positioning": [
+        "libs/api/positioning/src/index.ts"
+      ],
+      "@event-participation-trends/api/sensorlinking": [
+        "libs/api/sensorlinking/src/index.ts"
       ],
       "@event-participation-trends/api/user/data-access": [
         "libs/api/user/data-access/src/index.ts"
@@ -193,6 +208,9 @@
       "@event-participation-trends/app/modals/util": [
         "libs/app/modals/util/src/index.ts"
       ],
+      "@event-participation-trends/app/profile/feature": [
+        "libs/app/profile/feature/src/index.ts"
+      ],
       "@event-participation-trends/app/requestaccessmodal/feature": [
         "libs/app/requestaccessmodal/feature/src/index.ts"
       ],
@@ -205,8 +223,14 @@
       "@event-participation-trends/app/shared/util": [
         "libs/app/shared/util/src/index.ts"
       ],
+      "@event-participation-trends/app/subpagenav/data-access": [
+        "libs/app/subpagenav/data-access/src/index.ts"
+      ],
       "@event-participation-trends/app/subpagenav/feature": [
         "libs/app/subpagenav/feature/src/index.ts"
+      ],
+      "@event-participation-trends/app/subpagenav/util": [
+        "libs/app/subpagenav/util/src/index.ts"
       ],
       "@event-participation-trends/app/usermanagement/data-access": [
         "libs/app/usermanagement/data-access/src/index.ts"

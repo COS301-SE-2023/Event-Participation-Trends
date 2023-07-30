@@ -33,6 +33,7 @@ ion-list {
   background: transparent;
   width: auto;
 }
+
 ion-item {
   --background: inherit;
   width: auto;

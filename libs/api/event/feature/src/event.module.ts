@@ -12,6 +12,9 @@ import {
     RemoveViewerFromEventHandler,
     RemoveEventFromViewerHandler,
     UpdateEventDetailsHandler,
+    UpdateFloorlayoutHandler,
+    AddDevicePositionHandler,
+    AddViewerHandler,
 } from './commands';
 
 import { 
@@ -19,6 +22,10 @@ import {
     GetManagedEventsHandler,
     GetUserViewingEventsHandler,
     GetEventHandler,
+    GetEventFloorlayoutHandler,
+    GetEventDevicePositionHandler,
+    GetAllEventCategoriesHandler,
+    GetManagedEventCategoriesHandler
  } from './queries';
 
 import {
@@ -29,6 +36,9 @@ import {
     RemoveViewerFromEventEventHandler,
     RemoveEventFromViewerEventHandler,
     UpdateEventDetialsEventHandler,
+    UpdateFloorlayoutEventHandler,
+    AddDevicePositionEventHandler,
+    AddViewerEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -43,6 +53,9 @@ export const CommandHandlers = [
     RemoveViewerFromEventHandler,
     RemoveEventFromViewerHandler,
     UpdateEventDetailsHandler,
+    UpdateFloorlayoutHandler,
+    AddDevicePositionHandler,
+    AddViewerHandler,
 ]
 
 export const EventHandlers = [
@@ -53,6 +66,9 @@ export const EventHandlers = [
     RemoveViewerFromEventEventHandler,
     RemoveEventFromViewerEventHandler,
     UpdateEventDetialsEventHandler,
+    UpdateFloorlayoutEventHandler,
+    AddDevicePositionEventHandler,
+    AddViewerEventHandler
 ];
 
 export const QueryHandlers = [
@@ -61,7 +77,12 @@ export const QueryHandlers = [
     GetAllViewRequestsHandler,
     GetUserViewingEventsHandler,
     GetEventHandler,
+    GetEventFloorlayoutHandler,
+    GetEventDevicePositionHandler,
+    GetAllEventCategoriesHandler,
+    GetManagedEventCategoriesHandler
 ];
+
 
 @Module({
     imports: [CqrsModule, EventDataAccessModule, UserDataAccessModule],

@@ -1,6 +1,9 @@
-<subpagenav [currentPage]="'/home/eventdetails'"></subpagenav>
-<ion-content
-  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+<!-- <subpagenav [currentPage]="'/home/eventdetails'"></subpagenav> -->
+<div
+  class="bg-[url('assets/blob-scene-haikei-dark.svg')] fixed opacity-75 top-0 left-0 w-screen h-screen z-0"
+></div>
+<div
+  class="bg-cover bg-no-repeat bg-center bg-fixed h-full overflow-y-scroll"
 >
   <div class="backdrop-blur-[6px] h-full">
     <div
@@ -8,7 +11,7 @@
       class="w-screen z-20 bg-ept-deep-grey bg-opacity-20 h-full flex justify-center items-center transition-all duration-300 absolute"
     >
       <div
-        class="w-2/6 h-5/6 bg-white rounded-lg bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
+        class="w-2/6 h-5/6 bg-white rounded-lg shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
       >
         <div class="flex flex-col w-full content-center">
           <ion-icon
@@ -61,7 +64,7 @@
       class="w-screen z-20 bg-ept-deep-grey bg-opacity-20 h-full flex justify-center items-center transition-all duration-300 absolute"
     >
       <div
-        class="w-2/6 h-fit bg-white rounded-lg bg-opacity-[85%] shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
+        class="w-2/6 h-fit bg-white rounded-lg shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)]"
       >
         <div class="flex flex-col w-full content-center">
           <ion-icon
@@ -106,8 +109,8 @@
           </div>
           <h1 class="text-2xl p-4 self-start">{{name}}</h1>
         </div>
-        <div class="p-4 self-start w-full">
-          <div class="py-3">
+        <div class="p-3 self-start w-full">
+          <div class="py-2">
             <label>Start Date</label>
             <ion-input
               type="date"
@@ -115,7 +118,7 @@
               [(ngModel)]="startDate"
             ></ion-input>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>End Date</label>
             <ion-input
               type="date"
@@ -123,7 +126,7 @@
               [(ngModel)]="endDate"
             ></ion-input>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Location</label>
             <ion-input
               type="text"
@@ -131,7 +134,7 @@
               [(ngModel)]="location"
             ></ion-input>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Category</label>
             <ion-input
               type="text"
@@ -139,20 +142,22 @@
               [(ngModel)]="category"
             ></ion-input>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Starts At:</label>
             <ion-input
               type="time"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
               [(ngModel)]="startTime"
+              pattern="^(?:2[0-3]|[01][0-9]):[0-5][0-9]$"
             ></ion-input>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Ends At:</label>
             <ion-input
               type="time"
               class="input px-2 bg-white w-full overflow-hidden shadow-[0px_5px_15px_1px_rgba(0,0,0,0.2)] rounded-lg border-ept-deep-grey"
               [(ngModel)]="endTime"
+              pattern="^(?:2[0-3]|[01][0-9]):[0-5][0-9]$"
             ></ion-input>
           </div>
         </div>
@@ -168,9 +173,26 @@
         </div>
       </div>
       <div
-        class="col-span-2 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
-        routerLink="/flooreditor"
-      ></div>
+        class="relative col-span-2 m-7 flex flex-col items-center justify-center rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white hover:cursor-pointer"
+      >
+      <ion-button
+        class="m-4 w-1/3 rounded-lg overflow-hidden self-center bg-ept-deep-grey hover:scale-105 duration-300 transition-all"
+        (click)="openCreateFloorplan()"
+      >
+        <ion-icon name="create-outline"></ion-icon>Edit Floor
+        Plan</ion-button
+      >
+      <div *ngIf="floorplanExists" class="absolute bottom-4 flex flex-col items-center justify-evenly">
+        <ion-label *ngIf="showRed" class="text-md">Delete existing floor plan?</ion-label>
+        <img 
+          [src]="showRed ? 'assets/trash-icon.svg' : 'assets/trash-bin-outline.svg'" 
+          class="h-10 w-10" 
+          (mouseenter)="showRed = true"
+          (mouseleave)="showRed = false"
+          (click)="confirmAlert()"
+        >
+      </div>
+      </div>
     </div>
   </div>
-</ion-content>
+</div>

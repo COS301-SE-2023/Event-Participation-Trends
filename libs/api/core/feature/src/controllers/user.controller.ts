@@ -1,5 +1,9 @@
 import { UserService } from '@event-participation-trends/api/user/feature';
 import {
+    IGetEmailResponse,
+    IGetFullNameResponse,
+    IGetProfilePicUrlResponse,
+    IGetUserNameResponse,
     IGetUserRoleResponse,
   IGetUsersRequest,
   IGetUsersResponse,
@@ -20,7 +24,7 @@ export class UserController {
   constructor(private userService: UserService) {}
     @Get('getAllUsers')
     @SetMetadata('role',Role.ADMIN)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getAllUsers(
         @Req() req: Request,
     ): Promise<IGetUsersResponse> {
@@ -37,7 +41,7 @@ export class UserController {
 
     @Post('updateUserRole')
     @SetMetadata('role',Role.ADMIN)
-    @UseGuards(JwtGuard, RbacGuard)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async updateUserRole(
         @Req() req: Request,
         @Body() requestBody: IUpdateRoleRequest,
@@ -72,5 +76,50 @@ export class UserController {
     return {
         userRole: request.user['role'],
     };
+    }
+
+    @Get('getUserName')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getUserName(@Req() req: Request): Promise<IGetUserNameResponse> {
+        const request: any = req;
+        return {
+            username: request.user['firstName'],
+        };
+    }
+
+    @Get('getProfilePicUrl')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getProfilePhotoLink(@Req() req: Request): Promise<IGetProfilePicUrlResponse> {
+        const request: any = req;
+        return {
+            url: request.user['picture'],
+        };
+    }
+
+    @Get('getFullName')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getFullName(@Req() req: Request): Promise<IGetFullNameResponse> {
+        const request: any = req;
+        if (request.user['lastName'] == undefined) {
+            return {
+                fullName: request.user['firstName'],
+            };
+        }
+        return {
+            fullName: request.user['firstName'] + ' ' + request.user['lastName'],
+        };
+    }
+
+    @Get('getEmail')
+    @SetMetadata('role', Role.VIEWER)
+    @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+    async getEmail(@Req() req: Request): Promise<IGetEmailResponse> {
+        const request: any = req;
+        return {
+            email: request.user['email'],
+        };
     }
 }
