@@ -152,8 +152,8 @@ extern "C" void app_main(void)
     uint8_t mac[6];
     esp_efuse_mac_get_default(mac);
     char mac_str[18];
-    // snprintf(mac_str, 18, "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-    snprintf(mac_str, 18, "%02x:%02x:%02x:XY:XY:XY", mac[0], mac[1], mac[2]);
+    snprintf(mac_str, 18, "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    // snprintf(mac_str, 18, "%02x:%02x:%02x:XY:XY:XY", mac[0], mac[1], mac[2]);
     global_mac_addr = std::string(mac_str);
 #ifdef CONFIG_OTA_ENABLE
     ESP_LOGI("OTA", "Starting OTA");
