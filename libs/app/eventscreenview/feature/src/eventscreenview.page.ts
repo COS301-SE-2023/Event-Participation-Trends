@@ -143,12 +143,14 @@ export class EventScreenViewPage {
             const eventEndDate = response.event.EndDate;
             
             if (eventStartDate) {
-              
-              this.eventStartTime = eventStartDate;
+              this.eventStartTime = new Date(eventStartDate);
             }
             if (eventEndDate) {
-              this.eventEndTime = eventEndDate;
+              this.eventEndTime = new Date(eventEndDate);
             }
+
+            console.log(this.eventStartTime);
+            console.log(this.eventEndTime);
           }
         });
       }      
@@ -162,11 +164,6 @@ export class EventScreenViewPage {
      // wait until the heatmap container is rendered
      setTimeout(() => {
       this.isLoading = false;
-
-      this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 10);
-      this.eventEndTime = new Date();
-      this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
     
       // set the number of hours of the event
       let hoursOfEvent = 0;
@@ -225,10 +222,10 @@ export class EventScreenViewPage {
         clearInterval(streamingInterval);
       } else {
 
-        //! Testing purposes
+        // //! Testing purposes
 
-        now.setHours(now.getHours() - 10);
-        now.setMinutes(now.getMinutes() - 30);
+        // now.setHours(now.getHours() - 11);
+        // now.setMinutes(now.getMinutes() - 20);
 
         // get positions this interval
 
@@ -247,7 +244,7 @@ export class EventScreenViewPage {
           radius: number
         }[] = [];
 
-        
+      
         data = positions!.positions!.map((position: IPosition) => {
           if (position.x != null && position.y != null) {
             return {
