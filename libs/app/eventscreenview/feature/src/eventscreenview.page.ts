@@ -2,8 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
-import 'luxon';
-import 'chartjs-adapter-luxon';
 import 'chartjs-plugin-datalabels';
 
 import ChartStreaming from 'chartjs-plugin-streaming';
