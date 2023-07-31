@@ -4,7 +4,6 @@ import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
 import Konva from 'konva';
 import HeatMap from 'heatmap-ts'
-
 import 'chartjs-plugin-datalabels';
 
 import ChartStreaming from 'chartjs-plugin-streaming';
@@ -147,12 +146,14 @@ export class EventScreenViewPage {
             const eventEndDate = response.event.EndDate;
             
             if (eventStartDate) {
-              
-              this.eventStartTime = eventStartDate;
+              this.eventStartTime = new Date(eventStartDate);
             }
             if (eventEndDate) {
-              this.eventEndTime = eventEndDate;
+              this.eventEndTime = new Date(eventEndDate);
             }
+
+            console.log(this.eventStartTime);
+            console.log(this.eventEndTime);
           }
         });
       }      
@@ -166,11 +167,6 @@ export class EventScreenViewPage {
      // wait until the heatmap container is rendered
      setTimeout(() => {
       this.isLoading = false;
-
-      this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 13);
-      this.eventEndTime = new Date();
-      this.eventEndTime.setHours(this.eventEndTime.getHours() + 4);
     
       // set the number of hours of the event
       let hoursOfEvent = 0;
@@ -246,10 +242,10 @@ export class EventScreenViewPage {
         clearInterval(streamingInterval);
       } else {
 
-        //! Testing purposes
+        // //! Testing purposes
 
-        now.setHours(now.getHours() - 13);
-        now.setMinutes(now.getMinutes() - 20);
+        // now.setHours(now.getHours() - 11);
+        // now.setMinutes(now.getMinutes() - 20);
 
         // get positions this interval
 

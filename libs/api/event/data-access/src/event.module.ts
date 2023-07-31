@@ -6,6 +6,7 @@ import { EventSchema,
          SensorSchema,
          StallSchema,
 } from '../schemas';
+import {EmailService} from '@event-participation-trends/api/email/feature';
 @Module({
     imports: [MongooseModule.forFeature([
         {name: 'EventLocation', schema: EventLocationSchema },
@@ -13,7 +14,7 @@ import { EventSchema,
         {name: 'Stall', schema: StallSchema },
         {name: 'Event', schema: EventSchema }
         ])],
-  providers: [EventRepository],
-  exports: [EventRepository],
+  providers: [EventRepository, EmailService],
+  exports: [EventRepository, EmailService],
 })
 export class EventModule {} 
