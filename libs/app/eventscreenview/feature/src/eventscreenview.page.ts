@@ -47,8 +47,8 @@ export class EventScreenViewPage {
 
   // Frontend
   isLoading = true;
-  activeDevices = 25;
-  inactiveDevices = 5;
+  activeDevices = 4;
+  inactiveDevices = 0;
   diviceCountChart = null;
   showToggle = false;
   showHeatmap = false;
