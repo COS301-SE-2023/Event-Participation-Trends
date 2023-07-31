@@ -2156,8 +2156,8 @@ export class CreateFloorPlanPage implements OnInit{
           loading.dismiss();
           this.presentToastSuccess('bottom', 'Floor layout saved successfully');
           // save an image of the canvas
-          const dataUrl = this.canvasContainer.toDataURL({ pixelRatio: 3 });
-          this.downloadURI(dataUrl, 'floorplan.png');
+          // const dataUrl = this.canvasContainer.toDataURL({ pixelRatio: 3 });
+          // this.downloadURI(dataUrl, 'floorplan.png');
           this.router.navigate(
             ['/event/eventdetails'], 
             { queryParams: {
