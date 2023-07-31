@@ -73,7 +73,7 @@
       >
         <ion-card-content
           class="flex flex-col h-full duration-300 transition-all bg-transparent"
-          title="This event has no floor layout"
+          [title]="!hasFloorLayout(event) ? 'This event has no floor layout' : event.Name"
         >
           <div class="w-full grid grid-cols-4">
             <p
