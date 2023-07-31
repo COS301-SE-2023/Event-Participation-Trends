@@ -22,10 +22,7 @@
         ngClass="title-text"
         class="block 1310:hidden text-xl font-semibold self-center"
         [ngClass]="{'lg:text-xl': !isLargeScreen, 'lg:text-2xl': isLargeScreen}"
-        >EPT
-        <sub
-          ><ion-text color="medium">/ {{getRole()}}</ion-text></sub
-        ></ion-label
+        >EPT</ion-label
       >
     </div>
 
@@ -156,11 +153,7 @@
         ngClass="title-text"
         class="hidden 1310:block 1310:text-lg 1480:text-xl font-semibold pt-2"
         >Event Participation Trends
-        <sub
-          ><ion-text color="medium" class="lg:text-sm"
-            >/ {{getRole()}}</ion-text
-          ></sub
-        ></ion-label
+        </ion-label
       >
       <ion-label
         ngClass="title-text"
@@ -200,6 +193,8 @@
         <ion-label ngClass="tab-text">Event Details</ion-label>
       </ion-tab-button>
     </div>
+
+    <div *ngIf="!showTabs"></div>
 
     <div class="flex justify-self-end"
     >
