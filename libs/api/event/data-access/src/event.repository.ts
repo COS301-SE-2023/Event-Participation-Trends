@@ -30,6 +30,10 @@ export class EventRepository {
         return await this.eventModel.find({Name: {$eq: eventName}}).select("-Devices");
     }
 
+    async getEventByNameVerbose(eventName: string){
+        return await this.eventModel.find({Name: {$eq: eventName}});
+    }
+
     async getEventById(eventID: Types.ObjectId){
         return await this.eventModel.find({_id: {$eq: eventID}}).select("-Devices");
     }
@@ -194,6 +198,10 @@ export class EventRepository {
     async getAllEventCategories(){
         return await this.eventModel.find().select("Category").distinct("Category");
     }
+
+    async deleteEventbyId(eventId: Types.ObjectId){
+        return await this.eventModel.deleteOne(
+            {_id :{$eq: eventId}})};
 
     async getManagedEventCategories(managerID: Types.ObjectId){
         return await this.eventModel.find(

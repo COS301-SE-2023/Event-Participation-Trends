@@ -10,37 +10,7 @@ The system uses Google Authentication to ensure security and privacy of the data
 
 ## Installation and Setup
 
-1. Clone the repository to your local machine using the following command:
-
-   ```bash
-   git clone https://github.com/COS301-SE-2023/Event-Participation-Trends
-   ```
-
-2. Navigate to the project directory:
-
-   ```bash
-   cd Event-Participation-Trends
-   ```
-
-3. Install the required dependencies
-   ```bash
-   yarn install
-   ```
-4. Configure the .env file
-
-5. Start the Angular frontend:
-
-   ```bash
-   yarn nx serve app
-   ```
-
-6. Start the NestJs backend:
-
-   ```bash
-   yarn nx serve api
-   ```
-
-7. Open your web browser and visit `http://localhost:4200` to access the Event Management System.
+Please refer to our [technical installation manual](https://github.com/COS301-SE-2023/Event-Participation-Trends/wiki/Technical-Installation-Manual).
 
 ## About Us
 
@@ -65,3 +35,4 @@ The system uses Google Authentication to ensure security and privacy of the data
 | Coding Standards Document | [Link](https://www.notion.so/Coding-Standards-7b82311f246d445c835abcd739321909?pvs=4) |
 | Documentation Contributions | [Link](https://www.notion.so/List-of-Contributions-1c60a373935440e383232a35eac06898?pvs=4) |
 | User Manual | [Link](https://docs.google.com/document/d/1_cKCrhkL_yB80d10c_E82UGZVLFnSZI2S8DJMGUVsJ0/edit?usp=sharing)
+| Technical Installation Manual | [Link](https://github.com/COS301-SE-2023/Event-Participation-Trends/wiki/Technical-Installation-Manual)

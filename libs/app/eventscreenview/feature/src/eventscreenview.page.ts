@@ -4,7 +4,6 @@ import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
 import Konva from 'konva';
 import HeatMap from 'heatmap-ts'
-
 import 'chartjs-plugin-datalabels';
 
 import ChartStreaming from 'chartjs-plugin-streaming';
