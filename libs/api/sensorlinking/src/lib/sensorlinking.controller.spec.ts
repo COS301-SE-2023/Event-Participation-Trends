@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
 import { SensorlinkingController } from './sensorlinking.controller';
-import { Module } from '@nestjs/common';
 import {
   UserService,
   UserModule,
