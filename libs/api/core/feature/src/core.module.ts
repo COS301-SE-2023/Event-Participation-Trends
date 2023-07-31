@@ -15,6 +15,10 @@ import {
   GlobalModule,
   GlobalService,
 } from '@event-participation-trends/api/global/feature';
+import {
+    EmailModule,
+    EmailService,
+  } from '@event-participation-trends/api/email/feature';
 import { ApiGuardsModule } from '@event-participation-trends/api/guards';
 import { SensorlinkingModule } from '@event-participation-trends/api/sensorlinking';
 import { JwtService } from '@nestjs/jwt';
@@ -25,11 +29,12 @@ import { JwtService } from '@nestjs/jwt';
     UserModule,
     EventModule,
     GlobalModule,
+    EmailModule,
     ApiGuardsModule,
     SensorlinkingModule,
   ],
   controllers: [UserController, EventController, GlobalController],
-  providers: [UserService, EventService, GlobalService, JwtService],
-  exports: [UserService, EventService, GlobalService],
+  providers: [UserService, EventService, GlobalService, JwtService, EmailService],
+  exports: [UserService, EventService, GlobalService, EmailService],
 })
 export class CoreModule {}
