@@ -31,6 +31,8 @@ import {
     IGetEventDevicePositionRequest,
     IGetEventDevicePositionResponse,
     IGetAllEventCategoriesResponse,
+    IGetManagedEventCategoriesResponse,
+    IGetManagedEventCategoriesRequest,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -373,6 +375,21 @@ export class EventController {
   async getAllEventCategories(): Promise<IGetAllEventCategoriesResponse> {
 
     return this.eventService.getAllEventCategories();
+  }
+
+  @Get('getManagedEventCategories')
+  @SetMetadata('role', Role.MANAGER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
+  async getManagedEventCategories(@Req() req: Request ): Promise<IGetManagedEventCategoriesResponse> {
+    const request: any = req;
+
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: Manager email not provided', 400);
+
+    const extractRequest: IGetManagedEventCategoriesRequest = {
+      ManagerEmail: request.user['email'],
+    };
+    return this.eventService.getManagedEventCategories(extractRequest);
   }
 
 }

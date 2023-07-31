@@ -23,8 +23,12 @@ import {
   IEventId,
   IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
+  IGetEventDevicePositionResponse,
+  IGetEventFloorlayoutResponse,
+  IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
+  IPosition,
   ISendViewRequestResponse,
   IUpdateEventDetailsRequest,
   IUpdateEventDetailsResponse,
@@ -119,6 +123,14 @@ export class AppApiService {
     );
   }
 
+  getEvent(eventId: IEventId): Observable<IEvent> {
+    return this.http.get<IEvent>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
+      headers: {
+        'x-csrf-token': this.cookieService.get('csrf'),
+      },
+    });
+  }
+
   getAllEvents(): Observable<IGetAllEventsResponse> {
     return this.http.get<IGetAllEventsResponse>('/api/event/getAllEvents', {
       headers: {
@@ -167,6 +179,14 @@ export class AppApiService {
     });
   }
 
+  getEventFloorLayout(eventId: string): Observable<IGetEventFloorlayoutResponse> {
+    return this.http.get<IGetEventFloorlayoutResponse>(`/api/event/getEventFloorLayout?eventId=${eventId}`, {
+      headers:{
+        'x-csrf-token': this.cookieService.get('csrf'),
+      }
+    });
+  }
+
   sendViewRequest(eventId: IEventId): Observable<ISendViewRequestResponse> {
     return this.http.post<ISendViewRequestResponse>(
       '/api/event/sendViewRequest',
@@ -191,7 +211,7 @@ export class AppApiService {
         },
       })
     ).then((response) => {
-      return response.users[0].Requesters;
+      return response.users[0]?.Requesters || [];
     });
   }
 
@@ -294,6 +314,41 @@ export class AppApiService {
       )
     ).then((response) => {
       return response.categories;
+    });
+  }
+
+  async getManagedEventCategories(): Promise<string[] | undefined | null> {
+    return firstValueFrom(
+      this.http.get<IGetManagedEventCategoriesResponse>(
+        '/api/event/getManagedEventCategories',
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response.categories;
+    });
+  }
+
+  async getEventDevicePosition(eventId: string | null, startTime: Date | null | undefined, endTime: Date | null | undefined): Promise<IGetEventDevicePositionResponse | undefined | null> {
+    // copy startTime up to "GMT+0000"
+    const startTimeString = startTime?.toString().slice(0, 33);
+    // copy endTime up to "GMT+0000"
+    const endTimeString = endTime?.toString().slice(0, 33);
+
+    return firstValueFrom(
+      this.http.get<IGetEventDevicePositionResponse>(
+        `/api/event/getEventDevicePosition?eventId=${eventId}&startTime=${startTimeString}&endTime=${endTimeString}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response;
     });
   }
 }

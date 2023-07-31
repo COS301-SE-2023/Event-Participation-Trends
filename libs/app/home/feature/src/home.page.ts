@@ -1,4 +1,5 @@
 import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 import { Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ProfileComponent } from '@event-participation-trends/app/profile/feature';
@@ -10,17 +11,18 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./home.page.css'],
 })
 export class HomePage {
-  selected = 'Users';
-  usersSelected = true;
+  selected = 'Event';
+  usersSelected = false;
   viewSelected = false;
   compareSelected = false;
-
+  
+  public open = false;
   public role = Role.VIEWER;
   public username = '';
   public profilePicUrl = '';
   public faultyImage = false;
 
-  constructor(private appApiService: AppApiService, private readonly modalController: ModalController) {
+  constructor(private appApiService: AppApiService, private readonly modalController: ModalController, private router: Router) {
     this.appApiService.getRole().subscribe((response)=>{
       this.role = (response.userRole as Role) || Role.VIEWER;
     });
@@ -33,6 +35,18 @@ export class HomePage {
         this.faultyImage = true;
       }
     });
+
+    const url = this.router.url;
+    if (url.includes('user')) {
+      this.selected = 'Users';
+      this.usersSelected = true;
+    } else if (url.includes('view')) {
+      this.selected = 'View';
+      this.viewSelected = true;
+    } else if (url.includes('comparing')) {
+      this.selected = 'Compare Events';
+      this.compareSelected = true;
+    }
   }
 
   selectTab(option: string) {
@@ -67,6 +81,10 @@ export class HomePage {
 
   getRole(): Role {
     return this.role;
+  }
+
+  isViewer(): boolean {
+    return this.role === 'viewer';
   }
 
   isLargeScreen = false;

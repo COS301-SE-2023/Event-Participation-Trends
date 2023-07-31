@@ -41,117 +41,48 @@ export class VieweventsPage implements OnInit{
     private readonly router: Router,
     private store: Store,
     private readonly toastController: ToastController,
-  ) {
-    // // get role
-    // this.appApiService.getRole().subscribe((role) => {
-    //   this.role = role.userRole ? role.userRole : 'Viewer';
-      
-    //   let my_events_request : Observable<IGetManagedEventsResponse>;
-      
-    //   if (this.role === 'admin') {
-    //     this.appApiService.getAllEvents().subscribe((response) => {
-    //       this.my_events = response.events;
-    //     })
-        
-    //     return;
-    //   }
-      
-    //   if (this.role === 'manager') {
-    //     my_events_request = this.appApiService.getManagedEvents();
-    //   }else {
-    //     my_events_request = new Observable((observer) => {
-    //       observer.next({
-    //         events: []
-    //       });
-    //       setTimeout(() => {
-    //         observer.complete();
-    //       })
-    //     });
-    //   }
-      
-    //   forkJoin([my_events_request, this.appApiService.getAllEvents(), this.appApiService.getSubscribedEvents()]).subscribe((response) => {
-    //     const my_events = response[0].events;
-    //     const all_events = response[1].events;
-    //     const subscribed_events = response[2].events;
-
-    //     this.my_events = my_events;
-    //     this.all_events = all_events;
-
-    //     this.subscribed_events = subscribed_events.filter((event: any) => {
-    //       // event is not in my_events
-    //       return (
-    //         this.my_events.filter((my_event) => {
-    //           return my_event._id == event._id;
-    //         }).length == 0
-    //       );
-    //     });
-
-    //     // Set unsubscribed events
-    //     this.unsubscribed_events = all_events.filter((event: any) => {
-    //       return (
-    //         !this.hasAccess(event) &&
-    //         this.my_events.filter((my_event) => {
-    //           return my_event._id == event._id;
-    //         }).length == 0
-    //       );
-    //     });
-    //   })
-
-    // });
-  }
+  ) {}
 
   ngOnInit() {
-    // set isLoading to false after 3 seconds
-    setTimeout(() => {
-      this.store.dispatch(new GetRole());
-      this.store.dispatch(new GetAllEvents());
-
-      this.all_events$.subscribe((all_events) => {
-        this.all_events = all_events ? all_events : [];
-      });
-
-      this.role$.subscribe((role) => {
-        this.role = role ? role : 'Viewer';
-
-        let my_events_request: Observable<IGetManagedEventsResponse>;
+      // get role
+      this.appApiService.getRole().subscribe((role) => {
+        this.role = role.userRole ? role.userRole : 'viewer';
+        
+        let my_events_request : Observable<IGetManagedEventsResponse>;
+        
+        console.log('role:', this.role);
 
         if (this.role === 'admin') {
-          this.all_events$.subscribe((all_events) => {
-            this.my_events = all_events ? all_events : [];
-          });
+          this.appApiService.getAllEvents().subscribe((response) => {
+            this.my_events = response.events;
+            console.log('my_events', this.my_events);
+          })
+          
           return;
         }
-
+        
         if (this.role === 'manager') {
-          this.store.dispatch(new GetMyEvents());
-
-          this.my_events$.subscribe((my_events) => {
-            this.my_events = my_events ? my_events : [];
-          });
-        } else {
+          my_events_request = this.appApiService.getManagedEvents();
+        }else {
           my_events_request = new Observable((observer) => {
             observer.next({
-              events: [],
+              events: []
             });
             setTimeout(() => {
               observer.complete();
             })
           });
-
-          my_events_request.subscribe((my_events) => {
-            this.my_events = my_events.events ? my_events.events : [];
-
-            // set my events
-            this.store.dispatch(new SetMyEvents(this.my_events));
-          });
         }
+        
+        forkJoin([my_events_request, this.appApiService.getAllEvents(), this.appApiService.getSubscribedEvents()]).subscribe((response) => {
+          const my_events = response[0].events;
+          const all_events = response[1].events;
+          const subscribed_events = response[2].events;
 
-        this.store.dispatch(new GetSubscribedEvents());
+          this.my_events = my_events;
+          this.all_events = all_events;
 
-        this.subscribed_events$.subscribe((subscribed_events) => {
-          this.subscribed_events = subscribed_events ? subscribed_events : [];
-
-          this.subscribed_events = this.subscribed_events?.filter((event: any) => {
+          this.subscribed_events = subscribed_events.filter((event: any) => {
             // event is not in my_events
             return (
               this.my_events.filter((my_event) => {
@@ -159,16 +90,21 @@ export class VieweventsPage implements OnInit{
               }).length == 0
             );
           });
-          this.store.dispatch(new GetUnsubscribedEvents());
-    
-          this.unsubscribed_events$.subscribe((unsubscribed_events) => {
-            this.unsubscribed_events = unsubscribed_events ? unsubscribed_events : [];
+
+          // Set unsubscribed events
+          this.unsubscribed_events = all_events.filter((event: any) => {
+            return (
+              !this.hasAccess(event) &&
+              this.my_events.filter((my_event) => {
+                return my_event._id == event._id;
+              }).length == 0
+            );
           });
-        });
+        })
+
       });
 
       this.isLoading = false;
-    }, 1000);
   }
 
   async showPopupMenu(event: any) {
@@ -232,17 +168,6 @@ export class VieweventsPage implements OnInit{
   }
 
   managedEvents(): any[] {
-    // return this.my_events.filter((event) => {
-    //   return event.Name
-    //     ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
-    //     : false;
-    // });
-    this.my_events = [];
-
-    this.my_events$.subscribe((my_events) => {
-      this.my_events = my_events ? my_events : [];
-    });
-
     return this.my_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
@@ -251,17 +176,6 @@ export class VieweventsPage implements OnInit{
   }
 
   subscribedEvents(): any[] {
-    // return this.subscribed_events.filter((event) => {
-    //   return event.Name
-    //     ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
-    //     : false;
-    // });
-    this.subscribed_events = [];
-
-    this.subscribed_events$.subscribe((subscribed_events) => {
-      this.subscribed_events = subscribed_events ? subscribed_events : [];
-    });
-
     return this.subscribed_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
@@ -270,17 +184,6 @@ export class VieweventsPage implements OnInit{
   }
 
   unsubscribedEvents(): any[] {
-    // return this.unsubscribed_events.filter((event) => {
-    //   return event.Name
-    //     ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
-    //     : false;
-    // });
-    this.unsubscribed_events = [];
-
-    this.unsubscribed_events$.subscribe((unsubscribed_events) => {
-      this.unsubscribed_events = unsubscribed_events ? unsubscribed_events : [];
-    });
-
     return this.unsubscribed_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.searchValue.toLowerCase())
@@ -383,5 +286,14 @@ export class VieweventsPage implements OnInit{
     });
 
     await toast.present();
+  }
+
+  highlightText(text: string, search: string): string {
+    if (!search || !text) {
+      return text;
+    }
+
+    const pattern = new RegExp(search, 'gi');
+    return text.replace(pattern, match => `<span class="bg-ept-bumble-yellow text-ept-deep-grey">${match}</span>`);
   }
 }

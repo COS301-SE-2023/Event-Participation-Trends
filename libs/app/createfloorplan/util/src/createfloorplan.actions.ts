@@ -1,7 +1,7 @@
 import Konva from "konva";
 
 interface ISensorState {
-    object: Konva.Image,
+    object: Konva.Circle,
     isLinked: boolean,
 }
 
@@ -16,7 +16,7 @@ export class SetSensors {
 }
 export class AddSensor {
     static readonly type = '[CreateFloorPlan] AddSensor';
-    constructor(public sensor: Konva.Image) {}
+    constructor(public sensor: Konva.Circle) {}
 }
 
 export class RemoveSensor {

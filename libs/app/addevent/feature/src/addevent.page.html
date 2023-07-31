@@ -1,15 +1,18 @@
 <!-- <subpagenav [currentPage]="'/home/addevent'"></subpagenav> -->
+<div
+  class="bg-[url('assets/blob-scene-haikei-dark.svg')] fixed opacity-75 top-0 left-0 w-screen h-screen z-0"
+></div>
 <ion-content
-  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+  class="bg-cover bg-no-repeat bg-center bg-fixed h-full"
 >
-  <div class="backdrop-blur-[6px] h-full">
+  <div class="h-full">
     <div class="w-full min-h-full grid grid-cols-3">
       <form [formGroup]="eventForm" (ngSubmit)="createEvent()">
       <div
         class="col-span-1 m-7 rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white flex flex-col" [ngClass]="{'opacity-50': canCreateFloorPlan$ | async}"
       >
         <div class="p-4 self-start w-full">
-          <div class="py-3">
+          <div class="py-2">
             <label>Event Name</label>
             <ion-input
               [readonly]="canCreateFloorPlan$ | async"
@@ -25,7 +28,7 @@
               <div class="text-red-500 text-sm italic" *ngIf="eventName?.errors?.['required']">Invalid event name</div>
             </div>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Date</label>
             <ion-input
               [readonly]="canCreateFloorPlan$ | async"
@@ -41,7 +44,7 @@
               <div class="text-red-500 text-sm italic" *ngIf="eventDate?.errors?.['required']">Invalid date</div>
             </div>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Location</label>
             <ion-input
               [readonly]="canCreateFloorPlan$ | async"
@@ -57,7 +60,7 @@
               <div class="text-red-500 text-sm italic" *ngIf="eventLocation?.errors?.['required']">Invalid location</div>
             </div>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Category</label>
             <ion-input
               [readonly]="canCreateFloorPlan$ | async"
@@ -73,7 +76,7 @@
               <div class="text-red-500 text-sm italic" *ngIf="eventCategory?.errors?.['required']">Invalid category</div>
             </div>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Starts At:</label>
             <ion-input
               [readonly]="canCreateFloorPlan$ | async"
@@ -90,7 +93,7 @@
               <div class="text-red-500 text-sm italic" *ngIf="eventStartTime?.errors?.['required']">Invalid start time</div>
             </div>
           </div>
-          <div class="py-3">
+          <div class="py-2">
             <label>Ends At:</label>
             <ion-input
               [readonly]="canCreateFloorPlan$ | async"
@@ -123,7 +126,7 @@
       </div>
     </form>
       <div
-        class="bg-[url('assets/floormap_icon.svg')] bg-no-repeat bg-center col-span-2 m-7 flex flex-col items-center justify-center rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white" [ngClass]="{'opacity-50': !(canCreateFloorPlan$ | async)}"
+        class="bg-[url('assets/floormap_icon.svg')] overflow-hidden bg-no-repeat bg-center col-span-2 m-7 flex flex-col items-center justify-center rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey duration-300 transition-all bg-opacity-[85%] bg-ept-off-white" [ngClass]="{'opacity-50': !(canCreateFloorPlan$ | async)}"
       >
         <div class="h-full w-full backdrop-blur-[8px] flex flex-row items-center justify-center">
           <ion-button

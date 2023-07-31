@@ -1,11 +1,12 @@
 import { Time } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { Redirect } from '@nestjs/common';
 import { IEvent, IEventDetails, IUpdateEventDetailsRequest } from '@event-participation-trends/api/event/util';
 import { promisify } from 'util';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'event-participation-trends-eventdetails',
@@ -27,7 +28,18 @@ export class EventDetailsPage {
   public location = '';
   public category = '';
   public name = '';
-  constructor(appApiService: AppApiService, private readonly route: ActivatedRoute, private router: Router) {
+  screenTooSmall = false;
+  alert: HTMLIonAlertElement | null = null;
+  isLoading = false;
+  showRed = false;
+  floorplanExists = false;
+
+  constructor(
+    appApiService: AppApiService, 
+    private readonly route: ActivatedRoute,
+    private router: Router,
+    private alertController: AlertController,
+    ) {
     this.initialText = 'Initial text value';
     this.inviteEmail = '';
     this.appApiService = appApiService;
@@ -52,6 +64,12 @@ export class EventDetailsPage {
         this.name = this.event.Name;
         appApiService.getAccessRequests( {eventId : this.event._id} ).then((users) => {
           this.accessRequests = users;
+        });
+
+        appApiService.getEventFloorLayout(this.event._id).subscribe((response) => {
+          if(response.floorlayout !== ''){
+            this.floorplanExists = true;
+          }
         });
       })
     });
@@ -125,8 +143,59 @@ export class EventDetailsPage {
   }
 
   openCreateFloorplan() {
-    //get event if from url
-    const queryParams = { m: false, id: this.event._id, queryParamsHandling: 'merge' };
-    this.router.navigate(['/event/createfloorplan'], { queryParams });
+    if (this.screenTooSmall) {
+      this.presentAlert();
+    }
+    else {
+      this.isLoading = true;
+      //get event if from url
+      const queryParams = { m: false, id: this.event._id, queryParamsHandling: 'merge' };
+
+      this.router.navigate(['/event/createfloorplan'], { queryParams });
+    }
+  }
+
+  async presentAlert() {
+    this.alert = await this.alertController.create({
+      header:'Screen too small',
+      message:'Please use a larger screen to create a floor plan',
+      buttons: [{text: 'OK', role: 'confirm', handler: () => {
+        this.alert?.dismiss();
+      }}]
+    });
+    
+    await this.alert.present();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.checkScreenWidth();
+  }
+
+  checkScreenWidth(): void {
+    this.screenTooSmall = window.innerWidth < 1052;
+  }
+
+  ngAfterViewInit() {
+    this.checkScreenWidth();
+  }
+
+  async confirmAlert() {
+    const confirmAlert = await this.alertController.create({
+      header:'Warning',
+      message:'Are you sure you want to delete this event?',
+      buttons: [{text: 'Cancel', role: 'cancel', handler: () => {
+        confirmAlert.dismiss();
+      }}, {text: 'Delete', role: 'confirm', handler: () => {
+        this.appApiService.updateFloorLayout(this.event._id, '').subscribe((response) => {
+          console.log(response);
+          if(response.status === 'success'){
+            this.floorplanExists = false;
+          }
+        });
+      }}]
+    });
+    
+    await confirmAlert.present(); 
   }
 }

@@ -23,7 +23,7 @@ export class SubPageNavPage implements OnInit{
   public appApiService: AppApiService;
   selected = 'Dashboard';
   detailsSelected = false;
-  dashboardSelected = true;
+  dashboardSelected = false;
   showTabs = false;
   params: {
     m: string,
@@ -31,6 +31,7 @@ export class SubPageNavPage implements OnInit{
     queryParamsHandling: string
   } | null = null;
   
+  public open = false;
   public username = '';
   public fullName = '';
   public profilePicUrl = '';
@@ -70,6 +71,18 @@ export class SubPageNavPage implements OnInit{
         this.faultyImage = true;
       }
     });
+
+    const url = this.router.url;
+    if (url.includes('eventdetails')) {
+      this.selected = 'Event Details';
+      this.detailsSelected = true;
+      this.dashboardSelected = false;
+    }
+    else if (url.includes('dashboard')) {
+      this.selected = 'Dashboard';
+      this.detailsSelected = false;
+      this.dashboardSelected = true;
+    }
   }
 
   getRole(): Role {
