@@ -41,7 +41,7 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
 
         //notify user via Email
         this.emailService.sendEmail(
-            userDoc[0].Email || "", 
+            userDoc[0]?.Email || "", 
             EmailSubject.CREATE_EVENT,
             EmailContent.CREATE_EVENT_CONTENT+ event.event.Name + EmailContent.NEW_LINE + EmailContent.NEW_LINE +
             "Event Details: " + EmailContent.NEW_LINE +

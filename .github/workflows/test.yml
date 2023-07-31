@@ -18,4 +18,5 @@ jobs:
       - run: 'yarn nx run-many --target=lint --all --parallel --skip-nx-cache'
       - run: 'yarn nx run-many --target=build --all --parallel --skip-nx-cache'
       - run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache --coverage --testTimeout=10000'
-      - run: 'yarn nx run-many --target=e2e  --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
+      - run: 'yarn nx run app-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
+      - run: 'yarn test:integration'

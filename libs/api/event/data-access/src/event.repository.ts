@@ -207,5 +207,4 @@ export class EventRepository {
         return await this.eventModel.find(
             {Manager: {$eq: managerID}}).select("Category").distinct("Category");
     }
-
 }

@@ -35,7 +35,7 @@ export class AddViewingEventByNameHandler implements ICommandHandler<AddViewingE
                 const userDoc = await this.userRepository.getUserById(eventDoc[0].Manager)
                 
                 const data: IAddViewEvent ={
-                    userEmail: userDoc[0].Email,
+                    userEmail: userDoc[0]?.Email || "",
                     eventId: <string> <unknown> eventDoc[0]._id
                 }
 

@@ -6756,6 +6756,11 @@ he@^1.2.0:
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
+heatmap-ts@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/heatmap-ts/-/heatmap-ts-0.0.5.tgz#e27f781bd724ef979e67273d906b7a18a0018e00"
+  integrity sha512-u75dNVbKFTC8sdcWxr0HdQ0ceb4hkgqDlzI8vv76gX9clZBdzOJyAKDfh+vDuha9TkD+pe5iQPkuD4iY3hadng==
+
 helmet@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/helmet/-/helmet-7.0.0.tgz#ac3011ba82fa2467f58075afa58a49427ba6212d"
