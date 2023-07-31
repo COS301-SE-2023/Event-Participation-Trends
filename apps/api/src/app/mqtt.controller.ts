@@ -4,7 +4,9 @@ import { MqttService } from './mqtt.service';
 
 @Controller('mqtt')
 export class MqttController {
-    constructor(private readonly mqttservice : MqttService) {}
+    constructor(
+        private readonly mqttservice : MqttService
+    ) {}
     @MessagePattern('/ble')
     async mqtt_ble(@Payload() data) {
         data.origin = 'ble';

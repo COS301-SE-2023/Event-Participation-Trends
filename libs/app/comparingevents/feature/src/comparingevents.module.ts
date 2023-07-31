@@ -5,6 +5,7 @@ import { ComparingeventsRoutingModule } from './comparingevents.routing';
 import { ComparingeventsPage } from './comparingevents.page';
 import { ComparingeventsModule as ComparingeventsDataAccessModule } from '@event-participation-trends/app/comparingevents/data-access';
 import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [ComparingeventsPage],
@@ -12,7 +13,8 @@ import { IonicModule } from '@ionic/angular';
     CommonModule,
     ComparingeventsRoutingModule,
     ComparingeventsDataAccessModule,
-    IonicModule
+    IonicModule,
+    FormsModule
   ]
 })
 export class ComparingeventsModule { }

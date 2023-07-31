@@ -1,8 +1,23 @@
+<div
+  class="bg-[url('assets/blob-scene-haikei-dark.svg')] fixed opacity-75 top-0 left-0 w-screen h-screen z-0"
+></div>
 <ion-content
-  class="bg-[url('assets/honey_comb.jpg')] bg-cover bg-no-repeat bg-center bg-fixed h-full"
+  class="bg-cover bg-no-repeat bg-center bg-fixed h-full"
 >
-  <div class="backdrop-blur-[6px] h-full grid grid-cols-3">
-    <div class="col-span-2 my-8 mx-6">
+  <div class="h-full"  [ngClass]="{'items-center flex justify-center': isLoading, 'grid grid-cols-3': !isLoading}">
+    <div *ngIf="isLoading" class="flex flex-col justify-center items-center">
+      <ion-spinner name="bubbles" class="text-ept-bumble-yellow w-24 h-24"></ion-spinner>
+      <ion-label>Loading Content...</ion-label>
+    </div>
+    <div *ngIf="!isLoading" class="col-span-2 my-8 mx-6">
+      <div class="col-span-1 flex items-center">
+        <ion-refresher slot="fixed" [pullMin]="30" [pullMax]="70" (ionRefresh)="handleRefresh($event)">
+          <ion-refresher-content 
+            pullingIcon="arrow-down-circle-outline"
+            refreshingSpinner="bubbles"
+          ></ion-refresher-content>
+        </ion-refresher>
+      </div>
       <div class="grid grid-cols-3 mb-2">
         <div class="col-span-1 flex items-center">
           <p class="text-2xl">Comparing Events</p>
@@ -62,25 +77,24 @@
         </div>
       </div>
     </div>
-    <div class="col-span-1 bg-ept-off-white backdrop-blur-3xl bg-opacity-[75%] rounded-lg p-5 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center mx-2 mb-10 mt-4">
+    <div
+      *ngIf="!isLoading"
+      class="col-span-1 bg-ept-off-white backdrop-blur-3xl bg-opacity-[75%] rounded-lg p-5 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center mx-2 mb-10 mt-4"
+    >
       <p ngClass="sidebar-header sidebar-title" class="text-2xl ml-3">
-        Available Events
+        Available Event Categories
       </p>
       <span ngClass="sidebar-content" class="flex w-full">
         <ion-searchbar
           ngClass="sidebar-searchbar"
           placeholder="Search"
+          [(ngModel)]="searchValue"
         ></ion-searchbar>
-        <ion-icon
-          ngClass="search-filter"
-          class="h-10 w-10 self-center hover:opacity-50 p-2"
-          name="options-outline"
-        ></ion-icon>
       </span>
-      <p *ngIf="isEmpty()" ngClass="no-events">
+      <!-- <p *ngIf="isEmpty()" ngClass="no-events">
         No events to compare.<br />Try selecting a different time period.
-      </p>
-      <ion-list
+      </p> -->
+      <!-- <ion-list
         *ngIf="!isEmpty()"
         ngClass="compare-list"
         [ngStyle]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
@@ -101,7 +115,30 @@
             <p>{{event.description}}</p>
           </ion-checkbox>
         </ion-item>
+      </ion-list> -->
+      <ion-list
+        class="rounded-lg ion-content-scroll-host ion-padding"
+        *ngIf="hasCategories()"
+        [ngClass]="{'overflow-y': overflow ? 'scroll' : 'auto'}"
+      >
+        <ion-item
+          *ngFor="let category of getEventCategories()"
+          (click)="toggleItemSelection(category)"
+          class="hover:cursor-pointer rounded-lg"
+          [ngClass]="{'bg-[rgb(220,220,220)]': isSelectedCategory(category), 'hover:bg-[rgb(230,230,230)]': !isSelectedCategory(category)}"
+        >
+          <ion-icon
+            *ngIf="isSelectedCategory(category)"
+            slot="end"
+            name="checkmark-circle"
+            class="text-ept-bumble-yellow w-5 h-5 bg-ept-deep-grey rounded-full"
+          ></ion-icon>
+          <ion-label [innerHTML]="highlightText(category, searchValue)"></ion-label>
+        </ion-item>
       </ion-list>
+      <ion-item *ngIf="searchSize === 0" class="flex items-center justify-center text-center">
+        <ion-label class="text-red-500">No categories found.</ion-label>
+      </ion-item>
     </div>
   </div>
 </ion-content>
