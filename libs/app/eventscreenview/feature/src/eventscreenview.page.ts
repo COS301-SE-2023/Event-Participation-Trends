@@ -296,6 +296,12 @@ export class EventScreenViewPage {
         this.streamingUserCountChart?.data.labels?.push(newTime);
         // add new data to the chart
         this.streamingUserCountChart?.data.datasets[0].data?.push(newData);
+        if (this.streamingUserCountChart!.data.datasets[0].data?.length > 20) {
+          // remove first label
+          this.streamingUserCountChart?.data.labels?.shift();
+          // remove first data point
+          this.streamingUserCountChart?.data.datasets[0].data?.shift();
+        }
         this.streamingUserCountChart?.update();
 
         // add new data to the streamingChartData
