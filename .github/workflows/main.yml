@@ -16,4 +16,4 @@ jobs:
                 username: ${{ secrets.USERNAME }}
                 key: ${{ secrets.KEY }}
                 script: |
-                    sudo /root/main.sh
+                    sudo /root/deploy.sh production
