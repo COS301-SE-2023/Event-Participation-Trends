@@ -25,7 +25,8 @@ export class EmailService {
         subject: subjectStr,
         text: content,
       };
-      await this.transporter.sendMail(mailOptions);
+      if(process.env['ENVIRONMENT'] !== 'test')
+        await this.transporter.sendMail(mailOptions);
     }
 
 }
