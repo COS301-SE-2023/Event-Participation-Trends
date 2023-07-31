@@ -59,7 +59,10 @@ export class EventScreenViewPage {
   eventEndTime: Date = new Date();
 
   // Cache
-  heatmap: any;
+  floorlayoutScale = 1;
+  floorlayoutStage : Konva.Stage | null = null;
+  heatmap: HeatMap | null = null;
+  heatmapData: {x: number, y: number, value: number, radius: number}[] = [];
   myHeatmap: any;
   myHeatLayer: any;
   myFlowmapLayer: any;
@@ -245,8 +248,8 @@ export class EventScreenViewPage {
 
         //! Testing purposes
 
-        now.setHours(now.getHours() - 12);
-        now.setMinutes(now.getMinutes() - 60);
+        now.setHours(now.getHours() - 13);
+        now.setMinutes(now.getMinutes() - 20);
 
         // get positions this interval
 
@@ -254,7 +257,6 @@ export class EventScreenViewPage {
         const intervalEnd = now;
 
         const positions = await this.appApiService.getEventDevicePosition(this.eventId, intervalStart, intervalEnd);
-        console.log(positions);
 
         // add to heatmap
 
@@ -291,11 +293,13 @@ export class EventScreenViewPage {
             radius: 20
           });
 
-          this.heatmap.setData({
+          this.heatmap?.setData({
             max: 100,
             min: 1,
             data: data
           });
+
+          this.heatmapData = data;
 
           const unique_ids: number[] = [];
           for (let i = 0; i < positions.positions.length; i++) {
@@ -616,6 +620,11 @@ export class EventScreenViewPage {
   toggleHeatmap() {
     this.showHeatmap = !this.showHeatmap;
 
+    if (this.showHeatmap) {
+      // move the data points based on the floorlayoutStage's position
+      // this.moveDataPoints();
+    }
+
     // if (this.showHeatmap) {
     //   this.myHeatLayer = L.heatLayer(
     //     [],
@@ -628,7 +637,7 @@ export class EventScreenViewPage {
     // } else {
     //   this.myHeatmap.removeLayer(this.myHeatLayer);
     // }
-  }
+  }    
 
   // renderHeatMap() {
   //   this.myHeatmap = L.map(this.heatmapContainer.nativeElement).setView(this.mapCenter, this.mapZoomLevel);
@@ -700,7 +709,7 @@ export class EventScreenViewPage {
     const response = this.appApiService.getEventFloorLayout(eventId);
     response.subscribe((res: IGetEventFloorlayoutResponse) => {
       // use the response to create an image
-      const stage = new Konva.Stage({
+      this.floorlayoutStage = new Konva.Stage({
         container: 'floormap',
         width: this.heatmapContainer.nativeElement.offsetWidth,
         height: this.heatmapContainer.nativeElement.offsetHeight
@@ -709,7 +718,7 @@ export class EventScreenViewPage {
       // create node from JSON string
       const layer: Konva.Layer = Konva.Node.create(res.floorlayout, 'floormap');
       // add the node to the layer
-      stage.add(layer);
+      this.floorlayoutStage.add(layer);
 
       // // set the src of the image to the image url
       // layer.toDataURL({
@@ -947,9 +956,9 @@ export class EventScreenViewPage {
     const config: ChartConfiguration = {
       type: 'line',             // 'line', 'bar', 'bubble' and 'scatter' types are supported
       data: {
-        labels: chartLabels,             // empty at the beginning
+        labels: chartLabels,
         datasets: [{
-          data: chartData,              // empty at the beginning
+          data: chartData,
         }]
       },
       options: {
