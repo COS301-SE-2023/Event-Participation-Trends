@@ -68,6 +68,7 @@ export class EventScreenViewPage {
   hotzoneMarker: any;
   
   // Chart
+  devicesBarChart: Chart | null = null;
   streamingUserCountChart: Chart | null = null;
   eventHours: string[] = []; // labels for the chart
   userDetectedPerHour: {time: string, detected: number}[] = []; // data for the chart
@@ -164,9 +165,9 @@ export class EventScreenViewPage {
       this.isLoading = false;
 
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 10);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 13);
       this.eventEndTime = new Date();
-      this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
+      this.eventEndTime.setHours(this.eventEndTime.getHours() + 4);
     
       // set the number of hours of the event
       let hoursOfEvent = 0;
@@ -178,15 +179,32 @@ export class EventScreenViewPage {
       // set the labels of the x-axis
       for (let i = 0; i <= hoursOfEvent; i++) {
         // check if the minutes are less than 10, if so, add a 0 in front of the minutes
-        if (this.eventStartTime.getMinutes() < 10 && this.eventStartTime.getHours() < 10) {
-          this.eventHours.push(`${this.eventStartTime.getHours() + i}:0${this.eventStartTime.getMinutes()}`);
-        } else if (this.eventStartTime.getMinutes() < 10 && this.eventStartTime.getHours() >= 10) {
-          this.eventHours.push(`${this.eventStartTime.getHours() + i}:0${this.eventStartTime.getMinutes()}`);
-        } else if (this.eventStartTime.getHours() < 10 && this.eventStartTime.getMinutes() >= 10) {
-          this.eventHours.push(`${this.eventStartTime.getHours() + i}:${this.eventStartTime.getMinutes()}`);
-        } else {
-          this.eventHours.push(`${this.eventStartTime.getHours() + i}:${this.eventStartTime.getMinutes()}`);
+        // if (this.eventStartTime.getMinutes() < 10 && this.eventStartTime.getHours() < 10) {
+        //   this.eventHours.push(`0${this.eventStartTime.getHours() + i}:0${this.eventStartTime.getMinutes()}`);
+        // } else if (this.eventStartTime.getMinutes() < 10 && this.eventStartTime.getHours() >= 10) {
+        //   this.eventHours.push(`${this.eventStartTime.getHours() + i}:0${this.eventStartTime.getMinutes()}`);
+        // } else if (this.eventStartTime.getHours() < 10 && this.eventStartTime.getMinutes() >= 10) {
+        //   this.eventHours.push(`0${this.eventStartTime.getHours() + i}:${this.eventStartTime.getMinutes()}`);
+        // } else {
+        //   this.eventHours.push(`${this.eventStartTime.getHours() + i}:${this.eventStartTime.getMinutes()}`);
+        // } 
+        let hours = '';
+        let minutes = '';
+        if (this.eventStartTime.getHours() + i < 10) {
+          hours = `0${this.eventStartTime.getHours() + i}`;
         } 
+        else {
+          hours = `${this.eventStartTime.getHours() + i}`;
+        }
+
+        if (this.eventStartTime.getMinutes() < 10) {
+          minutes = `0${this.eventStartTime.getMinutes()}`;
+        }
+        else {
+          minutes = `${this.eventStartTime.getMinutes()}`;
+        }
+
+        this.eventHours.push(`${hours}:${minutes}`);
       }
 
       for (let i = 0; i < hoursOfEvent; i++) {
@@ -205,12 +223,12 @@ export class EventScreenViewPage {
        setTimeout(() => {
          Chart.register(ChartStreaming);
          this.heatmap = new HeatMap({
-          container: document.getElementById('view')!,
-          maxOpacity: .6,
-          radius: 50,
-          blur: 0.90,
-         })
-         this.getImageFromJSONData(this.eventId);
+           container: document.getElementById('view')!,
+           maxOpacity: .6,
+           radius: 50,
+           blur: 0.90,
+          });
+          this.getImageFromJSONData(this.eventId);
          this.renderTotalUserCount();
          this.renderTotalDeviceCount();
          this.renderUserCountDataStreaming();
@@ -227,8 +245,8 @@ export class EventScreenViewPage {
 
         //! Testing purposes
 
-        now.setHours(now.getHours() - 10);
-        now.setMinutes(now.getMinutes() - 30);
+        now.setHours(now.getHours() - 12);
+        now.setMinutes(now.getMinutes() - 60);
 
         // get positions this interval
 
@@ -247,68 +265,89 @@ export class EventScreenViewPage {
           radius: number
         }[] = [];
 
+        if (positions && positions.positions) {
+          data = positions.positions.map((position: IPosition) => {
+            if (position.x != null && position.y != null) {
+              return {
+                x: position.x,
+                y: position.y,
+                value: 20,
+                radius: 10
+              };
+            } else {
+              return {
+                x: 100,
+                y: 100,
+                value: 0,
+                radius: 20
+              };
+            }
+          });
+
+          data.push({
+            x: 100,
+            y: 100,
+            value: 0,
+            radius: 20
+          });
+
+          this.heatmap.setData({
+            max: 100,
+            min: 1,
+            data: data
+          });
+
+          const unique_ids: number[] = [];
+          for (let i = 0; i < positions.positions.length; i++) {
+            const position = positions.positions[i];
+            if (position.id && !unique_ids.includes(position.id)) {
+              unique_ids.push(position.id);
+            }
+          }
+
+          const newData = unique_ids.length;
+          this.totalUsersDetected = newData;
+          const newTime = now.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
         
-        data = positions!.positions!.map((position: IPosition) => {
-          if (position.x != null && position.y != null) {
-            return {
-              x: position.x,
-              y: position.y,
-              value: 20,
-              radius: 10
-            };
-          } else {
-            return {
-              x: 100,
-              y: 100,
-              value: 0,
-              radius: 20
-            };
+          if (this.streamingUserCountChart) {
+            // add new label and data to the chart
+            this.streamingUserCountChart.data.labels?.push(newTime);
+            // add new data to the chart
+            this.streamingUserCountChart.data.datasets[0].data?.push(newData);
+            if (this.streamingUserCountChart.data.datasets[0].data?.length > 20) {
+              // remove first label
+              this.streamingUserCountChart.data.labels?.shift();
+              // remove first data point
+              this.streamingUserCountChart.data.datasets[0].data?.shift();
+            }
+            this.streamingUserCountChart.update();
           }
-        })
 
-        data.push({
-          x: 100,
-          y: 100,
-          value: 0,
-          radius: 20
-        });
-
-        this.heatmap.setData({
-          max: 100,
-          min: 1,
-          data: data
-        });
-
-
-        const unique_ids: number[] = [];
-        for (let i = 0; i < positions!.positions!.length; i++) {
-          const position = positions!.positions![i];
-          if (!unique_ids.includes(position.id!)) {
-            unique_ids.push(position.id!);
+          // add new data to the streamingChartData
+          this.streamingChartData.labels.push(newTime);
+          this.streamingChartData.data.push(newData);
+          // update the streamingChartData in the store
+          this.store.dispatch(new SetStreamingChartData(this.streamingChartData));
+      
+          // update the userDetectedPerHour array
+          this.userDetectedPerHour.forEach((hour) => {
+            // test if the hour is equal to the current hour
+            console.log(hour.time.slice(0, 2), newTime.slice(0, 2));
+            if (hour.time.slice(0, 2) === newTime.slice(0, 2)) {
+              // add one to the detected users
+              hour.detected = this.totalUsersDetected;
+            }
+          });
+          if (this.devicesBarChart) {
+            this.devicesBarChart.data.datasets[0].data = this.userDetectedPerHour.map((hour) => hour.detected);
+            this.devicesBarChart.data.labels = this.userDetectedPerHour.map((hour) => hour.time);
+            this.devicesBarChart.update();
           }
-        }
 
-        const newData = unique_ids.length;
-        this.totalUsersDetected = newData;
-        const newTime = now.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
-       
-        // add new label and data to the chart
-        this.streamingUserCountChart?.data.labels?.push(newTime);
-        // add new data to the chart
-        this.streamingUserCountChart?.data.datasets[0].data?.push(newData);
-        if (this.streamingUserCountChart!.data.datasets[0].data?.length > 20) {
-          // remove first label
-          this.streamingUserCountChart?.data.labels?.shift();
-          // remove first data point
-          this.streamingUserCountChart?.data.datasets[0].data?.shift();
-        }
-        this.streamingUserCountChart?.update();
+          // update the userDetectedPerHour in the store
+          this.store.dispatch(new UpdateUsersDetectedPerHour(this.userDetectedPerHour));
 
-        // add new data to the streamingChartData
-        this.streamingChartData.labels.push(newTime);
-        this.streamingChartData.data.push(newData);
-        // update the streamingChartData in the store
-        this.store.dispatch(new SetStreamingChartData(this.streamingChartData));
+        }
 
       }
     }, 5000);
@@ -577,18 +616,18 @@ export class EventScreenViewPage {
   toggleHeatmap() {
     this.showHeatmap = !this.showHeatmap;
 
-    if (this.showHeatmap) {
-      this.myHeatLayer = L.heatLayer(
-        [],
-        {
-          radius: 10,
-          gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' },
-          minOpacity: 0.6
-        }
-      ).addTo(this.myHeatmap);
-    } else {
-      this.myHeatmap.removeLayer(this.myHeatLayer);
-    }
+    // if (this.showHeatmap) {
+    //   this.myHeatLayer = L.heatLayer(
+    //     [],
+    //     {
+    //       radius: 10,
+    //       gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' },
+    //       minOpacity: 0.6
+    //     }
+    //   ).addTo(this.myHeatmap);
+    // } else {
+    //   this.myHeatmap.removeLayer(this.myHeatLayer);
+    // }
   }
 
   // renderHeatMap() {
@@ -968,19 +1007,16 @@ export class EventScreenViewPage {
     //   });
     // }
 
-    const chartData: {
-      x: string,
-      y: number
-    }[] = [];
+    const chartData: number[] = [];
+    const chartLabels: string[] = [];
 
     this.userDetectedPerHour.forEach((timeData) => {
-      chartData.push({
-        x: timeData.time,
-        y: timeData.detected
-      });
+      chartData.push(timeData.detected);
+      chartLabels.push(timeData.time);
     });
 
     const data = {
+        labels: chartLabels,
         datasets: [{
           data: chartData,
           backgroundColor: [
@@ -993,48 +1029,50 @@ export class EventScreenViewPage {
         }]
       };
     
+    const config: ChartConfiguration = {
+      type: 'bar',
+      data: data,
+      options: {
+        plugins: {
+            title: {
+              display: true,
+              text: 'Users Detected vs Time of day (per hour)', 
+            },
+            legend:{
+                display: false
+            },
+            tooltip: {
+              enabled: false
+            }
+          },
+        scales: {
+          x: {
+            display: true, 
+              title: {
+              display: true,
+              text: 'Time of day',
+            },
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Number of Users Detected', 
+            },
+            beginAtZero: true, 
+          },
+        }
+      },
+    };
+    
     const deviceBarChartCanvas = this.totalDevicesBarChart.nativeElement;
 
     if (deviceBarChartCanvas) {
       const deviceBarChartCtx = deviceBarChartCanvas.getContext('2d');
       if (deviceBarChartCtx) {
-        const myChart = new Chart(
+        this.devicesBarChart = new Chart(
           deviceBarChartCanvas,
-          {
-            type: 'bar',
-            data: data,
-            options: {
-              plugins: {
-                  title: {
-                    display: true,
-                    text: 'Users Detected vs Time of day (per hour)', 
-                  },
-                  legend:{
-                      display: false
-                  },
-                  tooltip: {
-                    enabled: false
-                  }
-                },
-              scales: {
-                x: {
-                  display: true, 
-                    title: {
-                    display: true,
-                    text: 'Time of day',
-                  },
-                },
-                y: {
-                  display: true,
-                  title: {
-                    display: true,
-                    text: 'Number of Users Detected', 
-                  },
-                  beginAtZero: true, 
-                },
-              }
-            },
-          }
+          config
         );
       }
     }
