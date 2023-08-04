@@ -28,7 +28,7 @@
     <span class="loading loading-spinner loading-lg"></span>
   </div>
   <div
-    class="relative grid grid-cols-1 px-3 overflow-x-auto overflow-y-scroll pt-20 transition-opacity duration-500"
+    class="relative grid grid-cols-1 px-3 overflow-x-auto overflow-y-scroll pt-24 transition-opacity duration-500"
     [ngClass]="{ 'opacity-0': !show }"
     (scroll)="onScroll($event)"
   >
@@ -38,6 +38,24 @@
     >
       <div class="col-span-4">{{ user.FirstName }}</div>
       <div class="col-span-4">{{ user.Email }}</div>
+      <div class="col-span-4 flex justify-center align-middle">
+        <div class="bg-ept-navy-blue rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1">
+            <div class="h-full mx-3 z-30 text-center"
+            [ngClass]="{'text-ept-navy-blue': isViewer(user)}"
+            (click)="setViewer(user)">
+                Viewer
+            </div>
+            <div class="h-full mx-3 z-30 text-center"
+            [ngClass]="{'text-ept-navy-blue': !isViewer(user)}"
+            (click)="setManager(user)">
+                Manager
+            </div>
+            <div class="absolute w-[50%] h-full z-20 rounded-full transition-all duration-300 ease-in-out"
+            [ngClass]="{'animate-slideLeft bg-ept-blue-grey': isViewer(user), 'animate-slideRight bg-ept-bumble-yellow': !isViewer(user)}">
+
+            </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -38,12 +38,35 @@ export class UsersPageComponent implements OnInit {
     });
   }
 
+  isViewer(user: any): boolean {
+    return user.Role == 'viewer';
+  }
+
+  updateRole(user: any) {
+    this.appApiService.updateUserRole({
+      update: {
+        UserEmail: user.Email,
+        UpdateRole: user.Role,
+      },
+    });
+  }
+
+  setViewer(user: any) {
+    user.Role = 'viewer';
+    this.updateRole(user);
+  }
+
+  setManager(user: any) {
+    user.Role = 'manager';
+    this.updateRole(user);
+  }
+
   onScroll(event: any) {
     // If scrolling up, log 'top'
     if (event.target.scrollTop < this.prev_scroll || event.target.scrollTop == 0) {
       this.show_search = true;
       this.disable_search = false;
-    } else if (event.target.scrollTop > 300) {
+    } else if (event.target.scrollTop > this.prev_scroll) {
       this.show_search = false;
       setTimeout(() => {
         this.disable_search = true;
