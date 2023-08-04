@@ -6,6 +6,7 @@ import { IEvent } from '@event-participation-trends/api/event/util';
 import { FormsModule } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'event-participation-trends-all-events-page',
@@ -16,7 +17,7 @@ import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
   providers: [provideIcons({ heroLockClosedSolid, heroInboxSolid })],
 })
 export class AllEventsPageComponent implements OnInit {
-  constructor(private appApiService: AppApiService) {}
+  constructor(private appApiService: AppApiService, private router: Router) {}
 
   public all_events: any[] = [];
   public subscribed_events: any[] = [];
@@ -63,6 +64,17 @@ export class AllEventsPageComponent implements OnInit {
 
   showMyEvents() {
     this.show_all_events = false;
+  }
+
+  getURL(event: any) {
+    if (this.role == 'admin') {
+      this.router.navigate(["/event/details/" + event._id]);
+    } else if (this.role == 'manager' && this.hasAccess(event)) {
+      this.router.navigate(["/event/details/" + event._id]);
+    } 
+    else {
+      this.router.navigate(["/event/dashboard/" + event._id]);
+    }
   }
 
   onScroll(event: any) {

@@ -35,7 +35,7 @@
       <input
         type="text"
         placeholder="Type here"
-        class="sol-start-4 col-span-6 w-full max-w-xs outline-none py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
+        class="col-start-5 col-span-6 w-full max-w-xs outline-none py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
         [(ngModel)]="search"
         [ngClass]="{ 'opacity-0': !show_search }"
       />
@@ -64,9 +64,10 @@
     *ngIf="isAdmin()"
     (scroll)="onScroll($event)"
   >
-    <div
+    <a
       class="m-3 p-5 h-52 bg-ept-navy-blue rounded-2xl flex flex-col justify-between hover:scale-105 hover:bg-[#2b2e38] transition-all duration-300 cursor-pointer"
       *ngFor="let event of get_all_events()"
+      (click)="getURL(event)"
     >
       <div class="text-xl font-poppins font-semibold">{{ event.Name }}</div>
       <div>
@@ -87,7 +88,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </a>
   </div>
   <!-- Not Admin -->
   <div
