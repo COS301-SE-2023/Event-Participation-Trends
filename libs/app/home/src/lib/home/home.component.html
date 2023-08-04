@@ -11,62 +11,55 @@
     >
       <div #top>
         <div class="flex justify-center">
-          <div class="mt-4 font-poppins font-semibold text-2xl mx-4 hover:scale-[102%] transition-all duration-100"><a href="/">Event Participation Trends</a></div>
+          <div
+            class="mt-4 font-poppins font-semibold text-2xl mx-4 hover:scale-[102%] transition-all duration-100"
+          >
+            <a href="/">Event Participation Trends</a>
+          </div>
         </div>
         <div #navlinks class="font-poppins font-semibold mt-6 m-3">
-          <div
-            id="events-link"
-            (click)="events()"
-            class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
-            [ngClass]="{
-              'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
-                onEvents(),
-              'hover:bg-ept-navy-blue hover:scale-105': !onEvents()
-            }"
-            *ngIf="!isManager()"
-          >
-            Events
-          </div>
-          <div
-            id="events-link"
-            (click)="events()"
-            class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
-            [ngClass]="{
-              'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
-                onEvents(),
-              'hover:bg-ept-navy-blue hover:scale-105': !onEvents()
-            }"
-            *ngIf="isManager()"
-          >
-            Events
-          </div>
-          <a
-          href="/compare">
+          <a routerLink="events">
             <div
-            id="compare-link"
-            (click)="compare()"
-            class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
-            [ngClass]="{
-              'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
-              onCompare(),
-              'hover:bg-ept-navy-blue hover:scale-105': !onCompare()
-            }"
+              id="events-link"
+              (click)="events()"
+              class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
+              [ngClass]="{
+                'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
+                  onEvents(),
+                'hover:bg-ept-navy-blue hover:scale-105': !onEvents()
+              }"
             >
-            Compare
-          </div>
-        </a>
-          <div
-            id="users-link"
-            (click)="users()"
-            class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
-            [ngClass]="{
-              'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
-                onUsers(),
-              'hover:bg-ept-navy-blue hover:scale-105': !onUsers()
-            }"
-          >
-            Users
-          </div>
+              Events
+            </div>
+          </a>
+          <a routerLink="compare">
+            <div
+              id="compare-link"
+              (click)="compare()"
+              class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
+              [ngClass]="{
+                'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
+                  onCompare(),
+                'hover:bg-ept-navy-blue hover:scale-105': !onCompare()
+              }"
+            >
+              Compare
+            </div>
+          </a>
+          <a routerLink="users">
+            <div
+              id="users-link"
+              (click)="users()"
+              class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
+              [ngClass]="{
+                'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
+                  onUsers(),
+                'hover:bg-ept-navy-blue hover:scale-105': !onUsers()
+              }"
+            >
+              Users
+            </div>
+          </a>
         </div>
       </div>
       <div #user class="self-end">
@@ -94,10 +87,7 @@
       </div>
     </div>
   </div>
-  <div
-    #gradient
-    class="col-span-7"
-  >
+  <div #gradient class="col-span-7">
     <router-outlet></router-outlet>
   </div>
 </div>

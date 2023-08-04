@@ -8,6 +8,7 @@ enum Tab {
   Events = 'events',
   Users = 'users',
   Compare = 'compare',
+  None = '',
 }
 
 enum Role {
@@ -24,7 +25,7 @@ enum Role {
 export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
   
-  public tab = Tab.Events;
+  public tab = Tab.None;
   public role = Role.Admin;
   public username = '';
   public img_url = '';
@@ -32,8 +33,37 @@ export class HomeComponent implements OnInit, AfterViewInit {
   constructor(private appApiService: AppApiService) {}
 
   async ngOnInit() {
+    
     this.username = await this.appApiService.getUserName();
     this.img_url = await this.appApiService.getProfilePicUrl();
+    const r = await this.appApiService.getRole();
+
+    switch (r) {
+      case 'admin':
+        this.role = Role.Admin;
+        break;
+      case 'manager':
+        this.role = Role.Manager;
+        break;
+      case 'viewer':
+        this.role = Role.Viewer;
+        break;
+      default:
+        this.role = Role.Viewer;
+        break;
+    }
+
+    const t = window.location.href.split('/').pop();
+    if (t === 'users') {
+      this.tab = Tab.Users;
+    }
+    else if (t === 'compare') {
+      this.tab = Tab.Compare;
+    }
+    else {
+      this.tab = Tab.Events;
+    }
+
   }
 
   ngAfterViewInit() {
@@ -68,14 +98,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   events() {
+    this.tab = Tab.Events;
     this.pressButton('#events-link');
   }
 
   users() {
+    this.tab = Tab.Users;
     this.pressButton('#users-link');
   }
 
   compare() {
+    this.tab = Tab.Compare;
     this.pressButton('#compare-link');
   }
 
