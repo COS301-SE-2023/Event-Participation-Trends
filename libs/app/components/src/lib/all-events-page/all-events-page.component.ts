@@ -70,8 +70,8 @@ export class AllEventsPageComponent implements OnInit {
       event.target.scrollTop < this.prev_scroll ||
       event.target.scrollTop == 0
     ) {
-      this.show_search = true;
       this.disable_search = false;
+      this.show_search = true;
     } else if (event.target.scrollTop > 150) {
       this.show_search = false;
       setTimeout(() => {

@@ -28,12 +28,12 @@
     <span class="loading loading-spinner loading-lg"></span>
   </div>
   <div
-    class="relative grid grid-cols-1 px-3 overflow-x-auto overflow-y-scroll pt-24 transition-opacity duration-500"
+    class="relative grid grid-cols-1 px-3 mb-1 overflow-x-auto overflow-y-scroll pt-24 transition-opacity duration-500"
     [ngClass]="{ 'opacity-0': !show }"
     (scroll)="onScroll($event)"
   >
     <div
-      class="mx-3 my-[3px] p-5 bg-ept-navy-blue rounded-xl flex-col justify-between hover:bg-[#2b2e38] bg-opacity-30 transition-all duration-300 cursor-pointer grid grid-cols-12"
+      class="mx-3 my-[3px] px-5 py-3 bg-ept-navy-blue rounded-xl flex-col justify-between hover:bg-[#2b2e38] bg-opacity-30 transition-all duration-300 cursor-pointer grid grid-cols-12 items-center"
       *ngFor="let user of get_users()"
     >
       <div class="col-span-4">{{ user.FirstName }}</div>

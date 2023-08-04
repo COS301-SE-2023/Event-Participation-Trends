@@ -1,7 +1,7 @@
 <div class="h-full w-full relative flex flex-col">
   <div
-    class="flex justify-center items-center"
-    [ngClass]="{ '-z-50': disable_search, 'z-20': !disable_search }"
+    class="flex justify-center items-center z-20"
+    *ngIf="!disable_search"
   >
     <div class="w-full grid grid-cols-12 absolute mt-24 items-center">
       <div class="col-start-2 col-span-3" *ngIf="isManager()">
