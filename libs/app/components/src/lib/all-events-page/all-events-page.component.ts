@@ -124,6 +124,14 @@ export class AllEventsPageComponent implements OnInit {
     });
   }
 
+  get_my_events(): any[] {
+    return this.my_events.filter((event) => {
+      return event.Name
+        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
+        : false;
+    });
+  }
+
   isAdmin() {
     return this.role === 'admin';
   }
