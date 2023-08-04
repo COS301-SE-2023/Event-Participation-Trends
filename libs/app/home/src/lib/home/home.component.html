@@ -40,18 +40,21 @@
           >
             Events
           </div>
-          <div
+          <a
+          href="/compare">
+            <div
             id="compare-link"
             (click)="compare()"
             class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
             [ngClass]="{
               'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
-                onCompare(),
+              onCompare(),
               'hover:bg-ept-navy-blue hover:scale-105': !onCompare()
             }"
-          >
+            >
             Compare
           </div>
+        </a>
           <div
             id="users-link"
             (click)="users()"
