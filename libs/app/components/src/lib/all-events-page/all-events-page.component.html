@@ -1,6 +1,6 @@
 <div class="h-full w-full relative flex flex-col">
   <div
-    class="flex justify-center items-center z-20"
+    class="flex items-center z-20 w-full"
     *ngIf="!disable_search"
   >
     <div class="w-full grid grid-cols-12 absolute mt-24 items-center">
@@ -35,7 +35,7 @@
       <input
         type="text"
         placeholder="Type here"
-        class="col-start-5 col-span-6 w-full max-w-xs outline-none py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
+        class="sol-start-4 col-span-6 w-full max-w-xs outline-none py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
         [(ngModel)]="search"
         [ngClass]="{ 'opacity-0': !show_search }"
       />
