@@ -79,6 +79,10 @@ export class HomeComponent implements OnInit {
     return this.role === Role.Manager;
   }
 
+  isAdmin(): boolean {
+    return this.role === Role.Admin;
+  }
+
   showModal() {
     const modal = document.querySelector('#profile-modal');
 

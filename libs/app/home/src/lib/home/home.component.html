@@ -28,6 +28,7 @@
                   onEvents(),
                 'hover:bg-ept-navy-blue hover:scale-105': !onEvents()
               }"
+              *ngIf="isManager() || isAdmin()"
             >
               Events
             </div>
@@ -42,6 +43,7 @@
                   onCompare(),
                 'hover:bg-ept-navy-blue hover:scale-105': !onCompare()
               }"
+              *ngIf="isManager() || isAdmin()"
             >
               Compare
             </div>
@@ -56,6 +58,7 @@
                   onUsers(),
                 'hover:bg-ept-navy-blue hover:scale-105': !onUsers()
               }"
+              *ngIf="isAdmin()"
             >
               Users
             </div>

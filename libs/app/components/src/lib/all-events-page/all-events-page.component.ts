@@ -35,7 +35,9 @@ export class AllEventsPageComponent implements OnInit {
     this.role = await this.appApiService.getRole();
 
     this.all_events = await this.appApiService.getAllEvents();
-    this.my_events = await this.appApiService.getManagedEvents();
+    if (this.role === 'manager') {
+      this.my_events = await this.appApiService.getManagedEvents();
+    }
 
     if (this.role !== 'admin') {
       this.subscribed_events = await this.appApiService.getSubscribedEvents();
@@ -64,11 +66,13 @@ export class AllEventsPageComponent implements OnInit {
   }
 
   onScroll(event: any) {
-    // If scrolling up, log 'top'
-    if (event.target.scrollTop < this.prev_scroll || event.target.scrollTop == 0) {
+    if (
+      event.target.scrollTop < this.prev_scroll ||
+      event.target.scrollTop == 0
+    ) {
       this.show_search = true;
       this.disable_search = false;
-    } else if (event.target.scrollTop > this.prev_scroll) {
+    } else if (event.target.scrollTop > 150) {
       this.show_search = false;
       setTimeout(() => {
         this.disable_search = true;
@@ -76,7 +80,6 @@ export class AllEventsPageComponent implements OnInit {
     }
 
     this.prev_scroll = event.target.scrollTop;
-
   }
 
   emptySearch(): boolean {
