@@ -29,6 +29,7 @@ export class AllEventsPageComponent implements OnInit {
   public prev_scroll = 0;
   public show_search = true;
   public disable_search = false;
+  public show_all_events = true;
 
   async ngOnInit() {
     this.role = await this.appApiService.getRole();
@@ -54,12 +55,20 @@ export class AllEventsPageComponent implements OnInit {
     }, 300);
   }
 
+  showAllEvents() {
+    this.show_all_events = true;
+  }
+
+  showMyEvents() {
+    this.show_all_events = false;
+  }
+
   onScroll(event: any) {
     // If scrolling up, log 'top'
     if (event.target.scrollTop < this.prev_scroll || event.target.scrollTop == 0) {
       this.show_search = true;
       this.disable_search = false;
-    } else if (event.target.scrollTop > 300) {
+    } else if (event.target.scrollTop > this.prev_scroll) {
       this.show_search = false;
       setTimeout(() => {
         this.disable_search = true;
