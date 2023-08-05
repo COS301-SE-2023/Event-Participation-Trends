@@ -4,6 +4,9 @@ import { RouterModule, Route } from '@angular/router';
 import { appEventViewRoutes } from './lib.routes';
 import { EventViewComponent } from './event-view/event-view.component';
 import { DashboardPageComponent, EventDetailsPageComponent } from '@event-participation-trends/app/components';
+import { NgIconsModule } from '@ng-icons/core';
+import { heroArrowLeft, heroChartBar, heroPencil } from '@ng-icons/heroicons/outline';
+import { matModeEditRound, matBarChartRound } from '@ng-icons/material-icons/round';
 
 @NgModule({
   bootstrap: [EventViewComponent],
@@ -11,6 +14,9 @@ import { DashboardPageComponent, EventDetailsPageComponent } from '@event-partic
     CommonModule,
     RouterModule.forChild(appEventViewRoutes),
     RouterModule,
+    DashboardPageComponent,
+    EventDetailsPageComponent,
+    NgIconsModule.withIcons({heroArrowLeft, heroChartBar, heroPencil, matModeEditRound, matBarChartRound})
   ],
   declarations: [EventViewComponent],
 })

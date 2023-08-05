@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AppApiService } from '@event-participation-trends/app/api';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'event-participation-trends-event-details-page',
@@ -8,4 +11,23 @@ import { CommonModule } from '@angular/common';
   templateUrl: './event-details-page.component.html',
   styleUrls: ['./event-details-page.component.css'],
 })
-export class EventDetailsPageComponent {}
+export class EventDetailsPageComponent implements OnInit {
+
+  constructor(private appApiService: AppApiService, private router : Router, private route: ActivatedRoute) {}
+
+  public id = '';
+  public event : any | null = null;
+
+  async ngOnInit() {
+    
+    this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
+
+    if (!this.id) {
+      this.router.navigate(['/']);
+    }
+
+    this.event = await this.appApiService.getEvent({ eventId: this.id });
+
+  }
+
+}

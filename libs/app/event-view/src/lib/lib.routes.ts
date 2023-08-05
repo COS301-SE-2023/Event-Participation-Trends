@@ -4,15 +4,19 @@ import { EventViewComponent } from './event-view/event-view.component';
 
 export const appEventViewRoutes: Route[] = [
     {
-        path: '',
+        path: ':id',
         component: EventViewComponent,
         children: [
             {
-                path: 'dashboard/:id',
+                path: '',
                 component: DashboardPageComponent
             },
             {
-                path: 'details/:id',
+                path: 'dashboard',
+                component: DashboardPageComponent
+            },
+            {
+                path: 'details',
                 component: EventDetailsPageComponent
             }
         ]

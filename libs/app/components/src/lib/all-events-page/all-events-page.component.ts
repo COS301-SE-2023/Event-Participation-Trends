@@ -68,12 +68,12 @@ export class AllEventsPageComponent implements OnInit {
 
   getURL(event: any) {
     if (this.role == 'admin') {
-      this.router.navigate(["/event/details/" + event._id]);
+      this.router.navigate(["/event/" + event._id + "/details"]);
     } else if (this.role == 'manager' && this.hasAccess(event)) {
-      this.router.navigate(["/event/details/" + event._id]);
+      this.router.navigate(["/event/" + event._id + "/details"]);
     } 
     else {
-      this.router.navigate(["/event/dashboard/" + event._id]);
+      this.router.navigate(["/event/" + event._id + "/dashboard"]);
     }
   }
 
