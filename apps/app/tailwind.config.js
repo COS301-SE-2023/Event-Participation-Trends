@@ -21,6 +21,13 @@ module.exports = {
       'montserrat': ['Montserrat', 'Arial'],
     },
     extend: {
+      gridTemplateColumns: {
+        '24': 'repeat(24, minmax(0, 1fr))',
+        '36': 'repeat(36, minmax(0, 1fr))',
+      },
+      gridColumn: {
+        'span-34': 'span 34 / span 34',
+      },
       keyframes: {
         bounce: {
           '0%, 100%' : {

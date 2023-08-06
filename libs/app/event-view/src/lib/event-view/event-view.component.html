@@ -3,14 +3,14 @@
   class="fixed top-0 left-0 h-screen w-screen bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue -z-50"
 ></div>
 <div
-  class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-12 grid-rows-1 overflow-hidden"
+  class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-36 grid-rows-1 overflow-hidden"
 >
-  <div class="col-span-1 w-full h-screen">
-    <div class="h-screen flex flex-col content-center">
+  <div class="col-span-2 w-full h-screen">
+    <div class="h-screen flex flex-col items-center">
       <a routerLink="/home"
         ><div
           id="back"
-          class="w-14 h-14 mx-5 mt-5 rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center"
+          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center"
           (click)="goBack()"
         >
           <ng-icon name="heroArrowLeft" class="text-3xl"></ng-icon>
@@ -19,7 +19,7 @@
       <a routerLink="details"
         ><div
           id="details"
-          class="w-14 h-14 mx-5 mt-5 rounded-full bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
+          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
           [ngClass]="{
             'bg-ept-blue-grey text-ept-deep-grey': onDetails(),
             'bg-ept-navy-blue hover:bg-[#373a44]': !onDetails()
@@ -32,7 +32,7 @@
       <a routerLink="dashboard"
         ><div
           id="dashboard"
-          class="w-14 h-14 mx-5 mt-5 rounded-full bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
+          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
           [ngClass]="{
             'bg-ept-blue-grey text-ept-deep-grey': onDashboard(),
             'bg-ept-navy-blue hover:bg-[#373a44]': !onDashboard()
@@ -44,7 +44,7 @@
       ></a>
     </div>
   </div>
-  <div #gradient class="col-span-10 w-full">
+  <div #gradient class="col-span-34 w-full">
     <router-outlet></router-outlet>
   </div>
 </div>
