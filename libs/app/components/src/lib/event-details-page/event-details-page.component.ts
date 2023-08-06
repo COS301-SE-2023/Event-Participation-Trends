@@ -17,6 +17,8 @@ export class EventDetailsPageComponent implements OnInit {
 
   public id = '';
   public event : any | null = null;
+  public show = false;
+  public loading = true;
 
   async ngOnInit() {
     
@@ -26,7 +28,16 @@ export class EventDetailsPageComponent implements OnInit {
       this.router.navigate(['/']);
     }
 
-    this.event = await this.appApiService.getEvent({ eventId: this.id });
+    this.event = (await this.appApiService.getEvent({ eventId: this.id }) as any).event;
+
+    if (this.event === null) {
+      this.router.navigate(['/home']);
+    }
+    
+    this.loading = false;
+    setTimeout(() => {
+      this.show = true;
+    }, 200);
 
   }
 
