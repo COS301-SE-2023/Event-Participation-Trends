@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails, IEventLocation } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventId, IEventLocation, IStall, Position } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
-         Device,
-         FloorLayout,
-         DeviceLocation,
          EventLocation,
          Sensor,
          Stall,
-         TEMP_DEVICE_BUFFER,
-         TEMP_DEVICE_TO_DT,
 } from '../schemas';
 import { Types } from 'mongoose';
 
@@ -18,14 +13,9 @@ import { Types } from 'mongoose';
 export class EventRepository {
     constructor(
         @InjectModel(Event.name) private eventModel: mongoose.Model<Event>,
-        @InjectModel(Device.name) private deviceModel: mongoose.Model<Device>,
-        //@InjectModel(FloorLayout.name) private floorLayoutModel: mongoose.Model<FloorLayout>,
-        @InjectModel(DeviceLocation.name) private deviceLocationModel: mongoose.Model<DeviceLocation>,
         @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
         @InjectModel(Stall.name) private stallModel: mongoose.Model<Stall>,
-        @InjectModel(TEMP_DEVICE_BUFFER.name) private TEMP_DEVICE_BUFFERModel: mongoose.Model<TEMP_DEVICE_BUFFER>,
-        @InjectModel(TEMP_DEVICE_TO_DT.name) private TEMP_DEVICE_TO_DTModel: mongoose.Model<TEMP_DEVICE_TO_DT>,
     ){}
 
     async createEvent(event: IEventDetails){
@@ -33,23 +23,26 @@ export class EventRepository {
     }   
 
     async getAllEvents(){
-        return await this.eventModel.find();
+        return await this.eventModel.find().select("-Devices");
     }
 
     async getEventByName(eventName: string){
+        return await this.eventModel.find({Name: {$eq: eventName}}).select("-Devices");
+    }
+
+    async getEventByNameVerbose(eventName: string){
         return await this.eventModel.find({Name: {$eq: eventName}});
     }
 
     async getEventById(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id: {$eq: eventID}});
+        return await this.eventModel.find({_id: {$eq: eventID}}).select("-Devices");
     }
 
     async getManagedEvents(managerID: Types.ObjectId){
-        return await this.eventModel.find({Manager: {$eq: managerID}});
+        return await this.eventModel.find({Manager: {$eq: managerID}}).select("-Devices");
     }
 
     async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
-        console.log("Unga Bunga");
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
             { $push: { Requesters: userID } });
@@ -115,12 +108,103 @@ export class EventRepository {
         return await this.eventModel.updateOne(
         {_id :{$eq: eventID}},{$set: {Location :location}})
     }
+    
+    async updateEventFloorlayout(eventID: Types.ObjectId, floorlayout: string){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {FloorLayout :floorlayout}})
+    }
 
     async getALLEventNames(){
         return await this.eventModel.find({ Name: 1 });
     }
 
     async getPopulatedEvent(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id :{$eq: eventID}});
+        return await this.eventModel.find({_id :{$eq: eventID}}).select("-Devices");
+    }
+
+    // Stall
+    async getAllEventStalls(eventID: IEventId){
+        return await this.eventModel.find({_id :{$eq: eventID}}, {Stalls: 1});
+    }
+
+    async createStall(stall: IStall){
+        await this.stallModel.create(stall);
+        return await this.eventModel.updateOne(
+            {_id :{$eq: stall.EventId}},
+            { $push: { Stalls: stall } });
+    }
+
+    async getStallByName(eventID: Types.ObjectId, stallName: string){
+        return await this.stallModel.find({Event: {$eq: eventID}, Name: {$eq: stallName}});
+    }
+
+    async getAllStallNames(eventID: IEventId){
+        return await this.stallModel.find({Event: {$eq: eventID}}, {Name: 1});
+    }
+
+    async updateStallName(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { Name: stall.Name } });
+    }
+
+    async updateStallXCoordinate(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { XCoordinate: stall.x_coordinate } });
+    }
+
+    async updateStallYCoordinate(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { YCoordinate: stall.y_coordinate } });
+    }
+
+    async updateStallWidth(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { Width: stall.width } });
+    }
+
+    async updateStallHeight(eventID: IEventId, stall: IStall){
+        return await this.stallModel.updateOne(
+            {Event: {$eq: eventID}, Name: {$eq: stall.Name}},
+            { $set: { Height: stall.height } });
+    }
+
+    async removeStall(eventID: IEventId, stallName: string){
+        return await this.stallModel.deleteOne(
+            {Event: {$eq: eventID}, Name: {$eq: stallName}});
+    }
+
+    async getEventFloorlayout(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { FloorLayout: 1 })
+    }
+
+    async addDevicePosition(eventID: Types.ObjectId, position: Position[]){
+        return await this.eventModel.updateOne(
+            { _id: {$eq: eventID}},
+            { $push: { Devices: { $each: position } } });
+    }
+
+    async getDevicePosotions(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { Devices: 1 })
+    }
+
+    async getAllEventCategories(){
+        return await this.eventModel.find().select("Category").distinct("Category");
+    }
+
+    async deleteEventbyId(eventId: Types.ObjectId){
+        return await this.eventModel.deleteOne(
+            {_id :{$eq: eventId}})};
+
+    async getManagedEventCategories(managerID: Types.ObjectId){
+        return await this.eventModel.find(
+            {Manager: {$eq: managerID}}).select("Category").distinct("Category");
     }
 }

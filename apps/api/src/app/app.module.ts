@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MqttController } from './mqtt.controller';
@@ -10,39 +9,59 @@ import {
   PassportService,
   PassportModule as Wow,
 } from '@event-participation-trends/api/passport';
-import { CoreModule } from '@event-participation-trends/api/core/feature'
+import { CoreModule } from '@event-participation-trends/api/core/feature';
 import { MqttService } from './mqtt.service';
-import { UserService, UserModule } from '@event-participation-trends/api/user/feature';
+import {
+  UserService,
+  UserModule,
+} from '@event-participation-trends/api/user/feature';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EventService } from '@event-participation-trends/api/event/feature';
 import { EventModule } from '@event-participation-trends/api/event/data-access';
 import { ApiGuardsModule } from '@event-participation-trends/api/guards';
 import { ConfigModule } from '@nestjs/config';
 
+import {
+  SensorlinkingModule,
+  SensorlinkingService,
+} from '@event-participation-trends/api/sensorlinking';
+import { ScheduleModule } from '@nestjs/schedule';
+
+import {DatabaseModule} from '@event-participation-trends/api/database/feature';
+import { DatabaseConfigService } from '@event-participation-trends/api/database/feature';
+
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    Wow,
-    JwtModule.register({}),
-    ClientsModule.register([
+    ConfigModule.forRoot(
       {
-        name: 'MQTT_SERVICE',
-        transport: Transport.MQTT,
-        options: {
-          url: process.env.MQTT_URL,
-          username: process.env.MQTT_USERNAME,
-          password: process.env.MQTT_PASSWORD,
-        },
-      },
-    ]),
-    MongooseModule.forRoot(process.env['MONGO_ALTALS_CONNECTION_URL']),
+        isGlobal: true,
+      }
+    ),
+    Wow,
+    JwtModule.register({
+      global: true,
+      secret: process.env['JWT_SECRET'],
+      signOptions: { expiresIn: process.env['JWT_EXPIRE_TIME'] },
+    }),
+    MongooseModule.forRootAsync({
+        useClass: DatabaseConfigService
+    }),
     UserModule,
     EventModule,
     CqrsModule,
     CoreModule,
-    ApiGuardsModule
+    ApiGuardsModule,
+    SensorlinkingModule,
+    DatabaseModule,
+    ScheduleModule.forRoot(),
   ],
-  controllers: [AppController, MqttController, PassportController],
-  providers: [AppService, MqttService, PassportService, UserService, EventService],
+  controllers: [AppController, PassportController],
+  providers: [
+    AppService,
+    PassportService,
+    UserService,
+    EventService,
+    SensorlinkingService,
+  ],
 })
 export class AppModule {}

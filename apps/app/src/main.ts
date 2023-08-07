@@ -1,6 +1,7 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { CoreModule } from '@event-participation-trends/app/core/feature';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app.component';
 
-platformBrowserDynamic()
-  .bootstrapModule(CoreModule)
-  .catch((err) => console.error(err));
+bootstrapApplication(AppComponent, appConfig).catch((err) =>
+  console.error(err)
+);

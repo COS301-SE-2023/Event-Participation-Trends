@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Req, Get, Request, Res } from '@nestjs/common';
+import { Controller, UseGuards, Req, Get, Request, Res, Post, Body } from '@nestjs/common';
 import { Response as express_response } from 'express';
 import { PassportService } from './passport.service';
 import { GoogleOAuthGuard } from '../google-oauth-guard.guard';
@@ -15,6 +15,12 @@ export class PassportController {
     @Get('google/')
     @UseGuards(GoogleOAuthGuard)
     async googleAuth(@Request() req: any) {
+        /**/
+    }
+
+    @Post('google/')
+    @UseGuards(GoogleOAuthGuard)
+    async googleAuthPOST(@Request() req: any, @Body() body: any) {
         /**/
     }
 
