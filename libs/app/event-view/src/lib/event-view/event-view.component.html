@@ -5,8 +5,8 @@
 <div
   class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-36 grid-rows-1 overflow-hidden"
 >
-  <div class="col-span-2 w-full h-screen">
-    <div class="h-screen flex flex-col items-center">
+  <div class="col-span-2 w-full h-screen flex flex-col justify-between">
+    <div class="flex flex-col items-center">
       <a routerLink="/home"
         ><div
           id="back"
@@ -53,6 +53,17 @@
           (click)="goFloorplan()"
         >
           <ng-icon name="matDrawRound" class="text-4xl font-bold"></ng-icon>
+        </div
+      ></a>
+    </div>
+    <div class="flex flex-col items-center">
+      <a routerLink="details"
+        ><div
+          id="details"
+          class="w-14 h-14 mb-5 rounded-full hover:bg-[#373a44] bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
+          (click)="goDetails()"
+        >
+          <ng-icon name="matQuestionMarkRound" class="text-4xl font-bold"></ng-icon>
         </div
       ></a>
     </div>

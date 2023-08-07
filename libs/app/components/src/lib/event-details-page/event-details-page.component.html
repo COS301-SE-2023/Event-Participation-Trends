@@ -1,21 +1,24 @@
-<div class="top-0 left-0 w-full h-screen">
-    <div class="grid grid-cols-4 grid-rows-3 w-full h-full">
-        <div class="col-span-1 row-span-3 m-5 ml-0 p-4 bg-ept-navy-blue rounded-2xl flex flex-col relative">
-            <div
-                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
-                [ngClass]="{ 'opacity-0': !loading }"
-                *ngIf="!show"
-            >
-                <span class="loading loading-spinner loading-lg"></span>
-            </div>
-            <div class="transition-opacity duration-200" [ngClass]="{'opacity-0': !show}">
-                <div class="text-ept-off-white text-3xl font-poppins font-semibold">{{event.Name}}</div>
-            </div>
-        </div>
-        <div class="col-span-3 row-span-3 m-5 ml-0 bg-ept-navy-blue rounded-2xl flex justify-center align-middle items-center">
-            <div id="edit_floorplan" (click)="editFloorplan()" class="py-2 px-4 bg-ept-blue-grey text-ept-deep-grey text-xl font-poppins font-semibold rounded-3xl hover:scale-105 transition-all duration-300">
-                Edit Floorplan
-            </div>
-        </div>
+<div class="top-0 left-0 w-full h-full grid grid-cols-1 grid-rows-1">
+  <div
+    class="flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-4"
+  >
+    <div
+      class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+      [ngClass]="{ 'opacity-0': !loading }"
+      *ngIf="!show"
+    >
+      <span class="loading loading-spinner loading-lg"></span>
     </div>
+    <div class="grid grid-cols-12 relative">
+      <div
+        class="transition-opacity duration-200 col-span-6"
+        [ngClass]="{ 'opacity-0': !show }"
+        *ngIf="event"
+      >
+        <div class="text-ept-off-white text-3xl font-poppins font-semibold">
+          {{ event.Name }}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

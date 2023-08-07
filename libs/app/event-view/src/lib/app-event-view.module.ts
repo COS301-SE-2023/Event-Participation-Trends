@@ -6,7 +6,7 @@ import { EventViewComponent } from './event-view/event-view.component';
 import { DashboardPageComponent, EventDetailsPageComponent } from '@event-participation-trends/app/components';
 import { NgIconsModule } from '@ng-icons/core';
 import { heroArrowLeft, heroChartBar, heroPencil } from '@ng-icons/heroicons/outline';
-import { matFormatListBulletedRound, matBarChartRound, matDrawRound } from '@ng-icons/material-icons/round';
+import { matFormatListBulletedRound, matBarChartRound, matDrawRound, matQuestionMarkRound } from '@ng-icons/material-icons/round';
 
 @NgModule({
   bootstrap: [EventViewComponent],
@@ -16,7 +16,7 @@ import { matFormatListBulletedRound, matBarChartRound, matDrawRound } from '@ng-
     RouterModule,
     DashboardPageComponent,
     EventDetailsPageComponent,
-    NgIconsModule.withIcons({heroArrowLeft, heroChartBar, heroPencil, matFormatListBulletedRound, matBarChartRound, matDrawRound})
+    NgIconsModule.withIcons({heroArrowLeft, heroChartBar, heroPencil, matFormatListBulletedRound, matBarChartRound, matDrawRound, matQuestionMarkRound})
   ],
   declarations: [EventViewComponent],
 })
