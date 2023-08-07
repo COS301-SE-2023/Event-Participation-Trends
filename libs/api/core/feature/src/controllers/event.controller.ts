@@ -33,6 +33,8 @@ import {
     IGetAllEventCategoriesResponse,
     IGetManagedEventCategoriesResponse,
     IGetManagedEventCategoriesRequest,
+    IGetFloorplanBoundariesResponse,
+    IGetFloorplanBoundariesRequest,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -56,7 +58,6 @@ import {
   RbacGuard,
 } from '@event-participation-trends/api/guards';
 import { Role } from '@event-participation-trends/api/user/util';
-
 
 @Controller('event')
 export class EventController {
@@ -320,6 +321,29 @@ export class EventController {
     (<unknown>this.eventService.getEventFloorLayout(extractRequest))
   );
  }
+
+  @Get('getFloorplanBoundaries')
+  @SetMetadata('role',Role.VIEWER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async getFloorplanCenter(
+      @Query() query: any
+  ): Promise<IGetFloorplanBoundariesResponse> {
+
+    if(query.eventId==undefined || query.eventId ==null)
+      throw new HttpException("Bad Request: eventId not provided", 400);
+    
+    // if(query.floorplanId==undefined || query.floorplanId ==null)
+    //   throw new HttpException("Bad Request: floorplanId not provided", 400);
+
+    const extractRequest: IGetFloorplanBoundariesRequest = {
+      eventId: query.eventId
+    };
+
+    return <IGetFloorplanBoundariesResponse>(
+      (<unknown>this.eventService.getFloorplanBoundaries(extractRequest))
+    );
+  }
+
  
     @Post('addEventViewer')
     @SetMetadata('role',Role.MANAGER)

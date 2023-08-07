@@ -25,6 +25,8 @@ import {
   IGetAllEventsResponse,
   IGetEventDevicePositionResponse,
   IGetEventFloorlayoutResponse,
+  IGetEventResponse,
+  IGetFloorplanBoundariesResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
@@ -410,5 +412,20 @@ export class AppApiService {
       )
     );
     return response.positions || [];
+  }
+
+  async getFloorplanBoundaries(eventId: string) : Promise<IGetFloorplanBoundariesResponse> {
+    return firstValueFrom(
+      this.http.get<IGetFloorplanBoundariesResponse>(
+        `/api/event/getFloorplanBoundaries?eventId=${eventId}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response;
+    });
   }
 }

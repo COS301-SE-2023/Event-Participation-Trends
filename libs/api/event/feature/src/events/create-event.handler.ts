@@ -3,11 +3,16 @@ import { IEventHandler, EventsHandler } from '@nestjs/cqrs';
 import { IEvent } from "@event-participation-trends/api/event/util";
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { Types } from 'mongoose';
+import { EmailService } from '@event-participation-trends/api/email/feature'
+import { EmailContent, EmailSubject} from '@event-participation-trends/api/email/util';
+import { UserRepository } from '@event-participation-trends/api/user/data-access';
 
 @EventsHandler(CreateEventEvent)
 export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> {
   constructor(
     private readonly eventRepository: EventRepository,
+    private readonly userRepository: UserRepository,
+    private readonly emailService: EmailService,
     ) {}
 
   async handle(event: CreateEventEvent) {
@@ -15,6 +20,7 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
 
     if(event.event.Manager != undefined){
         const ViewersArr: Types.ObjectId[] = new Array<Types.ObjectId>(event.event.Manager);
+        const userDoc= await this.userRepository.getUserById(event.event.Manager);
 
         const eventToCreate : IEvent ={
             StartDate: new Date(event.event.StartDate || ""),
@@ -32,6 +38,26 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
         }
 
         await this.eventRepository.createEvent(eventToCreate);
+
+        //notify user via Email
+        this.emailService.sendEmail(
+            userDoc[0]?.Email || "", 
+            EmailSubject.CREATE_EVENT,
+            EmailContent.CREATE_EVENT_CONTENT+ event.event.Name + EmailContent.NEW_LINE + EmailContent.NEW_LINE +
+            "Event Details: " + EmailContent.NEW_LINE +
+            "\t Start Date: " + new Date(event.event.StartDate || "") + EmailContent.NEW_LINE +
+            "\t End Date: " + new Date(event.event.EndDate || "") + EmailContent.NEW_LINE +
+            "\t Event Name: " + event.event.Name + EmailContent.NEW_LINE +
+            "\t Event Category: " + event.event.Category + EmailContent.NEW_LINE +
+            "\t Event Location Details: " + EmailContent.NEW_LINE + 
+            "\t\t Latitude: " + event.event.Location?.Latitude + EmailContent.NEW_LINE +
+            "\t\t Longitude: " + event.event.Location?.Longitude + EmailContent.NEW_LINE +
+            "\t\t StreetName: " + event.event.Location?.StreetName + EmailContent.NEW_LINE +
+            "\t\t CityName: " + event.event.Location?.CityName + EmailContent.NEW_LINE +
+            "\t\t Province Name: " + event.event.Location?.ProvinceName + EmailContent.NEW_LINE +
+            "\t\t Country Name: " + event.event.Location?.CountryName + EmailContent.NEW_LINE +
+            "\t\t ZIPCode: " + event.event.Location?.ZIPCode + EmailContent.NEW_LINE
+        )
     }
   }
 }   

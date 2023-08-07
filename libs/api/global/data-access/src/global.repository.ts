@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Global
 } from '../schemas';
+import { Types } from 'mongoose';
 
 import { IGlobal } from '@event-participation-trends/api/global/util';
 
@@ -23,6 +24,10 @@ export class GlobalRepository {
     async replaceGlobal(data: IGlobal){
         await this.globalModel.deleteMany({});
         return this.createGlobal(data);
+    }
+
+    async deleteGlobal(){
+        return await this.globalModel.deleteMany({});
     }
 
 }

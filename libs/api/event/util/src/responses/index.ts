@@ -19,3 +19,4 @@ export * from './add-device-position.response';
 export * from './get-event-device-position.response';
 export * from './get-event-categories.response';
 export * from './get-managed-event-categories.response';
+export * from './get-floorplan-boundaries.response';

@@ -27,6 +27,18 @@
       "@event-participation-trends/api/core/feature": [
         "libs/api/core/feature/src/index.ts"
       ],
+      "@event-participation-trends/api/database/feature": [
+        "libs/api/database/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/email/data-access": [
+        "libs/api/email/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/api/email/feature": [
+        "libs/api/email/feature/src/index.ts"
+      ],
+      "@event-participation-trends/api/email/util": [
+        "libs/api/email/util/src/index.ts"
+      ],
       "@event-participation-trends/api/event/data-access": [
         "libs/api/event/data-access/src/index.ts"
       ],
