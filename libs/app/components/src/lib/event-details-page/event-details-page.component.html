@@ -1,0 +1,24 @@
+<div class="top-0 left-0 w-full h-full grid grid-cols-1 grid-rows-1">
+  <div
+    class="flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-4"
+  >
+    <div
+      class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+      [ngClass]="{ 'opacity-0': !loading }"
+      *ngIf="!show"
+    >
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+    <div class="grid grid-cols-12 relative">
+      <div
+        class="transition-opacity duration-200 col-span-6"
+        [ngClass]="{ 'opacity-0': !show }"
+        *ngIf="event"
+      >
+        <div class="text-ept-off-white text-3xl font-poppins font-semibold">
+          {{ event.Name }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
