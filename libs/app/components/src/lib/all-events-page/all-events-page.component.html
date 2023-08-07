@@ -62,7 +62,7 @@
     (scroll)="onScroll($event)"
   >
     <a
-      class="relative m-3 p-5 h-52 bg-ept-navy-blue bg-opacity-30 rounded-2xl flex flex-col justify-center items-center hover:scale-105 hover:bg-[#2b2e38] hover:bg-opacity-30 transition-all duration-300 cursor-pointer"
+      class="relative mt-5 mr-5 p-5 h-52 bg-ept-navy-blue bg-opacity-30 rounded-2xl flex flex-col justify-center items-center hover:scale-105 hover:bg-[#2b2e38] hover:bg-opacity-30 transition-all duration-300 cursor-pointer"
       (mouseover)="create = true"
       (mouseleave)="create = false"
     >
@@ -79,7 +79,7 @@
       </div>
     </a>
     <a
-      class="m-3 p-5 h-52 bg-ept-navy-blue rounded-2xl flex flex-col justify-between hover:scale-105 hover:bg-[#2b2e38] transition-all duration-300 cursor-pointer"
+      class="mt-5 mr-5 p-5 h-52 bg-ept-navy-blue rounded-2xl flex flex-col justify-between hover:scale-105 hover:bg-[#2b2e38] transition-all duration-300 cursor-pointer"
       *ngFor="let event of get_all_events()"
       (click)="getURL(event)"
     >

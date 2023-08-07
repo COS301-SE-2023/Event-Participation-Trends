@@ -33,12 +33,12 @@
     (scroll)="onScroll($event)"
   >
     <div
-      class="mx-3 my-[3px] px-5 py-3 bg-ept-navy-blue rounded-xl flex-col justify-between hover:bg-[#2b2e38] bg-opacity-30 transition-all duration-300 cursor-pointer grid grid-cols-12 items-center"
+      class="mx-20 my-[3px] px-5 py-3 bg-ept-navy-blue rounded-xl flex-col justify-between hover:bg-[#2b2e38] bg-opacity-30 transition-all duration-300 cursor-pointer grid grid-cols-12 items-center"
       *ngFor="let user of get_users()"
     >
-      <div class="col-span-4">{{ user.FirstName }}</div>
+      <div class="col-span-4">{{ getName(user) }}</div>
       <div class="col-span-4">{{ user.Email }}</div>
-      <div class="col-span-4 flex justify-center align-middle">
+      <div class="col-start-11 col-span-3 flex justify-center align-middle">
         <div class="bg-ept-navy-blue rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1">
             <div class="h-full mx-3 z-30 text-center"
             [ngClass]="{'text-ept-navy-blue': isViewer(user)}"
