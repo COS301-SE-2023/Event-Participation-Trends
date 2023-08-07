@@ -209,6 +209,7 @@
           [ngClass]="{
           'overflow-visible': expandHelp,
         }"
+          (click)="help_press()"
           (mouseover)="showHelp()"
           (mouseleave)="hideHelp()"
         >
@@ -230,3 +231,8 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+<event-participation-trends-event-help
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="help-modal"
+>
+</event-participation-trends-event-help>

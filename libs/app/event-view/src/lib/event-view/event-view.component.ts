@@ -38,7 +38,7 @@ export class EventViewComponent implements OnInit {
       this.overflowBack = false;
     }, 300);
   }
-  
+
   // Help
   public expandHelp = false;
   public overflowHelp = false;
@@ -149,5 +149,22 @@ export class EventViewComponent implements OnInit {
 
   onDashboard() : boolean {
     return this.tab === Tab.Dashboard;
+  }
+
+  showHelpModal() {
+    const modal = document.querySelector('#help-modal');
+
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
+  }
+
+  help_press() {
+    this.pressButton('#help-link');
+    
+    setTimeout(() => {
+      this.showHelpModal();
+    }, 100);
   }
 }

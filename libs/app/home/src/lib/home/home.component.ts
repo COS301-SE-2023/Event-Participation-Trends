@@ -133,8 +133,17 @@ export class HomeComponent implements OnInit {
     return this.role === Role.Admin;
   }
 
-  showModal() {
+  showProfile() {
     const modal = document.querySelector('#profile-modal');
+
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
+  }
+
+  showHelpModal() {
+    const modal = document.querySelector('#help-modal');
 
     modal?.classList.remove('hidden');
     setTimeout(() => {
@@ -170,7 +179,7 @@ export class HomeComponent implements OnInit {
     this.pressButton('#profile-picture');
 
     setTimeout(() => {
-      this.showModal();
+      this.showProfile();
     }, 100);
   }
 
@@ -179,6 +188,14 @@ export class HomeComponent implements OnInit {
 
     setTimeout(() => {
       this.router.navigate(['/']);
+    }, 100);
+  }
+
+  help_press() {
+    this.pressButton('#help-link');
+    
+    setTimeout(() => {
+      this.showHelpModal();
     }, 100);
   }
 
