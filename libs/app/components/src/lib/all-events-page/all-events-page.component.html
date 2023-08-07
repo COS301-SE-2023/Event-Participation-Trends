@@ -83,7 +83,10 @@
       *ngFor="let event of get_all_events()"
       (click)="getURL(event)"
     >
-      <div class="text-xl font-poppins font-semibold">{{ event.Name }}</div>
+      <div class="text-xl font-poppins font-semibold grid grid-cols-12">
+        <div class="" [ngClass]="{'col-span-11': !hasFloorplan(event), 'col-span-12': hasFloorplan(event)}">{{ event.Name }}</div>
+        <div class="w-2 h-2 bg-ept-bumble-yellow justify-self-end rounded-full" *ngIf="!hasFloorplan(event)"></div>
+      </div>
       <div>
         <div class="flex justify-between">
           <div class="text-ept-blue-grey text-sm font-montserrat">Location</div>

@@ -80,6 +80,10 @@ export class AllEventsPageComponent implements OnInit {
     }
   }
 
+  hasFloorplan(event: any) : boolean {
+    return event.FloorLayout ? true : false;
+  }
+
   onScroll(event: any) {
     if (
       event.target.scrollTop < this.prev_scroll ||
