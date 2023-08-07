@@ -4,6 +4,7 @@ import { OnInit, AfterViewInit } from '@angular/core';
 import { ProfileComponent } from '@event-participation-trends/app/components';
 import { timeout } from 'rxjs';
 import { set } from 'mongoose';
+import { Router } from '@angular/router';
 
 enum Tab {
   Events = 'events',
@@ -88,7 +89,7 @@ export class HomeComponent implements OnInit {
     }, 300);
   }
 
-  constructor(private appApiService: AppApiService) {}
+  constructor(private appApiService: AppApiService, private router: Router) {}
 
   async ngOnInit() {
     
@@ -170,6 +171,14 @@ export class HomeComponent implements OnInit {
 
     setTimeout(() => {
       this.showModal();
+    }, 100);
+  }
+
+  home_press() {
+    this.pressButton('#home-link');
+
+    setTimeout(() => {
+      this.router.navigate(['/']);
     }, 100);
   }
 

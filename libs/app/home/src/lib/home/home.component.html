@@ -9,6 +9,9 @@
     class="col-span-2 w-full h-screen flex flex-col justify-between items-center z-50"
   >
     <div class="w-14 flex flex-col relative">
+      <div id="home-link" class="h-14 mt-5 mb-2 hover:scale-105 transition-all duration-300 cursor-pointer" (click)="home_press()">
+        <img src="assets/ept_logo.png" />
+      </div>
       <div
         class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
         [ngClass]="{ 'overflow-visible': overflowEvents }"
