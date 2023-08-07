@@ -41,4 +41,18 @@ export class EventDetailsPageComponent implements OnInit {
 
   }
 
+  pressButton(id: string) {
+    const target = document.querySelector(id);
+
+    target?.classList.add('hover:scale-[90%]');
+    setTimeout(() => {
+      target?.classList.remove('hover:scale-[90%]');
+    }, 100);
+  }
+
+  editFloorplan() {
+    this.pressButton('#edit_floorplan');
+    // this.router.navigate([`/event/${this.id}/edit`]);
+  }
+
 }

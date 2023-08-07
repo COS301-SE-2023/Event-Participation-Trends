@@ -6,6 +6,7 @@ import { IEvent } from '@event-participation-trends/api/event/util';
 import { FormsModule } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
+import { matPlusRound } from '@ng-icons/material-icons/round';
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,7 +15,7 @@ import { Router } from '@angular/router';
   imports: [CommonModule, FormsModule, NgIconComponent],
   templateUrl: './all-events-page.component.html',
   styleUrls: ['./all-events-page.component.css'],
-  providers: [provideIcons({ heroLockClosedSolid, heroInboxSolid })],
+  providers: [provideIcons({ heroLockClosedSolid, heroInboxSolid, matPlusRound })],
 })
 export class AllEventsPageComponent implements OnInit {
   constructor(private appApiService: AppApiService, private router: Router) {}
@@ -31,6 +32,8 @@ export class AllEventsPageComponent implements OnInit {
   public show_search = true;
   public disable_search = false;
   public show_all_events = true;
+
+  public create = false;
 
   async ngOnInit() {
     this.role = await this.appApiService.getRole();
