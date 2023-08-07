@@ -16,19 +16,6 @@
           <ng-icon name="heroArrowLeft" class="text-3xl"></ng-icon>
         </div
       ></a>
-      <a routerLink="details"
-        ><div
-          id="details"
-          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
-          [ngClass]="{
-            'bg-ept-blue-grey text-ept-deep-grey': onDetails(),
-            'bg-ept-navy-blue hover:bg-[#373a44]': !onDetails()
-          }"
-          (click)="goDetails()"
-        >
-          <ng-icon name="matBarChartRound" class="text-4xl"></ng-icon>
-        </div
-      ></a>
       <a routerLink="dashboard"
         ><div
           id="dashboard"
@@ -38,6 +25,19 @@
             'bg-ept-navy-blue hover:bg-[#373a44]': !onDashboard()
           }"
           (click)="goDashboard()"
+        >
+          <ng-icon name="matBarChartRound" class="text-4xl"></ng-icon>
+        </div
+      ></a>
+      <a routerLink="details"
+        ><div
+          id="details"
+          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
+          [ngClass]="{
+            'bg-ept-blue-grey text-ept-deep-grey': onDetails(),
+            'bg-ept-navy-blue hover:bg-[#373a44]': !onDetails()
+          }"
+          (click)="goDetails()"
         >
           <ng-icon name="matModeEditRound" class="text-4xl font-bold"></ng-icon>
         </div
