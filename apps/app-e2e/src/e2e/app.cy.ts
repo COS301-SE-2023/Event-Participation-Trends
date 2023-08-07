@@ -1,3 +1,5 @@
+import { getGreeting } from '../support/app.po';
+
 describe('app', () => {
   beforeEach(() => {
     cy.viewport(1920, 1080);
