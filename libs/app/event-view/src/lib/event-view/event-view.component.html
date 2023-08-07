@@ -1,4 +1,4 @@
-<div
+<!-- <div
   #gradient
   class="fixed top-0 left-0 h-screen w-screen bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue -z-50"
 ></div>
@@ -66,6 +66,164 @@
           <ng-icon name="matQuestionMarkRound" class="text-4xl font-bold"></ng-icon>
         </div
       ></a>
+    </div>
+  </div>
+  <div #gradient class="col-span-34 w-full">
+    <router-outlet></router-outlet>
+  </div>
+</div> -->
+<div
+  #gradient
+  class="fixed top-0 left-0 h-screen w-screen bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue -z-50"
+></div>
+<div
+  class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-36 grid-rows-1 overflow-hidden"
+>
+  <div
+    class="col-span-2 w-full h-screen flex flex-col justify-between items-center z-50"
+  >
+    <div class="w-14 flex flex-col relative">
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowBack }"
+      >
+        <a
+          id="back-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goBack()"
+          [ngClass]="{
+          'overflow-visible': expandBack,
+        }"
+          (mouseover)="showBack()"
+          (mouseleave)="hideBack()"
+        >
+          <ng-icon name="heroArrowLeft" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandBack
+          }"
+        >
+          <div>Back</div>
+        </div>
+      </div>
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowDashboard }"
+      >
+        <a
+          routerLink="dashboard"
+          id="dashboard-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goDashboard()"
+          [ngClass]="{
+          'bg-ept-blue-grey text-ept-deep-grey': onDashboard(),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !onDashboard(),
+          'overflow-visible': expandDashboard,
+        }"
+          (mouseover)="showDashboard()"
+          (mouseleave)="hideDashboard()"
+        >
+          <ng-icon name="matBarChartRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandDashboard
+          }"
+        >
+          <div>Dashboard</div>
+        </div>
+      </div>
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowDetails }"
+      >
+        <a
+          routerLink="details"
+          id="details-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goDetails()"
+          [ngClass]="{
+          'bg-ept-blue-grey text-ept-deep-grey': onDetails(),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !onDetails(),
+          'overflow-visible': expandDetails,
+        }"
+          (mouseover)="showDetails()"
+          (mouseleave)="hideDetails()"
+        >
+          <ng-icon name="matFormatListBulletedRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandDetails
+          }"
+        >
+          <div>Details</div>
+        </div>
+      </div>
+
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowFloorplan }"
+      >
+        <a
+          routerLink="floorplan"
+          id="floorplan-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goFloorplan()"
+          [ngClass]="{
+          'bg-ept-blue-grey text-ept-deep-grey': onFloorplan(),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !onFloorplan(),
+          'overflow-visible': expandFloorplan,
+        }"
+          (mouseover)="showFloorplan()"
+          (mouseleave)="hideFloorplan()"
+        >
+          <ng-icon name="matDrawRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandFloorplan
+          }"
+        >
+          <div>Floorplan</div>
+        </div>
+      </div>
+    </div>
+    <div class="w-14 flex flex-col items-center">
+      <div
+        class="h-14 mb-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowHelp }"
+      >
+        <a
+          id="help-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          [ngClass]="{
+          'overflow-visible': expandHelp,
+        }"
+          (mouseover)="showHelp()"
+          (mouseleave)="hideHelp()"
+        >
+          <ng-icon name="matQuestionMarkRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandHelp
+          }"
+        >
+          <div>Help</div>
+        </div>
+      </div>
     </div>
   </div>
   <div #gradient class="col-span-34 w-full">

@@ -24,6 +24,77 @@ export class EventViewComponent implements OnInit {
   public id: string | null = '';
   public tab = Tab.None;
 
+  // Navbar
+  // Back
+  public expandBack = false;
+  public overflowBack = false;
+  showBack() {
+    this.expandBack = true;
+    this.overflowBack = true;
+  }
+  hideBack() {
+    this.expandBack = false;
+    setTimeout(() => {
+      this.overflowBack = false;
+    }, 300);
+  }
+  
+  // Help
+  public expandHelp = false;
+  public overflowHelp = false;
+  showHelp() {
+    this.expandHelp = true;
+    this.overflowHelp = true;
+  }
+  hideHelp() {
+    this.expandHelp = false;
+    setTimeout(() => {
+      this.overflowHelp = false;
+    }, 300);
+  }
+
+  // Dashboard
+  public expandDashboard = false;
+  public overflowDashboard = false;
+  showDashboard() {
+    this.expandDashboard = true;
+    this.overflowDashboard = true;
+  }
+  hideDashboard() {
+    this.expandDashboard = false;
+    setTimeout(() => {
+      this.overflowDashboard = false;
+    }, 300);
+  }
+
+  // Details
+  public expandDetails = false;
+  public overflowDetails = false;
+  showDetails() {
+    this.expandDetails = true;
+    this.overflowDetails = true;
+  }
+  hideDetails() {
+    this.expandDetails = false;
+    setTimeout(() => {
+      this.overflowDetails = false;
+    }, 300);
+  }
+
+  // Floorplan
+  public expandFloorplan = false;
+  public overflowFloorplan = false;
+  showFloorplan() {
+    this.expandFloorplan = true;
+    this.overflowFloorplan = true;
+  }
+  hideFloorplan() {
+    this.expandFloorplan = false;
+    setTimeout(() => {
+      this.overflowFloorplan = false;
+    }, 300);
+  }
+
   async ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
 
