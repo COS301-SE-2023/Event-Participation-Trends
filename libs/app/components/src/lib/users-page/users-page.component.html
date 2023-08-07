@@ -1,0 +1,61 @@
+<div class="h-full w-full relative flex flex-col">
+  <div
+    class="flex justify-center items-center"
+    [ngClass]="{ '-z-50': disable_search, 'z-20': !disable_search }"
+  >
+    <input
+      type="text"
+      placeholder="Type here"
+      class="w-full max-w-xs outline-none absolute mt-24 py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
+      [(ngModel)]="search"
+      [ngClass]="{ 'opacity-0': !show_search }"
+    />
+  </div>
+  <div
+    class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 -z-20"
+    *ngIf="!loading && emptySearch()"
+  >
+    <ng-icon name="heroInboxSolid" class="text-6xl"></ng-icon>
+    <div class="font-poppins text-xl mt-3">
+      Looks like there's nothing here...
+    </div>
+  </div>
+  <div
+    class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200 -z-10"
+    [ngClass]="{ 'opacity-0': !loading }"
+    *ngIf="!show"
+  >
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+  <div
+    class="relative grid grid-cols-1 px-3 mb-1 overflow-x-auto overflow-y-scroll pt-24 transition-opacity duration-500"
+    [ngClass]="{ 'opacity-0': !show }"
+    (scroll)="onScroll($event)"
+  >
+    <div
+      class="mx-3 my-[3px] px-5 py-3 bg-ept-navy-blue rounded-xl flex-col justify-between hover:bg-[#2b2e38] bg-opacity-30 transition-all duration-300 cursor-pointer grid grid-cols-12 items-center"
+      *ngFor="let user of get_users()"
+    >
+      <div class="col-span-4">{{ user.FirstName }}</div>
+      <div class="col-span-4">{{ user.Email }}</div>
+      <div class="col-span-4 flex justify-center align-middle">
+        <div class="bg-ept-navy-blue rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1">
+            <div class="h-full mx-3 z-30 text-center"
+            [ngClass]="{'text-ept-navy-blue': isViewer(user)}"
+            (click)="setViewer(user)">
+                Viewer
+            </div>
+            <div class="h-full mx-3 z-30 text-center"
+            [ngClass]="{'text-ept-navy-blue': !isViewer(user)}"
+            (click)="setManager(user)">
+                Manager
+            </div>
+            <div class="absolute w-[50%] h-full z-20 rounded-full transition-all duration-300 ease-in-out"
+            [ngClass]="{'animate-slideLeft bg-ept-blue-grey': isViewer(user), 'animate-slideRight bg-ept-bumble-yellow': !isViewer(user)}">
+
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

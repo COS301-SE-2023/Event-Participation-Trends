@@ -1,19 +1,27 @@
 name: Deploys, everything has already been tested
+
 on:
   push:
     branches:
       - main
+  pull_request:
+    types:
+      - closed
+
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v2
-            - name: Connect to server and trigger update
-              uses: appleboy/ssh-action@master
-              with:
-                host:   ${{ secrets.HOST}}
-                username: ${{ secrets.USERNAME }}
-                key: ${{ secrets.KEY }}
-                script: |
-                    sudo /root/main.sh
+  deploy:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Connect to server and trigger update
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            sudo /root/deploy.sh production

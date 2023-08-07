@@ -49,6 +49,12 @@ import {
     GetEventDevicePositionQuery,
     IGetAllEventCategoriesResponse,
     GetAllEventCategoriesQuery,
+    IGetManagedEventCategoriesRequest,
+    GetManagedEventCategoriesQuery,
+    IGetManagedEventCategoriesResponse,
+    IGetFloorplanBoundariesRequest,
+    GetFloorplanBoundariesQuery,
+    IGetFloorplanBoundariesResponse,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -104,6 +110,10 @@ export class EventService {
         return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
     }
 
+    async getFloorplanBoundaries(request: IGetFloorplanBoundariesRequest) {
+        return await this.queryBus.execute<GetFloorplanBoundariesQuery, IGetFloorplanBoundariesResponse>(new GetFloorplanBoundariesQuery(request));
+    }
+
     // Stalls
     async getAllEventStalls(request: IGetEventRequest) {
         return await this.queryBus.execute<GetEventQuery, IGetEventResponse>(new GetEventQuery(request));
@@ -142,5 +152,9 @@ export class EventService {
 
     async getAllEventCategories() {
         return await this.queryBus.execute<GetAllEventCategoriesQuery, IGetAllEventCategoriesResponse>(new GetAllEventCategoriesQuery());
+    }
+
+    async getManagedEventCategories(request: IGetManagedEventCategoriesRequest) {
+        return await this.queryBus.execute<GetManagedEventCategoriesQuery, IGetManagedEventCategoriesResponse>(new GetManagedEventCategoriesQuery(request));
     }
 }

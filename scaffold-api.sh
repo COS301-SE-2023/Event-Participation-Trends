@@ -39,3 +39,6 @@ yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=api/glo
 yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=api/email --no-interactive
 yarn nx generate @nrwl/js:library data-access --unitTestRunner=jest --directory=api/email --no-interactive
 yarn nx generate @nrwl/js:library util --unitTestRunner=jest --directory=api/email --no-interactive
+
+#DATABASE
+yarn nx generate @nrwl/js:library feature --unitTestRunner=jest --directory=api/database --no-interactive
