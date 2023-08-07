@@ -3,6 +3,7 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { OnInit, AfterViewInit } from '@angular/core';
 import { ProfileComponent } from '@event-participation-trends/app/components';
 import { timeout } from 'rxjs';
+import { set } from 'mongoose';
 
 enum Tab {
   Events = 'events',
@@ -29,6 +30,63 @@ export class HomeComponent implements OnInit {
   public role = Role.Admin;
   public username = '';
   public img_url = '';
+
+  // Navbar
+  // Events
+  public expandEvents = false;
+  public overflowEvents = false;
+  showEvents() {
+    this.expandEvents = true;
+    this.overflowEvents = true;
+  }
+  hideEvents() {
+    this.expandEvents = false;
+    setTimeout(() => {
+      this.overflowEvents = false;
+    }, 300);
+  }
+
+  // Compare
+  public expandCompare = false;
+  public overflowCompare = false;
+  showCompare() {
+    this.expandCompare = true;
+    this.overflowCompare = true;
+  }
+  hideCompare() {
+    this.expandCompare = false;
+    setTimeout(() => {
+      this.overflowCompare = false;
+    }, 300);
+  }
+
+  // Users
+  public expandUsers = false;
+  public overflowUsers = false;
+  showUsers() {
+    this.expandUsers = true;
+    this.overflowUsers = true;
+  }
+  hideUsers() {
+    this.expandUsers = false;
+    setTimeout(() => {
+      this.overflowUsers = false;
+    }, 300);
+  }
+
+  // Help
+  public expandHelp = false;
+  public overflowHelp = false;
+  showHelp() {
+    this.expandHelp = true;
+    this.overflowHelp = true;
+  }
+  hideHelp() {
+    this.expandHelp = false;
+    setTimeout(() => {
+      this.overflowHelp = false;
+    }, 300);
+  }
 
   constructor(private appApiService: AppApiService) {}
 
@@ -86,9 +144,9 @@ export class HomeComponent implements OnInit {
   pressButton(id: string) {
     const target = document.querySelector(id);
 
-    target?.classList.add('hover:scale-90');
+    target?.classList.add('hover:scale-[80%]');
     setTimeout(() => {
-      target?.classList.remove('hover:scale-90');
+      target?.classList.remove('hover:scale-[80%]');
     }, 100);
   }
 
@@ -109,10 +167,9 @@ export class HomeComponent implements OnInit {
 
   profile_press() {
     this.pressButton('#profile-picture');
-    this.pressButton('#username');
 
     setTimeout(() => {
-    this.showModal();
+      this.showModal();
     }, 100);
   }
 
@@ -126,13 +183,5 @@ export class HomeComponent implements OnInit {
 
   onCompare(): boolean {
     return this.tab === Tab.Compare;
-  }
-
-  showUsers(): boolean {
-    return this.role === Role.Admin;
-  }
-
-  showCompare(): boolean {
-    return this.role === Role.Admin || this.role === Role.Manager;
   }
 }

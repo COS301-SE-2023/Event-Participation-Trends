@@ -1,104 +1,3 @@
-<!-- <div
-  #gradient
-  class="fixed top-0 left-0 h-screen w-screen bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue -z-50"
-></div>
-<div
-  class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-9 grid-rows-1 overflow-hidden"
->
-  <div class="col-span-2 w-full h-screen">
-    <div
-      class="bg-ept-deep-grey h-screen grid grid-rows-2 content-between border-r-4 border-ept-navy-blue"
-    >
-      <div #top>
-        <div class="flex justify-center">
-          <div
-            class="mt-4 font-poppins font-semibold text-2xl mx-4 hover:scale-[102%] transition-all duration-100"
-          >
-            <a href="/">Event Participation Trends</a>
-          </div>
-        </div>
-        <div #navlinks class="font-poppins font-semibold mt-6 m-3">
-          <a routerLink="events">
-            <div
-              id="events-link"
-              (click)="events()"
-              class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
-              [ngClass]="{
-                'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
-                  onEvents(),
-                'hover:bg-ept-navy-blue hover:scale-105': !onEvents()
-              }"
-              *ngIf="isManager() || isAdmin()"
-            >
-              Events
-            </div>
-          </a>
-          <a routerLink="compare">
-            <div
-              id="compare-link"
-              (click)="compare()"
-              class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
-              [ngClass]="{
-                'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
-                  onCompare(),
-                'hover:bg-ept-navy-blue hover:scale-105': !onCompare()
-              }"
-              *ngIf="isManager() || isAdmin()"
-            >
-              Compare
-            </div>
-          </a>
-          <a routerLink="users">
-            <div
-              id="users-link"
-              (click)="users()"
-              class="p-3 pl-6 text-lg rounded-2xl m-3 transitions-all duration-300 select-none cursor-pointer"
-              [ngClass]="{
-                'bg-ept-navy-blue text-ept-bumble-yellow hover:bg-opacity-80':
-                  onUsers(),
-                'hover:bg-ept-navy-blue hover:scale-105': !onUsers()
-              }"
-              *ngIf="isAdmin()"
-            >
-              Users
-            </div>
-          </a>
-        </div>
-      </div>
-      <div #user class="self-end">
-        <div
-          class="mb-2 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-start items-center"
-        >
-          <div id="profile-picture" class="avatar" (click)="profile_press()">
-            <div
-              class="w-14 ml-3 mask mask-hexagon hover:scale-105 transition-all duration-300 cursor-pointer"
-            >
-              <img src="{{ img_url }}" />
-            </div>
-          </div>
-          <div
-            id="username"
-            class="text-2xl font-poppins font-semibold ml-3 hover:scale-105 transition-all duration-300 cursor-pointer select-none"
-            (click)="profile_press()"
-          >
-            {{ username }}
-          </div>
-          <span class="text-sm text-ept-blue-grey mt-5 ml-2">
-            / {{ role }}</span
-          >
-        </div>
-      </div>
-    </div>
-  </div>
-  <div #gradient class="col-span-7">
-    <router-outlet></router-outlet>
-  </div>
-</div>
-<event-participation-trends-profile
-  class="transition-opacity duration-300 hidden opacity-0"
-  id="profile-modal"
-></event-participation-trends-profile> -->
-
 <div
   #gradient
   class="fixed top-0 left-0 h-screen w-screen bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue -z-50"
@@ -106,87 +5,136 @@
 <div
   class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-36 grid-rows-1 overflow-hidden"
 >
-  <div class="col-span-2 w-full h-screen flex flex-col justify-between">
-    <div class="flex flex-col items-center">
-      <!-- <a routerLink="/home"
-        ><div
-          id="back"
-          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center"
-          (click)="goBack()"
-        >
-          <ng-icon name="heroArrowLeft" class="text-3xl"></ng-icon>
-        </div
-      ></a> -->
-      <!-- <a routerLink="dashboard"
-        ><div
-          id="dashboard"
-          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
-          [ngClass]="{
-            'bg-ept-blue-grey text-ept-deep-grey': onDashboard(),
-            'bg-ept-navy-blue hover:bg-[#373a44]': !onDashboard()
-          }"
-          (click)="goDashboard()"
-        >
-          <ng-icon name="matBarChartRound" class="text-4xl"></ng-icon>
-        </div
-      ></a> -->
-      <a routerLink="events"
-        ><div
-          id="events"
-          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center"
+  <div
+    class="col-span-2 w-full h-screen flex flex-col justify-between items-center z-50"
+  >
+    <div class="w-14 flex flex-col relative">
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowEvents }"
+      >
+        <a
+          routerLink="events"
+          id="events-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
           (click)="events()"
           [ngClass]="{
-            'bg-ept-blue-grey text-ept-deep-grey': onEvents(),
-            'bg-ept-navy-blue hover:bg-[#373a44]': !onEvents()
-          }"
+          'bg-ept-blue-grey text-ept-deep-grey': onEvents(),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !onEvents(),
+          'overflow-visible': expandEvents,
+        }"
           *ngIf="isManager() || isAdmin()"
+          (mouseover)="showEvents()"
+          (mouseleave)="hideEvents()"
         >
           <ng-icon name="matEventRound" class="text-3xl"></ng-icon>
-        </div></a
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandEvents
+          }"
+        >
+          <div>Events</div>
+        </div>
+      </div>
+
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowCompare }"
       >
-      <a routerLink="compare"
-        ><div
-          id="compare"
-          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center"
+        <a
+          routerLink="compare"
+          id="compare-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
           (click)="compare()"
           [ngClass]="{
-            'bg-ept-blue-grey text-ept-deep-grey': onCompare(),
-            'bg-ept-navy-blue hover:bg-[#373a44]': !onCompare()
-          }"
+          'bg-ept-blue-grey text-ept-deep-grey': onCompare(),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !onCompare(),
+          'overflow-visible': expandCompare,
+        }"
           *ngIf="isManager() || isAdmin()"
+          (mouseover)="showCompare()"
+          (mouseleave)="hideCompare()"
         >
           <ng-icon name="heroArrowsRightLeft" class="text-3xl"></ng-icon>
-        </div></a
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandCompare
+          }"
+        >
+          <div>Compare</div>
+        </div>
+      </div>
+
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowUsers }"
       >
-      <a routerLink="users"
-        ><div
-          id="users"
-          class="w-14 h-14 mt-5 rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center"
+        <a
+          routerLink="users"
+          id="users-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
           (click)="users()"
           [ngClass]="{
-            'bg-ept-blue-grey text-ept-deep-grey': onUsers(),
-            'bg-ept-navy-blue hover:bg-[#373a44]': !onUsers()
-          }"
+          'bg-ept-blue-grey text-ept-deep-grey': onUsers(),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !onUsers(),
+          'overflow-visible': expandUsers,
+        }"
           *ngIf="isAdmin()"
+          (mouseover)="showUsers()"
+          (mouseleave)="hideUsers()"
         >
           <ng-icon name="matGroupRound" class="text-3xl"></ng-icon>
-        </div></a
-      >
-    </div>
-    <div class="flex flex-col items-center">
-      <a routerLink="details"
-        ><div
-          id="help"
-          class="w-14 h-14 mb-5 rounded-full hover:bg-[#373a44] bg-ept-navy-blue transition-all duration-300 flex justify-center items-center"
-        >
-          <ng-icon
-            name="matQuestionMarkRound"
-            class="text-4xl font-bold"
-          ></ng-icon></div
-      ></a>
-      <div id="profile-picture" class="avatar mb-5" (click)="profile_press()">
+        </a>
         <div
-          class="w-14 mask mask-hexagon hover:scale-105 transition-all duration-300 cursor-pointer"
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandUsers
+          }"
+        >
+          <div>Users</div>
+        </div>
+      </div>
+    </div>
+    <div class="w-14 flex flex-col items-center">
+      <div
+        class="h-14 mb-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowHelp }"
+      >
+        <a
+          id="help-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          [ngClass]="{
+          'overflow-visible': expandHelp,
+        }"
+          (mouseover)="showHelp()"
+          (mouseleave)="hideHelp()"
+        >
+          <ng-icon name="matQuestionMarkRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+              expandHelp
+          }"
+        >
+          <div>Help</div>
+        </div>
+      </div>
+      <div
+        id="profile-picture"
+        class="avatar mb-5 w-full transition-all duration-300"
+        (click)="profile_press()"
+      >
+        <div
+          class="mask mask-hexagon hover:scale-105 transition-all duration-300 cursor-pointer"
         >
           <img src="{{ img_url }}" />
         </div>
@@ -197,3 +145,7 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+<event-participation-trends-profile
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="profile-modal"
+></event-participation-trends-profile>
