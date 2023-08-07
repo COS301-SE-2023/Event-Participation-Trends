@@ -5,6 +5,7 @@ import { AppApiService } from '@event-participation-trends/app/api';
 enum Tab {
   Dashboard = 'dashboard',
   Details = 'details',
+  Floorplan = 'floorplan',
   None = '',
 }
 
@@ -60,6 +61,15 @@ export class EventViewComponent implements OnInit {
   goDashboard() {
     this.pressButton('#dashboard');
     this.tab = Tab.Dashboard;
+  }
+
+  goFloorplan() {
+    this.pressButton('#floorplan');
+    this.tab = Tab.Floorplan;
+  }
+
+  onFloorplan() : boolean {
+    return this.tab === Tab.Floorplan;
   }
 
   onDetails() : boolean {
