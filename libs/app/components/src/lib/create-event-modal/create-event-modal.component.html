@@ -1,1 +1,39 @@
-<p>create-event-modal works!</p>
+<div
+  class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
+>
+  <div
+    class="fixed w-screen h-screen top-0 left-0 bg-ept-navy-blue bg-opacity-80"
+    (click)="closeModal()"
+  ></div>
+  <div
+    class="bg-gradient-to-br from-ept-deep-grey from-30% to-ept-navy-blue z-50 rounded-2xl p-6 flex flex-col justify-between items-center"
+  >
+    <div class="text-3xl font-poppins font-semibold">
+      Enter a name for this new event
+    </div>
+    <div class="my-4">
+      <input
+        type="text"
+        placeholder="Type here"
+        class="w-full outline-none py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
+        [(ngModel)]="name"
+      />
+    </div>
+    <div class="grid grid-cols-2 justify-items-center w-full">
+      <div
+        id="create-button"
+        class="py-3 px-10 my-2 bg-ept-navy-blue rounded-2xl text-lg font-poppins font-semibold hover:bg-ept-blue-grey hover:text-ept-deep-grey hover:scale-105 transition-all duration-300"
+        (click)="createEvent()"
+      >
+        Create
+      </div>
+      <div
+        id="close-modal"
+        class="py-3 px-10 my-2 bg-ept-navy-blue rounded-2xl text-lg font-poppins font-semibold hover:bg-ept-blue-grey hover:text-ept-deep-grey hover:scale-105 transition-all duration-300"
+        (click)="closeModal()"
+      >
+        Cancel
+      </div>
+    </div>
+  </div>
+</div>

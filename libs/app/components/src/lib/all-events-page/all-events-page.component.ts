@@ -8,11 +8,12 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { matPlusRound } from '@ng-icons/material-icons/round';
 import { Router } from '@angular/router';
+import { CreateEventModalComponent } from '../create-event-modal/create-event-modal.component';
 
 @Component({
   selector: 'event-participation-trends-all-events-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIconComponent],
+  imports: [CommonModule, FormsModule, NgIconComponent, CreateEventModalComponent],
   templateUrl: './all-events-page.component.html',
   styleUrls: ['./all-events-page.component.css'],
   providers: [provideIcons({ heroLockClosedSolid, heroInboxSolid, matPlusRound })],
@@ -164,5 +165,14 @@ export class AllEventsPageComponent implements OnInit {
 
   isViewer() {
     return this.role === 'viewer';
+  }
+
+  showCreate() {
+    const modal = document.querySelector('#create-modal');
+
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
   }
 }

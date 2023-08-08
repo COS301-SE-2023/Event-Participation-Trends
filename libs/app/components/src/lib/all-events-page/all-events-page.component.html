@@ -65,6 +65,7 @@
       class="relative mt-5 mr-5 p-5 h-52 bg-ept-navy-blue bg-opacity-30 rounded-2xl flex flex-col justify-center items-center hover:scale-105 hover:bg-[#2b2e38] hover:bg-opacity-30 transition-all duration-300 cursor-pointer"
       (mouseover)="create = true"
       (mouseleave)="create = false"
+      (click)="showCreate()"
     >
       <ng-icon
         name="matPlusRound"
@@ -204,3 +205,8 @@
     </div>
   </div>
 </div>
+<event-participation-trends-create-event-modal
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="create-modal"
+>
+</event-participation-trends-create-event-modal>
