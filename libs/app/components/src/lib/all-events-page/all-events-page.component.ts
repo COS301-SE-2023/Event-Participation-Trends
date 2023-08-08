@@ -129,8 +129,46 @@ export class AllEventsPageComponent implements OnInit {
     return false;
   }
 
+  // New event getters
+
+  subscribedActiveEvents(): any[] {
+    if (this.role === 'admin' || !this.show_all_events) {
+      return [];
+    }
+
+    console.log(this.subscribed_events);
+
+    console.log(this.sortByEndDate(this.filterActive(this.filterSearch(this.subscribed_events))));
+
+    return this.sortByEndDate(this.filterActive(this.filterSearch(this.subscribed_events)));
+  }
+
+  nonSubscribedActiveEvents(): any[] {
+    if (this.isAdmin() || !this.show_all_events) {
+      return [];
+    }
+
+    return this.sortByEndDate(this.filterActive(this.filterSearch(this.non_subscribed_events)));
+  }
+
+  myEvents(): any[] {
+    if (!this.isManager() || this.show_all_events) {
+      return [];
+    }
+
+    return this.sortByEndDate(this.filterSearch(this.my_events));
+  }
+
+  allEvents(): any[] {
+    if (!this.isAdmin()) {
+      return [];
+    }
+
+    return this.sortByEndDate(this.filterSearch(this.all_events));
+  }
+
   get_all_events(): any[] {
-    return this.sort_by_enddate(this.all_events.filter((event) => {
+    return this.sortByEndDate(this.all_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.search.toLowerCase())
         : false;
@@ -161,9 +199,23 @@ export class AllEventsPageComponent implements OnInit {
     });
   }
 
-  sort_by_enddate(events: any[]): any[] {
+  sortByEndDate(events: any[]): any[] {
     return events.sort((a, b) => {
       return new Date(b.EndDate).getTime() - new Date(a.EndDate).getTime();
+    });
+  }
+
+  filterActive(events: any[]): any[] {
+    return events.filter((event) => {
+      return this.isActive(event);
+    });
+  }
+
+  filterSearch(events: any[]): any[] {
+    return events.filter((event) => {
+      return event.Name
+        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
+        : false;
     });
   }
 
@@ -240,6 +292,15 @@ export class AllEventsPageComponent implements OnInit {
     // round to 0 decimal places
 
     return Math.round(percentage);
+  }
+
+  isActive(event: any) : boolean {
+    const startDate = new Date(event.StartDate);
+    const endDate = new Date(event.EndDate);
+
+    const currentDate = new Date();
+
+    return currentDate >= startDate && currentDate < endDate;
   }
 
   isDone(endDate: Date) : boolean {
