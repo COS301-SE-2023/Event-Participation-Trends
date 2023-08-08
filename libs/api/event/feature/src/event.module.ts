@@ -25,6 +25,8 @@ import {
     GetEventFloorlayoutHandler,
     GetEventDevicePositionHandler,
     GetAllEventCategoriesHandler,
+    GetManagedEventCategoriesHandler,
+    GetFloorplanBoundariesQueryHandler
  } from './queries';
 
 import {
@@ -79,6 +81,8 @@ export const QueryHandlers = [
     GetEventFloorlayoutHandler,
     GetEventDevicePositionHandler,
     GetAllEventCategoriesHandler,
+    GetManagedEventCategoriesHandler,
+    GetFloorplanBoundariesQueryHandler
 ];
 
 

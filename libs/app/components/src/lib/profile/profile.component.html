@@ -1,0 +1,47 @@
+<div
+  class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
+>
+  <div
+    class="fixed w-screen h-screen top-0 left-0 bg-ept-navy-blue bg-opacity-80"
+    (click)="closeModal()"
+  ></div>
+  <div
+    class="bg-gradient-to-br from-ept-blue-grey from-[-30%] to-[#7a849c] z-50 rounded-3xl"
+  >
+    <div
+      class="mx-6 text-inherit rounded-3xl py-10 px-3 flex justify-end items-center"
+    >
+      <div class="avatar">
+        <div class="w-18 mask mask-hexagon">
+          <img src="{{ img_url }}" />
+        </div>
+      </div>
+      <div> 
+        <div
+          class="text-white text-3xl font-poppins font-semibold ml-3" 
+        >
+          {{ name }}
+        </div>
+        <span class="text-md text -white font-montserrat mt-5 ml-3">
+          {{ role }}</span
+        >
+      </div>
+    </div>
+    <div class="grid grid-cols-2 justify-items-center">
+      <div
+        id="logout-button"
+        class="w-[80%] bg-ept-navy-blue p-3 m-3 mb-4 rounded-2xl font-poppins font-semibold text-ept-bumble-yellow flex justify-center cursor-pointer transition-all duration-300 hover:scale-105"
+        (click)="logout()"
+      >
+        <div>Log Out</div>
+      </div>
+      <div
+        id="close-button"
+        class="w-[80%] bg-ept-navy-blue p-3 m-3 mb-4 rounded-2xl font-poppins font-semibold text-ept-bumble-yellow flex justify-center cursor-pointer transition-all duration-300 hover:scale-105"
+        (click)="closeModal()"
+      >
+        <div>Back</div>
+      </div>
+    </div>
+  </div>
+</div>

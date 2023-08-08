@@ -201,7 +201,10 @@ export class EventRepository {
 
     async deleteEventbyId(eventId: Types.ObjectId){
         return await this.eventModel.deleteOne(
-            {_id :{$eq: eventId}});
-    }
+            {_id :{$eq: eventId}})};
 
+    async getManagedEventCategories(managerID: Types.ObjectId){
+        return await this.eventModel.find(
+            {Manager: {$eq: managerID}}).select("Category").distinct("Category");
+    }
 }

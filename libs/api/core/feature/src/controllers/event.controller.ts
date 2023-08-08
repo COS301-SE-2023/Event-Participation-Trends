@@ -31,6 +31,10 @@ import {
     IGetEventDevicePositionRequest,
     IGetEventDevicePositionResponse,
     IGetAllEventCategoriesResponse,
+    IGetManagedEventCategoriesResponse,
+    IGetManagedEventCategoriesRequest,
+    IGetFloorplanBoundariesResponse,
+    IGetFloorplanBoundariesRequest,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -317,6 +321,29 @@ export class EventController {
     (<unknown>this.eventService.getEventFloorLayout(extractRequest))
   );
  }
+
+  @Get('getFloorplanBoundaries')
+  @SetMetadata('role',Role.VIEWER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async getFloorplanCenter(
+      @Query() query: any
+  ): Promise<IGetFloorplanBoundariesResponse> {
+
+    if(query.eventId==undefined || query.eventId ==null)
+      throw new HttpException("Bad Request: eventId not provided", 400);
+    
+    // if(query.floorplanId==undefined || query.floorplanId ==null)
+    //   throw new HttpException("Bad Request: floorplanId not provided", 400);
+
+    const extractRequest: IGetFloorplanBoundariesRequest = {
+      eventId: query.eventId
+    };
+
+    return <IGetFloorplanBoundariesResponse>(
+      (<unknown>this.eventService.getFloorplanBoundaries(extractRequest))
+    );
+  }
+
  
     @Post('addEventViewer')
     @SetMetadata('role',Role.MANAGER)
@@ -373,6 +400,21 @@ export class EventController {
   async getAllEventCategories(): Promise<IGetAllEventCategoriesResponse> {
 
     return this.eventService.getAllEventCategories();
+  }
+
+  @Get('getManagedEventCategories')
+  @SetMetadata('role', Role.MANAGER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
+  async getManagedEventCategories(@Req() req: Request ): Promise<IGetManagedEventCategoriesResponse> {
+    const request: any = req;
+
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: Manager email not provided', 400);
+
+    const extractRequest: IGetManagedEventCategoriesRequest = {
+      ManagerEmail: request.user['email'],
+    };
+    return this.eventService.getManagedEventCategories(extractRequest);
   }
 
 }

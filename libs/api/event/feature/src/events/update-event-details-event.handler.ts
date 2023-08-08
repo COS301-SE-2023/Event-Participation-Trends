@@ -73,7 +73,7 @@ export class UpdateEventDetialsEventHandler implements IEventHandler<UpdateEvent
 
             if(userDoc != undefined && userDoc != null && userDoc[0])
                 this.emailService.sendEmail(
-                    userDoc[0].Email || "", 
+                    userDoc[0]?.Email || "", 
                     EmailSubject.EVENT_DETAILS_UPDATED,
                     emailContent
                 );
