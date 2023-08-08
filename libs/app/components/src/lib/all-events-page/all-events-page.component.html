@@ -84,26 +84,41 @@
       *ngFor="let event of get_all_events()"
       (click)="getURL(event)"
     >
-      <div class="text-xl font-poppins font-semibold grid grid-cols-12">
-        <div class="" [ngClass]="{'col-span-11': !hasFloorplan(event), 'col-span-12': hasFloorplan(event)}">{{ event.Name }}</div>
-        <div class="w-2 h-2 bg-ept-bumble-yellow justify-self-end rounded-full" *ngIf="!hasFloorplan(event)"></div>
+      <div>
+        <div class="text-xl font-poppins font-semibold grid grid-cols-12">
+          <div
+            class=""
+            [ngClass]="{
+              'col-span-11': !hasFloorplan(event),
+              'col-span-12': hasFloorplan(event)
+            }"
+          >
+            {{ event.Name }}
+          </div>
+          <div
+            class="w-2 h-2 bg-ept-bumble-yellow justify-self-end rounded-full"
+            *ngIf="!hasFloorplan(event)"
+          ></div>
+        </div>
+        <div class="text-sm">
+          <div>{{ event.Location?.CityName }}</div>
+          <div>{{ event.Category }}</div>
+        </div>
       </div>
       <div>
-        <div class="flex justify-between">
-          <div class="text-ept-blue-grey text-sm font-montserrat">Location</div>
-          <div
-            class="font-montserrat text-base font-semibold text-ept-off-white"
-          >
-            {{ event.Location?.CityName }}
-          </div>
+        <div class="text-sm text-ept-blue-grey flex justify-between">
+          <div>{{ getDate(event.StartDate) }}</div>
+          <div>{{ getDate(event.EndDate) }}</div>
         </div>
-        <div class="flex justify-between">
-          <div class="text-ept-blue-grey text-sm font-montserrat">Category</div>
+        <div class="text-sm text-ept-blue-grey flex justify-between">
+          <div>{{ getTime(event.StartDate) }}</div>
+          <div>{{ getTime(event.EndDate) }}</div>
+        </div>
+        <div class="flex justify-start w-full h-2 mt-3 bg-ept-deep-grey bg-opacity-30">
           <div
-            class="font-montserrat text-base font-semibold text-ept-off-white text-right"
-          >
-            {{ event.Category }}
-          </div>
+            class="h-full bg-ept-blue-grey rounded-full" [ngClass]="{'bg-opacity-20': isDone(event.EndDate)}"
+            [style.width.%]="calculatePercentageDone(event.StartDate, event.EndDate)"
+          ></div>
         </div>
       </div>
     </a>

@@ -13,10 +13,17 @@ import { CreateEventModalComponent } from '../create-event-modal/create-event-mo
 @Component({
   selector: 'event-participation-trends-all-events-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIconComponent, CreateEventModalComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgIconComponent,
+    CreateEventModalComponent,
+  ],
   templateUrl: './all-events-page.component.html',
   styleUrls: ['./all-events-page.component.css'],
-  providers: [provideIcons({ heroLockClosedSolid, heroInboxSolid, matPlusRound })],
+  providers: [
+    provideIcons({ heroLockClosedSolid, heroInboxSolid, matPlusRound }),
+  ],
 })
 export class AllEventsPageComponent implements OnInit {
   constructor(private appApiService: AppApiService, private router: Router) {}
@@ -72,16 +79,15 @@ export class AllEventsPageComponent implements OnInit {
 
   getURL(event: any) {
     if (this.role == 'admin') {
-      this.router.navigate(["/event/" + event._id + "/details"]);
+      this.router.navigate(['/event/' + event._id + '/details']);
     } else if (this.role == 'manager' && this.hasAccess(event)) {
-      this.router.navigate(["/event/" + event._id + "/details"]);
-    } 
-    else {
-      this.router.navigate(["/event/" + event._id + "/dashboard"]);
+      this.router.navigate(['/event/' + event._id + '/details']);
+    } else {
+      this.router.navigate(['/event/' + event._id + '/dashboard']);
     }
   }
 
-  hasFloorplan(event: any) : boolean {
+  hasFloorplan(event: any): boolean {
     return event.FloorLayout ? true : false;
   }
 
@@ -124,11 +130,11 @@ export class AllEventsPageComponent implements OnInit {
   }
 
   get_all_events(): any[] {
-    return this.all_events.filter((event) => {
+    return this.sort_by_enddate(this.all_events.filter((event) => {
       return event.Name
         ? event.Name.toLowerCase().includes(this.search.toLowerCase())
         : false;
-    });
+    }));
   }
 
   get_subscribed_events(): any[] {
@@ -155,6 +161,12 @@ export class AllEventsPageComponent implements OnInit {
     });
   }
 
+  sort_by_enddate(events: any[]): any[] {
+    return events.sort((a, b) => {
+      return new Date(b.EndDate).getTime() - new Date(a.EndDate).getTime();
+    });
+  }
+
   isAdmin() {
     return this.role === 'admin';
   }
@@ -174,5 +186,67 @@ export class AllEventsPageComponent implements OnInit {
     setTimeout(() => {
       modal?.classList.remove('opacity-0');
     }, 100);
+  }
+
+  convertDateFormat(inputDate: Date): string {
+    const date = new Date(inputDate);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  }
+
+  getDate(inputDate: Date): string {
+    const date = new Date(inputDate);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  getTime(inputDate: Date): string {
+    const date = new Date(inputDate);
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${hours}:${minutes}`;
+  }
+
+  calculatePercentageDone(startDate: Date, endDate: Date): number {
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+
+    const currentDate = new Date();
+
+    if (currentDate < startDate) {
+      return 0; // Not started yet
+    } else if (currentDate >= endDate) {
+      return 100; // Already finished
+    }
+
+    const totalDuration = endDate.getTime() - startDate.getTime();
+    const elapsedDuration = currentDate.getTime() - startDate.getTime();
+    const percentage = (elapsedDuration / totalDuration) * 100;
+
+    console.log(startDate, endDate, Math.round(percentage));
+
+    // round to 0 decimal places
+
+    return Math.round(percentage);
+  }
+
+  isDone(endDate: Date) : boolean {
+    endDate = new Date(endDate);
+
+    const currentDate = new Date();
+
+    return currentDate >= endDate;
   }
 }
