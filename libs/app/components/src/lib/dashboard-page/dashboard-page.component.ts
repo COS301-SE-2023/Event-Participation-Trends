@@ -83,6 +83,8 @@ export class DashboardPageComponent implements OnInit {
   totalUsersDetectedPrev = 0;
   averageDataDetectedThisRun: IAverageDataFound[] = [];
   allPosDetectedInCurrHour: {hour: string, positions: number[]} = {hour: '', positions: []};
+  percentageIncreaseThanPrevHour = 0;
+  grandTotalUsersDetected = 0;
   /**
    * The variables within the below block are used to determine the corrdinates of the
    * grid tiles on the flowmap layer. The grid tiles are used to determine the direction
@@ -149,7 +151,7 @@ export class DashboardPageComponent implements OnInit {
       // set the number of hours of the event
       //------- testing data
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 223);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 224);
       this.eventEndTime = new Date();
       this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
@@ -198,7 +200,7 @@ export class DashboardPageComponent implements OnInit {
           blur: 0.90,
         });
         this.getImageFromJSONData(this.id);
-        // this.renderUserCountDataStreaming();
+        this.renderUserCountDataStreaming();
         this.renderTotalDevicesBarChart();
       }, 1000);
     }, 200);    
@@ -213,7 +215,7 @@ export class DashboardPageComponent implements OnInit {
         // //! Testing purposes
 
         now.setHours(now.getHours() - 223);
-        now.setMinutes(now.getMinutes() - 23);
+        now.setMinutes(now.getMinutes() - 35);
         console.log(now);
         // get positions this interval
 
@@ -315,7 +317,6 @@ export class DashboardPageComponent implements OnInit {
           // add new data to the streamingChartData
           this.streamingChartData.labels.push(newTime);
           this.streamingChartData.data.push(newData);
-      
           // update the userDetectedPerHour array
           this.userDetectedPerHour.forEach((hour) => {
             // test if the hour is equal to the current hour
@@ -328,6 +329,23 @@ export class DashboardPageComponent implements OnInit {
             this.devicesBarChart.data.datasets[0].data = this.userDetectedPerHour.map((hour) => hour.detected);
             this.devicesBarChart.data.labels = this.userDetectedPerHour.map((hour) => hour.time);
             this.devicesBarChart.update();
+          }
+
+          // sum the total users detected from every hour
+          this.grandTotalUsersDetected = this.userDetectedPerHour.reduce((total, hour) => {
+            return total + hour.detected;
+          }, 0);
+
+          // calculate the current percentage increase that the previous hour
+          const prevHour = now.getHours() - 1;
+          const prevHourPos = this.userDetectedPerHour.find(hour => hour.time === `${prevHour}:00`);
+          if (prevHourPos) {
+            const prevHourDetected = prevHourPos.detected;
+            const currHourDetected = this.userDetectedPerHour.find(hour => hour.time === `${now.getHours()}:00`)?.detected;
+            if (prevHourDetected && currHourDetected) {
+              const percentageIncrease = ((currHourDetected - prevHourDetected) / prevHourDetected) * 100;
+              this.percentageIncreaseThanPrevHour = percentageIncrease;
+            }
           }
         }
 
@@ -395,6 +413,7 @@ export class DashboardPageComponent implements OnInit {
         }]
       },
       options: {
+        responsive: true,
         plugins: {
           tooltip: {
             enabled: false
@@ -409,18 +428,10 @@ export class DashboardPageComponent implements OnInit {
         },
         scales: {
           x: {
-              display: true, 
-              title: {
-                display: true,
-                text: 'Time of day',
-              },
+              display: true,
             },
             y: {
               display: true,
-              title: {
-                display: true,
-                text: 'Users Detected', 
-              },
               beginAtZero: true, 
             },
         }
@@ -467,6 +478,7 @@ export class DashboardPageComponent implements OnInit {
       type: 'bar',
       data: data,
       options: {
+        responsive: true,
         plugins: {
             title: {
               display: true,

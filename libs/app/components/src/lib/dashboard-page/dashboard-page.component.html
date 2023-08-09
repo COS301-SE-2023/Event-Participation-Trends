@@ -38,6 +38,9 @@
             >
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
+            <div *ngIf="show" class="rounded-md col-span-5 row-span-2">
+                <canvas #userCountDataStreamingChart class="w-full"></canvas>
+            </div>
         </div>
         <div class="col-span-1 row-span-1 m-5 mt-0 ml-0 bg-slate-200 rounded-2xl relative">
             <div
@@ -52,8 +55,8 @@
                     <ng-icon name="heroUserGroupSolid" class="text-7xl"></ng-icon>
                 </div>
                 <div class="stat-title">Total Users</div>
-                <div class="stat-value text-blue-700">25.6K</div>
-                <div class="stat-desc">21% increase in the last hour</div>
+                <div class="stat-value text-blue-700">{{grandTotalUsersDetected}}</div>
+                <div class="stat-desc">{{percentageIncreaseThanPrevHour}}% increase in the last hour</div>
             </div>
             <div *ngIf="show" class="flex justify-between text-ept-navy-blue pr-2">
                 <div class="stat">
