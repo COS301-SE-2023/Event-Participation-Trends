@@ -37,11 +37,21 @@
             </div>
             <div *ngIf="show" class="stat">
                 <div class="stat-figure text-blue-700">
-                    <ng-icon></ng-icon>
+                    <ng-icon name="heroUserGroup" class="text-6xl"></ng-icon>
                 </div>
                 <div class="stat-title">Total Users</div>
                 <div class="stat-value text-blue-700">25.6K</div>
                 <div class="stat-desc">21% increase in the last hour</div>
+            </div>
+            <div *ngIf="show" class="stat">
+                <div class="stat-figure text-green-400">
+                    <ng-icon name="heroArrowTrendingUp" class="text-6xl"></ng-icon>
+                </div>
+                <div class="stat-title">Users Detected</div>
+                <div class="flex mt-2 justify-between">
+                    <div class="stat-value text-green-400">150</div>
+                </div>
+                <div class="text-ept-blue-grey text-sm">Previously <span class="ml-2 text-lg">100</span></div>
             </div>
             
         </div>
