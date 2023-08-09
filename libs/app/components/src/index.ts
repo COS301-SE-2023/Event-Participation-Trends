@@ -7,3 +7,5 @@ export * from './lib/floorplan-editor-page/floorplan-editor-page.component';
 export * from './lib/link-event/link-event.component';
 export * from './lib/request-access/request-access.component';
 export * from './lib/users-page/users-page.component';
+
+export * from './lib/dashboard-page/dashboard-page.module';

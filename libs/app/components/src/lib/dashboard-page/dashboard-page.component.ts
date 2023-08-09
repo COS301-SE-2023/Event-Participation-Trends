@@ -12,6 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IGetEventDevicePositionResponse, IGetEventFloorlayoutResponse, IGetEventResponse, IPosition } from '@event-participation-trends/api/event/util';
 import { Store } from '@ngxs/store';
+import { NgIconsModule } from '@ng-icons/core';
+import { heroUserGroup } from '@ng-icons/heroicons/outline';
 
 interface IAverageDataFound {
   id: number | null | undefined,
@@ -24,8 +26,6 @@ interface IAverageDataFound {
 
 @Component({
   selector: 'event-participation-trends-dashboard-page',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.css'],
 })
