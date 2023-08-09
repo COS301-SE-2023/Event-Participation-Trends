@@ -11,6 +11,7 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IGetEventDevicePositionResponse, IGetEventFloorlayoutResponse, IGetEventResponse, IPosition } from '@event-participation-trends/api/event/util';
+import { set } from 'mongoose';
 
 interface IAverageDataFound {
   id: number | null | undefined,
@@ -79,6 +80,7 @@ export class DashboardPageComponent implements OnInit {
   }[] = [];
   eventId = '';
   totalUsersDetected = 0;
+  totalUsersDetectedPrev = 0;
   averageDataDetectedThisRun: IAverageDataFound[] = [];
 
   /**
@@ -141,12 +143,16 @@ export class DashboardPageComponent implements OnInit {
     return date.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
   }
 
-  async ngAfterViewInit() {
+  ngAfterViewInit() {
     // wait until the heatmap container is rendered
     setTimeout(() => {
-      this.isLoading = false;
-    
       // set the number of hours of the event
+      //------- testing data
+      this.eventStartTime = new Date();
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 223);
+      this.eventEndTime = new Date();
+      this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
+      //---------------
       let hoursOfEvent = 0;
       if (this.eventStartTime.getHours() > this.eventEndTime.getHours()) {
         hoursOfEvent = (24 - this.eventStartTime.getHours()) + this.eventEndTime.getHours();
@@ -182,8 +188,6 @@ export class DashboardPageComponent implements OnInit {
           }
         )
       }
-
-      // get average data points up to the current time to load heatmap
     
       setTimeout(() => {
         Chart.register(ChartStreaming);
@@ -195,121 +199,121 @@ export class DashboardPageComponent implements OnInit {
         });
         this.getImageFromJSONData(this.id);
         // this.renderUserCountDataStreaming();
-        // this.renderTotalDevicesBarChart();
+        this.renderTotalDevicesBarChart();
       }, 1000);
-    }, 1000);    
+    }, 200);    
 
-  //   const streamingInterval = setInterval(async () => {
-  //     const now = new Date();
+    const streamingInterval = setInterval(async () => {
+      const now = new Date();
 
-  //     if (now > this.eventEndTime) {
-  //       clearInterval(streamingInterval);
-  //     } else {
+      if (now > this.eventEndTime) {
+        clearInterval(streamingInterval);
+      } else {
 
-  //       // //! Testing purposes
+        // //! Testing purposes
 
-  //       // now.setHours(now.getHours() - 11);
-  //       // now.setMinutes(now.getMinutes() - 20);
+        now.setHours(now.getHours() - 223);
+        now.setMinutes(now.getMinutes());
+        console.log(now);
+        // get positions this interval
 
-  //       // get positions this interval
+        const intervalStart = new Date(now.getTime() - 5000);
+        const intervalEnd = now;
 
-  //       const intervalStart = new Date(now.getTime() - 5000);
-  //       const intervalEnd = now;
+        const positions = await this.appApiService.getEventDevicePosition(this.id, intervalStart, intervalEnd);
+        console.log(positions);
+        // add to heatmap
 
-  //       const positions = await this.appApiService.getEventDevicePosition(this.eventId, intervalStart, intervalEnd);
+        let data: {
+          x: number,
+          y: number,
+          value: number,
+          radius: number
+        }[] = [];
 
-  //       // add to heatmap
+        if (positions) {
+          data = positions.map((position: IPosition) => {
+            if (position.x != null && position.y != null) {
+              return {
+                x: position.x,
+                y: position.y,
+                value: 20,
+                radius: 10
+              };
+            } else {
+              return {
+                x: 100,
+                y: 100,
+                value: 0,
+                radius: 20
+              };
+            }
+          });
 
-  //       let data: {
-  //         x: number,
-  //         y: number,
-  //         value: number,
-  //         radius: number
-  //       }[] = [];
+          data.push({
+            x: 100,
+            y: 100,
+            value: 0,
+            radius: 20
+          });
 
-  //       if (positions) {
-  //         data = positions.map((position: IPosition) => {
-  //           if (position.x != null && position.y != null) {
-  //             return {
-  //               x: position.x,
-  //               y: position.y,
-  //               value: 20,
-  //               radius: 10
-  //             };
-  //           } else {
-  //             return {
-  //               x: 100,
-  //               y: 100,
-  //               value: 0,
-  //               radius: 20
-  //             };
-  //           }
-  //         });
+          this.heatmap?.setData({
+            max: 100,
+            min: 1,
+            data: data
+          });
 
-  //         data.push({
-  //           x: 100,
-  //           y: 100,
-  //           value: 0,
-  //           radius: 20
-  //         });
+          this.heatmapData = data;
 
-  //         this.heatmap?.setData({
-  //           max: 100,
-  //           min: 1,
-  //           data: data
-  //         });
+          const unique_ids: number[] = [];
+          for (let i = 0; i < positions.length; i++) {
+            const position = positions[i];
+            if (position.id && !unique_ids.includes(position.id)) {
+              unique_ids.push(position.id);
+            }
+          }
 
-  //         this.heatmapData = data;
-
-  //         const unique_ids: number[] = [];
-  //         for (let i = 0; i < positions.length; i++) {
-  //           const position = positions[i];
-  //           if (position.id && !unique_ids.includes(position.id)) {
-  //             unique_ids.push(position.id);
-  //           }
-  //         }
-
-  //         const newData = unique_ids.length;
-  //         this.totalUsersDetected = newData;
-  //         const newTime = now.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+          const newData = unique_ids.length;
+          this.totalUsersDetectedPrev = this.totalUsersDetected;
+          this.totalUsersDetected = newData;
+          const newTime = now.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
         
-  //         if (this.streamingUserCountChart) {
-  //           // add new label and data to the chart
-  //           this.streamingUserCountChart.data.labels?.push(newTime);
-  //           // add new data to the chart
-  //           this.streamingUserCountChart.data.datasets[0].data?.push(newData);
-  //           if (this.streamingUserCountChart.data.datasets[0].data?.length > 20) {
-  //             // remove first label
-  //             this.streamingUserCountChart.data.labels?.shift();
-  //             // remove first data point
-  //             this.streamingUserCountChart.data.datasets[0].data?.shift();
-  //           }
-  //           this.streamingUserCountChart.update();
-  //         }
+          if (this.streamingUserCountChart) {
+            // add new label and data to the chart
+            this.streamingUserCountChart.data.labels?.push(newTime);
+            // add new data to the chart
+            this.streamingUserCountChart.data.datasets[0].data?.push(newData);
+            if (this.streamingUserCountChart.data.datasets[0].data?.length > 20) {
+              // remove first label
+              this.streamingUserCountChart.data.labels?.shift();
+              // remove first data point
+              this.streamingUserCountChart.data.datasets[0].data?.shift();
+            }
+            this.streamingUserCountChart.update();
+          }
 
-  //         // add new data to the streamingChartData
-  //         this.streamingChartData.labels.push(newTime);
-  //         this.streamingChartData.data.push(newData);
+          // add new data to the streamingChartData
+          this.streamingChartData.labels.push(newTime);
+          this.streamingChartData.data.push(newData);
       
-  //         // update the userDetectedPerHour array
-  //         this.userDetectedPerHour.forEach((hour) => {
-  //           // test if the hour is equal to the current hour
-  //           console.log(hour.time.slice(0, 2), newTime.slice(0, 2));
-  //           if (hour.time.slice(0, 2) === newTime.slice(0, 2)) {
-  //             // add one to the detected users
-  //             hour.detected = this.totalUsersDetected;
-  //           }
-  //         });
-  //         if (this.devicesBarChart) {
-  //           this.devicesBarChart.data.datasets[0].data = this.userDetectedPerHour.map((hour) => hour.detected);
-  //           this.devicesBarChart.data.labels = this.userDetectedPerHour.map((hour) => hour.time);
-  //           this.devicesBarChart.update();
-  //         }
+          // update the userDetectedPerHour array
+          this.userDetectedPerHour.forEach((hour) => {
+            // test if the hour is equal to the current hour
+            if (hour.time.slice(0, 2) === newTime.slice(0, 2)) {
+              // add one to the detected users
+              hour.detected = this.totalUsersDetected;
+            }
+          });
+          if (this.devicesBarChart) {
+            this.devicesBarChart.data.datasets[0].data = this.userDetectedPerHour.map((hour) => hour.detected);
+            this.devicesBarChart.data.labels = this.userDetectedPerHour.map((hour) => hour.time);
+            this.devicesBarChart.update();
+          }
 
-  //       }
+        }
 
-  //     }
-  //   }, 5000);
+      }
+    }, 5000);
   }
 
   showToggleButton() {
@@ -459,18 +463,10 @@ export class DashboardPageComponent implements OnInit {
         scales: {
           x: {
             display: true, 
-              title: {
-              display: true,
-              text: 'Time of day',
-            },
           },
           y: {
             display: true,
-            title: {
-              display: true,
-              text: 'Number of Users Detected', 
-            },
-            beginAtZero: true, 
+            beginAtZero: true,
           },
         }
       },
