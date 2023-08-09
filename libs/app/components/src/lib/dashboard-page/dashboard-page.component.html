@@ -1,6 +1,6 @@
 <div class="top-0 left-0 w-full h-screen">
     <div class="grid grid-cols-4 grid-rows-3 w-full h-full">
-        <div class="col-span-3 row-span-3 m-5 ml-0 bg-slate-200 rounded-2xl relative">
+        <div class="col-span-3 row-span-3 m-5 ml-0 bg-slate-200 rounded-2xl relative" (mouseleave)="hideToggleButton()" (mouseover)="showToggleButton()">
             <div
                 class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
                 [ngClass]="{ 'opacity-0': !loading }"
@@ -8,7 +8,14 @@
             >
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
-            <div id="floormap" class="z-20 absolute w-full h-full top-0 left-0"></div>
+            <div class="absolute right-3 top-3 opacity-40 hover:opacity-100 z-50">
+                <label class="text-xl text-ept-deep-grey opacity-40 z-50">Heatmap</label>
+                <label class="switch">
+                    <input type="checkbox" />
+                    <span class="slider round"></span>
+                </label>
+            </div> 
+            <div *ngIf="show" id="floormap" class="z-20 absolute w-full h-full top-0 left-0"></div>
             <div
                 *ngIf="show"
                 id="heatmapContainer"
