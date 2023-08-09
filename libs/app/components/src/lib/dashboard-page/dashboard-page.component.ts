@@ -145,13 +145,13 @@ export class DashboardPageComponent implements OnInit {
     return date.toString().replace(/( [A-Z]{3,4})$/, '').slice(0, 33);
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     // wait until the heatmap container is rendered
     setTimeout(() => {
       // set the number of hours of the event
       //------- testing data
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 224);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 227);
       this.eventEndTime = new Date();
       this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
@@ -203,7 +203,7 @@ export class DashboardPageComponent implements OnInit {
         this.renderUserCountDataStreaming();
         this.renderTotalDevicesBarChart();
       }, 1000);
-    }, 200);    
+    }, 1000);    
 
     const streamingInterval = setInterval(async () => {
       const now = new Date();
@@ -214,16 +214,15 @@ export class DashboardPageComponent implements OnInit {
 
         // //! Testing purposes
 
-        now.setHours(now.getHours() - 223);
+        now.setHours(now.getHours() - 227);
         now.setMinutes(now.getMinutes() - 35);
-        console.log(now);
+
         // get positions this interval
 
         const intervalStart = new Date(now.getTime() - 5000);
         const intervalEnd = now;
 
         const positions = await this.appApiService.getEventDevicePosition(this.id, intervalStart, intervalEnd);
-        console.log(positions);
         // add to heatmap
 
         // check to see if we don't need to reset the all positions detected array (if we are in a new hour)
@@ -270,7 +269,6 @@ export class DashboardPageComponent implements OnInit {
             min: 1,
             data: data
           });
-
           this.heatmapData = data;
 
           const unique_ids: number[] = [];
@@ -384,7 +382,6 @@ export class DashboardPageComponent implements OnInit {
         width: this.heatmapContainer.nativeElement.offsetWidth,
         height: this.heatmapContainer.nativeElement.offsetHeight
       });
-
       // create node from JSON string
       const layer: Konva.Layer = Konva.Node.create(response, 'floormap');
       // add the node to the layer
