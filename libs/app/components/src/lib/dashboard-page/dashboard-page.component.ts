@@ -82,7 +82,7 @@ export class DashboardPageComponent implements OnInit {
   totalUsersDetected = 0;
   totalUsersDetectedPrev = 0;
   averageDataDetectedThisRun: IAverageDataFound[] = [];
-
+  allPosDetectedInCurrHour: {hour: string, positions: number[]} = {hour: '', positions: []};
   /**
    * The variables within the below block are used to determine the corrdinates of the
    * grid tiles on the flowmap layer. The grid tiles are used to determine the direction
@@ -213,7 +213,7 @@ export class DashboardPageComponent implements OnInit {
         // //! Testing purposes
 
         now.setHours(now.getHours() - 223);
-        now.setMinutes(now.getMinutes());
+        now.setMinutes(now.getMinutes() - 23);
         console.log(now);
         // get positions this interval
 
@@ -223,6 +223,12 @@ export class DashboardPageComponent implements OnInit {
         const positions = await this.appApiService.getEventDevicePosition(this.id, intervalStart, intervalEnd);
         console.log(positions);
         // add to heatmap
+
+        // check to see if we don't need to reset the all positions detected array (if we are in a new hour)
+        if (this.allPosDetectedInCurrHour.hour !== now.getHours().toString()) {
+          this.allPosDetectedInCurrHour.hour = now.getHours().toString();
+          this.allPosDetectedInCurrHour.positions = [];
+        }
 
         let data: {
           x: number,
@@ -270,7 +276,13 @@ export class DashboardPageComponent implements OnInit {
             const position = positions[i];
             if (position.id && !unique_ids.includes(position.id)) {
               unique_ids.push(position.id);
+
+              // add any new id detected to the all positions detected array
+              if (!this.allPosDetectedInCurrHour.positions.includes(position.id)) {
+                this.allPosDetectedInCurrHour.positions.push(position.id);
+              }
             }
+
           }
 
           const newData = unique_ids.length;
@@ -283,7 +295,7 @@ export class DashboardPageComponent implements OnInit {
           else {
             this.increasedUserCount = true;
           }
-          
+
           const newTime = now.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
         
           if (this.streamingUserCountChart) {
@@ -309,7 +321,7 @@ export class DashboardPageComponent implements OnInit {
             // test if the hour is equal to the current hour
             if (hour.time.slice(0, 2) === newTime.slice(0, 2)) {
               // add one to the detected users
-              hour.detected = this.totalUsersDetected;
+              hour.detected = this.allPosDetectedInCurrHour.positions.length;
             }
           });
           if (this.devicesBarChart) {
@@ -317,7 +329,6 @@ export class DashboardPageComponent implements OnInit {
             this.devicesBarChart.data.labels = this.userDetectedPerHour.map((hour) => hour.time);
             this.devicesBarChart.update();
           }
-
         }
 
       }
