@@ -276,6 +276,14 @@ export class DashboardPageComponent implements OnInit {
           const newData = unique_ids.length;
           this.totalUsersDetectedPrev = this.totalUsersDetected;
           this.totalUsersDetected = newData;
+
+          if (this.totalUsersDetectedPrev > this.totalUsersDetected) {
+            this.increasedUserCount = false;
+          }
+          else {
+            this.increasedUserCount = true;
+          }
+          
           const newTime = now.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
         
           if (this.streamingUserCountChart) {
