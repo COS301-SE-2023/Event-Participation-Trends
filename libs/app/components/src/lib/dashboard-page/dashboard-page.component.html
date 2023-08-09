@@ -37,21 +37,34 @@
             </div>
             <div *ngIf="show" class="stat">
                 <div class="stat-figure text-blue-700">
-                    <ng-icon name="heroUserGroup" class="text-7xl"></ng-icon>
+                    <ng-icon name="heroUserGroupSolid" class="text-7xl"></ng-icon>
                 </div>
                 <div class="stat-title">Total Users</div>
                 <div class="stat-value text-blue-700">25.6K</div>
                 <div class="stat-desc">21% increase in the last hour</div>
             </div>
             <div *ngIf="show" class="stat">
-                <div class="stat-figure text-green-400">
-                    <ng-icon name="heroArrowTrendingUp" class="text-7xl"></ng-icon>
+                <div *ngIf="increasedUserCount" class="stat-figure text-green-400 rotate-90 mr-6">
+                    <ng-icon name="heroBackward" class="animate-pulse text-4xl"></ng-icon>                    
+                    <ng-icon name="heroBackward" class="animate-pulse text-4xl"></ng-icon>
+                </div>
+                <div *ngIf="increasedUserCount" class="stat-figure text-green-400 rotate-90">
+                    <ng-icon name="heroBackward" class="animate-pulse text-4xl"></ng-icon>                    
+                    <ng-icon name="heroBackward" class="animate-pulse text-4xl"></ng-icon>
+                </div>
+                <div *ngIf="!increasedUserCount" class="stat-figure text-red-400 -rotate-90 mr-6">
+                    <ng-icon name="heroBackward" class="animate-pulse text-4xl"></ng-icon>
+                    <ng-icon name="heroBackward" class="animate-pulse text-4xl"></ng-icon>
+                </div>
+                <div *ngIf="!increasedUserCount" class="stat-figure text-red-400 -rotate-90">
+                    <ng-icon name="heroBackward" class="animate-pulse text-4xl"></ng-icon>
+                    <ng-icon name="heroBackward" class="animate-pulse text-4xl"></ng-icon>
                 </div>
                 <div class="stat-title">Users Detected</div>
                 <div class="flex mt-2 justify-between">
-                    <div class="stat-value text-green-400">150</div>
+                    <div class="stat-value text-pink-400">150</div>
                 </div>
-                <div class="text-ept-blue-grey text-sm">Previously <span class="ml-2 text-lg">100</span></div>
+                <div class="stat-desc text-ept-blue-grey">Previously <span class="ml-2 text-lg">100</span></div>
             </div>
             
         </div>

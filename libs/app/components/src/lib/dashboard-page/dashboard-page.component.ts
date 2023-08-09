@@ -63,6 +63,8 @@ export class DashboardPageComponent implements OnInit {
   hotzoneMarker: any;
   
   // Chart
+  increasedUserCount = true;
+
   devicesBarChart: Chart | null = null;
   streamingUserCountChart: Chart | null = null;
   eventHours: string[] = []; // labels for the chart

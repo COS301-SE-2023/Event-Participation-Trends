@@ -1,0 +1,17 @@
+@keyframes changing-colors {
+    0% {
+      filter: brightness(1);
+    }
+    100% {
+      filter: brightness(2);
+    }
+  }
+  
+  @keyframes changing-colours-reverse {
+    0% {
+      filter: brightness(2);
+    }
+    100% {
+      filter: brightness(1);
+    }
+  }
