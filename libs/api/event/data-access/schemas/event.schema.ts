@@ -44,6 +44,10 @@ export class Event{
 
     @Prop({ type: [{type: mongoose.Schema.Types.ObjectId ,ref: 'User'}] })
     Viewers: Types.ObjectId[] | undefined | null;
+    
+    @Prop({ type: Boolean })
+    PublicEvent: boolean | undefined | null;
+
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
