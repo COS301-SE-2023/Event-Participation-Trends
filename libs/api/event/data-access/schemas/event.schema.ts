@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { Stall } from './stall.schema';
 import { Sensor } from './sensor.schema';
-import { EventLocation } from './Eventlocation.schema';
 import { Position } from '../src/interfaces';
 
 export type EventDocument = HydratedDocument<Event>;
@@ -22,8 +21,8 @@ export class Event{
     @Prop({ type: String, required: true })
     Category: string | undefined | null;
 
-    @Prop({ type: EventLocation, required: true })
-    Location: EventLocation | undefined | null;
+    @Prop({ type: String, required: true })
+    Location: string | undefined | null;
 
     @Prop({ type: String })
     FloorLayout: string | undefined | null;
