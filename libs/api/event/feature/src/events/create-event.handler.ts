@@ -35,6 +35,7 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             Manager: event.event.Manager,
             Requesters: new Array<Types.ObjectId>(), 
             Viewers: ViewersArr,
+            PublicEvent: event.event.PublicEvent,
         }
 
         await this.eventRepository.createEvent(eventToCreate);
@@ -49,7 +50,8 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             "\t End Date: " + new Date(event.event.EndDate || "") + EmailContent.NEW_LINE +
             "\t Event Name: " + event.event.Name + EmailContent.NEW_LINE +
             "\t Event Category: " + event.event.Category + EmailContent.NEW_LINE +
-            "\t Event Location Details: " + event.event.Location + EmailContent.NEW_LINE
+            "\t Event Location Details: " + event.event.Location + EmailContent.NEW_LINE +
+            "\t Public Event: " + (event.event.PublicEvent? "Yes" : "No") + EmailContent.NEW_LINE
         )
     }
   }
