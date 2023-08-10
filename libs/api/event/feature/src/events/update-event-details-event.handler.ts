@@ -60,6 +60,11 @@ export class UpdateEventDetialsEventHandler implements IEventHandler<UpdateEvent
                 emailContent+= "\t New Event Location: "+request.Location+ EmailContent.NEW_LINE
             }
 
+            if(request.PublicEvent != null && request.PublicEvent != undefined){
+                await this.eventRepository.updateEventVisibility(request.EventId,request.PublicEvent);
+                emailContent+= "\t Public Event : "+(request.PublicEvent? "Yes" : "No")+ EmailContent.NEW_LINE
+            }
+            
             let userDoc;
             if(eventDoc[0].Manager != null && eventDoc[0].Manager != undefined)
                 userDoc = await this.userRepository.getUserById(eventDoc[0].Manager); 
