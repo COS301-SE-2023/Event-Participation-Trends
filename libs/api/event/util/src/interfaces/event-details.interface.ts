@@ -8,4 +8,5 @@ export interface IEventDetails {
     Location?: string | undefined | null;
     Manager?: Types.ObjectId | undefined | null;
     Floorlayout?: string | undefined | null;
+    PublicEvent?: boolean | undefined | null;
 }

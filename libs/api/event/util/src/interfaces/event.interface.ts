@@ -17,4 +17,5 @@ export interface IEvent {
     Manager?: Types.ObjectId | undefined | null;
     Requesters?: Types.ObjectId[] | undefined | null;
     Viewers?: Types.ObjectId[] | undefined | null;
+    PublicEvent?: boolean | undefined | null;
 }
