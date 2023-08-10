@@ -49,14 +49,7 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             "\t End Date: " + new Date(event.event.EndDate || "") + EmailContent.NEW_LINE +
             "\t Event Name: " + event.event.Name + EmailContent.NEW_LINE +
             "\t Event Category: " + event.event.Category + EmailContent.NEW_LINE +
-            "\t Event Location Details: " + EmailContent.NEW_LINE + 
-            "\t\t Latitude: " + event.event.Location?.Latitude + EmailContent.NEW_LINE +
-            "\t\t Longitude: " + event.event.Location?.Longitude + EmailContent.NEW_LINE +
-            "\t\t StreetName: " + event.event.Location?.StreetName + EmailContent.NEW_LINE +
-            "\t\t CityName: " + event.event.Location?.CityName + EmailContent.NEW_LINE +
-            "\t\t Province Name: " + event.event.Location?.ProvinceName + EmailContent.NEW_LINE +
-            "\t\t Country Name: " + event.event.Location?.CountryName + EmailContent.NEW_LINE +
-            "\t\t ZIPCode: " + event.event.Location?.ZIPCode + EmailContent.NEW_LINE
+            "\t Event Location Details: " + event.event.Location + EmailContent.NEW_LINE
         )
     }
   }
