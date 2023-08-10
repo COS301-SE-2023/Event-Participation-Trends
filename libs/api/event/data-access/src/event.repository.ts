@@ -121,6 +121,11 @@ export class EventRepository {
         {_id :{$eq: eventID}},{$set: {FloorLayout :floorlayout}})
     }
 
+    async updateEventVisibility(eventID: Types.ObjectId, visibility: boolean){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {PublicEvent :visibility}})
+    }
+
     async getALLEventNames(){
         return await this.eventModel.find({ Name: 1 });
     }
