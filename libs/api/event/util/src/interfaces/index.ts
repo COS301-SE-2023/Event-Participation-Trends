@@ -1,4 +1,3 @@
-export * from './event-location.interface';
 export * from './event.interface';
 export * from './floorlayout.interface';
 export * from './sensor.interface';
