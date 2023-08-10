@@ -4,7 +4,6 @@ import {
     IFloorLayout, 
     } from '@event-participation-trends/api/event/util';
 import {
-    IEventLocation,
     IStall,
     ISensor,
 } from '@event-participation-trends/api/event/util';
@@ -18,7 +17,7 @@ export class Event extends AggregateRoot implements IEvent {
         public EndDate?: Date | undefined | null,
         public Name?: string | undefined | null,
         public Category?: string | undefined | null,
-        public Location?: IEventLocation | undefined | null,
+        public Location?: string | undefined | null,
         public FloorLayout?: IFloorLayout | undefined | null,
         public Stalls?: IStall[] | undefined | null,
         public Sensors?: ISensor[] | undefined | null,

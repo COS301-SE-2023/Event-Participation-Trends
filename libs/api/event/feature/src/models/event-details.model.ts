@@ -3,9 +3,6 @@ import {
     CreateEventEvent, 
     UpdateFloorlayoutEvent,
     } from '@event-participation-trends/api/event/util';
-import {
-    IEventLocation,
-} from '@event-participation-trends/api/event/util';
 import { Types } from 'mongoose';
 import { AggregateRoot } from '@nestjs/cqrs';
 
@@ -15,7 +12,7 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
         public EndDate?: Date | undefined | null,
         public Name?: string | undefined | null,
         public Category?: string | undefined | null,
-        public Location?: IEventLocation | undefined | null,
+        public Location?: string | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
         public Floorlayout?: string | undefined | null,
     ){

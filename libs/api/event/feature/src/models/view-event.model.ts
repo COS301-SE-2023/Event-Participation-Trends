@@ -9,7 +9,7 @@ import { AggregateRoot } from '@nestjs/cqrs';
 export class ViewEvent extends AggregateRoot implements IViewEvent {
     constructor(
         public UserEmail?: string | undefined | null,
-	    public eventId?: Types.ObjectId,
+        public eventId?: Types.ObjectId,
     ){
         super();
     }
