@@ -25,6 +25,7 @@ export class Event extends AggregateRoot implements IEvent {
         public Manager?: Types.ObjectId | undefined | null,
         public Requesters?: Types.ObjectId[] | undefined | null,
         public Viewers?: Types.ObjectId[] | undefined | null,
+        public PublicEvent?: boolean | undefined | null,
     ){
         super();
     }
@@ -47,6 +48,7 @@ export class Event extends AggregateRoot implements IEvent {
             event.Manager,
             event.Requesters,
             event.Viewers,
+            event.PublicEvent
         );
         return instance;
     }
@@ -65,6 +67,7 @@ export class Event extends AggregateRoot implements IEvent {
             Manager: this.Manager,
             Requesters: this.Requesters,
             Viewers: this.Viewers,
+            PublicEvent: this.PublicEvent,
         };
     }
 }

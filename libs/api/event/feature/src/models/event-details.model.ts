@@ -15,6 +15,7 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
         public Location?: string | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
         public Floorlayout?: string | undefined | null,
+        public PublicEvent?: boolean | undefined | null,
     ){
         super();
     }
@@ -36,6 +37,7 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
             event.Location,
             event.Manager,
             event.Floorlayout,
+            event.PublicEvent,
         );
         return instance;
     }
@@ -49,6 +51,7 @@ export class EventDetails extends AggregateRoot implements IEventDetails {
             Location: this.Location,
             Manager: this.Manager,
             Floorlayout: this.Floorlayout,
+            PublicEvent: this.PublicEvent
         };
     }
 }
