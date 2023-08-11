@@ -240,6 +240,9 @@ export class AllEventsPageComponent implements OnInit {
   getTime(inputDate: Date): string {
     const date = new Date(inputDate);
 
+    const yourTimeZoneOffset = new Date().getTimezoneOffset(); // Offset in minutes
+    const dbDateInYourTimeZone = new Date(date.getTime() - yourTimeZoneOffset * 60 * 1000);
+
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
 

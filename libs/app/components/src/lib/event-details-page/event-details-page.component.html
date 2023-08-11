@@ -1,6 +1,6 @@
-<div class="top-0 left-0 w-full h-full grid grid-cols-1 grid-rows-1">
+<div class="top-0 left-0 w-full h-full grid grid-cols-3 grid-rows-1">
   <div
-    class="flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-4"
+    class="flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-6"
   >
     <div
       class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
@@ -9,14 +9,85 @@
     >
       <span class="loading loading-spinner loading-lg"></span>
     </div>
-    <div class="grid grid-cols-12 relative">
-      <div
-        class="transition-opacity duration-200 col-span-6"
-        [ngClass]="{ 'opacity-0': !show }"
-        *ngIf="event"
-      >
-        <div class="text-ept-off-white text-3xl font-poppins font-semibold">
-          {{ event.Name }}
+    <div
+      class="transition-opacity duration-200 col-span-6 flex flex-col justify-between h-full"
+      [ngClass]="{ 'opacity-0': !show }"
+      *ngIf="event"
+    >
+      <div class="text-ept-off-white text-4xl font-poppins font-semibold">
+        {{ event.Name }}
+      </div>
+
+      <div id="location" class="">
+        <div class="text-2xl font-semibold font-poppins">Location</div>
+        <div>
+          <input
+            type="text"
+            placeholder="Location"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-2 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="location"
+          />
+        </div>
+      </div>
+
+      <div id="category" class="">
+        <div class="text-2xl font-semibold font-poppins">Category</div>
+        <div>
+          <input
+            type="text"
+            placeholder="Category"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="category"
+          />
+        </div>
+      </div>
+
+      <div id="start" class="">
+        <div class="text-2xl font-semibold font-poppins">Start Time</div>
+        <div>
+          <input
+            type="datetime-local"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="start_time"
+          />
+        </div>
+      </div>
+
+      <div id="end" class="">
+        <div class="text-2xl font-semibold font-poppins">End Time</div>
+        <div>
+          <input
+            type="datetime-local"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="end_time"
+          />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-4 font-poppins text-lg">
+        <div
+          id="save_event"
+          class="mr-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center"
+          (click)="saveEvent()"
+          (disabled)="!hasChanges()"
+          [ngClass]="{
+            'opacity-30 cursor-not-allowed': !hasChanges(),
+            'hover:scale-[103%]': hasChanges()
+          }"
+        >
+          <div>Save Changes</div>
+        </div>
+        <div
+          id="cancel_changes"
+          class="ml-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center"
+          (click)="discardChanges()"
+          (disabled)="!hasChanges()"
+          [ngClass]="{
+            'opacity-30 cursor-not-allowed': !hasChanges(),
+            'hover:scale-[103%]': hasChanges()
+          }"
+        >
+          <div>Discard Changes</div>
         </div>
       </div>
     </div>
