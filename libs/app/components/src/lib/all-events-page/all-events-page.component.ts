@@ -92,6 +92,7 @@ export class AllEventsPageComponent implements OnInit {
   }
 
   onScroll(event: any) {
+    console.log(event.target.scrollTop);
     if (
       event.target.scrollTop < this.prev_scroll ||
       event.target.scrollTop == 0
@@ -109,12 +110,16 @@ export class AllEventsPageComponent implements OnInit {
   }
 
   emptySearch(): boolean {
+    if (!this.show_all_events) {
+      return this.myEvents().length == 0;
+    }
+
     if (this.role == 'admin') {
-      return this.get_all_events().length == 0;
+      return this.allEvents().length == 0;
     } else {
       return (
-        this.get_subscribed_events().length == 0 &&
-        this.get_non_subscribed_events().length == 0
+        this.subscribedActiveEvents().length == 0 &&
+        this.nonSubscribedActiveEvents().length == 0
       );
     }
   }
@@ -136,11 +141,7 @@ export class AllEventsPageComponent implements OnInit {
       return [];
     }
 
-    console.log(this.subscribed_events);
-
-    console.log(this.sortByEndDate(this.filterActive(this.filterSearch(this.subscribed_events))));
-
-    return this.sortByEndDate(this.filterActive(this.filterSearch(this.subscribed_events)));
+    return this.sortByEndDate(this.filterNotEnded(this.filterSearch(this.subscribed_events)));
   }
 
   nonSubscribedActiveEvents(): any[] {
@@ -148,7 +149,7 @@ export class AllEventsPageComponent implements OnInit {
       return [];
     }
 
-    return this.sortByEndDate(this.filterActive(this.filterSearch(this.non_subscribed_events)));
+    return this.sortByEndDate(this.filterNotEnded(this.filterSearch(this.non_subscribed_events)));
   }
 
   myEvents(): any[] {
@@ -167,38 +168,6 @@ export class AllEventsPageComponent implements OnInit {
     return this.sortByEndDate(this.filterSearch(this.all_events));
   }
 
-  get_all_events(): any[] {
-    return this.sortByEndDate(this.all_events.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    }));
-  }
-
-  get_subscribed_events(): any[] {
-    return this.subscribed_events.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    });
-  }
-
-  get_non_subscribed_events() {
-    return this.non_subscribed_events.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    });
-  }
-
-  get_my_events(): any[] {
-    return this.my_events.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    });
-  }
-
   sortByEndDate(events: any[]): any[] {
     return events.sort((a, b) => {
       return new Date(b.EndDate).getTime() - new Date(a.EndDate).getTime();
@@ -208,6 +177,12 @@ export class AllEventsPageComponent implements OnInit {
   filterActive(events: any[]): any[] {
     return events.filter((event) => {
       return this.isActive(event);
+    });
+  }
+
+  filterNotEnded(events: any[]): any[] {
+    return events.filter((event) => {
+      return this.notEnded(event);
     });
   }
 
@@ -287,8 +262,6 @@ export class AllEventsPageComponent implements OnInit {
     const elapsedDuration = currentDate.getTime() - startDate.getTime();
     const percentage = (elapsedDuration / totalDuration) * 100;
 
-    console.log(startDate, endDate, Math.round(percentage));
-
     // round to 0 decimal places
 
     return Math.round(percentage);
@@ -301,6 +274,14 @@ export class AllEventsPageComponent implements OnInit {
     const currentDate = new Date();
 
     return currentDate >= startDate && currentDate < endDate;
+  }
+
+  notEnded(event: any) : boolean {
+    const endDate = new Date(event.EndDate);
+
+    const currentDate = new Date();
+
+    return currentDate < endDate;
   }
 
   isDone(endDate: Date) : boolean {
