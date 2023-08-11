@@ -51,6 +51,7 @@ import { Request } from 'express';
 import {
   IEventDetails,
   IEventId,
+  EventDefualts,
 } from '@event-participation-trends/api/event/util';
 import {
   CsrfGuard,
@@ -58,6 +59,7 @@ import {
   RbacGuard,
 } from '@event-participation-trends/api/guards';
 import { Role } from '@event-participation-trends/api/user/util';
+import moment from 'moment';
 
 @Controller('event')
 export class EventController {
@@ -77,20 +79,25 @@ export class EventController {
     if (request.user['email'] == undefined)
       throw new HttpException('Bad Request: Manager email not provided', 400);
 
-    if (requestBody.StartDate == undefined || requestBody.StartDate == null)
-      throw new HttpException('Bad Request: Event StartDate not provided', 400);
-
-    if (requestBody.EndDate == undefined || requestBody.EndDate == null)
-      throw new HttpException('Bad Request: Event EndDate not provided', 400);
-
-    if (requestBody.Category == undefined || requestBody.Category == null)
-      throw new HttpException('Bad Request: Event Category not provided', 400);
-
     if (requestBody.Name == undefined || requestBody.Name == null)
       throw new HttpException('Bad Request: Event Name not provided', 400);
 
+    if (requestBody.StartDate == undefined || requestBody.StartDate == null)
+        requestBody.StartDate = computePreviousDayDate();
+
+    if (requestBody.EndDate == undefined || requestBody.EndDate == null)
+        requestBody.EndDate = computeNextWeekDate();
+
+    if (requestBody.Category == undefined || requestBody.Category == null)
+        requestBody.Category = EventDefualts.CATEGORY;
+
     if (requestBody.Location == undefined || requestBody.Location == null)
-      throw new HttpException('Bad Request: Event Location not provided', 400);
+        requestBody.Location = EventDefualts.LOCATION;
+
+    if(requestBody.PublicEvent == undefined || requestBody.PublicEvent == null )
+        requestBody.PublicEvent = EventDefualts.PUBLIC_EVENT == 0? false: true;
+
+    console.log(requestBody)
 
     const extractRequest: ICreateEventRequest = {
       ManagerEmail: request.user['email'],
@@ -417,4 +424,16 @@ export class EventController {
     return this.eventService.getManagedEventCategories(extractRequest);
   }
 
+}
+
+function computePreviousDayDate(): Date{
+    const currentDate = moment(); 
+    const dayBefore = currentDate.subtract(1, 'day');
+    return new Date(dayBefore.format('YYYY-MM-DD'));
+}
+
+function computeNextWeekDate(): Date{
+    const currentDate = moment(); 
+    const nextWeek = currentDate.add(6, 'day');
+    return new Date(nextWeek.format('YYYY-MM-DD'));
 }
