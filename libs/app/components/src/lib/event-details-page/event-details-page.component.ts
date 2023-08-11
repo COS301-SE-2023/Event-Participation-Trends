@@ -5,13 +5,18 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IUpdateEventDetailsRequest } from '@event-participation-trends/api/event/util';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { heroInboxSolid } from '@ng-icons/heroicons/solid'; 
 
 @Component({
   selector: 'event-participation-trends-event-details-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgIconsModule],
   templateUrl: './event-details-page.component.html',
   styleUrls: ['./event-details-page.component.css'],
+  providers: [
+    provideIcons({ heroInboxSolid }),
+  ],
 })
 export class EventDetailsPageComponent implements OnInit {
 
@@ -21,6 +26,7 @@ export class EventDetailsPageComponent implements OnInit {
   public event : any | null = null;
   public show = false;
   public loading = true;
+  public requests: any[] = [];
 
   //event
   public location = '';
@@ -49,13 +55,12 @@ export class EventDetailsPageComponent implements OnInit {
     this.start_time = new Date(localStartTime).toISOString().slice(0, 16);
     this.end_time = new Date(localEndTime).toISOString().slice(0, 16);
 
-    console.log(this.start_time);
-    console.log(this.end_time);
-
     if (this.event === null) {
       this.router.navigate(['/home']);
     }
-    
+
+    this.requests = await this.appApiService.getAccessRequests( {eventId : this.event._id} );
+
     this.loading = false;
     setTimeout(() => {
       this.show = true;
@@ -110,6 +115,29 @@ export class EventDetailsPageComponent implements OnInit {
       this.category !== this.event.Category ||
       this.start_time !== new Date(this.event.StartDate).toISOString().slice(0, 16) ||
       this.end_time !== new Date(this.event.EndDate).toISOString().slice(0, 16);
+  }
+
+  removeRequest(request: any) {
+    for (let i = 0; i < this.requests.length; i++) {
+      if (this.requests[i]._id === request._id) {
+        this.requests.splice(i, 1);
+        break;
+      }
+    }
+  }
+
+  acceptRequest(request: any) {
+    this.appApiService.acceptAccessRequest({userEmail: request.Email, eventId: this.event._id});
+    this.removeRequest(request);
+  }
+
+  declineRequest(request: any) {
+    this.appApiService.declineAccessRequest({userEmail: request.Email, eventId: this.event._id});
+    this.removeRequest(request);
+  }
+
+  emptyRequests() {
+    return this.requests.length === 0;
   }
 
 }
