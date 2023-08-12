@@ -55,6 +55,9 @@ import {
     IGetFloorplanBoundariesRequest,
     GetFloorplanBoundariesQuery,
     IGetFloorplanBoundariesResponse,
+    DeleteEventCommand,
+    IDeleteEventRequest,
+    IDeleteEventResponse
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -156,5 +159,9 @@ export class EventService {
 
     async getManagedEventCategories(request: IGetManagedEventCategoriesRequest) {
         return await this.queryBus.execute<GetManagedEventCategoriesQuery, IGetManagedEventCategoriesResponse>(new GetManagedEventCategoriesQuery(request));
+    }
+
+    async deleteEvent(request: IDeleteEventRequest) {
+        return await this.commandBus.execute<DeleteEventCommand, IDeleteEventResponse>(new DeleteEventCommand(request));
     }
 }
