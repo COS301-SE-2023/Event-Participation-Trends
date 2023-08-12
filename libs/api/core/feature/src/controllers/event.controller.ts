@@ -120,6 +120,14 @@ export class EventController {
     return this.eventService.getAllEvent(extractRequest);
   }
 
+  @Get('getAllActiveEvents')
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
+  async getAllActiveEvents(): Promise<IGetAllEventsResponse> {
+
+    return this.eventService.getAllActiveEvents();
+  }
+
   @Get('getManagedEvents')
   @SetMetadata('role', Role.MANAGER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
