@@ -47,13 +47,13 @@ export class EventRepository {
     async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
-            { $push: { Requesters: userID } });
+            { $addToSet: { Requesters: userID } });
     }
 
     async addViewer(userID: Types.ObjectId, eventID: Types.ObjectId){
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
-            { $push: { Viewers: userID } });
+            { $addToSet: { Viewers: userID } });
     }
 
     async getRequesters(eventID: Types.ObjectId){
@@ -135,7 +135,6 @@ export class EventRepository {
             {_id :{$eq: eventID}}).select("-Devices");
     }
 
-    // Stall
     async getAllEventStalls(eventID: IEventId){
         return await this.eventModel.find(
             {_id :{$eq: eventID}}, {Stalls: 1});
