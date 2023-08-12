@@ -35,6 +35,8 @@ import {
     IGetManagedEventCategoriesRequest,
     IGetFloorplanBoundariesResponse,
     IGetFloorplanBoundariesRequest,
+    IDeleteEventRequest,
+    IDeleteEventResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -310,6 +312,32 @@ export class EventController {
     );
   }
 
+  @Post('deleteEvent')
+  @SetMetadata('role',Role.MANAGER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async deleteEvent(
+    @Req() req: Request,
+    @Body() requestBody: IEventId
+  ): Promise<IDeleteEventResponse> {
+    const request: any = req;
+
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: viewer email not provided', 400);
+
+    if(requestBody.eventId==undefined || requestBody.eventId ==null)
+        throw new HttpException("Bad Request: eventId not provided", 400);
+
+
+    const extractRequest: IDeleteEventRequest = {
+        managerEmail: request.user['email'],
+        eventId: requestBody.eventId,
+    };
+
+    return <IDeleteEventResponse>(
+        (<unknown>this.eventService.deleteEvent(extractRequest))
+    );
+  }
+
   @Get('getEventFloorLayout')
   @SetMetadata('role',Role.VIEWER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
@@ -423,6 +451,8 @@ export class EventController {
     };
     return this.eventService.getManagedEventCategories(extractRequest);
   }
+
+
 
 }
 
