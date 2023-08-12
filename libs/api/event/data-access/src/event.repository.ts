@@ -24,6 +24,12 @@ export class EventRepository {
         return await this.eventModel.find().select("-Devices");
     }
 
+    async getAllActiveEvents(){
+        const currDate = new Date();
+        return await this.eventModel.find(
+            {EndDate: {$gt: currDate}}).select("-Devices");
+    }
+
     async getEventByName(eventName: string){
         return await this.eventModel.find(
             {Name: {$eq: eventName}}).select("-Devices");
