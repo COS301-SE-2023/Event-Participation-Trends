@@ -15,6 +15,8 @@ import {
     UpdateFloorlayoutHandler,
     AddDevicePositionHandler,
     AddViewerHandler,
+    DeleteEventHandler,
+    RemoveEventFromViewersHandler,
 } from './commands';
 
 import { 
@@ -40,6 +42,8 @@ import {
     UpdateFloorlayoutEventHandler,
     AddDevicePositionEventHandler,
     AddViewerEventHandler,
+    DeleteEventEventHandler,
+    RemoveEventFromViewersEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -57,6 +61,8 @@ export const CommandHandlers = [
     UpdateFloorlayoutHandler,
     AddDevicePositionHandler,
     AddViewerHandler,
+    DeleteEventHandler,
+    RemoveEventFromViewersHandler,
 ]
 
 export const EventHandlers = [
@@ -69,7 +75,9 @@ export const EventHandlers = [
     UpdateEventDetialsEventHandler,
     UpdateFloorlayoutEventHandler,
     AddDevicePositionEventHandler,
-    AddViewerEventHandler
+    AddViewerEventHandler,
+    DeleteEventEventHandler,
+    RemoveEventFromViewersEventHandler,
 ];
 
 export const QueryHandlers = [
