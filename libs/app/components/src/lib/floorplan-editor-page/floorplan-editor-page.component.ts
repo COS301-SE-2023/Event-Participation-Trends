@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener, OnInit, AfterViewInit } from '@angular/core';
 import Konva from 'konva';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,9 +29,9 @@ interface DroppedItem {
   styleUrls: ['./floorplan-editor-page.component.css'],
 })
 
-export class FloorplanEditorPageComponent implements OnInit{
-  @Select(FloorPlanEditorState.getSensors) sensors$!: Observable<ISensorState[] | undefined>; 
-  @Select(FloorPlanEditorState.getActiveSensor) activeSensor$!: Observable<ISensorState | null>;
+export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
+  // @Select(FloorPlanEditorState.getSensors) sensors$!: Observable<ISensorState[] | undefined>; 
+  // @Select(FloorPlanEditorState.getActiveSensor) activeSensor$!: Observable<ISensorState | null>;
   // @Select(SubPageNavState.currentPage) currentPage$!: Observable<string | null>;
   // @Select(SubPageNavState.prevPage) prevPage$!: Observable<string | null>;
     @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLDivElement>;
@@ -136,6 +136,7 @@ export class FloorplanEditorPageComponent implements OnInit{
     prevSelections: Konva.Shape[] = [];
     emptiedSelection = false;
     STALL_IMAGE_URL = 'assets/stall-icon.png';
+    eventId = '';
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -145,7 +146,7 @@ export class FloorplanEditorPageComponent implements OnInit{
       private readonly appApiService: AppApiService,
       private readonly route: ActivatedRoute,
       private readonly formBuilder: FormBuilder, 
-      private readonly store: Store,
+      // private readonly store: Store,
       // private alertController: AlertController,
       // private navController: NavController,  
       // private loadingController: LoadingController,
@@ -184,7 +185,7 @@ export class FloorplanEditorPageComponent implements OnInit{
       this.preventCreatingWalls = !this.preventCreatingWalls;
       this.activeItem = null;
       this.textLength = 0;
-      this.store.dispatch(new UpdateActiveSensor(''));
+      // this.store.dispatch(new UpdateActiveSensor(''));
 
       //remove all selected items
       this.transformers.forEach(transformer => {
@@ -332,10 +333,10 @@ export class FloorplanEditorPageComponent implements OnInit{
             this.canvas.add(circle);
             this.canvas.draw();
             droppedItem.konvaObject = circle;
-            this.store.dispatch(new AddSensor(circle));
-            this.sensors$.subscribe(sensors => {
-              this.sensors = sensors;
-            });
+            // this.store.dispatch(new AddSensor(circle));
+            // this.sensors$.subscribe(sensors => {
+            //   this.sensors = sensors;
+            // });
           }
           else if (droppedItem.name.includes('text-selection')) {
             const name = 'textbox-' + this.textBoxCount++;
@@ -400,7 +401,7 @@ export class FloorplanEditorPageComponent implements OnInit{
 
         if (this.activeItem instanceof Konva.Circle) {
           this.selectedSensor = true;
-          this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+          // this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
         }
         else {
           this.selectedSensor = false;
@@ -426,7 +427,7 @@ export class FloorplanEditorPageComponent implements OnInit{
 
         if (this.activeItem instanceof Konva.Circle) {
           this.selectedSensor = true;
-          this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+          // this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
         }
         else {
           this.selectedSensor = false;
@@ -603,6 +604,7 @@ export class FloorplanEditorPageComponent implements OnInit{
     ngAfterViewInit(): void {
         // wait for elements to render before initializing fabric canvas
         setTimeout(() => {
+          this.eventId = this.router.url.split('/')[2];
             this.displayedSnap = this.initialSnap;
             this.zoomOutDisabled = true;
             const canvasParent = this.canvasParent;
@@ -621,27 +623,26 @@ export class FloorplanEditorPageComponent implements OnInit{
 
             this.canvasContainer = new Konva.Stage({
               container: '#canvasElement',
-              width: width*0.995,                  //was width*0.9783,
-              height: window.innerHeight-100,      //height*0.92,       
+              width: width*0.9873,                  //was width*0.9783,
+              height: window.innerHeight-40,      //height*0.92,       
             });
             this.initialHeight = this.canvasContainer.height();
 
-            this.route.queryParams.subscribe(params => {
-              const eventId = params['id'];
-              
+            this.route.queryParams.subscribe(params => {              
               const newCanvas = new Konva.Layer();
 
-              this.appApiService.getEventFloorLayout(eventId).then((res: any) => {
+              this.appApiService.getEventFloorLayout(this.eventId).then((res: any) => {
                 if (res.floorlayout === null || res.floorlayout === '') {
                   this.defaultBehaviour(newCanvas);
                   return;
                 }
-                const json = JSON.parse(res.floorlayout);
+                
+                const json = JSON.parse(res); // was JSON.parse(res.floorlayout)
                 const width = this.canvasParent.nativeElement.offsetWidth;
                 this.canvasContainer = new Konva.Stage({
                   container: '#canvasElement',
                   width: width*0.995, //was 0.9783
-                  height: window.innerHeight-100,
+                  height: window.innerHeight-40,
                 });
                 this.canvas = Konva.Node.create(json, 'container');
 
@@ -662,7 +663,7 @@ export class FloorplanEditorPageComponent implements OnInit{
                       tooltip = this.addTooltip(type, type.getAttr('x'), type.getAttr('y'));
                       this.tooltips.push(tooltip);
                       this.sensors?.push({object: type, isLinked: type.getAttr('fill') === 'red' ? false : true});
-                      this.store.dispatch(new AddSensor(type));                      
+                      // this.store.dispatch(new AddSensor(type));                      
                       break;
                     case 'Group':
                       type = new Konva.Group(child.getAttrs());
@@ -1186,7 +1187,7 @@ export class FloorplanEditorPageComponent implements OnInit{
           this.textLength = 0;
           this.selectedTextBox = false;
 
-          this.store.dispatch(new UpdateActiveSensor(''));
+          // this.store.dispatch(new UpdateActiveSensor(''));
   
           return;
         }
@@ -1287,7 +1288,7 @@ export class FloorplanEditorPageComponent implements OnInit{
           this.activeItem = this.transformer.nodes()[0];
 
           if (this.activeItem instanceof Konva.Circle) {
-            this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+            // this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
           }
         }
       });
@@ -1309,7 +1310,7 @@ export class FloorplanEditorPageComponent implements OnInit{
           this.textLength = 0;
           this.selectedTextBox = false;
 
-          this.store.dispatch(new UpdateActiveSensor(''));
+          // this.store.dispatch(new UpdateActiveSensor(''));
 
           if (this.selectionGroup) {
             this.updatePositions();
@@ -1329,7 +1330,7 @@ export class FloorplanEditorPageComponent implements OnInit{
           this.textLength = 0;
           this.selectedTextBox = false;
 
-          this.store.dispatch(new UpdateActiveSensor(''));
+          // this.store.dispatch(new UpdateActiveSensor(''));
         }
 
         // if we are selecting with rect, do nothing
@@ -1354,7 +1355,7 @@ export class FloorplanEditorPageComponent implements OnInit{
           this.transformer.nodes([]);
           // this.transformers = [];
 
-          this.store.dispatch(new UpdateActiveSensor(''));
+          // this.store.dispatch(new UpdateActiveSensor(''));
           
           if (e.target.hasName('stallName')) {
             // find parent
@@ -1406,13 +1407,13 @@ export class FloorplanEditorPageComponent implements OnInit{
             this.textLength = 0;
             this.selectedTextBox = false;
 
-            this.store.dispatch(new UpdateActiveSensor(''));
+            // this.store.dispatch(new UpdateActiveSensor(''));
             
           } else if (this.transformer.nodes().length === 1) {
             this.activeItem = this.transformer.nodes()[0];
 
             if (this.activeItem instanceof Konva.Circle) {
-              this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+              // this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
             }
           }
 
@@ -1426,7 +1427,7 @@ export class FloorplanEditorPageComponent implements OnInit{
             this.textLength = 0;
             this.selectedTextBox = false;
 
-            this.store.dispatch(new UpdateActiveSensor(''));
+            // this.store.dispatch(new UpdateActiveSensor(''));
             
           }
         }
@@ -1542,7 +1543,7 @@ export class FloorplanEditorPageComponent implements OnInit{
             this.activeItem.setAttr('customClass', 'active');
 
             if (this.activeItem instanceof Konva.Circle) {
-              this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
+              // this.store.dispatch(new UpdateActiveSensor(this.activeItem.getAttr('customId')));
             }
         }
 
@@ -1684,7 +1685,7 @@ export class FloorplanEditorPageComponent implements OnInit{
         this.textLength = 0;
         this.selectedTextBox = false;
 
-        this.store.dispatch(new UpdateActiveSensor(''));
+        // this.store.dispatch(new UpdateActiveSensor(''));
 
         // remove item from canvasItems array
         const index = this.canvasItems.findIndex((item) => item.konvaObject === selectedObject);
@@ -1692,18 +1693,18 @@ export class FloorplanEditorPageComponent implements OnInit{
             this.canvasItems.splice(index, 1);
 
             // remove item from sensors array if it is a sensor
-            this.sensors$.subscribe((sensors) => {
-              sensors?.forEach((sensor) => {
-                  if (sensor.object === selectedObject) {
-                      this.store.dispatch(new RemoveSensor(sensor.object.getAttr('customId')));
+            // this.sensors$.subscribe((sensors) => {
+            //   sensors?.forEach((sensor) => {
+            //       if (sensor.object === selectedObject) {
+            //           this.store.dispatch(new RemoveSensor(sensor.object.getAttr('customId')));
 
-                      // reassign sensors to this.sensors
-                      this.sensors$.subscribe((sensors) => {
-                          this.sensors = sensors;
-                      });
-                  }
-              });                
-            });
+            //           // reassign sensors to this.sensors
+            //           this.sensors$.subscribe((sensors) => {
+            //               this.sensors = sensors;
+            //           });
+            //       }
+            //   });                
+            // });
         }
         this.canvas.batchDraw();
       }
@@ -2368,10 +2369,10 @@ export class FloorplanEditorPageComponent implements OnInit{
         this.appApiService.linkSensor(request, macAddress).then((res: any) => {
           if (res['success']) {
             // set the 'isLinked' attribute to true
-            this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
+            // this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
 
             //update active sensor
-            this.store.dispatch(new UpdateActiveSensor(request.id));
+            // this.store.dispatch(new UpdateActiveSensor(request.id));
             this.activeItem.setAttr('fill', 'lime');
           }
         });
