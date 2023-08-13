@@ -40,6 +40,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     @ViewChild('stall', {static: false}) stallElement!: ElementRef<HTMLImageElement>;
     @ViewChild('textBox', {static: false}) textElement!: ElementRef<HTMLImageElement>;
     @ViewChild('textInput', {static: false}) textInputField!: ElementRef<HTMLInputElement>; // ION-INPUT
+    @ViewChild('reader', {static: true}) qrCodeReader!: ElementRef;
     macAddrFromQR = '';
     isDropdownOpen = false;
     openDustbin = false;
@@ -137,6 +138,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     emptiedSelection = false;
     STALL_IMAGE_URL = 'assets/stall-icon.png';
     eventId = '';
+    hideScanner = true;
     
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
@@ -814,10 +816,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       
       this.scaleBy = 2;
       
-      this.canvasContainer.on('wheel', (e) => {
-        e.evt.preventDefault();
-        this.handleScaleAndDrag(this.scaleBy, e);              
-      });
+      // this.canvasContainer.on('wheel', (e) => {
+      //   e.evt.preventDefault();
+      //   this.handleScaleAndDrag(this.scaleBy, e);              
+      // });
       
       this.canvasContainer.scaleX(this.scaleBy);
       this.canvasContainer.scaleY(this.scaleBy);
@@ -1194,18 +1196,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
         // do nothing if we mousedown on any shape
         if (e.target !== this.canvasContainer) {
-          if (e.target instanceof Konva.Circle) {
-            const html5QrcodeScanner = new Html5QrcodeScanner(
-              "reader",
-              { fps: 15 },
-              /* verbose= */ false);
-            html5QrcodeScanner.render((decoded, res)=>{
-              this.macAddrFromQR = decoded;
-              this.updateLinkedSensors();
-              if(html5QrcodeScanner.getState() == Html5QrcodeScannerState.SCANNING)
-                html5QrcodeScanner.pause();
-            } , undefined);
-          }
           return;
         }
 
@@ -2385,7 +2375,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       // Add any additional validation or formatting logic here
       // Example: Restrict input to valid hexadecimal characters only
       const validHexCharacters = /^[0-9A-Fa-f]*$/;
-      if (!validHexCharacters.test(event.target)) {
+      if (!validHexCharacters.test(event.target.value)) {
         // Handle invalid input, show an error message, etc.
       }
 
@@ -2393,7 +2383,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       if (event.target.value.length === 2 && validHexCharacters.test(event.target.value)) {
         // map thorugh the macAddressBlocksElements and find the next input
         const nextInput = this.macAddressBlockElements?.item(blockIndex + 1);
-
+        console.log(this.macAddressBlockElements, nextInput)
         if (nextInput && nextInput?.value?.toString().length !== 2) {
           nextInput.focus();
 
@@ -2500,5 +2490,48 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           return 'assets/trash-delete.svg';
         }
         else return '';
+    }
+
+    showTextInput() : boolean {
+      return this.activeItem instanceof Konva.Group || this.activeItem instanceof Konva.Text
+    }
+
+    showLengthInput() : boolean {
+      return this.activeItem instanceof Konva.Path;
+    }
+
+    showAngleInput() : boolean {
+      return this.activeItem instanceof Konva.Path || this.activeItem instanceof Konva.Group || this.activeItem instanceof Konva.Text;
+    }
+
+    showSensorLinking() : boolean {
+      return this.activeItem instanceof Konva.Circle;
+    }
+
+    showQRCodeScanner(): void {
+      
+      const reader = document.getElementById('reader');
+      if (reader?.classList.contains('hidden')) {
+        reader?.classList.remove('hidden');
+      }
+      const html5QrcodeScanner = new Html5QrcodeScanner(
+        'reader',
+        { fps: 15 },
+        /* verbose= */ false);
+      html5QrcodeScanner.render((decoded, res)=>{
+        this.macAddrFromQR = decoded;
+        this.updateLinkedSensors();
+        if(html5QrcodeScanner.getState() == Html5QrcodeScannerState.SCANNING)
+          html5QrcodeScanner.pause();
+      } , undefined);
+
+      this.hideScanner = false;
+    }
+
+    hideQRCodeScanner(): void {
+      this.hideScanner = true;
+      //hide div with id='reader'
+      const reader = document.getElementById('reader');
+      reader?.classList.add('hidden');
     }
 }
