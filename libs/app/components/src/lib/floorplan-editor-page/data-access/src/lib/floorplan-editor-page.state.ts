@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { AddSensor, RemoveSensor, SetCreateFloorPlanState, SetSensors, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/components/src/lib/floorplan-editor-page/util';
-import { SetError } from '@event-participation-trends/app/components/src/lib/error/util';
 import Konva from 'konva';
-import { IgetNewEventSensorIdResponse } from '@event-participation-trends/api/sensorlinking';
 
 export interface ISensorState {
     object: Konva.Circle,
@@ -131,4 +128,39 @@ export class FloorPlanEditorState {
             return ctx.dispatch(new SetError((error as Error).message));
         }
     }
+}
+
+export class AddSensor {
+    static readonly type = '[CreateFloorPlan] AddSensor';
+    constructor(public sensor: Konva.Circle) {}
+}
+
+export class RemoveSensor {
+    static readonly type = '[CreateFloorPlan] RemoveSensor';
+    constructor(public sensorId: string) {}
+}
+
+export class SetCreateFloorPlanState {
+    static readonly type = '[CreateFloorPlan] SetCreateFloorPlanState';
+    constructor(public payload: any) {}
+}
+
+export class SetSensors {
+    static readonly type = '[CreateFloorPlan] SetSensors';
+    constructor(public payload: ISensorState[]) {}
+}
+
+export class UpdateActiveSensor {
+    static readonly type = '[CreateFloorPlan] UpdateActiveSensor';
+    constructor(public sensorId: string) {}
+}
+
+export class UpdateSensorLinkedStatus {
+    static readonly type = '[CreateFloorPlan] UpdateSensorLinkedStatus';
+    constructor(public sensorId: string, public isLinked: boolean) {}
+}
+
+export class SetError {
+    static readonly type = '[Error] Set Error';
+    constructor(public readonly error: string | null) {}
 }
