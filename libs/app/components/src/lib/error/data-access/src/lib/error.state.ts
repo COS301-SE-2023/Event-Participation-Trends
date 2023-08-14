@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 // import { ToastController } from '@ionic/angular';
-import { SetError } from '@event-participation-trends/app/components/src/lib/error/util';
 import { Action, State, StateContext } from '@ngxs/store';
 import { produce } from 'immer';
 
