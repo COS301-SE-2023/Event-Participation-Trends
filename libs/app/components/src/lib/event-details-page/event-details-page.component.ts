@@ -55,6 +55,9 @@ export class EventDetailsPageComponent implements OnInit {
     this.start_time = new Date(localStartTime).toISOString().slice(0, 16);
     this.end_time = new Date(localEndTime).toISOString().slice(0, 16);
 
+    this.event.StartDate = localStartTime;
+    this.event.EndDate = localEndTime;
+
     if (this.event === null) {
       this.router.navigate(['/home']);
     }
@@ -98,7 +101,13 @@ export class EventDetailsPageComponent implements OnInit {
         EndDate: db_end,
       }
     }
+    
     this.appApiService.updateEventDetails(updateDetails);
+
+    this.event.Location = this.location;
+    this.event.Category = this.category;
+    this.event.StartDate = db_start;
+    this.event.EndDate = db_end;
   }
 
   discardChanges() {
