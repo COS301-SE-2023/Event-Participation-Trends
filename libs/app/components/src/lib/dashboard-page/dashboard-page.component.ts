@@ -22,6 +22,13 @@ interface IAverageDataFound {
   detectedThisRun: boolean
 }
 
+interface IHeatmapData {
+  x: number,
+  y: number,
+  value: number,
+  radius: number
+}
+
 @Component({
   selector: 'event-participation-trends-dashboard-page',
   templateUrl: './dashboard-page.component.html',
@@ -43,6 +50,9 @@ export class DashboardPageComponent implements OnInit {
   showToggle = false;
   showHeatmap = false;
   showFlowmap = false;
+  currentClampedScaleX = 1;
+  currentClampedScaleY = 1;
+
 
   // Functional
   eventStartTime: Date = new Date();
@@ -52,7 +62,7 @@ export class DashboardPageComponent implements OnInit {
   floorlayoutScale = 1;
   floorlayoutStage : Konva.Stage | null = null;
   heatmap: HeatMap | null = null;
-  heatmapData: {x: number, y: number, value: number, radius: number}[] = [];
+  heatmapData: IHeatmapData[] = [];
   myHeatmap: any;
   myHeatLayer: any;
   myFlowmapLayer: any;
@@ -151,7 +161,7 @@ export class DashboardPageComponent implements OnInit {
       // set the number of hours of the event
       //------- testing data
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 227);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 344);
       this.eventEndTime = new Date();
       this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
@@ -214,8 +224,10 @@ export class DashboardPageComponent implements OnInit {
 
         // //! Testing purposes
 
-        now.setHours(now.getHours() - 227);
-        now.setMinutes(now.getMinutes() - 35);
+        now.setHours(now.getHours() - 344);
+        now.setMinutes(now.getMinutes() - 5);
+
+        console.log(now);
 
         // get positions this interval
 
@@ -231,12 +243,7 @@ export class DashboardPageComponent implements OnInit {
           this.allPosDetectedInCurrHour.positions = [];
         }
 
-        let data: {
-          x: number,
-          y: number,
-          value: number,
-          radius: number
-        }[] = [];
+        let data: IHeatmapData[] = [];
 
         if (positions) {
           data = positions.map((position: IPosition) => {
@@ -264,11 +271,12 @@ export class DashboardPageComponent implements OnInit {
             radius: 20
           });
 
-          this.heatmap?.setData({
-            max: 100,
-            min: 1,
-            data: data
-          });
+          // this.heatmap?.setData({
+          //   max: 100,
+          //   min: 1,
+          //   data: data
+          // });
+          this.setHeatmapData(data); // set the heatmap data based on zoom scale
           this.heatmapData = data;
 
           const unique_ids: number[] = [];
@@ -373,6 +381,60 @@ export class DashboardPageComponent implements OnInit {
     this.showHeatmap = !this.showHeatmap;
   }
 
+  setHeatmapData(data: IHeatmapData[]) {
+    // remove the old heatmap layer
+    this.floorlayoutStage?.find('Layer').forEach((layer) => {
+      if (layer.name() === 'heatmapLayer') {
+        layer.destroy();
+      }
+    });
+
+    this.heatmap?.setData({
+      max: 100,
+      min: 1,
+      data: data
+    });
+
+    this.heatmap?.repaint();
+
+    // create an image from using the decoded base64 data url string
+    // Create a new Image object
+    const image = new Image();
+
+    // Get the ImageData URL (base64 encoded) from this.heatmap?.getDataURL()
+    const base64Url = this.heatmap?.getDataURL();
+    if (base64Url) {
+      image.src = base64Url;
+
+      // Use the image's onload event to retrieve the dimensions
+      image.onload = () => {
+        const originalWidth = image.width;     // Width of the loaded image
+        const originalHeight = image.height;   // Height of the loaded image
+
+        // Now you can use the dimensions to create the Konva image
+        // and adjust the stage and container sizes if needed
+        // ...
+
+        // For example:
+        const heatmapLayer = new Konva.Layer({
+          name: 'heatmapLayer'
+        });
+        const heatmapImage = new Konva.Image({
+          image: image,
+          x: 0,
+          y: 0,
+          width: originalWidth,
+          height: originalHeight,
+        });
+
+        heatmapLayer.add(heatmapImage);
+        this.floorlayoutStage?.add(heatmapLayer);
+        heatmapLayer.moveToTop();
+      };
+    }
+
+  }
+
   async getImageFromJSONData(eventId: string) {
     const response = await this.appApiService.getEventFloorLayout(eventId);
     if (response) {
@@ -380,12 +442,68 @@ export class DashboardPageComponent implements OnInit {
       this.floorlayoutStage = new Konva.Stage({
         container: 'floormap',
         width: this.heatmapContainer.nativeElement.offsetWidth,
-        height: this.heatmapContainer.nativeElement.offsetHeight
+        height: this.heatmapContainer.nativeElement.offsetHeight,
       });
       // create node from JSON string
-      const layer: Konva.Layer = Konva.Node.create(response, 'floormap');
-      // add the node to the layer
-      this.floorlayoutStage.add(layer);
+      // const layer: Konva.Layer = Konva.Node.create(response, 'floormap');
+      // // add the node to the layer
+      // this.floorlayoutStage.add(layer);
+
+      // add event listener to the layer for scrolling
+      const zoomFactor = 1.2; // Adjust this as needed
+      const minScale = 1; // Adjust this as needed
+      const maxScale = 3.0; // Adjust this as needed
+
+      this.floorlayoutStage.on('wheel', (e) => {
+        if (this.floorlayoutStage) {
+          e.evt.preventDefault(); // Prevent default scrolling behavior
+
+          const oldScaleX = this.floorlayoutStage.scaleX();
+          const oldScaleY = this.floorlayoutStage.scaleY();
+
+          // Calculate new scale based on scroll direction
+          const newScaleX = e.evt.deltaY > 0 ? oldScaleX / zoomFactor : oldScaleX * zoomFactor;
+          const newScaleY = e.evt.deltaY > 0 ? oldScaleY / zoomFactor : oldScaleY * zoomFactor;
+
+          // Apply minimum and maximum scale limits
+          const clampedScaleX = Math.min(Math.max(newScaleX, minScale), maxScale);
+          const clampedScaleY = Math.min(Math.max(newScaleY, minScale), maxScale);
+
+          this.currentClampedScaleX = clampedScaleX;
+          this.currentClampedScaleY = clampedScaleY;
+
+          // Calculate zoom center based on cursor position
+          const zoomCenterX = this.floorlayoutStage.width() / 2;
+          const zoomCenterY = this.floorlayoutStage.height() / 2;
+
+          if (zoomCenterX && zoomCenterY) {
+            // Calculate this.floorlayoutStage position to keep zoom center fixed
+            const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
+            const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
+
+            this.floorlayoutStage.scaleX(clampedScaleX);
+            this.floorlayoutStage.scaleY(clampedScaleY);
+            this.floorlayoutStage.x(newPosX);
+            this.floorlayoutStage.y(newPosY);
+
+            // Adjust heatmap data based on new zoom levels
+            const adjustedHeatmapData = this.heatmapData.map(point => ({
+                x: point.x * clampedScaleX,
+                y: point.y * clampedScaleY,
+                value: point.value * clampedScaleX * clampedScaleY,
+                radius: point.radius * clampedScaleX * clampedScaleY
+            }));
+
+            this.heatmap?.setData({
+              max: 100,
+              min: 1,
+              data: adjustedHeatmapData
+            });
+
+            this.heatmap?.repaint();
+          }
+        }
+      });
     }
   }
 
