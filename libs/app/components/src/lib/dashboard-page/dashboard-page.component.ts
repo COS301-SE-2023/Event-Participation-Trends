@@ -161,7 +161,7 @@ export class DashboardPageComponent implements OnInit {
       // set the number of hours of the event
       //------- testing data
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 344);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 347);
       this.eventEndTime = new Date();
       this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
@@ -224,8 +224,8 @@ export class DashboardPageComponent implements OnInit {
 
         // //! Testing purposes
 
-        now.setHours(now.getHours() - 344);
-        now.setMinutes(now.getMinutes() - 5);
+        now.setHours(now.getHours() - 346);
+        now.setMinutes(now.getMinutes() - 45);
 
         console.log(now);
 
@@ -429,7 +429,6 @@ export class DashboardPageComponent implements OnInit {
 
         heatmapLayer.add(heatmapImage);
         this.floorlayoutStage?.add(heatmapLayer);
-        heatmapLayer.moveToTop();
       };
     }
 
@@ -445,9 +444,9 @@ export class DashboardPageComponent implements OnInit {
         height: this.heatmapContainer.nativeElement.offsetHeight,
       });
       // create node from JSON string
-      // const layer: Konva.Layer = Konva.Node.create(response, 'floormap');
+      const layer: Konva.Layer = Konva.Node.create(response, 'floormap');
       // // add the node to the layer
-      // this.floorlayoutStage.add(layer);
+      this.floorlayoutStage.add(layer);
 
       // add event listener to the layer for scrolling
       const zoomFactor = 1.2; // Adjust this as needed
@@ -457,53 +456,60 @@ export class DashboardPageComponent implements OnInit {
       this.floorlayoutStage.on('wheel', (e) => {
         if (this.floorlayoutStage) {
           e.evt.preventDefault(); // Prevent default scrolling behavior
-
+      
           const oldScaleX = this.floorlayoutStage.scaleX();
           const oldScaleY = this.floorlayoutStage.scaleY();
-
+      
           // Calculate new scale based on scroll direction
           const newScaleX = e.evt.deltaY > 0 ? oldScaleX / zoomFactor : oldScaleX * zoomFactor;
           const newScaleY = e.evt.deltaY > 0 ? oldScaleY / zoomFactor : oldScaleY * zoomFactor;
-
+      
           // Apply minimum and maximum scale limits
           const clampedScaleX = Math.min(Math.max(newScaleX, minScale), maxScale);
           const clampedScaleY = Math.min(Math.max(newScaleY, minScale), maxScale);
-
+      
           this.currentClampedScaleX = clampedScaleX;
           this.currentClampedScaleY = clampedScaleY;
-
-          // Calculate zoom center based on cursor position
-          const zoomCenterX = this.floorlayoutStage.width() / 2;
-          const zoomCenterY = this.floorlayoutStage.height() / 2;
-
+      
+          const zoomCenterX = this.floorlayoutStage.getPointerPosition()?.x;
+          const zoomCenterY = this.floorlayoutStage.getPointerPosition()?.y;
+      
           if (zoomCenterX && zoomCenterY) {
-            // Calculate this.floorlayoutStage position to keep zoom center fixed
-            const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
-            const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
-
+            if (clampedScaleX === minScale && clampedScaleY === minScale) {
+              // Fully zoomed out - reset position to original
+              this.floorlayoutStage.x(0);
+              this.floorlayoutStage.y(0);
+            } else {
+              // Calculate new position for zoom center
+              const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
+              const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
+      
+              this.floorlayoutStage.x(newPosX);
+              this.floorlayoutStage.y(newPosY);
+            }
+      
             this.floorlayoutStage.scaleX(clampedScaleX);
             this.floorlayoutStage.scaleY(clampedScaleY);
-            this.floorlayoutStage.x(newPosX);
-            this.floorlayoutStage.y(newPosY);
-
+      
             // Adjust heatmap data based on new zoom levels
             const adjustedHeatmapData = this.heatmapData.map(point => ({
-                x: point.x * clampedScaleX,
-                y: point.y * clampedScaleY,
-                value: point.value * clampedScaleX * clampedScaleY,
-                radius: point.radius * clampedScaleX * clampedScaleY
+              x: point.x * clampedScaleX,
+              y: point.y * clampedScaleY,
+              value: point.value * clampedScaleX * clampedScaleY,
+              radius: point.radius * clampedScaleX * clampedScaleY
             }));
-
+      
             this.heatmap?.setData({
               max: 100,
               min: 1,
               data: adjustedHeatmapData
             });
-
+      
             this.heatmap?.repaint();
           }
         }
       });
+      
     }
   }
 
