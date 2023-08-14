@@ -105,8 +105,11 @@ export class EventViewComponent implements OnInit {
     const t = window.location.href.split('/').pop();
     if (t === 'details') {
       this.tab = Tab.Details;
-    } else {
+    } else if (t === 'dashboard') {
       this.tab = Tab.Dashboard;
+    }
+    else if (t === 'floorplan') {
+      this.tab = Tab.Floorplan;
     }
   }
 
