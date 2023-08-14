@@ -6,13 +6,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {Html5QrcodeScanner, Html5QrcodeScannerState} from "html5-qrcode";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
-import { Select, Store } from '@ngxs/store';
-import { FloorPlanEditorState, ISensorState } from '@event-participation-trends/app/components/src/lib/floorplan-editor-page/data-access';
-import { Observable } from 'rxjs';
-import { AddSensor, RemoveSensor, UpdateActiveSensor, UpdateSensorLinkedStatus } from '@event-participation-trends/app/components/src/lib/floorplan-editor-page/util';
-// import { AlertController, IonInput, LoadingController, NavController, ToastController } from '@ionic/angular';
 import { NumberSymbol } from '@angular/common';
 import { Shape, ShapeConfig } from 'konva/lib/Shape';
+
+export interface ISensorState {
+  object: Konva.Circle,
+  isLinked: boolean,
+}
 
 type KonvaTypes = Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path | Konva.Circle | Konva.Label;
 
