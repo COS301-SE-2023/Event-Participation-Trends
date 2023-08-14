@@ -23,6 +23,7 @@ export class EventViewComponent implements OnInit {
 
   public id: string | null = '';
   public tab = Tab.None;
+  public manager_access = false;
 
   // Navbar
   // Back
@@ -98,8 +99,25 @@ export class EventViewComponent implements OnInit {
   async ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
 
+    
     if (!this.id) {
       this.router.navigate(['/home']);
+    }
+
+    const role = await this.appApiService.getRole();
+
+    // if id in get managed events then manager_access = true
+    if (role === 'admin') {
+      this.manager_access = true;
+    } else if (role === 'manager') {
+
+      const managed_events = await this.appApiService.getManagedEvents();
+      for (const event of managed_events) {
+        if ((event as any)._id === this.id) {
+          this.manager_access = true;
+          break;
+        }
+      }
     }
 
     const t = window.location.href.split('/').pop();

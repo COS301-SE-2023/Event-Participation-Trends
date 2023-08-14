@@ -26,9 +26,7 @@ export class DashboardPageComponent implements OnInit {
     if (!this.id) {
       this.router.navigate(['/']);
     }
-
-    this.event = await this.appApiService.getEvent({ eventId: this.id });
-
+    
     this.loading = false;
     setTimeout(() => {
       this.show = true;

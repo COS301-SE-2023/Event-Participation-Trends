@@ -67,6 +67,7 @@
       <div
         class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
         [ngClass]="{ 'overflow-visible': overflowDetails }"
+        *ngIf="manager_access"
       >
         <a
           routerLink="details"
@@ -97,6 +98,7 @@
       <div
         class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
         [ngClass]="{ 'overflow-visible': overflowFloorplan }"
+        *ngIf="manager_access"
       >
         <a
           routerLink="floorplan"
