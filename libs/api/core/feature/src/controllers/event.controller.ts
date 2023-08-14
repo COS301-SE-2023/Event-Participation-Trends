@@ -99,8 +99,6 @@ export class EventController {
     if(requestBody.PublicEvent == undefined || requestBody.PublicEvent == null )
         requestBody.PublicEvent = EventDefualts.PUBLIC_EVENT == 0? false: true;
 
-    console.log(requestBody)
-
     const extractRequest: ICreateEventRequest = {
       ManagerEmail: request.user['email'],
       Event: requestBody,
@@ -293,10 +291,12 @@ export class EventController {
         @Query() query: any
     ): Promise<IGetEventResponse> {
 
-        if(query.eventId==undefined || query.eventId ==null)
-            throw new HttpException("Bad Request: eventId not provided", 400);
+    if( (query.eventId==undefined && query.eventId ==null) && 
+        (query.eventName==undefined && query.eventName ==null))
+            throw new HttpException("Bad Request: eventId or eventName must be provided", 400);
 
     const extractRequest: IGetEventRequest = {
+      eventName: query.eventName,
       eventId: query.eventId,
     };
 
