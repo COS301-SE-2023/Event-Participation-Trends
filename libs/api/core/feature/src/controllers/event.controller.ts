@@ -216,8 +216,11 @@ export class EventController {
   @SetMetadata('role', Role.MANAGER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
   async acceptViewRequest(
+    @Req() req: Request,
     @Body() requestBody: IAcceptViewRequestRequest
   ): Promise<IAcceptViewRequestResponse> {
+    const request: any = req;
+
     if (requestBody.userEmail == undefined || requestBody.userEmail == null)
       throw new HttpException('Bad Request: viewer email not provided', 400);
 
@@ -225,6 +228,7 @@ export class EventController {
       throw new HttpException('Bad Request: eventId not provided', 400);
 
     const extractRequest: IAcceptViewRequestRequest = {
+      managerEmail: request.user['email'],
       userEmail: requestBody.userEmail,
       eventId: requestBody.eventId,
     };
