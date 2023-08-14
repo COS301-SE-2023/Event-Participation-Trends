@@ -224,8 +224,8 @@ export class DashboardPageComponent implements OnInit {
 
         // //! Testing purposes
 
-        now.setHours(now.getHours() - 346);
-        now.setMinutes(now.getMinutes() - 45);
+        now.setHours(now.getHours() - 347);
+        now.setMinutes(now.getMinutes() - 1);
 
         console.log(now);
 
@@ -442,6 +442,7 @@ export class DashboardPageComponent implements OnInit {
         container: 'floormap',
         width: this.heatmapContainer.nativeElement.offsetWidth,
         height: this.heatmapContainer.nativeElement.offsetHeight,
+        draggable: true,
       });
       // create node from JSON string
       const layer: Konva.Layer = Konva.Node.create(response, 'floormap');
@@ -451,7 +452,7 @@ export class DashboardPageComponent implements OnInit {
       // add event listener to the layer for scrolling
       const zoomFactor = 1.2; // Adjust this as needed
       const minScale = 1; // Adjust this as needed
-      const maxScale = 3.0; // Adjust this as needed
+      const maxScale = 8.0; // Adjust this as needed
 
       this.floorlayoutStage.on('wheel', (e) => {
         if (this.floorlayoutStage) {
@@ -490,13 +491,17 @@ export class DashboardPageComponent implements OnInit {
       
             this.floorlayoutStage.scaleX(clampedScaleX);
             this.floorlayoutStage.scaleY(clampedScaleY);
+
+            // Calculate the factor by which the radius and value should change
+            const radiusFactor = clampedScaleX * clampedScaleY;
+            const valueFactor = radiusFactor * radiusFactor;
       
             // Adjust heatmap data based on new zoom levels
             const adjustedHeatmapData = this.heatmapData.map(point => ({
               x: point.x * clampedScaleX,
               y: point.y * clampedScaleY,
-              value: point.value * clampedScaleX * clampedScaleY,
-              radius: point.radius * clampedScaleX * clampedScaleY
+              value: point.value * valueFactor,
+              radius: point.radius * radiusFactor
             }));
       
             this.heatmap?.setData({
@@ -509,7 +514,16 @@ export class DashboardPageComponent implements OnInit {
           }
         }
       });
-      
+    }
+  }
+
+  recenterFloorlayout() {
+    if (this.floorlayoutStage) {
+      this.floorlayoutStage.x(0);
+      this.floorlayoutStage.y(0);
+      this.floorlayoutStage.scaleX(1);
+      this.floorlayoutStage.scaleY(1);
+      this.floorlayoutStage.draw();
     }
   }
 

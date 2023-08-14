@@ -5,12 +5,13 @@ import { heroUserGroupSolid } from "@ng-icons/heroicons/solid";
 import { heroBackward } from "@ng-icons/heroicons/outline";
 import { DashboardPageComponent } from "./dashboard-page.component";
 import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown } from "@ng-icons/material-icons/baseline";
+import { matFilterCenterFocus } from "@ng-icons/material-icons/baseline";
 
 @NgModule({
     bootstrap: [DashboardPageComponent],
     imports: [
         CommonModule, 
-        NgIconsModule.withIcons({heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown})
+        NgIconsModule.withIcons({heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus})
     ],
     declarations: [DashboardPageComponent]
 })
