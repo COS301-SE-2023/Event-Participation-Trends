@@ -1,4 +1,3 @@
-export * from './event-location.interface';
 export * from './event.interface';
 export * from './floorlayout.interface';
 export * from './sensor.interface';
@@ -11,5 +10,5 @@ export * from './remove-viewer.interface';
 export * from './update-event-details.interface';
 export * from './update-stall.interface';
 export * from './position.interface';
-
 export * from './add-device-position.interface';
+export * from './delete-event.interface';

@@ -8,3 +8,4 @@ export * from './get-event-device-position.handler';
 export * from './get-event-categories.handler';
 export * from './get-managed-event-categories.handler';
 export * from './get-floorplan-boundaries.handler';
+export * from './get-all-active-events.handler';

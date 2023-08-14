@@ -10,3 +10,5 @@ export * from './update-stall.command';
 export * from './update-floorlayout.command';
 export * from './add-event-viewer.command';
 export * from './add-device-position.command';
+export * from './delete-event.command';
+export * from './remove-event-from-viewers.command';

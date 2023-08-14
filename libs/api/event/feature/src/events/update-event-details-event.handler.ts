@@ -57,16 +57,14 @@ export class UpdateEventDetialsEventHandler implements IEventHandler<UpdateEvent
 
             if(request.Location != null && request.Location != undefined){
                 await this.eventRepository.updateEventLocation(request.EventId,request.Location);
-                emailContent+= "\t New Event Location: "+ EmailContent.NEW_LINE +
-                "\t\t Latitude: " + request.Location.Latitude + EmailContent.NEW_LINE +
-                "\t\t Longitude: " + request.Location.Longitude + EmailContent.NEW_LINE +
-                "\t\t StreetName: " + request.Location.StreetName + EmailContent.NEW_LINE +
-                "\t\t CityName: " + request.Location.CityName + EmailContent.NEW_LINE +
-                "\t\t Province Name: " + request.Location.ProvinceName + EmailContent.NEW_LINE +
-                "\t\t Country Name: " + request.Location.CountryName + EmailContent.NEW_LINE +
-                "\t\t ZIPCode: " + request.Location.ZIPCode + EmailContent.NEW_LINE;
+                emailContent+= "\t New Event Location: "+request.Location+ EmailContent.NEW_LINE
             }
 
+            if(request.PublicEvent != null && request.PublicEvent != undefined){
+                await this.eventRepository.updateEventVisibility(request.EventId,request.PublicEvent);
+                emailContent+= "\t Public Event : "+(request.PublicEvent? "Yes" : "No")+ EmailContent.NEW_LINE
+            }
+            
             let userDoc;
             if(eventDoc[0].Manager != null && eventDoc[0].Manager != undefined)
                 userDoc = await this.userRepository.getUserById(eventDoc[0].Manager); 

@@ -10,3 +10,5 @@ export * from './add-device-position.handler';
 export * from './create-stall.handler';
 export * from './update-stall.handler';
 export * from './add-event-viewer.handler';
+export * from './delete-event.handler';
+export * from './remove-event-from-viewers.handler';

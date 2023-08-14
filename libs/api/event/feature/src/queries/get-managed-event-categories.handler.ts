@@ -26,7 +26,7 @@ export class GetManagedEventCategoriesHandler implements IQueryHandler<GetManage
                     if(eventCategoriesDoc.length == 0)
                         return {categories: <string[]>[]};
                     else
-                        return {categories: <string[]> <any> eventCategoriesDoc};
+                        return {categories: <string[]> <unknown> eventCategoriesDoc};
                 }else{
                     return {categories: <string[]>[]};
                 }

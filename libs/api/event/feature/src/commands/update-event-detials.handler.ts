@@ -25,6 +25,7 @@ export class UpdateEventDetailsHandler implements ICommandHandler<UpdateEventDet
             Category: request.eventDetails.Category,
             Location: request.eventDetails.Location,
             Manager: request.eventDetails.Manager,
+            PublicEvent: request.eventDetails.PublicEvent,
         }
     
         const event = this.publisher.mergeObjectContext(UpdateEventDetails.fromData(data));

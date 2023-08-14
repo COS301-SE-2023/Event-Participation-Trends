@@ -2,7 +2,8 @@ import {
     AcceptViewRequestEvent, 
     RemoveViewerFromEventEvent,
     CreateEventEvent,
-    AddViewerEvent
+    AddViewerEvent,
+    DeleteEventEvent,
 } from '@event-participation-trends/api/event/util';
 import {
     AddViewingEventCommand,
@@ -11,6 +12,7 @@ import {
 } from '@event-participation-trends/api/user/util';
 import{
     RemoveEventFromViewerCommand,
+    RemoveEventFromViewersCommand,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { ICommand, ofType, Saga } from '@nestjs/cqrs';
@@ -55,6 +57,14 @@ export class EventsSagas {
       return events$.pipe(
         ofType(AddViewerEvent),
         map((event: AddViewerEvent) => new AddViewingEventCommand({request: {userEmail: event.event.UserEmail, eventId: <string> <unknown> event.event.eventId } })),
+      );
+    };
+
+    @Saga()
+    onEventDelete = (events$: Observable<any>): Observable<ICommand> => {
+      return events$.pipe(
+        ofType(DeleteEventEvent),
+        map((event: DeleteEventEvent) => new RemoveEventFromViewersCommand(event.event)),
       );
     };
 }
