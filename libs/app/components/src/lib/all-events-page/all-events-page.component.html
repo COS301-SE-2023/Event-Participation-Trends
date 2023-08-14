@@ -138,9 +138,7 @@
     >
       <div>
         <div class="text-xl font-poppins font-semibold grid grid-cols-12">
-          <div
-            class="col-span-12"
-          >
+          <div class="col-span-12">
             {{ event.Name }}
           </div>
         </div>
@@ -172,10 +170,16 @@
       </div>
     </a>
     <!-- Non-Subscribed Events -->
+    <event-participation-trends-request-access-modal
+      *ngFor="let event of nonSubscribedActiveEvents()"
+      class="fixed top-0 left-0 transition-opacity duration-300 hidden opacity-0 z-50"
+      id="{{getRequestModalId(event)}}"
+      event_id="{{event._id}}"
+    ></event-participation-trends-request-access-modal>
     <a
       class="mt-5 mr-5 p-5 h-52 bg-ept-navy-blue rounded-2xl relative overflow-hidden hover:scale-105 hover:bg-[#2b2e38] transition-all duration-300 cursor-pointer"
       *ngFor="let event of nonSubscribedActiveEvents()"
-      (click)="getURL(event)"
+      (click)="requestAccess(event)"
     >
       <div
         class="w-full h-full top-0 left-0 absolute flex justify-center align-middle bg-ept-navy-blue bg-opacity-50"
@@ -188,9 +192,7 @@
       <div class="flex flex-col justify-between">
         <div>
           <div class="text-xl font-poppins font-semibold grid grid-cols-12">
-            <div
-              class="col-span-12"
-            >
+            <div class="col-span-12">
               {{ event.Name }}
             </div>
           </div>

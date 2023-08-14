@@ -1,1 +1,16 @@
-<p>request-access-modal works!</p>
+<div
+  class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
+>
+  <div
+    class="fixed w-screen h-screen top-0 left-0 bg-ept-navy-blue bg-opacity-80"
+    (click)="closeModal()"
+  ></div>
+  <div
+    class="bg-gradient-to-br from-ept-deep-grey from-[-30%] to-[#22242A] z-50 rounded-2xl p-6 flex flex-col justify-between items-center text-center"
+  >
+    <div class="w-full flex justify-center align-middle text-9xl py-12"><ng-icon class="drop-shadow-[0_15px_20px_rgba(0,0,0,0.35)] bg-transparent  " name="heroLockClosedSolid"></ng-icon></div>
+    <div class="text-4xl font-poppins font-semibold mt-5 mb-8 mx-4">You do not have access to this event</div>
+    <div id="{{getButtonName()}}" class="px-8 py-3 my-2 rounded-xl bg-ept-navy-blue text-ept-bumble-yellow text-lg drop-shadow-[0_15px_20px_rgba(0,0,0,0.25)] hover:scale-105 transition-all duration-300" (click)="sendRequest()">Request Access</div>
+    <div class="p-2 my-2 text-ept-blue-grey hover:scale-105 transition-all duration-300" (click)="closeModal()">Go Back</div>
+  </div>
+</div>

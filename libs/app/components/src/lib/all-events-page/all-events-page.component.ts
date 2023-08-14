@@ -9,6 +9,7 @@ import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { matPlusRound } from '@ng-icons/material-icons/round';
 import { Router } from '@angular/router';
 import { CreateEventModalComponent } from '../create-event-modal/create-event-modal.component';
+import { RequestAccessModalComponent } from '../request-access-modal/request-access-modal.component';
 
 @Component({
   selector: 'event-participation-trends-all-events-page',
@@ -18,6 +19,7 @@ import { CreateEventModalComponent } from '../create-event-modal/create-event-mo
     FormsModule,
     NgIconComponent,
     CreateEventModalComponent,
+    RequestAccessModalComponent,
   ],
   templateUrl: './all-events-page.component.html',
   styleUrls: ['./all-events-page.component.css'],
@@ -293,5 +295,23 @@ export class AllEventsPageComponent implements OnInit {
     const currentDate = new Date();
 
     return currentDate >= endDate;
+  }
+
+  getRequestModalId(event: any) {
+    return `request-modal-${event._id}`;
+  }
+
+  requestAccess(event: any) {
+
+    const modal = document.querySelector('#' + this.getRequestModalId(event));
+
+    if (!modal) {
+      return;
+    }
+
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
   }
 }
