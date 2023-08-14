@@ -634,7 +634,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               const newCanvas = new Konva.Layer();
 
               this.appApiService.getEventFloorLayout(this.eventId).then((res: any) => {
-                if (res.floorlayout === null || res.floorlayout === '') {
+                if (res === null || res === '') {
                   this.defaultBehaviour(newCanvas);
                   return;
                 }
