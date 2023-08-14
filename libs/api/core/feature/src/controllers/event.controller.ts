@@ -193,8 +193,11 @@ export class EventController {
   @SetMetadata('role', Role.MANAGER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
   async declineViewRequest(
+    @Req() req: Request,
     @Body() requestBody: IDeclineViewRequestRequest
   ): Promise<IDeclineViewRequestResponse> {
+    const request: any = req;
+
     if (requestBody.userEmail == undefined || requestBody.userEmail == null)
       throw new HttpException('Bad Request: viewer email not provided', 400);
 
@@ -202,6 +205,7 @@ export class EventController {
       throw new HttpException('Bad Request: eventId not provided', 400);
 
     const extractRequest: IDeclineViewRequestRequest = {
+      managerEmail: request.user['email'],
       userEmail: requestBody.userEmail,
       eventId: requestBody.eventId,
     };
