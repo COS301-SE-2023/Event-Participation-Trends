@@ -33,9 +33,9 @@
             >
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
-            <div *ngIf="show" class="rounded-md col-span-5 row-span-2">
+            <div *ngIf="show" class="rounded-md col-span-5 row-span-2 h-full">
                 <canvas #totalDevicesBarChart class="w-full h-full"></canvas>
-              </div>
+            </div>
         </div>
         <div class="col-span-1 row-span-1 m-5 ml-0 bg-slate-200 rounded-2xl relative">
             <div
@@ -45,8 +45,8 @@
             >
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
-            <div *ngIf="show" class="rounded-md col-span-5 row-span-2">
-                <canvas #userCountDataStreamingChart class="w-full"></canvas>
+            <div *ngIf="show" class="rounded-md col-span-5 row-span-2 h-full">
+                <canvas #userCountDataStreamingChart class="w-full h-full"></canvas>
             </div>
         </div>
         <div class="col-span-1 row-span-1 m-5 mt-0 ml-0 bg-slate-200 rounded-2xl relative">

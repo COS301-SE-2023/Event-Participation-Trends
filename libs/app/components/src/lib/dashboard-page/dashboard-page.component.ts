@@ -411,6 +411,7 @@ export class DashboardPageComponent implements OnInit {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           tooltip: {
             enabled: false
@@ -476,6 +477,7 @@ export class DashboardPageComponent implements OnInit {
       data: data,
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             title: {
               display: true,
