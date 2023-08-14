@@ -46,7 +46,7 @@ export class EventDetailsPageComponent implements OnInit {
 
     this.event = (await this.appApiService.getEvent({ eventId: this.id }) as any).event;
 
-    this.location = this.event.Location.StreetName;
+    this.location = this.event.Location;
     this.category = this.event.Category;
     
     const localStartTime = new Date(new Date(this.event.StartDate).getTime() - this.time_offset * 60 * 1000);
@@ -93,7 +93,7 @@ export class EventDetailsPageComponent implements OnInit {
       eventDetails: {
         Name: this.event.name,
         Category: this.category,
-        Location: this.event.Location,
+        Location: this.location,
         StartDate: db_start,
         EndDate: db_end,
       }
@@ -104,14 +104,14 @@ export class EventDetailsPageComponent implements OnInit {
   discardChanges() {
     this.pressButton('#cancel_changes');
 
-    this.location = this.event.Location.StreetName;
+    this.location = this.event.Location;
     this.category = this.event.Category;
     this.start_time = new Date(this.event.StartDate).toISOString().slice(0, 16);
     this.end_time = new Date(this.event.EndDate).toISOString().slice(0, 16);
   }
 
   hasChanges() {
-    return this.location !== this.event.Location.StreetName ||
+    return this.location !== this.event.Location ||
       this.category !== this.event.Category ||
       this.start_time !== new Date(this.event.StartDate).toISOString().slice(0, 16) ||
       this.end_time !== new Date(this.event.EndDate).toISOString().slice(0, 16);
