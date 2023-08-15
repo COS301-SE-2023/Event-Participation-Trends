@@ -102,6 +102,9 @@ export class DashboardPageComponent implements OnInit {
     "ept-off-white": "#F5F5F5",
     "ept-blue-grey": "#B1B8D4",
     "ept-navy-blue": "#22242A",
+    "ept-light-blue": "#57D3DD",
+    "ept-light-green": "#4ade80",
+    "ept-light-red": "#ef4444"
   };
   /**
    * The variables within the below block are used to determine the corrdinates of the
@@ -169,7 +172,7 @@ export class DashboardPageComponent implements OnInit {
       // set the number of hours of the event
       //------- testing data
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 361);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 371);
       this.eventEndTime = new Date();
       this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
@@ -216,6 +219,13 @@ export class DashboardPageComponent implements OnInit {
           maxOpacity: .6,
           radius: 50,
           blur: 0.90,
+          gradient: {
+            0.0: this.chartColors['ept-off-white'],
+            0.25: this.chartColors['ept-light-blue'],
+            0.5: this.chartColors['ept-light-green'],
+            0.75: this.chartColors['ept-bumble-yellow'],
+            1.0: this.chartColors['ept-light-red']
+          }
         });
         this.getImageFromJSONData(this.id);
         this.renderUserCountDataStreaming();
@@ -232,8 +242,8 @@ export class DashboardPageComponent implements OnInit {
 
         // //! Testing purposes
 
-        now.setHours(now.getHours() - 360);
-        now.setMinutes(now.getMinutes() - 55);
+        now.setHours(now.getHours() - 371);
+        now.setMinutes(now.getMinutes() - 0);
 
         console.log(now);
 
@@ -390,8 +400,25 @@ export class DashboardPageComponent implements OnInit {
 
     this.floorlayoutStage?.find('Layer').forEach((layer) => {
       if (layer.name() === 'heatmapLayer') {
-        layer.visible(this.showHeatmap);
+        layer.visible(this.showHeatmap);        
       }
+
+      // if (layer.name() === 'floorlayoutLayer') {
+      //   // run through the layer and change the colors of the walls
+      //   layer.getLayer()?.find('Path').forEach((path) => {
+      //     if (path.name() == 'wall') {
+      //       path.attrs.stroke = this.showHeatmap ? this.chartColors['ept-deep-grey'] : this.chartColors['ept-blue-grey'];
+      //     }
+      //   });
+      //   // run through the layer and change the colors of the border of the sensors
+      //   layer.getLayer()?.find('Circle').forEach((circle) => {
+      //     if (circle.name() == 'sensor') {
+      //       circle.attrs.stroke = this.showHeatmap ? this.chartColors['ept-deep-grey'] : this.chartColors['ept-blue-grey'];
+      //     }
+      //   });
+
+      //   layer.getLayer()?.draw();
+      // }
     });
   }
 
@@ -457,6 +484,22 @@ export class DashboardPageComponent implements OnInit {
       });
       // create node from JSON string
       const layer: Konva.Layer = Konva.Node.create(response, 'floormap');
+
+      layer.setAttr('name', 'floorlayoutLayer');
+
+      // run through the layer and change the colors of the walls
+      layer.find('Path').forEach((path) => {
+        if (path.name() == 'wall') {
+          path.attrs.stroke = this.chartColors['ept-blue-grey'];
+        }
+      });
+      // run through the layer and change the colors of the border of the sensors
+      layer.find('Circle').forEach((circle) => {
+        if (circle.name() == 'sensor') {
+          circle.attrs.stroke = this.chartColors['ept-blue-grey'];
+        }
+      });
+
       // // add the node to the layer
       this.floorlayoutStage.add(layer);
 
@@ -570,13 +613,13 @@ export class DashboardPageComponent implements OnInit {
           // backgroundColor: 'rgba(255, 255, 255, 0.2)',  // Adjust the background color of the line
           fill: true,
           backgroundColor: gradientStroke ? gradientStroke : 'white',
-          borderColor: '#d048b6',
+          borderColor: this.chartColors['ept-bumble-yellow'],
           borderWidth: 2,
           borderDash: [],
           borderDashOffset: 0.0,
-          pointBackgroundColor: '#d048b6',
+          pointBackgroundColor: this.chartColors['ept-bumble-yellow'],
           pointBorderColor: 'rgba(255,255,255,0)',
-          pointHoverBackgroundColor: '#d048b6',
+          pointHoverBackgroundColor: this.chartColors['ept-bumble-yellow'],
           pointBorderWidth: 20,
           pointHoverRadius: 4,
           pointHoverBorderWidth: 15,
@@ -656,7 +699,7 @@ export class DashboardPageComponent implements OnInit {
         datasets: [{
           data: chartData,
           backgroundColor: [
-            '#57D3DD'
+            this.chartColors['ept-light-blue'],
           ],
           borderRadius: 5,
           borderWidth: 0,

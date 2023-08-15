@@ -50,6 +50,9 @@ module.exports = {
         "ept-off-white": "#F5F5F5",
         "ept-blue-grey": "#B1B8D4",
         "ept-navy-blue": "#22242A",
+        "ept-light-blue": "#57D3DD",
+        "ept-light-green": "#4ade80",
+        "ept-light-red": "#ef4444"
       },
     },
   },
