@@ -109,6 +109,7 @@ export class EventDetailsPageComponent implements OnInit {
 
     this.event.Location = this.location;
     this.event.Category = this.category;
+    this.event.PublicEvent = this.isPublic;
     this.event.StartDate = db_start;
     this.event.EndDate = db_end;
   }
