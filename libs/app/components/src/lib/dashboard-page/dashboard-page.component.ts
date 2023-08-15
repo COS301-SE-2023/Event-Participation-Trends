@@ -161,7 +161,7 @@ export class DashboardPageComponent implements OnInit {
       // set the number of hours of the event
       //------- testing data
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 347);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 358);
       this.eventEndTime = new Date();
       this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
@@ -224,8 +224,8 @@ export class DashboardPageComponent implements OnInit {
 
         // //! Testing purposes
 
-        now.setHours(now.getHours() - 347);
-        now.setMinutes(now.getMinutes() - 1);
+        now.setHours(now.getHours() - 358);
+        now.setMinutes(now.getMinutes() - 21);
 
         console.log(now);
 
@@ -379,6 +379,12 @@ export class DashboardPageComponent implements OnInit {
 
   toggleHeatmap() {
     this.showHeatmap = !this.showHeatmap;
+
+    this.floorlayoutStage?.find('Layer').forEach((layer) => {
+      if (layer.name() === 'heatmapLayer') {
+        layer.visible(this.showHeatmap);
+      }
+    });
   }
 
   setHeatmapData(data: IHeatmapData[]) {
@@ -411,13 +417,10 @@ export class DashboardPageComponent implements OnInit {
         const originalWidth = image.width;     // Width of the loaded image
         const originalHeight = image.height;   // Height of the loaded image
 
-        // Now you can use the dimensions to create the Konva image
-        // and adjust the stage and container sizes if needed
-        // ...
-
         // For example:
         const heatmapLayer = new Konva.Layer({
-          name: 'heatmapLayer'
+          name: 'heatmapLayer',
+          visible: this.showHeatmap
         });
         const heatmapImage = new Konva.Image({
           image: image,
