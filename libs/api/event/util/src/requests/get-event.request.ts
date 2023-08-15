@@ -1,4 +1,5 @@
 
 export interface IGetEventRequest{
-    eventId: string | undefined | null;
+    eventName?: string | undefined | null;
+    eventId?: string | undefined | null;
 }

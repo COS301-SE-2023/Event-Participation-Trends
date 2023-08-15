@@ -99,8 +99,6 @@ export class EventController {
     if(requestBody.PublicEvent == undefined || requestBody.PublicEvent == null )
         requestBody.PublicEvent = EventDefualts.PUBLIC_EVENT == 0? false: true;
 
-    console.log(requestBody)
-
     const extractRequest: ICreateEventRequest = {
       ManagerEmail: request.user['email'],
       Event: requestBody,
@@ -193,8 +191,11 @@ export class EventController {
   @SetMetadata('role', Role.MANAGER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
   async declineViewRequest(
+    @Req() req: Request,
     @Body() requestBody: IDeclineViewRequestRequest
   ): Promise<IDeclineViewRequestResponse> {
+    const request: any = req;
+
     if (requestBody.userEmail == undefined || requestBody.userEmail == null)
       throw new HttpException('Bad Request: viewer email not provided', 400);
 
@@ -202,6 +203,7 @@ export class EventController {
       throw new HttpException('Bad Request: eventId not provided', 400);
 
     const extractRequest: IDeclineViewRequestRequest = {
+      managerEmail: request.user['email'],
       userEmail: requestBody.userEmail,
       eventId: requestBody.eventId,
     };
@@ -212,8 +214,11 @@ export class EventController {
   @SetMetadata('role', Role.MANAGER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
   async acceptViewRequest(
+    @Req() req: Request,
     @Body() requestBody: IAcceptViewRequestRequest
   ): Promise<IAcceptViewRequestResponse> {
+    const request: any = req;
+
     if (requestBody.userEmail == undefined || requestBody.userEmail == null)
       throw new HttpException('Bad Request: viewer email not provided', 400);
 
@@ -221,6 +226,7 @@ export class EventController {
       throw new HttpException('Bad Request: eventId not provided', 400);
 
     const extractRequest: IAcceptViewRequestRequest = {
+      managerEmail: request.user['email'],
       userEmail: requestBody.userEmail,
       eventId: requestBody.eventId,
     };
@@ -285,10 +291,12 @@ export class EventController {
         @Query() query: any
     ): Promise<IGetEventResponse> {
 
-        if(query.eventId==undefined || query.eventId ==null)
-            throw new HttpException("Bad Request: eventId not provided", 400);
+    if( (query.eventId==undefined && query.eventId ==null) && 
+        (query.eventName==undefined && query.eventName ==null))
+            throw new HttpException("Bad Request: eventId or eventName must be provided", 400);
 
     const extractRequest: IGetEventRequest = {
+      eventName: query.eventName,
       eventId: query.eventId,
     };
 

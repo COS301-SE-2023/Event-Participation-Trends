@@ -24,6 +24,12 @@ export class EventRepository {
         return await this.eventModel.find().select("-Devices");
     }
 
+    async getManager(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { Manager: 1 })
+    }
+
     async getAllActiveEvents(){
         const currDate = new Date();
         return await this.eventModel.find(
@@ -136,7 +142,7 @@ export class EventRepository {
         return await this.eventModel.find({ Name: 1 });
     }
 
-    async getPopulatedEvent(eventID: Types.ObjectId){
+    async getPopulatedEventById(eventID: Types.ObjectId){
         return await this.eventModel.find(
             {_id :{$eq: eventID}}).select("-Devices");
     }
