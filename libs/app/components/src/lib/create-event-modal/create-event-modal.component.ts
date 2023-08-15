@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AppApiService } from '@event-participation-trends/app/api';
 
 @Component({
   selector: 'event-participation-trends-create-event-modal',
@@ -14,7 +15,7 @@ export class CreateEventModalComponent {
 
   public name = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private appApiService: AppApiService) {}
 
   pressButton(id: string) {
     const target = document.querySelector(id);
@@ -37,7 +38,15 @@ export class CreateEventModalComponent {
 
   createEvent() {
     this.pressButton('#create-button');
-    console.log(this.name);
+    
+    setTimeout(() => {
+
+      this.appApiService.createEvent({Name: this.name});
+
+      this.closeModal();
+
+    }, 100);
+
   }
 
 }
