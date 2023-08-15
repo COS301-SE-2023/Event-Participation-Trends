@@ -95,6 +95,14 @@ export class DashboardPageComponent implements OnInit {
   allPosDetectedInCurrHour: {hour: string, positions: number[]} = {hour: '', positions: []};
   percentageIncreaseThanPrevHour = 0;
   grandTotalUsersDetected = 0;
+
+  chartColors = {
+    "ept-deep-grey": "#101010",
+    "ept-bumble-yellow": "#facc15",
+    "ept-off-white": "#F5F5F5",
+    "ept-blue-grey": "#B1B8D4",
+    "ept-navy-blue": "#22242A",
+  };
   /**
    * The variables within the below block are used to determine the corrdinates of the
    * grid tiles on the flowmap layer. The grid tiles are used to determine the direction
@@ -161,7 +169,7 @@ export class DashboardPageComponent implements OnInit {
       // set the number of hours of the event
       //------- testing data
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 358);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 360);
       this.eventEndTime = new Date();
       this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
@@ -224,8 +232,8 @@ export class DashboardPageComponent implements OnInit {
 
         // //! Testing purposes
 
-        now.setHours(now.getHours() - 358);
-        now.setMinutes(now.getMinutes() - 21);
+        now.setHours(now.getHours() - 360);
+        now.setMinutes(now.getMinutes() - 31);
 
         console.log(now);
 
@@ -542,12 +550,37 @@ export class DashboardPageComponent implements OnInit {
       chartLabels[index] = label;
     });
 
+    const ctx: CanvasRenderingContext2D | null = this.userCountDataStreamingChart.nativeElement?.getContext("2d");
+    let gradientStroke = null;
+    if (ctx) {
+      gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
+
+      gradientStroke.addColorStop(1, 'rgba(72,72,176,0.2)');
+      gradientStroke.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+      gradientStroke.addColorStop(0, 'rgba(119,52,169,0)'); //purple colors
+    }
+
     const config: ChartConfiguration = {
-      type: 'line',             // 'line', 'bar', 'bubble' and 'scatter' types are supported
+      type: 'line',
       data: {
         labels: chartLabels,
         datasets: [{
           data: chartData,
+          // borderColor: 'white',  // Set the line color to white
+          // backgroundColor: 'rgba(255, 255, 255, 0.2)',  // Adjust the background color of the line
+          fill: true,
+          backgroundColor: gradientStroke ? gradientStroke : 'white',
+          borderColor: '#d048b6',
+          borderWidth: 2,
+          borderDash: [],
+          borderDashOffset: 0.0,
+          pointBackgroundColor: '#d048b6',
+          pointBorderColor: 'rgba(255,255,255,0)',
+          pointHoverBackgroundColor: '#d048b6',
+          pointBorderWidth: 20,
+          pointHoverRadius: 4,
+          pointHoverBorderWidth: 15,
+          pointRadius: 4,
         }]
       },
       options: {
@@ -555,27 +588,46 @@ export class DashboardPageComponent implements OnInit {
         maintainAspectRatio: false,
         plugins: {
           tooltip: {
-            enabled: false
+            enabled: true
           },
           legend: {
             display: false,
           },
           title: {
             display: true,
-            text: 'Users Detected vs Time of Day (per 5 seconds)'
-          }
+            text: 'Users Detected vs Time of Day (per 5 seconds)',
+            color: this.chartColors['ept-off-white'],  // Set the title text color to white
+          },
         },
         scales: {
           x: {
-              display: true,
+            display: true,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)',  // Adjust the color of the x-axis grid lines
             },
-            y: {
-              display: true,
-              beginAtZero: true, 
+            ticks: {
+              color: this.chartColors['ept-blue-grey'],  // Adjust the color of the x-axis labels
+            }
+          },
+          y: {
+            display: true,
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)',  // Adjust the color of the y-axis grid lines
             },
-        }
+            ticks: {
+              color: this.chartColors['ept-blue-grey'],  // Adjust the color of the y-axis labels
+            }
+          },
+        },
+        elements: {
+          line: {
+            tension: 0.3,  // Adjust the tension of the line for a smoother curve
+          },
+        },
       }
     };
+    
     const userCountDataStreamingCanvas = this.userCountDataStreamingChart.nativeElement;
 
     if (userCountDataStreamingCanvas) {
