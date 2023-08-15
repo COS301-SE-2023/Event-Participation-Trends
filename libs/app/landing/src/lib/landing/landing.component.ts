@@ -39,4 +39,30 @@ export class LandingComponent implements AfterViewInit, OnInit {
     });
     this.gradient.nativeElement.style.backgroundImage = `radial-gradient(at 50% 50%, #1d1f26, #101010)`;
   }
+
+  pressButton(id: string) {
+    const target = document.querySelector(id);
+
+    target?.classList.add('hover:scale-[80%]');
+    setTimeout(() => {
+      target?.classList.remove('hover:scale-[80%]');
+    }, 100);
+  }
+
+  showProfile() {
+    const modal = document.querySelector('#profile-modal');
+
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
+  }
+
+  profile_press() {
+    this.pressButton('#profile-picture');
+
+    setTimeout(() => {
+      this.showProfile();
+    }, 100);
+  }
 }

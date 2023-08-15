@@ -25,8 +25,9 @@
       </a>
     </div>
     <div
-      class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
+      class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center cursor-pointer"
       *ngIf="loggedIn"
+      (click)="profile_press()"
     >
       <div>{{ username }}</div>
       <div class="avatar">
@@ -334,3 +335,7 @@
     </div>
   </div>
 </div>
+<event-participation-trends-profile
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="profile-modal"
+></event-participation-trends-profile>
