@@ -33,6 +33,7 @@ export class EventDetailsPageComponent implements OnInit {
   public category = '';
   public start_time = '';
   public end_time = '';
+  public isPublic = false;
 
   private time_offset = new Date().getTimezoneOffset();
 
@@ -48,6 +49,7 @@ export class EventDetailsPageComponent implements OnInit {
 
     this.location = this.event.Location;
     this.category = this.event.Category;
+    this.isPublic = this.event.PublicEvent;
     
     const localStartTime = new Date(new Date(this.event.StartDate).getTime() - this.time_offset * 60 * 1000);
     const localEndTime = new Date(new Date(this.event.EndDate).getTime() - this.time_offset * 60 * 1000);
@@ -97,6 +99,7 @@ export class EventDetailsPageComponent implements OnInit {
         Name: this.event.name,
         Category: this.category,
         Location: this.location,
+        PublicEvent: this.isPublic,
         StartDate: db_start,
         EndDate: db_end,
       }
@@ -115,6 +118,7 @@ export class EventDetailsPageComponent implements OnInit {
 
     this.location = this.event.Location;
     this.category = this.event.Category;
+    this.isPublic = this.event.PublicEvent;
     this.start_time = new Date(this.event.StartDate).toISOString().slice(0, 16);
     this.end_time = new Date(this.event.EndDate).toISOString().slice(0, 16);
   }
@@ -123,7 +127,8 @@ export class EventDetailsPageComponent implements OnInit {
     return this.location !== this.event.Location ||
       this.category !== this.event.Category ||
       this.start_time !== new Date(this.event.StartDate).toISOString().slice(0, 16) ||
-      this.end_time !== new Date(this.event.EndDate).toISOString().slice(0, 16);
+      this.end_time !== new Date(this.event.EndDate).toISOString().slice(0, 16) ||
+      this.isPublic !== this.event.PublicEvent;
   }
 
   removeRequest(request: any) {

@@ -64,6 +64,34 @@
         </div>
       </div>
 
+      <div class="col-start-11 col-span-3 flex justify-center align-middle drop-shadow-[0_10px_10px_rgba(0,0,0,0.2)]">
+        <div
+          class="bg-ept-navy-blue rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1"
+        >
+          <div
+            class="h-full mx-3 z-30 text-center"
+            [ngClass]="{ 'text-ept-navy-blue': isPublic }"
+            (click)="isPublic = true"
+          >
+            Public
+          </div>
+          <div
+            class="h-full mx-3 z-30 text-center"
+            [ngClass]="{ 'text-ept-navy-blue': !isPublic }"
+            (click)="isPublic = false"
+          >
+            Private
+          </div>
+          <div
+            class="absolute w-[50%] h-full z-20 rounded-full transition-all duration-300 ease-in-out"
+            [ngClass]="{
+              'animate-slideLeft bg-ept-blue-grey': isPublic,
+              'animate-slideRight bg-ept-bumble-yellow': !isPublic
+            }"
+          ></div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-4 font-poppins text-lg">
         <div
           id="save_event"
