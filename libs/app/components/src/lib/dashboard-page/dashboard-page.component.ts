@@ -169,7 +169,7 @@ export class DashboardPageComponent implements OnInit {
       // set the number of hours of the event
       //------- testing data
       this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 360);
+      this.eventStartTime.setHours(this.eventStartTime.getHours() - 361);
       this.eventEndTime = new Date();
       this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
@@ -233,7 +233,7 @@ export class DashboardPageComponent implements OnInit {
         // //! Testing purposes
 
         now.setHours(now.getHours() - 360);
-        now.setMinutes(now.getMinutes() - 31);
+        now.setMinutes(now.getMinutes() - 55);
 
         console.log(now);
 
@@ -656,12 +656,10 @@ export class DashboardPageComponent implements OnInit {
         datasets: [{
           data: chartData,
           backgroundColor: [
-            'rgb(34 197 94)'
+            '#57D3DD'
           ],
-          borderColor: [
-            'rgb(34 197 94)'
-          ],
-          borderWidth: 1,
+          borderRadius: 5,
+          borderWidth: 0,
         }]
       };
     
@@ -675,6 +673,7 @@ export class DashboardPageComponent implements OnInit {
             title: {
               display: true,
               text: 'Users Detected vs Time of day (per hour)', 
+              color: this.chartColors['ept-off-white'],  // Set the title text color to white
             },
             legend:{
                 display: false
@@ -686,10 +685,22 @@ export class DashboardPageComponent implements OnInit {
         scales: {
           x: {
             display: true, 
+            ticks: {
+              color: this.chartColors['ept-blue-grey'],  // Adjust the color of the x-axis labels
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)',  // Adjust the color of the y-axis grid lines
+            },
           },
           y: {
             display: true,
             beginAtZero: true,
+            ticks: {
+              color: this.chartColors['ept-blue-grey'],  // Adjust the color of the y-axis labels
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)',  // Adjust the color of the y-axis grid lines
+            },
           },
         }
       },
