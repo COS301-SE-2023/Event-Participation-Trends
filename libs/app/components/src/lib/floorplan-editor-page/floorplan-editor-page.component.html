@@ -293,7 +293,6 @@
               </div>
               <button
                 class="mt-3 bg-ept-deep-grey rounded-md text-ept-off-white p-1 text-sm/16 cursor-pointer"
-                disabled="{{!canLinkSensorWithMacAddress}}"
                 [ngClass]="{'opacity-50 pointer-events-none': !canLinkSensorWithMacAddress}"
                 (click)="updateLinkedSensors()"
                 >Link Sensor</button
