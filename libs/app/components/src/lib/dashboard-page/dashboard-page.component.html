@@ -52,7 +52,7 @@
                 <canvas id="lineChart" #userCountDataStreamingChart class="w-full h-full"></canvas>
             </div>
         </div>
-        <div class="col-span-1 row-span-1 m-5 mt-0 ml-0 bg-slate-200 rounded-2xl relative">
+        <div class="col-span-1 row-span-1 m-5 mt-0 ml-0 border-ept-blue-grey border-2 border-solid rounded-2xl relative">
             <div
                 class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
                 [ngClass]="{ 'opacity-0': !loading }"
@@ -60,7 +60,7 @@
             >
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
-            <div *ngIf="show" class="stat text-ept-navy-blue">
+            <div *ngIf="show" class="stat text-ept-off-white">
                 <div class="stat-figure text-blue-700">
                     <ng-icon name="heroUserGroupSolid" class="text-7xl"></ng-icon>
                 </div>
@@ -68,7 +68,7 @@
                 <div class="stat-value text-blue-700">{{grandTotalUsersDetected}}</div>
                 <div class="stat-desc">{{percentageIncreaseThanPrevHour}}% increase in the last hour</div>
             </div>
-            <div *ngIf="show" class="flex justify-between text-ept-navy-blue pr-2">
+            <div *ngIf="show" class="flex justify-between text-ept-off-white pr-2">
                 <div class="stat">
                     <div class="stat-title">Users Detected</div>
                     <div class="flex mt-2 justify-between">
