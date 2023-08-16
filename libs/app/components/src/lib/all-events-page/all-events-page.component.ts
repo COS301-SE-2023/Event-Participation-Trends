@@ -103,8 +103,7 @@ export class AllEventsPageComponent implements OnInit {
     return event.FloorLayout ? true : false;
   }
 
-  onScroll(event: any) {
-    console.log(event.target.scrollTop);
+  onScroll(event: any) {  
     if (
       event.target.scrollTop < this.prev_scroll ||
       event.target.scrollTop == 0
