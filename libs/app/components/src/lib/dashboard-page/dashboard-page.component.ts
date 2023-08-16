@@ -756,7 +756,7 @@ export class DashboardPageComponent implements OnInit {
         maintainAspectRatio: false,
         plugins: {
           tooltip: {
-            enabled: true
+            enabled: false
           },
           legend: {
             display: false,
