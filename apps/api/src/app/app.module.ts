@@ -29,6 +29,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 import {DatabaseModule} from '@event-participation-trends/api/database/feature';
 import { DatabaseConfigService } from '@event-participation-trends/api/database/feature';
+import { NgIconsModule } from '@ng-icons/core';
 
 @Module({
   imports: [
