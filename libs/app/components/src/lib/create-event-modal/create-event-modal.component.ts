@@ -39,9 +39,20 @@ export class CreateEventModalComponent {
   createEvent() {
     this.pressButton('#create-button');
     
-    setTimeout(() => {
+    setTimeout(async () => {
 
       this.appApiService.createEvent({Name: this.name});
+
+      let event = (await this.appApiService.getEventByName(this.name)) as any;
+
+      while (!event) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        event = (await this.appApiService.getEventByName(this.name)) as any;
+      }
+
+      console.log(event);
+
+      this.router.navigate(['/event', event._id, 'details']);
 
       this.closeModal();
 
