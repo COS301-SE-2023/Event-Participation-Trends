@@ -6,25 +6,32 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IUpdateEventDetailsRequest } from '@event-participation-trends/api/event/util';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
-import { heroInboxSolid } from '@ng-icons/heroicons/solid'; 
+import { heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { matDeleteRound } from '@ng-icons/material-icons/round';
+import { DeleteConfirmModalComponent } from '../delete-confirm-modal/delete-confirm-modal.component';
 
 @Component({
   selector: 'event-participation-trends-event-details-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIconsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgIconsModule,
+    DeleteConfirmModalComponent,
+  ],
   templateUrl: './event-details-page.component.html',
   styleUrls: ['./event-details-page.component.css'],
-  providers: [
-    provideIcons({ heroInboxSolid, matDeleteRound }),
-  ],
+  providers: [provideIcons({ heroInboxSolid, matDeleteRound })],
 })
 export class EventDetailsPageComponent implements OnInit {
-
-  constructor(private appApiService: AppApiService, private router : Router, private route: ActivatedRoute) {}
+  constructor(
+    private appApiService: AppApiService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   public id = '';
-  public event : any | null = null;
+  public event: any | null = null;
   public show = false;
   public loading = true;
   public requests: any[] = [];
@@ -39,21 +46,26 @@ export class EventDetailsPageComponent implements OnInit {
   private time_offset = new Date().getTimezoneOffset();
 
   async ngOnInit() {
-    
     this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
 
     if (!this.id) {
       this.router.navigate(['/']);
     }
 
-    this.event = (await this.appApiService.getEvent({ eventId: this.id }) as any).event;
+    this.event = (
+      (await this.appApiService.getEvent({ eventId: this.id })) as any
+    ).event;
 
     this.location = this.event.Location;
     this.category = this.event.Category;
     this.isPublic = this.event.PublicEvent;
-    
-    const localStartTime = new Date(new Date(this.event.StartDate).getTime() - this.time_offset * 60 * 1000);
-    const localEndTime = new Date(new Date(this.event.EndDate).getTime() - this.time_offset * 60 * 1000);
+
+    const localStartTime = new Date(
+      new Date(this.event.StartDate).getTime() - this.time_offset * 60 * 1000
+    );
+    const localEndTime = new Date(
+      new Date(this.event.EndDate).getTime() - this.time_offset * 60 * 1000
+    );
 
     this.start_time = new Date(localStartTime).toISOString().slice(0, 16);
     this.end_time = new Date(localEndTime).toISOString().slice(0, 16);
@@ -65,13 +77,21 @@ export class EventDetailsPageComponent implements OnInit {
       this.router.navigate(['/home']);
     }
 
-    this.requests = await this.appApiService.getAccessRequests( {eventId : this.event._id} );
+    this.requests = await this.appApiService.getAccessRequests({
+      eventId: this.event._id,
+    });
 
     this.loading = false;
     setTimeout(() => {
       this.show = true;
     }, 200);
+  }
 
+  getEventID() {
+    if (this.event) {
+      return this.event._id;
+    }
+    return '';
   }
 
   pressButton(id: string) {
@@ -103,9 +123,9 @@ export class EventDetailsPageComponent implements OnInit {
         PublicEvent: this.isPublic,
         StartDate: db_start,
         EndDate: db_end,
-      }
-    }
-    
+      },
+    };
+
     this.appApiService.updateEventDetails(updateDetails);
 
     this.event.Location = this.location;
@@ -126,11 +146,15 @@ export class EventDetailsPageComponent implements OnInit {
   }
 
   hasChanges() {
-    return this.location !== this.event.Location ||
+    return (
+      this.location !== this.event.Location ||
       this.category !== this.event.Category ||
-      this.start_time !== new Date(this.event.StartDate).toISOString().slice(0, 16) ||
-      this.end_time !== new Date(this.event.EndDate).toISOString().slice(0, 16) ||
-      this.isPublic !== this.event.PublicEvent;
+      this.start_time !==
+        new Date(this.event.StartDate).toISOString().slice(0, 16) ||
+      this.end_time !==
+        new Date(this.event.EndDate).toISOString().slice(0, 16) ||
+      this.isPublic !== this.event.PublicEvent
+    );
   }
 
   removeRequest(request: any) {
@@ -143,12 +167,18 @@ export class EventDetailsPageComponent implements OnInit {
   }
 
   acceptRequest(request: any) {
-    this.appApiService.acceptAccessRequest({userEmail: request.Email, eventId: this.event._id});
+    this.appApiService.acceptAccessRequest({
+      userEmail: request.Email,
+      eventId: this.event._id,
+    });
     this.removeRequest(request);
   }
 
   declineRequest(request: any) {
-    this.appApiService.declineAccessRequest({userEmail: request.Email, eventId: this.event._id});
+    this.appApiService.declineAccessRequest({
+      userEmail: request.Email,
+      eventId: this.event._id,
+    });
     this.removeRequest(request);
   }
 
@@ -160,9 +190,12 @@ export class EventDetailsPageComponent implements OnInit {
     this.pressButton('#delete_event');
 
     setTimeout(() => {
-    this.appApiService.deleteEvent({ eventId: this.event._id });
-    this.router.navigate(['/home']);
-    }, 400);
-  }
+      const modal = document.querySelector('#delete-modal');
 
+      modal?.classList.remove('hidden');
+      setTimeout(() => {
+        modal?.classList.remove('opacity-0');
+      }, 50);
+    }, 200);
+  }
 }
