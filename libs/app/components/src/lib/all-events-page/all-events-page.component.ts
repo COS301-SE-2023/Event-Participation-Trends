@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { matPlusRound } from '@ng-icons/material-icons/round';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { CreateEventModalComponent } from '../create-event-modal/create-event-modal.component';
 import { RequestAccessModalComponent } from '../request-access-modal/request-access-modal.component';
 
@@ -48,6 +48,16 @@ export class AllEventsPageComponent implements OnInit {
   async ngOnInit() {
     this.role = await this.appApiService.getRole();
 
+    this.loadEvents();
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.loadEvents();
+      }
+    });
+  }
+
+  async loadEvents() {
     this.all_events = await this.appApiService.getAllEvents();
     if (this.role === 'manager') {
       this.my_events = await this.appApiService.getManagedEvents();
@@ -143,7 +153,9 @@ export class AllEventsPageComponent implements OnInit {
       return [];
     }
 
-    return this.sortByEndDate(this.filterNotEnded(this.filterSearch(this.subscribed_events)));
+    return this.sortByEndDate(
+      this.filterNotEnded(this.filterSearch(this.subscribed_events))
+    );
   }
 
   nonSubscribedActiveEvents(): any[] {
@@ -151,7 +163,9 @@ export class AllEventsPageComponent implements OnInit {
       return [];
     }
 
-    return this.sortByEndDate(this.filterNotEnded(this.filterSearch(this.non_subscribed_events)));
+    return this.sortByEndDate(
+      this.filterNotEnded(this.filterSearch(this.non_subscribed_events))
+    );
   }
 
   myEvents(): any[] {
@@ -243,7 +257,9 @@ export class AllEventsPageComponent implements OnInit {
     const date = new Date(inputDate);
 
     const yourTimeZoneOffset = new Date().getTimezoneOffset(); // Offset in minutes
-    const dbDateInYourTimeZone = new Date(date.getTime() - yourTimeZoneOffset * 60 * 1000);
+    const dbDateInYourTimeZone = new Date(
+      date.getTime() - yourTimeZoneOffset * 60 * 1000
+    );
 
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -272,7 +288,7 @@ export class AllEventsPageComponent implements OnInit {
     return Math.round(percentage);
   }
 
-  isActive(event: any) : boolean {
+  isActive(event: any): boolean {
     const startDate = new Date(event.StartDate);
     const endDate = new Date(event.EndDate);
 
@@ -281,7 +297,7 @@ export class AllEventsPageComponent implements OnInit {
     return currentDate >= startDate && currentDate < endDate;
   }
 
-  notEnded(event: any) : boolean {
+  notEnded(event: any): boolean {
     const endDate = new Date(event.EndDate);
 
     const currentDate = new Date();
@@ -289,7 +305,7 @@ export class AllEventsPageComponent implements OnInit {
     return currentDate < endDate;
   }
 
-  isDone(endDate: Date) : boolean {
+  isDone(endDate: Date): boolean {
     endDate = new Date(endDate);
 
     const currentDate = new Date();
@@ -302,7 +318,6 @@ export class AllEventsPageComponent implements OnInit {
   }
 
   requestAccess(event: any) {
-
     const modal = document.querySelector('#' + this.getRequestModalId(event));
 
     if (!modal) {
