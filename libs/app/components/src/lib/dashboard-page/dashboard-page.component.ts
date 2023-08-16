@@ -141,7 +141,11 @@ export class DashboardPageComponent implements OnInit {
     this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
 
     if (!this.id) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/home']);
+    }
+
+    if (!(await this.hasAccess())) {
+      this.router.navigate(['/home']);
     }
     
     this.event = await this.appApiService.getEvent({ eventId: this.id });
@@ -160,6 +164,30 @@ export class DashboardPageComponent implements OnInit {
     setTimeout(() => {
       this.show = true;
     }, 200);    
+  }
+
+  async hasAccess() {
+    const role = await this.appApiService.getRole();
+
+    if (role === 'admin') {
+      return new Promise((resolve) => {
+        resolve(true);
+      });
+    }
+
+    const subscribed_events = await this.appApiService.getSubscribedEvents();
+
+    for (const event of subscribed_events) {
+      if ((event as any)._id === this.id) {
+        return new Promise((resolve) => {
+          resolve(true);
+        });
+      }
+    }
+
+    return new Promise((resolve) => {
+      resolve(false);
+    });
   }
 
   dateToString(date: Date) {
