@@ -487,6 +487,11 @@ export class DashboardPageComponent implements OnInit {
 
       layer.setAttr('name', 'floorlayoutLayer');
 
+      // run through the layer and set the components not to be draggable
+      layer.children?.forEach(element => {
+         element.draggable(false);
+      });
+
       // run through the layer and change the colors of the walls
       layer.find('Path').forEach((path) => {
         if (path.name() == 'wall') {
@@ -570,6 +575,126 @@ export class DashboardPageComponent implements OnInit {
       });
     }
   }
+
+  zoomIn() {
+    if (this.floorlayoutStage) {
+      const oldScaleX = this.floorlayoutStage.scaleX();
+      const oldScaleY = this.floorlayoutStage.scaleY();
+
+      // Calculate new scale based on scroll direction
+      const newScaleX = oldScaleX * 1.2;
+      const newScaleY = oldScaleY * 1.2;
+
+      // Apply minimum and maximum scale limits
+      const clampedScaleX = Math.min(Math.max(newScaleX, 1), 8);
+      const clampedScaleY = Math.min(Math.max(newScaleY, 1), 8);
+
+      this.currentClampedScaleX = clampedScaleX;
+      this.currentClampedScaleY = clampedScaleY;
+
+      const zoomCenterX = this.floorlayoutStage.getPointerPosition()?.x;
+      const zoomCenterY = this.floorlayoutStage.getPointerPosition()?.y;
+
+      if (zoomCenterX && zoomCenterY) {
+        if (clampedScaleX === 1 && clampedScaleY === 1) {
+          // Fully zoomed out - reset position to original
+          this.floorlayoutStage.x(0);
+          this.floorlayoutStage.y(0);
+        } else {
+          // Calculate new position for zoom center
+          const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
+          const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
+
+          this.floorlayoutStage.x(newPosX);
+          this.floorlayoutStage.y(newPosY);
+        }
+
+        this.floorlayoutStage.scaleX(clampedScaleX);
+        this.floorlayoutStage.scaleY(clampedScaleY);
+
+        // Calculate the factor by which the radius and value should change
+        const radiusFactor = clampedScaleX * clampedScaleY;
+        const valueFactor = radiusFactor * radiusFactor;
+
+        // Adjust heatmap data based on new zoom levels
+        const adjustedHeatmapData = this.heatmapData.map(point => ({
+          x: point.x * clampedScaleX,
+          y: point.y * clampedScaleY,
+          value: point.value * valueFactor,
+          radius: point.radius * radiusFactor
+        }));
+
+        this.heatmap?.setData({
+          max: 100,
+          min: 1,
+          data: adjustedHeatmapData
+        });
+
+        this.heatmap?.repaint();
+      }
+    }
+  }
+
+  zoomOut() {
+    if (this.floorlayoutStage) {
+      const oldScaleX = this.floorlayoutStage.scaleX();
+      const oldScaleY = this.floorlayoutStage.scaleY();
+
+      // Calculate new scale based on scroll direction
+      const newScaleX = oldScaleX / 1.2;
+      const newScaleY = oldScaleY / 1.2;
+
+      // Apply minimum and maximum scale limits
+      const clampedScaleX = Math.min(Math.max(newScaleX, 1), 8);
+      const clampedScaleY = Math.min(Math.max(newScaleY, 1), 8);
+
+      this.currentClampedScaleX = clampedScaleX;
+      this.currentClampedScaleY = clampedScaleY;
+
+      const zoomCenterX = this.floorlayoutStage.getPointerPosition()?.x;
+      const zoomCenterY = this.floorlayoutStage.getPointerPosition()?.y;
+
+      if (zoomCenterX && zoomCenterY) {
+        if (clampedScaleX === 1 && clampedScaleY === 1) {
+          // Fully zoomed out - reset position to original
+          this.floorlayoutStage.x(0);
+          this.floorlayoutStage.y(0);
+        } else {
+          // Calculate new position for zoom center
+          const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
+          const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
+
+          this.floorlayoutStage.x(newPosX);
+          this.floorlayoutStage.y(newPosY);
+        }
+
+        this.floorlayoutStage.scaleX(clampedScaleX);
+        this.floorlayoutStage.scaleY(clampedScaleY);
+
+        // Calculate the factor by which the radius and value should change
+        const radiusFactor = clampedScaleX * clampedScaleY;
+        const valueFactor = radiusFactor * radiusFactor;
+
+        // Adjust heatmap data based on new zoom levels
+        const adjustedHeatmapData = this.heatmapData.map(point => ({
+          x: point.x * clampedScaleX,
+          y: point.y * clampedScaleY,
+          value: point.value * valueFactor,
+          radius: point.radius * radiusFactor
+        }));
+
+        this.heatmap?.setData({
+          max: 100,
+          min: 1,
+          data: adjustedHeatmapData
+        });
+
+        this.heatmap?.repaint();
+      }
+    }
+  }
+
+
 
   recenterFloorlayout() {
     if (this.floorlayoutStage) {

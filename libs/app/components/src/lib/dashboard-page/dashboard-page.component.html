@@ -25,10 +25,10 @@
                 class="w-full h-full z-0 rounded-lg"
             ></div>
             <div class="flex flex-col justify-evenly absolute top-14 right-3">
-                <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
+                <div *ngIf="show" (click)="zoomIn()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
                     <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
                 </div>
-                <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
+                <div *ngIf="show" (click)="zoomOut()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
                     <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
                 </div>
                 <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
