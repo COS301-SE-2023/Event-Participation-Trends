@@ -140,6 +140,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     eventId = '';
     hideScanner = true;
     
+    id = '';
+    event: any | null | undefined = null;
+
     // change this value according to which true scale to represent (i.e. 1 block displays as 10m but when storing in database we want 2x2 blocks)
     TRUE_SCALE_FACTOR = 2; //currently represents a 2x2 block
     ratio = this.TRUE_SCALE_FACTOR / this.gridSize;
@@ -2017,8 +2020,60 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         element.remove();
       });
     }
+
+    async hasAccess() : Promise<boolean> {
+      const role = await this.appApiService.getRole();
+  
+      if (role === 'admin') {
+        return new Promise((resolve) => {
+          resolve(true);
+        });
+      }
+  
+      if (role === 'viewer') {
+        return new Promise((resolve) => {
+          resolve(false);
+        });
+      }
+  
+      const managed_events = await this.appApiService.getManagedEvents();
+  
+      for (let i = 0; i < managed_events.length; i++) {
+        if ((managed_events[i] as any)._id === this.id) {
+          return new Promise((resolve) => {
+            resolve(true);
+          });
+        }
+      }
+  
+      return new Promise((resolve) => {
+        resolve(false);
+      });
+    }
     
-      ngOnInit() : void {
+      async ngOnInit() {
+        this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
+
+        if (!this.id) {
+          this.router.navigate(['/home']);
+        }
+
+        this.event = (
+          (await this.appApiService.getEvent({ eventId: this.id })) as any
+        ).event;
+
+        if (this.event === null) {
+          this.router.navigate(['/home']);
+        }
+
+        if (!(await this.hasAccess())) {
+          this.router.navigate(['/home']);
+        }
+
+        if (!(await this.hasAccess())) {
+          this.router.navigate(['/home']);
+        }
+
         this.alertPresented = false;
         this.checkScreenWidth();
         this.macAddressForm = this.formBuilder.group({

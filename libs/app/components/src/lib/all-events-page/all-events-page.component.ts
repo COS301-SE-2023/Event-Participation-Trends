@@ -92,7 +92,7 @@ export class AllEventsPageComponent implements OnInit {
   getURL(event: any) {
     if (this.role == 'admin') {
       this.router.navigate(['/event/' + event._id + '/details']);
-    } else if (this.role == 'manager' && this.hasAccess(event)) {
+    } else if (this.role == 'manager' && this.managesEvent(event)) {
       this.router.navigate(['/event/' + event._id + '/details']);
     } else {
       this.router.navigate(['/event/' + event._id + '/dashboard']);
@@ -133,6 +133,16 @@ export class AllEventsPageComponent implements OnInit {
         this.nonSubscribedActiveEvents().length == 0
       );
     }
+  }
+
+  managesEvent(event: any): boolean {
+    for (let i = 0; i < this.my_events.length; i++) {
+      if (this.my_events[i]._id == event._id) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   hasAccess(event: any): boolean {

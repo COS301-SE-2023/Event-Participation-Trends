@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AppApiService } from '@event-participation-trends/app/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'event-participation-trends-compare-page',
@@ -8,4 +10,17 @@ import { CommonModule } from '@angular/common';
   templateUrl: './compare-page.component.html',
   styleUrls: ['./compare-page.component.css'],
 })
-export class ComparePageComponent {}
+export class ComparePageComponent implements OnInit{
+
+  constructor(private appApiService: AppApiService, private router: Router) {}
+
+  async ngOnInit() {
+
+    const role = await this.appApiService.getRole();
+
+    if (role === 'viewer') {
+      this.router.navigate(['/home']);
+    }
+
+  }
+}

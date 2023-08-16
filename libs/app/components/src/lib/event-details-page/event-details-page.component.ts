@@ -46,15 +46,24 @@ export class EventDetailsPageComponent implements OnInit {
   private time_offset = new Date().getTimezoneOffset();
 
   async ngOnInit() {
+    
     this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
 
     if (!this.id) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/home']);
     }
 
     this.event = (
       (await this.appApiService.getEvent({ eventId: this.id })) as any
     ).event;
+
+    if (this.event === null) {
+      this.router.navigate(['/home']);
+    }
+
+    if (!(await this.hasAccess())) {
+      this.router.navigate(['/home']);
+    }
 
     this.location = this.event.Location;
     this.category = this.event.Category;
@@ -92,6 +101,36 @@ export class EventDetailsPageComponent implements OnInit {
       return this.event._id;
     }
     return '';
+  }
+
+  async hasAccess() : Promise<boolean> {
+    const role = await this.appApiService.getRole();
+
+    if (role === 'admin') {
+      return new Promise((resolve) => {
+        resolve(true);
+      });
+    }
+
+    if (role === 'viewer') {
+      return new Promise((resolve) => {
+        resolve(this.event.PublicEvent);
+      });
+    }
+
+    const managed_events = await this.appApiService.getManagedEvents();
+
+    for (let i = 0; i < managed_events.length; i++) {
+      if ((managed_events[i] as any)._id === this.id) {
+        return new Promise((resolve) => {
+          resolve(true);
+        });
+      }
+    }
+
+    return new Promise((resolve) => {
+      resolve(false);
+    });
   }
 
   pressButton(id: string) {
