@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { IUpdateEventDetailsRequest } from '@event-participation-trends/api/event/util';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { heroInboxSolid } from '@ng-icons/heroicons/solid'; 
+import { matDeleteRound } from '@ng-icons/material-icons/round';
 
 @Component({
   selector: 'event-participation-trends-event-details-page',
@@ -15,7 +16,7 @@ import { heroInboxSolid } from '@ng-icons/heroicons/solid';
   templateUrl: './event-details-page.component.html',
   styleUrls: ['./event-details-page.component.css'],
   providers: [
-    provideIcons({ heroInboxSolid }),
+    provideIcons({ heroInboxSolid, matDeleteRound }),
   ],
 })
 export class EventDetailsPageComponent implements OnInit {
@@ -153,6 +154,15 @@ export class EventDetailsPageComponent implements OnInit {
 
   emptyRequests() {
     return this.requests.length === 0;
+  }
+
+  deleteEvent() {
+    this.pressButton('#delete_event');
+
+    setTimeout(() => {
+    this.appApiService.deleteEvent({ eventId: this.event._id });
+    this.router.navigate(['/home']);
+    }, 400);
   }
 
 }

@@ -64,9 +64,11 @@
         </div>
       </div>
 
-      <div class="col-start-11 col-span-3 flex justify-center align-middle drop-shadow-[0_10px_10px_rgba(0,0,0,0.2)]">
+      <div
+        class="col-start-11 col-span-3 flex justify-center align-middle drop-shadow-[0_10px_10px_rgba(0,0,0,0.2)]"
+      >
         <div
-          class="bg-ept-navy-blue rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1"
+          class="bg-ept-navy-blue font-poppins font-semibold text-lg rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1"
         >
           <div
             class="h-full mx-3 z-30 text-center"
@@ -92,10 +94,10 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-4 font-poppins text-lg">
+      <div class="grid grid-cols-5 font-poppins font-semibold text-xl">
         <div
           id="save_event"
-          class="mr-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center"
+          class="mr-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center items-center"
           (click)="saveEvent()"
           (disabled)="!hasChanges()"
           [ngClass]="{
@@ -103,11 +105,11 @@
             'hover:scale-[103%]': hasChanges()
           }"
         >
-          <div>Save Changes</div>
+          <div>Save</div>
         </div>
         <div
           id="cancel_changes"
-          class="ml-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center"
+          class="mx-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center items-center"
           (click)="discardChanges()"
           (disabled)="!hasChanges()"
           [ngClass]="{
@@ -115,7 +117,14 @@
             'hover:scale-[103%]': hasChanges()
           }"
         >
-          <div>Discard Changes</div>
+          <div>Discard</div>
+        </div>
+        <div
+          id="delete_event"
+          class="text-4xl ml-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center align-middle hover:scale-105"
+          (click)="deleteEvent()"
+          >
+          <ng-icon name="matDeleteRound"></ng-icon>
         </div>
       </div>
     </div>
