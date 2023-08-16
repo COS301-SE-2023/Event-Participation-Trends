@@ -18,6 +18,7 @@ import {
   ICreateEventResponse,
   IDeclineViewRequestRequest,
   IDeclineViewRequestResponse,
+  IDeleteEventResponse,
   IEvent,
   IEventDetails,
   IEventId,
@@ -145,6 +146,20 @@ export class AppApiService {
     return response.status || Status.FAILURE;
   }
 
+  async getEventByName(eventName: string): Promise<IEvent> {
+    const response = await firstValueFrom(
+      this.http.get<IGetEventResponse>(
+        `/api/event/getEvent?eventName=${eventName}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.event;
+  }
+
   async getEvent(eventId: IEventId): Promise<IEvent> {
     return firstValueFrom(
       this.http.get<IEvent>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
@@ -220,6 +235,21 @@ export class AppApiService {
       )
     );
     return response.floorlayout || '';
+  }
+
+  async deleteEvent(eventId: IEventId): Promise<Status> {
+    const response = await firstValueFrom(
+      this.http.post<IDeleteEventResponse>(
+        '/api/event/deleteEvent',
+        eventId,
+        { 
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.status || Status.FAILURE;
   }
 
   async sendViewRequest(eventId: IEventId): Promise<Status> {

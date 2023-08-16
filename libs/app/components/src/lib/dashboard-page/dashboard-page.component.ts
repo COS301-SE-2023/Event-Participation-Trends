@@ -143,7 +143,7 @@ export class DashboardPageComponent implements OnInit {
     if (!this.id) {
       this.router.navigate(['/']);
     }
-
+    
     this.event = await this.appApiService.getEvent({ eventId: this.id });
 
     const eventStartDate = this.event.StartDate;

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Route } from '@angular/router';
 import { appHomeRoutes } from './lib.routes';
 import { HomeComponent } from './home/home.component';
-import { ProfileComponent } from '@event-participation-trends/app/components';
+import { ProfileComponent, HomeHelpComponent } from '@event-participation-trends/app/components';
 import {
   AllEventsPageComponent,
   ComparePageComponent,
@@ -32,6 +32,7 @@ import {
     RouterModule.forChild(appHomeRoutes),
     RouterModule,
     ProfileComponent,
+    HomeHelpComponent,
     AllEventsPageComponent,
     ComparePageComponent,
     UsersPageComponent,

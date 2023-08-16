@@ -8,4 +8,5 @@ export enum EmailContent {
     ROLE_CHANGE_MANAGER_TO_VIEWER_CONTENT= "Role reassigned from Manager to Viewer",
     ROLE_CHANGE_VIEWER_TO_MANAGER_CONTENT= "Role reassigned from Viewer to Manager",
     NEW_LINE= "\n",
+    EVENT_DELETED_CONTENT= "Event has been successfully deleted: ",
 }

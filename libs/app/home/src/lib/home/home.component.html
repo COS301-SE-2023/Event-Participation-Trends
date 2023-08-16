@@ -1,6 +1,6 @@
 <div
   #gradient
-  class="fixed top-0 left-0 h-screen w-screen bg-gradient-to-br from-ept-deep-grey to-ept-navy-blue -z-50"
+  class="fixed top-0 left-0 h-screen w-screen bg-ept-deep-grey -z-50"
 ></div>
 <div
   class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-36 grid-rows-1 overflow-hidden"
@@ -35,7 +35,7 @@
         <div
           class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
           [ngClass]="{
-            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
               expandEvents
           }"
         >
@@ -66,7 +66,7 @@
         <div
           class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
           [ngClass]="{
-            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
               expandCompare
           }"
         >
@@ -97,7 +97,7 @@
         <div
           class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
           [ngClass]="{
-            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
               expandUsers
           }"
         >
@@ -113,6 +113,7 @@
         <a
           id="help-link"
           class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="help_press()"
           [ngClass]="{
           'overflow-visible': expandHelp,
         }"
@@ -124,7 +125,7 @@
         <div
           class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
           [ngClass]="{
-            'pl-20 pr-5 w-fit bg-ept-navy-blue rounded-full opacity-100':
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
               expandHelp
           }"
         >
@@ -152,3 +153,8 @@
   class="transition-opacity duration-300 hidden opacity-0"
   id="profile-modal"
 ></event-participation-trends-profile>
+<event-participation-trends-home-help
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="help-modal"
+>
+</event-participation-trends-home-help>

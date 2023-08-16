@@ -1,6 +1,6 @@
-<div class="top-0 left-0 w-full h-full grid grid-cols-1 grid-rows-1">
+<div class="top-0 left-0 w-full h-full grid grid-cols-3 grid-rows-3">
   <div
-    class="flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-4"
+    class="col-span-1 row-span-3 flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-6"
   >
     <div
       class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
@@ -9,14 +9,156 @@
     >
       <span class="loading loading-spinner loading-lg"></span>
     </div>
-    <div class="grid grid-cols-12 relative">
+    <div
+      class="transition-opacity duration-200 col-span-6 flex flex-col justify-between h-full"
+      [ngClass]="{ 'opacity-0': !show }"
+      *ngIf="event"
+    >
+      <div class="text-ept-off-white text-4xl font-poppins font-semibold">
+        {{ event.Name }}
+      </div>
+
+      <div id="location" class="">
+        <div class="text-2xl font-semibold font-poppins">Location</div>
+        <div>
+          <input
+            type="text"
+            placeholder="Location"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-2 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="location"
+          />
+        </div>
+      </div>
+
+      <div id="category" class="">
+        <div class="text-2xl font-semibold font-poppins">Category</div>
+        <div>
+          <input
+            type="text"
+            placeholder="Category"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="category"
+          />
+        </div>
+      </div>
+
+      <div id="start" class="">
+        <div class="text-2xl font-semibold font-poppins">Start Time</div>
+        <div>
+          <input
+            type="datetime-local"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="start_time"
+          />
+        </div>
+      </div>
+
+      <div id="end" class="">
+        <div class="text-2xl font-semibold font-poppins">End Time</div>
+        <div>
+          <input
+            type="datetime-local"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="end_time"
+          />
+        </div>
+      </div>
+
       <div
-        class="transition-opacity duration-200 col-span-6"
-        [ngClass]="{ 'opacity-0': !show }"
-        *ngIf="event"
+        class="col-start-11 col-span-3 flex justify-center align-middle drop-shadow-[0_10px_10px_rgba(0,0,0,0.2)]"
       >
-        <div class="text-ept-off-white text-3xl font-poppins font-semibold">
-          {{ event.Name }}
+        <div
+          class="bg-ept-navy-blue font-poppins font-semibold text-lg rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1"
+        >
+          <div
+            class="h-full mx-3 z-30 text-center"
+            [ngClass]="{ 'text-ept-navy-blue': isPublic }"
+            (click)="isPublic = true"
+          >
+            Public
+          </div>
+          <div
+            class="h-full mx-3 z-30 text-center"
+            [ngClass]="{ 'text-ept-navy-blue': !isPublic }"
+            (click)="isPublic = false"
+          >
+            Private
+          </div>
+          <div
+            class="absolute w-[50%] h-full z-20 rounded-full transition-all duration-300 ease-in-out"
+            [ngClass]="{
+              'animate-slideLeft bg-ept-bumble-yellow': isPublic,
+              'animate-slideRight bg-ept-blue-grey': !isPublic
+            }"
+          ></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-5 font-poppins font-semibold text-xl">
+        <div
+          id="save_event"
+          class="mr-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center items-center"
+          (click)="saveEvent()"
+          (disabled)="!hasChanges()"
+          [ngClass]="{
+            'opacity-30 cursor-not-allowed': !hasChanges(),
+            'hover:scale-[103%]': hasChanges()
+          }"
+        >
+          <div>Save</div>
+        </div>
+        <div
+          id="cancel_changes"
+          class="mx-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center items-center"
+          (click)="discardChanges()"
+          (disabled)="!hasChanges()"
+          [ngClass]="{
+            'opacity-30 cursor-not-allowed': !hasChanges(),
+            'hover:scale-[103%]': hasChanges()
+          }"
+        >
+          <div>Discard</div>
+        </div>
+        <div
+          id="delete_event"
+          class="text-4xl ml-2 p-3 bg-ept-bumble-yellow rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center align-middle hover:scale-105"
+          (click)="deleteEvent()"
+          >
+          <ng-icon name="matDeleteRound"></ng-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="col-span-1 row-span-3 flex flex-col relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-6"
+  >
+    <div class="text-2xl font-poppins font-semibold mb-3">Requests</div>
+    <div class="overflow-y-scroll relative h-full">
+      <div
+        class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 z-50"
+        *ngIf="emptyRequests()"
+      >
+        <ng-icon name="heroInboxSolid" class="text-6xl"></ng-icon>
+        <div class="font-poppins text-xl mt-3">
+          There are no requests for this event yet...
+        </div>
+      </div>
+      <div
+        class="p-3 grid grid-cols-5 border-b-2 border-b-ept-blue-grey border-opacity-10 items-center"
+        *ngFor="let request of requests"
+      >
+        <div class="col-span-3">{{ request.Email }}</div>
+        <div
+          class="p-2 bg-ept-bumble-yellow text-ept-deep-grey rounded-2xl text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          (click)="acceptRequest(request)"
+        >
+          Accept
+        </div>
+        <div
+          class="p-2 bg-ept-blue-grey text-ept-deep-grey rounded-2xl text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          (click)="declineRequest(request)"
+        >
+          Decline
         </div>
       </div>
     </div>

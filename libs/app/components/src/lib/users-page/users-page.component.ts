@@ -51,6 +51,18 @@ export class UsersPageComponent implements OnInit {
     });
   }
 
+  getName(user: any): string {
+    if (user.FirstName == null) {
+      user.FirstName = '';
+    }
+
+    if (user.LastName == null) {
+      user.LastName = '';
+    }
+    
+    return user.FirstName + ' ' + user.LastName;
+  }
+
   setViewer(user: any) {
     user.Role = 'viewer';
     this.updateRole(user);
