@@ -1,1 +1,22 @@
-<p>compare-page works!</p>
+<div class="top-0 left-0 w-full h-screen">
+    <div class="grid grid-cols-12 grid-rows-3 w-full h-full">
+        <div class="col-span-9 row-span-3 m-5 ml-2 border-ept-blue-grey border-2 border-solid rounded-2xl relative">
+            <div
+                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+        </div>
+        <div class="col-span-3 row-span-3 m-5 ml-0 border-ept-blue-grey border-2 border-solid rounded-2xl relative">
+            <div
+                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+        </div>
+    </div>
+</div>
