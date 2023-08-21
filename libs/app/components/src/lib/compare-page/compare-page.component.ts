@@ -53,4 +53,23 @@ export class ComparePageComponent implements OnInit{
   selectCategory(category: string): void {
     this.selectedCategory = category;
   }
+
+  highlightText(text: string, search: string): string {
+    if (!search || !text) {
+      return text;
+    }
+
+    const pattern = new RegExp(search, 'gi');
+    return text.replace(pattern, match => `<span class="bg-ept-bumble-yellow text-ept-navy-blue">${match}</span>`);
+  }
+
+  getEventCategories() : string[] {
+    const categoryList = this.categories;
+
+    return categoryList.filter((category) => {
+      return category
+        ? category.toLowerCase().includes(this.search.toLowerCase())
+        : false;
+    });
+  }
 }
