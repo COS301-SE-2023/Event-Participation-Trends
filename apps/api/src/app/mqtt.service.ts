@@ -59,8 +59,6 @@ export class MqttService {
         if (thisFloorLayout?.children === undefined) return;
         thisFloorLayout?.children?.forEach((child: any) => {
           if (child.className === 'Circle') {
-            console.log(child);
-            console.log(child?.attrs?.uniqueId || child?.attrs?.customId);
             sensors.add({
               x: child?.attrs?.x,
               y: child?.attrs?.y,

@@ -286,8 +286,6 @@ export class DashboardPageComponent implements OnInit {
         // now.setHours(now.getHours() - 371);
         // now.setMinutes(now.getMinutes() - 0);
 
-        console.log(now);
-
         // get positions this interval
 
         const intervalStart = new Date(now.getTime() - 5000);
@@ -309,7 +307,6 @@ export class DashboardPageComponent implements OnInit {
 
         if (positions) {
           data = positions.map((position: IPosition) => {
-            console.log(position);
             if (position.x != null && position.y != null) {
               return {
                 x: position.x,
@@ -488,7 +485,6 @@ export class DashboardPageComponent implements OnInit {
 
     // Get the ImageData URL (base64 encoded) from this.heatmap?.getDataURL()
     const base64Url = this.heatmap?.getDataURL();
-    console.log('base64Url', base64Url);
 
     if (base64Url) {
       image.src = base64Url;
@@ -497,9 +493,6 @@ export class DashboardPageComponent implements OnInit {
       image.onload = () => {
         const originalWidth = image.width;     // Width of the loaded image
         const originalHeight = image.height;   // Height of the loaded image
-
-        console.log('originalWidth', originalWidth);
-        console.log('originalHeight', originalHeight);
 
         // For example:
         const heatmapLayer = new Konva.Layer({
