@@ -59,16 +59,19 @@ export class MqttService {
         if (thisFloorLayout?.children === undefined) return;
         thisFloorLayout?.children?.forEach((child: any) => {
           if (child.className === 'Circle') {
+            console.log(child);
+            console.log(child?.attrs?.uniqueId || child?.attrs?.customId);
             sensors.add({
               x: child?.attrs?.x,
               y: child?.attrs?.y,
-              id: child?.attrs?.customId,
+              id: child?.attrs?.uniqueId || child?.attrs?.customId,
             });
           }
         });
         const positions = await this.anotherOne(sensors);
+
         this.buffer = new Array<any>();
-        if(process.env['ENVIRONMENT'] === 'production')
+        if(process.env['MQTT_ENVIRONMENT'] === 'production')
           this.eventService.addDevicePosition({
             eventId: (event as any)._id,
             position: positions

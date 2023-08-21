@@ -255,9 +255,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         }
     }
 
-    addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
+    async addKonvaObject(droppedItem: DroppedItem, positionX: number, positionY: number) {
       if (droppedItem.name.includes('png') || droppedItem.name.includes('jpg') || droppedItem.name.includes('jpeg') || droppedItem.name.includes('svg') || 1 == 1) {
-        Konva.Image.fromURL(droppedItem.name, (image) => {
+        Konva.Image.fromURL(droppedItem.name, async (image) => {
           const imgSrc = image.image();
           image = new Konva.Image({
             image: imgSrc,
@@ -332,6 +332,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               cursor: 'move',
             });
             circle.setAttr('customId', this.getSelectedSensorId(circle));
+            const uniqueId = await this.appApiService.getNewEventSensorId();
+            circle.setAttr('uniqueId', uniqueId);
             const tooltip = this.addTooltip(circle, positionX, positionY);
             this.tooltips.push(tooltip);
             this.setMouseEvents(circle);
@@ -2231,14 +2233,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         link.click();
         document.body.removeChild(link);
       }
-
-      // getUniqueId(): string {
-      //   this.appApiService.getNewEventSensorId().subscribe((res: any) => {
-      //     return res;
-      //   });
-
-      //   return '';
-      // }
 
       updateWidth(event: any) {
         const input = this.revertValue(parseFloat(event.target.value));
