@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './compare-page.component.html',
   styleUrls: ['./compare-page.component.css'],
 })
-export class ComparePageComponent {
+export class ComparePageComponent implements OnInit{
   public id = '';
   public event : any | null = null;
   public show = false;

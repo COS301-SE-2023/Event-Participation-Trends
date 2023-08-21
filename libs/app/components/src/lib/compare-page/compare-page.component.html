@@ -19,19 +19,30 @@
             </div>
             <div
                 *ngIf="show"
-                class="bg-opacity-[75%] rounded-lg p-5 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center text-center"
+                class="bg-opacity-[75%] rounded-lg my-2 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center text-center px-5"
                 >
                 <p ngClass="sidebar-header sidebar-title" class="text-2xl">
                     Available Categories
                 </p>
-                <span ngClass="sidebar-content" class="flex w-full">
+                <span ngClass="px-2 sidebar-content" class="my-2 flex w-full">
                     <input
                         type="text"
                         placeholder="Type here"
-                        class="col-start-5 col-span-4 w-full outline-none py-3 px-5 bg-ept-off-white bg-opacity-[97%] backdrop-blur-sm text-ept-navy-blue rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
+                        class="col-start-5 col-span-4 w-full outline-none py-3 px-5 bg-ept-navy-blue border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm text-ept-navy-blue rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
                         [(ngModel)]="search"
                     />
                 </span>
+                <div class="overflow-x-auto overflow-y-scroll text-xl text-left w-full rounded-sm">
+                    <div *ngFor="let category of categories" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-sm ">
+                        <label>{{category}}</label>
+                        <input
+                            type="checkbox"
+                            class="ml-2 form-checkbox h-5 w-5 text-ept-navy-blue self-center"
+                            
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
