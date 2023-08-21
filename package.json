@@ -65,6 +65,7 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
+    "ts-matrix": "^1.2.2",
     "tslib": "^2.3.0",
     "wait-on": "^7.0.1",
     "zone.js": "~0.13.0"

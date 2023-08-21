@@ -11955,6 +11955,11 @@ ts-loader@^9.3.1:
     micromatch "^4.0.0"
     semver "^7.3.4"
 
+ts-matrix@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/ts-matrix/-/ts-matrix-1.2.2.tgz#3c4100f2f6943e78d80b08d2f21f7fa21a45f871"
+  integrity sha512-SLYiwsfnRy+9C5z+k4Etj87jNxWA2qdp6fAWGYMPRzb0IdeGjPohj5orDc0reRzQLkheTplT4277/rOui8A5aA==
+
 ts-node@10.9.1:
   version "10.9.1"
   resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.9.1.tgz#e73de9102958af9e1f0b168a6ff320e25adcff4b"

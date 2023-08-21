@@ -1,10 +1,11 @@
 import { AddDevicePosition, EventService } from '@event-participation-trends/api/event/feature';
 import { IGetAllEventsRequest } from '@event-participation-trends/api/event/util';
-import { PositioningService, SensorReading } from '@event-participation-trends/api/positioning';
+import { PositioningService, SensorReading, KalmanFilter } from '@event-participation-trends/api/positioning';
 import { Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { SensorlinkingService } from '@event-participation-trends/api/sensorlinking';
 import { Position } from '@event-participation-trends/api/event/data-access';
+import { Matrix } from 'ts-matrix';
 
 @Injectable()
 export class MqttService {
@@ -12,12 +13,14 @@ export class MqttService {
   private macToId: Map<string, number>;
   private buffer: Array<any>;
   private idNum: number;
+  private filters: Map<number, KalmanFilter>;
 
   constructor(private readonly sensorLinkingService: SensorlinkingService, private readonly positioningService: PositioningService, private readonly eventService: EventService) {
     this.sensors = new Array<string>();
     this.macToId = new Map<string, number>();
     this.buffer = new Array<any>();
     this.idNum = 0;
+    this.filters = new Map<number, KalmanFilter>();
   }
 
   async processData(data: any) {
@@ -104,6 +107,48 @@ export class MqttService {
         });
     }
     const positions = this.positioningService.getPositions(tempBuffer);
-    return positions;
+
+    if (!(process.env['MQTT_FILTER'] === 'kalman')) {
+      return positions;
+    }
+
+    const filteredPositions = new Array<Position>();
+
+    positions.map((position) => {
+      let filter = this.filters.get(position.id);
+
+      if (!filter) {
+        filter = new KalmanFilter(
+          position.x,
+          position.y,
+          position.timestamp.getTime() / 1000,
+          0.003,
+          0.5,
+          0.5
+        );
+      }
+
+      const estimated_position = filter.update(
+        new Matrix(2, 1, [[position.x], [position.y]]),
+        position.timestamp.getTime() / 1000
+      );
+
+      console.log("Estimated Position", estimated_position);
+
+      const filtered_position : Position = {
+        id: position.id,
+        x: estimated_position[0][0],
+        y: estimated_position[1][0],
+        timestamp: position.timestamp,
+      };
+
+      console.log("Filtered Position", filtered_position);
+
+      this.filters.set(position.id, filter);
+
+      filteredPositions.push(filtered_position);
+    });
+
+    return filteredPositions;
   };
 }
