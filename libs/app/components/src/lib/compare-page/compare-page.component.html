@@ -1,6 +1,6 @@
-<div class="top-0 left-0 w-full h-screen">
-    <div class="grid grid-cols-12 grid-rows-3 w-full h-full">
-        <div class="col-span-9 row-span-3 m-5 ml-2 border-ept-blue-grey border-2 border-solid rounded-2xl relative">
+<div class="top-0 left-0 w-full h-screen overflow-x-auto overflow-y-scroll ">
+    <div class="grid grid-cols-12 grid-rows-3 h-full">
+        <div class="col-span-9 row-span-3 m-5 ml-2 border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'bg-ept-navy-blue': show}">
             <div
                 class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
                 [ngClass]="{ 'opacity-0': !loading }"
@@ -9,7 +9,7 @@
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
         </div>
-        <div class="col-span-3 row-span-3 m-5 ml-0 border-ept-blue-grey border-2 border-solid rounded-2xl relative">
+        <div class="col-span-3 row-span-3 m-5 ml-0 border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'bg-ept-navy-blue': show}">
             <div
                 class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
                 [ngClass]="{ 'opacity-0': !loading }"
@@ -27,19 +27,16 @@
                 <span ngClass="px-2 sidebar-content" class="my-2 flex w-full">
                     <input
                         type="text"
-                        placeholder="Type here"
+                        placeholder="Search here"
                         class="col-start-5 col-span-4 w-full outline-none py-3 px-5 bg-ept-navy-blue border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm text-ept-navy-blue rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
                         [(ngModel)]="search"
                     />
                 </span>
-                <div class="overflow-x-auto overflow-y-scroll text-xl text-left w-full rounded-sm">
-                    <div *ngFor="let category of categories" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-sm ">
-                        <label>{{category}}</label>
-                        <input
-                            type="checkbox"
-                            class="ml-2 form-checkbox h-5 w-5 text-ept-navy-blue self-center"
-                            
-                        />
+                <div class="text-xl text-left rounded-sm h-full">
+                    <div *ngFor="let category of categories" (click)="selectCategory(category)" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-md hover:bg-ept-blue-grey hover:bg-opacity-20 hover:text-[22px] hover:cursor-pointer transition-all duration-100" [ngClass]="{'bg-ept-blue-grey bg-opacity-20':isSelected(category)}">
+                        <label class="hover:cursor-pointer" (click)="selectCategory(category)">{{category}}</label>
+                        <ng-icon *ngIf="isSelected(category)" class="text-ept-bumble-yellow self-center text-2xl" name="matCheckCircleOutline"></ng-icon>
+                        <ng-icon *ngIf="!isSelected(category)" class="text-ept-blue-grey self-center text-2xl" name="matRadioButtonUnchecked"></ng-icon>
                     </div>
                 </div>
             </div>

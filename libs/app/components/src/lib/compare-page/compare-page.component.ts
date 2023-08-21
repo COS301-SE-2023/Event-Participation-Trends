@@ -1,16 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'event-participation-trends-compare-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-  ],
   templateUrl: './compare-page.component.html',
   styleUrls: ['./compare-page.component.css'],
 })
@@ -24,6 +17,8 @@ export class ComparePageComponent implements OnInit{
   public role = 'viewer';
   public search = '';
 
+  selectedCategory = '';
+
   constructor(private readonly appApiService: AppApiService, private readonly route: ActivatedRoute, private readonly router: Router) {}
 
   async ngOnInit() {
@@ -33,9 +28,13 @@ export class ComparePageComponent implements OnInit{
     if (this.role === 'admin') {
       //get all categories
       this.categories = await this.appApiService.getAllEventCategories();
+      // set first item as selected
+      this.selectedCategory = this.categories[0];
     } else if (this.role === 'manager') {
       //get managed categories
       this.categories = await this.appApiService.getManagedEventCategories();
+      // set first item as selected
+      this.selectedCategory = this.categories[0];
     }
 
     console.log(this.categories);
@@ -45,5 +44,13 @@ export class ComparePageComponent implements OnInit{
     setTimeout(() => {
       this.show = true;
     }, 200);
+  }
+
+  isSelected(category: string): boolean {
+    return category === this.selectedCategory;
+  }
+
+  selectCategory(category: string): void {
+    this.selectedCategory = category;
   }
 }
