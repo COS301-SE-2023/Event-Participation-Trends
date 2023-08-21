@@ -17,6 +17,21 @@
             >
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
+            <div
+                *ngIf="show"
+                class="bg-opacity-[75%] rounded-lg p-5 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center text-center"
+                >
+                <p ngClass="sidebar-header sidebar-title" class="text-2xl">
+                    Available Categories
+                </p>
+                <span ngClass="sidebar-content" class="flex w-full">
+                    <input
+                        type="text"
+                        placeholder="Type here"
+                        class="col-start-5 col-span-4 w-full outline-none py-3 px-5 bg-ept-off-white bg-opacity-[97%] backdrop-blur-sm text-ept-navy-blue rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
+                        [(ngModel)]="search"
+                    />
+                </span>
         </div>
     </div>
 </div>
