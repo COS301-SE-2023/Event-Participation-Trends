@@ -77,13 +77,6 @@ export class MqttService {
             eventId: (event as any)._id,
             position: positions
           })
-
-
-        // for devices
-        // find kalmann filter of device
-        // if not found, create new, with the first 2 parameeters being the measured x and y
-        // const estimation = kalman.update(new_time, new Matrix(2, 1, [[position.x], [position.y]]));
-        // kalman.predict();
       });
   }
 
