@@ -133,16 +133,12 @@ export class MqttService {
         position.timestamp.getTime() / 1000
       );
 
-      console.log("Estimated Position", estimated_position);
-
       const filtered_position : Position = {
         id: position.id,
         x: estimated_position[0][0],
         y: estimated_position[1][0],
         timestamp: position.timestamp,
       };
-
-      console.log("Filtered Position", filtered_position);
 
       this.filters.set(position.id, filter);
 
