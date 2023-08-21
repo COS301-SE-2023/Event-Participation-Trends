@@ -43,6 +43,13 @@ export class EventDetailsPageComponent implements OnInit {
   public end_time = '';
   public isPublic = false;
 
+  // old_event
+  public old_location = '';
+  public old_category = '';
+  public old_start_time = '';
+  public old_end_time = '';
+  public old_isPublic = false;
+
   private time_offset = new Date().getTimezoneOffset();
 
   async ngOnInit() {
@@ -89,6 +96,12 @@ export class EventDetailsPageComponent implements OnInit {
     this.requests = await this.appApiService.getAccessRequests({
       eventId: this.event._id,
     });
+
+    this.old_category = this.category;
+    this.old_location = this.location;
+    this.old_isPublic = this.isPublic;
+    this.old_start_time = this.start_time;
+    this.old_end_time = this.end_time;
 
     this.loading = false;
     setTimeout(() => {
@@ -142,11 +155,6 @@ export class EventDetailsPageComponent implements OnInit {
     }, 100);
   }
 
-  editFloorplan() {
-    this.pressButton('#edit_floorplan');
-    // this.router.navigate([`/event/${this.id}/edit`]);
-  }
-
   saveEvent() {
     this.pressButton('#save_event');
 
@@ -167,33 +175,29 @@ export class EventDetailsPageComponent implements OnInit {
 
     this.appApiService.updateEventDetails(updateDetails);
 
-    this.event.Location = this.location;
-    this.event.Category = this.category;
-    this.event.PublicEvent = this.isPublic;
-    this.event.StartDate = db_start;
-    this.event.EndDate = db_end;
+    this.old_category = this.category;
+    this.old_location = this.location;
+    this.old_isPublic = this.isPublic;
+    this.old_start_time = this.start_time;
+    this.old_end_time = this.end_time;
   }
 
   discardChanges() {
     this.pressButton('#cancel_changes');
 
-    this.location = this.event.Location;
-    this.category = this.event.Category;
-    this.isPublic = this.event.PublicEvent;
-    this.start_time = new Date(this.event.StartDate).toISOString().slice(0, 16);
-    this.end_time = new Date(this.event.EndDate).toISOString().slice(0, 16);
+    this.category = this.old_category;
+    this.location = this.old_location;
+    this.isPublic = this.old_isPublic;
+    this.start_time = this.old_start_time;
+    this.end_time = this.old_end_time;
   }
 
   hasChanges() {
-    return (
-      this.location !== this.event.Location ||
-      this.category !== this.event.Category ||
-      this.start_time !==
-        new Date(this.event.StartDate).toISOString().slice(0, 16) ||
-      this.end_time !==
-        new Date(this.event.EndDate).toISOString().slice(0, 16) ||
-      this.isPublic !== this.event.PublicEvent
-    );
+    return ( this.location !== this.old_location ||
+      this.category !== this.old_category ||
+      this.start_time !== this.old_start_time ||
+      this.end_time !== this.old_end_time ||
+      this.isPublic !== this.old_isPublic);
   }
 
   removeRequest(request: any) {

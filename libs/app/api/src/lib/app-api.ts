@@ -10,7 +10,6 @@ import {
   IUpdateRoleRequest,
   IUser,
   IupdateRoleResponse,
-  Role,
 } from '@event-participation-trends/api/user/util';
 import {
   IAcceptViewRequestRequest,
