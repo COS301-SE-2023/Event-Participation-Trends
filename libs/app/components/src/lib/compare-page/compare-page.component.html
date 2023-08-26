@@ -16,36 +16,7 @@
                 </div>
             </span>
             <div *ngIf="show" class="grid grid-rows-2 w-full h-full gap-2 p-3">
-                <div #heatmapContainerOne class="row-span-1 w-full z-0 relative border-ept-blue-grey border-2 border-solid rounded-2xl">
-                    <div *ngIf="show" id="floormap" class="z-20 absolute w-full h-full top-0 left-0"></div>
-                    <div *ngIf="show" id="view" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
-                    <div class="flex flex-col justify-evenly absolute top-14 right-3">
-                        <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
-                            <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
-                        </div>
-                        <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
-                            <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
-                        </div>
-                        <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
-                            <ng-icon name="matFilterCenterFocus" title="Recenter floor"></ng-icon>
-                        </div>
-                    </div>
-                </div>
-                <div #heatmapContainerTwo class="row-span-1 w-full z-0 relative border-ept-blue-grey border-2 border-solid rounded-2xl">
-                    <div *ngIf="show" id="floormap" class="z-20 absolute w-full h-full top-0 left-0"></div>
-                    <div *ngIf="show" id="view" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
-                    <div class="flex flex-col justify-evenly absolute top-14 right-3">
-                        <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
-                            <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
-                        </div>
-                        <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
-                            <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
-                        </div>
-                        <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
-                            <ng-icon name="matFilterCenterFocus" title="Recenter floor"></ng-icon>
-                        </div>
-                    </div>
-                </div>
+                <event-participation-trends-heatmap-container></event-participation-trends-heatmap-container>
             </div>
         </div>
         <div class="pb-3 col-span-3 row-span-3 m-5 ml-0 border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'bg-ept-navy-blue': show}">

@@ -11,3 +11,5 @@ export * from './lib/users-page/users-page.component';
 export * from './lib/dashboard-page/dashboard-page.module';
 export * from './lib/home-help/home-help.component';
 export * from './lib/event-help/event-help.component';
+export * from './lib/heatmap-container/heatmap-container.module';
+export * from './lib/heatmap-container/heatmap-container.component';

@@ -6,13 +6,15 @@ import { matCheckCircleOutline } from "@ng-icons/material-icons/outline";
 import { matRadioButtonUnchecked, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
 import { heroAdjustmentsHorizontal } from "@ng-icons/heroicons/outline";
 import { FormsModule } from "@angular/forms";
+import { HeatmapContainerComponentModule } from "@event-participation-trends/app/components";
 
 @NgModule({
     bootstrap: [ComparePageComponent],
     imports: [
         CommonModule, 
         FormsModule,
-        NgIconsModule.withIcons({matCheckCircleOutline, matRadioButtonUnchecked, heroAdjustmentsHorizontal, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut})
+        NgIconsModule.withIcons({matCheckCircleOutline, matRadioButtonUnchecked, heroAdjustmentsHorizontal, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut}),
+        HeatmapContainerComponentModule
     ],
     declarations: [ComparePageComponent]
 })
