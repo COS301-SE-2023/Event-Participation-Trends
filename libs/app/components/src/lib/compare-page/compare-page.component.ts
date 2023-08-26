@@ -2,11 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IEvent } from '@event-participation-trends/api/event/util';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { HeatmapContainerComponent } from '@event-participation-trends/app/components';
+
+import { matCheckCircleOutline } from "@ng-icons/material-icons/outline";
+import { matRadioButtonUnchecked, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
+import { heroAdjustmentsHorizontal } from "@ng-icons/heroicons/outline";
 
 @Component({
   selector: 'event-participation-trends-compare-page',
+  standalone: true,
+  imports: [
+    CommonModule, 
+    FormsModule,
+    NgIconsModule,
+    HeatmapContainerComponent
+  ],
   templateUrl: './compare-page.component.html',
   styleUrls: ['./compare-page.component.css'],
+  providers: [
+    provideIcons({matCheckCircleOutline, matRadioButtonUnchecked, heroAdjustmentsHorizontal, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut})
+  ]
 })
 export class ComparePageComponent implements OnInit{
   public id = '';

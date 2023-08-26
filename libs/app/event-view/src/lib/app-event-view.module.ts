@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Route } from '@angular/router';
 import { appEventViewRoutes } from './lib.routes';
 import { EventViewComponent } from './event-view/event-view.component';
-import { DashboardPageComponent, DashboardPageModule, EventDetailsPageComponent, EventHelpComponent } from '@event-participation-trends/app/components';
+import { DashboardPageComponent, EventDetailsPageComponent, EventHelpComponent } from '@event-participation-trends/app/components';
 import { NgIconsModule } from '@ng-icons/core';
 import {
   heroArrowLeft,
@@ -23,7 +23,7 @@ import {
     CommonModule,
     RouterModule.forChild(appEventViewRoutes),
     RouterModule,
-    DashboardPageModule,
+    DashboardPageComponent,
     EventHelpComponent,
     EventDetailsPageComponent,
     NgIconsModule.withIcons({
