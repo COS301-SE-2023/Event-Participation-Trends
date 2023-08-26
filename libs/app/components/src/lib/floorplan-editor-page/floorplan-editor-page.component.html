@@ -1,7 +1,7 @@
 <div class="top-0 left-0 w-full h-screen">
-  <div class="grid grid-cols-12 gap-3 p-3 h-full">
+  <div class="grid grid-cols-36 gap-3 p-3 h-full">
     <div
-      class="tool-menu col-span-2 rounded-lg bg-white md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative flex flex-col justify-between items-center"
+      class="tool-menu col-span-7 max-h-full overflow-y-scroll rounded-lg bg-white md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative flex flex-col justify-between items-center"
       ngClass="card-container"
     >
       <div ngClass="card" [class.flipped]="isCardFlipped && isSensor()">
@@ -29,12 +29,12 @@
             </div>
           </div>                  
           <h3
-            *ngIf="!showSensorLinking()"
             class="components-heading flex justify-between items-center mt-4 ml-2 md:text-md"
+            [ngClass]="{'opacity-50 pointer-events-none': !preventCreatingWalls}"
           >
             Components
           </h3>
-          <div class="components-list mb-1 overflow-hidden" *ngIf="!showSensorLinking()">
+          <div class="components-list mb-1 overflow-hidden">
             <div
               class="overflow-y-auto max-h-fit flex ml-4"
               [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
@@ -192,18 +192,18 @@
           <div class="flex flex-col items-start">
             <div class="flex items-center w-full">
               <input type="radio" name="linkOption" id="altOption" [checked]="hideScanner" (change)="hideQRCodeScanner()" [ngClass]="{'bg-ept-bumble-yellow': hideScanner}"/>
-              <label for="altOption">
+              <label for="altOption" class="cursor-pointer">
                 Link with manual input
               </label>
             </div>
             <div class="flex items-center w-full">
               <input type="radio" name="linkOption" id="qrOption" [checked]="!hideScanner" (change)="showQRCodeScanner()" [ngClass]="{'bg-ept-bumble-yellow': !hideScanner}"/>
-              <label for="qrOption">
+              <label for="qrOption" class="cursor-pointer">
                 QR Code Scanner
               </label>
             </div>
           </div>
-          <div #reader id="reader" class="m-2" [ngClass]="{'hidden': hideScanner}"></div>
+          <div #reader id="reader" class="m-2 w-[180px]" [ngClass]="{'hidden': hideScanner}"></div>
           <form [formGroup]="macAddressForm" [ngClass]="{'hidden': !hideScanner}">
             <div class="mt-4 flex flex-col items-center justify-evenly">
               <div class="flex items-center">
@@ -319,7 +319,7 @@
     <div
         id="canvasParent"
         #canvasParent
-        class="relative col-span-10 bg-white rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2"
+        class="relative col-span-29 bg-white rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2"
         (drop)="onDrop($event)"
         (dragover)="onDragOver($event)"
         >

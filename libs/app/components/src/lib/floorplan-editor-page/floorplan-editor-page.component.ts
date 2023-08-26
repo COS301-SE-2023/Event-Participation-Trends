@@ -658,7 +658,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       break;
                     case 'Path':
                       type = new Konva.Path(child.getAttrs());
-                      this.currentPathStrokeWidth = type.getAttr('strokeWidth');
+                      this.currentPathStrokeWidth = 3;
+                      type.setAttr('strokeWidth', this.currentPathStrokeWidth);
                       break;
                     case 'Circle':
                       type = new Konva.Circle(child.getAttrs());
@@ -854,10 +855,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         return;
       }
 
-      const mousePointTo = {
-        x: pointer.x / oldScale - stage.x() / oldScale,
-        y: pointer.y / oldScale - stage.y() / oldScale
-      };
+      // const mousePointTo = {
+      //   x: pointer.x / oldScale - stage.x() / oldScale,
+      //   y: pointer.y / oldScale - stage.y() / oldScale
+      // };
 
       let wheelDirection = 0;
       if (!direction) {
@@ -930,14 +931,26 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.setZoomOutDisabled(this.displayedSnap);
       }
 
-      const x =
-        -(mousePointTo.x - pointer.x / newScale) * newScale;
-      const y =
-        -(mousePointTo.y - pointer.y / newScale) * newScale;
+      
+      const clampedScaleX = Math.min(Math.max(newScale, 1), 16);
+      const clampedScaleY = Math.min(Math.max(newScale, 1), 16);
 
-      const pos = this.boundFunc({ x, y }, newScale);
+      const oldScaleX = this.canvasContainer.scaleX();
+      const oldScaleY = this.canvasContainer.scaleY();
+      // Get the center of the viewport as the zoom center
+      const zoomCenterX = this.canvasContainer.width() / 2;
+      const zoomCenterY = this.canvasContainer.height() / 2;
+  
+      // Calculate new position for zoom center
+      const newPosX = zoomCenterX - (zoomCenterX - this.canvasContainer.x()) * (clampedScaleX / oldScaleX);
+      const newPosY = zoomCenterY - (zoomCenterY - this.canvasContainer.y()) * (clampedScaleY / oldScaleY);
+  
+      this.canvasContainer.x(newPosX);
+      this.canvasContainer.y(newPosY);
+      this.canvasContainer.scaleX(clampedScaleX);
+      this.canvasContainer.scaleY(clampedScaleY);
 
-      this.canvasContainer.scale({ x: newScale, y: newScale });
+      const pos = this.boundFunc({ x: newPosX, y: newPosY }, newScale);
       this.canvasContainer.position(pos);
     }
 

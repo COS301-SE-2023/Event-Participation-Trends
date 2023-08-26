@@ -27,6 +27,7 @@ module.exports = {
       },
       gridColumn: {
         'span-34': 'span 34 / span 34',
+        'span-29': 'span 29 / span 29',
       },
       keyframes: {
         bounce: {
