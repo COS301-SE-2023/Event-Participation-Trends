@@ -22,15 +22,25 @@
                 class="bg-opacity-[75%] rounded-lg my-2 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center text-center px-5"
                 >
                 <p ngClass="sidebar-header sidebar-title" class="text-2xl">
-                    Available Categories
+                    Available Events
                 </p>
-                <span ngClass="px-2 sidebar-content" class="my-2 flex w-full">
-                    <input
-                        type="text"
-                        placeholder="Search here"
-                        class="col-start-5 col-span-4 w-full outline-none py-3 px-5 bg-ept-navy-blue border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
-                        [(ngModel)]="search"
-                    />
+                <span ngClass="sidebar-content" class="my-2 flex flex-col w-full justify-evenly">
+                    <div class="flex justify-between px-2 bg-ept-navy-blue border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
+                        <ng-icon name="matSearch" class="text-[40px] text-ept-blue-grey"></ng-icon>
+                        <input
+                            type="text"
+                            placeholder="Search here"
+                            class="w-full outline-none bg-transparent text-ept-off-white"
+                            [(ngModel)]="search"
+                        />
+                    </div>
+                    <div class="mt-2 px-2 flex justify-between border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
+                        <ng-icon name="heroAdjustmentsHorizontal" class="text-[40px] text-ept-blue-grey"></ng-icon>
+                        <select class="w-full bg-ept-navy-blue rounded-2xl outline-none text-ept-off-white">
+                            <option value="all">Show All</option>
+                            <option *ngFor="let category of getEventCategories()" [value]="category">{{category}}</option>
+                        </select>
+                    </div>
                 </span>
                 <div class="text-xl text-left rounded-sm h-full">
                     <div *ngFor="let category of getEventCategories()" (click)="selectCategory(category)" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-md hover:bg-ept-blue-grey hover:bg-opacity-20 hover:text-[22px] hover:cursor-pointer transition-all duration-100" [ngClass]="{'bg-ept-blue-grey bg-opacity-20':isSelected(category)}">
