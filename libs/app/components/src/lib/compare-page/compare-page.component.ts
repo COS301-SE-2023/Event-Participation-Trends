@@ -20,7 +20,7 @@ export class ComparePageComponent implements OnInit{
   public role = 'viewer';
   public search = '';
 
-  selectedCategory = '';
+  selectedCategory = 'Show All';
   eventsSelected = 0;
   
 
@@ -72,12 +72,11 @@ export class ComparePageComponent implements OnInit{
 
       return sameName && sameStartAndEndDate && sameCategory;
     });
-    console.log(index);
     return this.eventList[index].selected;
   }
 
-  selectCategory(category: string): void {
-    this.selectedCategory = category;
+  selectCategory(event: any): void {
+    this.selectedCategory = event.target.value;
   }
 
   selectEvent(event: IEvent): void {
@@ -126,10 +125,19 @@ export class ComparePageComponent implements OnInit{
   getEvents() : IEvent[] {
     const eventList = this.events;
 
-    return eventList.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    });
+    if (this.selectedCategory == "Show All") {
+      return eventList.filter((event) => {
+        return event.Name
+          ? event.Name.toLowerCase().includes(this.search.toLowerCase())
+          : false;
+      });
+    }
+    else {
+      return eventList.filter((event) => {
+        return event.Name
+          ? event.Name.toLowerCase().includes(this.search.toLowerCase()) && event.Category == this.selectedCategory
+          : false;
+      });
+    }
   }
 }

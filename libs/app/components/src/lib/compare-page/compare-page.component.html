@@ -36,8 +36,8 @@
                     </div>
                     <div class="mt-2 px-2 flex justify-between border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
                         <ng-icon name="heroAdjustmentsHorizontal" class="text-[40px] text-ept-blue-grey"></ng-icon>
-                        <select class="w-full bg-ept-navy-blue rounded-2xl outline-none text-ept-off-white">
-                            <option value="all">Show All</option>
+                        <select class="w-full bg-ept-navy-blue rounded-2xl outline-none text-ept-off-white" (change)="selectCategory($event)">
+                            <option value="Show All">Show All</option>
                             <option *ngFor="let category of getEventCategories()" [value]="category">{{category}}</option>
                         </select>
                     </div>
