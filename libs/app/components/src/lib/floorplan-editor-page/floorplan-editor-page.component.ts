@@ -23,8 +23,6 @@ interface DroppedItem {
 
 @Component({
   selector: 'event-participation-trends-floorplan-editor-page',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './floorplan-editor-page.component.html',
   styleUrls: ['./floorplan-editor-page.component.css'],
 })
@@ -97,6 +95,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     componentSize = this.gridSize;
     zoomInDisabled = false;
     zoomOutDisabled = false;
+    centerDisabled = true;
+    centerPosition = {x: 0, y: 0};
     gridSizeLabel = 0;
     snapLabel = 0;
     selectedWall = false;
@@ -687,6 +687,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
               this.defaultBehaviour(newCanvas);
               this.moveSensorsAndTooltipsToTop();
+              this.centerFloorPlan();
             });
           });
           }, 6);
@@ -694,6 +695,61 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         setTimeout(() => {
           this.isLoading = false;
         }, 1500);
+    }
+
+    centerFloorPlan(): void {
+      if (!this.canvas || !this.canvas.children) return;
+
+      while(this.currentScale != 1) {
+        this.zoomOut();
+        if (this.currentScale < 1) {
+          this.currentScale = 1;
+        }
+      }
+
+      this.canvasContainer.setAttr('x', 0);
+      this.canvasContainer.setAttr('y', 0);
+
+      let maxXCoordinate = 0;
+      let maxYCoordinate = 0;
+      let minXCoordinate = 1000000;
+      let minYCoordinate = 1000000;
+
+      for (let i = 1; i < this.canvas.children.length; i++) {
+        const child = this.canvas.children[i];
+        if (child.attrs.x > maxXCoordinate) {
+          maxXCoordinate = child.attrs.x;
+        }
+        if (child.attrs.y > maxYCoordinate) {
+          maxYCoordinate = child.attrs.y;
+        }
+        if (child.attrs.x < minXCoordinate) {
+          minXCoordinate = child.attrs.x;
+        }
+        if (child.attrs.y < minYCoordinate) {
+          minYCoordinate = child.attrs.y;
+        }
+      }
+
+      const floorplanCenterX = minXCoordinate + (maxXCoordinate - minXCoordinate) / 2;
+      const floorplanCenterY = minYCoordinate + (maxYCoordinate - minYCoordinate) / 2;
+
+      const originalCanvasCenterX = (this.canvasContainer.width() / 2) / 2;
+      const originalCanvasCenterY = (this.canvasContainer.height() / 2) / 2;
+      const originalCanvasX = this.canvasContainer.x();
+      const originalCanvasY = this.canvasContainer.y();
+
+      const newCanvasX = Math.abs(originalCanvasCenterX - floorplanCenterX);
+      const newCanvasY = Math.abs(originalCanvasCenterY - floorplanCenterY);
+
+      this.canvasContainer.setAttr('x', originalCanvasX - 2*newCanvasX);
+      this.canvasContainer.setAttr('y', originalCanvasY - 2*newCanvasY);
+
+      this.centerPosition = {x: originalCanvasX - 2*newCanvasX, y: originalCanvasY - 2*newCanvasY};
+
+      this.canvasContainer.draw();
+      this.canvasContainer.visible(true);
+      this.centerDisabled = true;
     }
 
     moveSensorsAndTooltipsToTop(): void {
@@ -1031,6 +1087,11 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       const x = Math.min(0, Math.max(pos.x, stageWidth * (1 - scale)));
       const y = Math.min(0, Math.max(pos.y, stageHeight * (1 - scale)));
   
+      if (this.canvasContainer.position().x != this.centerPosition.x || 
+        this.canvasContainer.position().y != this.centerPosition.y) {
+          this.centerDisabled = false;
+      }
+
       return {
         x,
         y

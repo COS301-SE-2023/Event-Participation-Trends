@@ -360,23 +360,24 @@
             <label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Snap = {{snapLabel}}m</label>
         </div>
         <div class="absolute bottom-2.5 left-2.5 flex flex-row bg-ept-off-white">
-            <div>
-            <img
-                class="h-8 w-8 mr-1 border-2 p-0.5 border-ept-deep-grey cursor-pointer rounded"
-                src="assets/zoom-in-svgrepo-com.svg"
-                alt="zoom in"
-                (click)="zoomIn()"
-                [ngClass]="{'opacity-50 pointer-events-none border-opacity-50': zoomInDisabled}"
-            >
+            <div 
+              (click)="zoomIn()" 
+              class="h-8 mr-1 text-3xl border-ept-blue-grey border-2 border-solid rounded hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50"
+              [ngClass]="{'opacity-20 pointer-events-none border-opacity-50': zoomInDisabled}">
+              <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
             </div>
-            <div>
-            <img
-                class="h-8 w-8 border-2 p-0.5 border-ept-deep-grey cursor-pointer rounded"
-                src="assets/zoom-out-svgrepo-com.svg"
-                alt="zoom out"
-                (click)="zoomOut()"
-                [ngClass]="{'opacity-50 pointer-events-none border-opacity-50': zoomOutDisabled}"
+            <div 
+              (click)="zoomOut()" 
+              class="h-8 mr-1 text-3xl border-ept-blue-grey border-2 border-solid rounded hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50"
+              [ngClass]="{'opacity-20 pointer-events-none border-opacity-50': zoomOutDisabled}"
             >
+              <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
+            </div>
+            <div 
+              class="h-8 text-3xl border-ept-blue-grey border-2 border-solid rounded hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50"
+              [ngClass]="{'opacity-20 pointer-events-none border-opacity-50': centerDisabled}"
+            >
+              <ng-icon name="matFilterCenterFocus" title="Recenter floorplan" (click)="centerFloorPlan()"></ng-icon>
             </div>
         </div>
     </div>
