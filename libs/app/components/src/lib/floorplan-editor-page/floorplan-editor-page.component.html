@@ -12,7 +12,7 @@
               <input type="radio" id="radioSelection" name="options" class="sr-only" [checked]="preventCreatingWalls" (change)="toggleEditing()">
               <label for="radioSelection" class="flex items-center cursor-pointer mr-4">
                 <!-- indicator -->
-                <div class="block w-4 h-4 border border-gray-600 rounded-full mr-2 transition" [ngClass]="{'bg-ept-off-white': !preventCreatingWalls, 'bg-blue-500': preventCreatingWalls}"></div>
+                <div class="block w-4 h-4 p-2 border border-gray-600 rounded-full mr-2 transition" [ngClass]="{'bg-ept-off-white': !preventCreatingWalls, 'bg-blue-500': preventCreatingWalls}"></div>
                 <!-- label text -->
                 Component Selection
               </label>
@@ -22,7 +22,7 @@
               <input type="radio" id="radioCreation" name="options" class="sr-only" [checked]="!preventCreatingWalls" (change)="toggleEditing()">
               <label for="radioCreation" class="flex items-center cursor-pointer mr-4">
                 <!-- indicator -->
-                <div class="block w-4 h-4 border border-gray-600 rounded-full mr-2 transition" [ngClass]="{'bg-ept-off-white': preventCreatingWalls, 'bg-blue-500': !preventCreatingWalls}"></div>
+                <div class="block w-4 h-4 p-2 border border-gray-600 rounded-full mr-2 transition" [ngClass]="{'bg-ept-off-white': preventCreatingWalls, 'bg-blue-500': !preventCreatingWalls}"></div>
                 <!-- label text -->
                 Wall Creation
               </label>
@@ -163,7 +163,7 @@
               <label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall}">Length:</label><br/>
               <input
                 aria-label=""
-                class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
+                class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
                 type="number"
                 step="0.5"
                 [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
@@ -176,7 +176,7 @@
               <label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor}">Angle:</label><br/>
               <input
                 aria-label=""
-                class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-3"
+                class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-3 w-[100px]"
                 type="number"
                 step="1"
                 [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
