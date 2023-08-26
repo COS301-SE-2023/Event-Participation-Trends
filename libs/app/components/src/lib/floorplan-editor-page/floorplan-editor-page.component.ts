@@ -658,7 +658,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       break;
                     case 'Path':
                       type = new Konva.Path(child.getAttrs());
-                      this.currentPathStrokeWidth = type.getAttr('strokeWidth');
+                      this.currentPathStrokeWidth = 3;
+                      type.setAttr('strokeWidth', this.currentPathStrokeWidth);
                       break;
                     case 'Circle':
                       type = new Konva.Circle(child.getAttrs());
