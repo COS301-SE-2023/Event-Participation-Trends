@@ -10,6 +10,7 @@ import { HeatmapContainerComponent } from '@event-participation-trends/app/compo
 import { matCheckCircleOutline } from "@ng-icons/material-icons/outline";
 import { matRadioButtonUnchecked, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
 import { heroAdjustmentsHorizontal } from "@ng-icons/heroicons/outline";
+import { heroInboxSolid } from '@ng-icons/heroicons/solid'; 
 
 @Component({
   selector: 'event-participation-trends-compare-page',
@@ -23,7 +24,7 @@ import { heroAdjustmentsHorizontal } from "@ng-icons/heroicons/outline";
   templateUrl: './compare-page.component.html',
   styleUrls: ['./compare-page.component.css'],
   providers: [
-    provideIcons({matCheckCircleOutline, matRadioButtonUnchecked, heroAdjustmentsHorizontal, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut})
+    provideIcons({matCheckCircleOutline, matRadioButtonUnchecked, heroAdjustmentsHorizontal, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, heroInboxSolid})
   ]
 })
 export class ComparePageComponent implements OnInit{

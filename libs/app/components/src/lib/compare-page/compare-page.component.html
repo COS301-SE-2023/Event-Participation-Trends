@@ -8,7 +8,7 @@
             >
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
-            <span *ngIf="show" class="ml-2 flex justify-between">
+            <span *ngIf="show && eventsSelected > 0" class="ml-2 flex justify-between">
                 <label class="text-4xl p-2">Heatmaps</label>
                 <div class="self-center w-full flex justify-evenly mx-3">
                     <label class="opacity-50 text-xl">Time range: </label>
@@ -17,6 +17,16 @@
             </span>
             <div *ngIf="show" class="grid grid-rows-2 w-full h-full gap-2 p-3">
                 <event-participation-trends-heatmap-container *ngFor="let event of getSelectedEvents()"></event-participation-trends-heatmap-container>
+                <div
+                    class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 z-50"
+                    *ngIf="eventsSelected < 1"
+                >
+                    <ng-icon name="heroInboxSolid" class="text-6xl"></ng-icon>
+                    <div class="font-poppins text-xl mt-3 text-center">
+                    No events selected for comparison.<br>
+                    Use the tab on the right to select events.
+                    </div>
+                </div>
             </div>
         </div>
         <div class="pb-3 col-span-3 row-span-3 m-5 ml-0 border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'bg-ept-navy-blue': show}">
