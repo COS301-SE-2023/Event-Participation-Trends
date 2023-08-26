@@ -43,10 +43,10 @@
                     </div>
                 </span>
                 <div class="text-xl text-left rounded-sm h-full">
-                    <div *ngFor="let category of getEventCategories()" (click)="selectCategory(category)" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-md hover:bg-ept-blue-grey hover:bg-opacity-20 hover:text-[22px] hover:cursor-pointer transition-all duration-100" [ngClass]="{'bg-ept-blue-grey bg-opacity-20':isSelected(category)}">
-                        <label [innerHTML]="highlightText(category, search)" class="hover:cursor-pointer" (click)="selectCategory(category)">{{category}}</label>
-                        <ng-icon *ngIf="isSelected(category)" class="text-ept-bumble-yellow self-center text-2xl" name="matCheckCircleOutline"></ng-icon>
-                        <ng-icon *ngIf="!isSelected(category)" class="text-ept-blue-grey self-center text-2xl" name="matRadioButtonUnchecked"></ng-icon>
+                    <div *ngFor="let event of getEvents()" (click)="selectEvent(event)" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-md " [ngClass]="{'hover:bg-ept-blue-grey hover:bg-opacity-20 hover:text-[22px] hover:cursor-pointer transition-all duration-100': isSelectedEvent(event) || eventsSelected !== 2, 'bg-ept-blue-grey bg-opacity-20': isSelectedEvent(event), 'opacity-50': !isSelectedEvent(event) && eventsSelected === 2}">
+                        <label [innerHTML]="highlightText(event, search)" [ngClass]="{'hover:cursor-pointer': isSelectedEvent(event) || eventsSelected !== 2}">{{event.Name}}</label>
+                        <ng-icon *ngIf="isSelectedEvent(event)" class="text-ept-bumble-yellow self-center text-2xl" name="matCheckCircleOutline"></ng-icon>
+                        <ng-icon *ngIf="!isSelectedEvent(event)" class="text-ept-blue-grey self-center text-2xl" name="matRadioButtonUnchecked"></ng-icon>
                     </div>
                 </div>
             </div>
