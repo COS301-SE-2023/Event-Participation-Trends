@@ -41,6 +41,7 @@ export class ComparePageComponent implements OnInit{
 
   selectedCategory = 'Show All';
   eventsSelected = 0;
+  showDropDown = false;
   
 
   constructor(private readonly appApiService: AppApiService, private readonly route: ActivatedRoute, private readonly router: Router) {}
@@ -77,6 +78,10 @@ export class ComparePageComponent implements OnInit{
     setTimeout(() => {
       this.show = true;
     }, 200);
+  }
+
+  toggleDropDown(): void {
+    this.showDropDown = !this.showDropDown;
   }
 
   isSelected(category: string): boolean {
