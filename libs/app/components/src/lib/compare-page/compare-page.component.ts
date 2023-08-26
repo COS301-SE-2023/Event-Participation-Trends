@@ -140,4 +140,14 @@ export class ComparePageComponent implements OnInit{
       });
     }
   }
+
+  getSelectedEvents() : IEvent[] {
+    const eventList = this.eventList;
+
+    return eventList.filter((event) => {
+      return event.selected;
+    }).map((event) => {
+      return event.event;
+    });
+  }
 }
