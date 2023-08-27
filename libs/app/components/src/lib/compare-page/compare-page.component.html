@@ -16,7 +16,7 @@
                 </div>
             </span>
             <div *ngIf="show" class="grid grid-rows-2 w-full h-full gap-2 p-3">
-                <event-participation-trends-heatmap-container *ngFor="let event of getSelectedEvents()"></event-participation-trends-heatmap-container>
+                <event-participation-trends-heatmap-container *ngFor="let event of selectedEvents" [containerEvent]="event"></event-participation-trends-heatmap-container>
                 <div
                     class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 z-50"
                     *ngIf="eventsSelected < 1"
@@ -39,30 +39,32 @@
             </div>
             <div
                 *ngIf="show"
-                class="overflow-y-hidden h-full bg-opacity-[75%] rounded-lg my-2 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center text-center px-5"
+                class="grid grid-rows-8 overflow-y-hidden h-full bg-opacity-[75%] rounded-lg my-2 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center text-center px-5"
                 >
-                <p ngClass="sidebar-header sidebar-title" class="text-2xl">
-                    Available Events
-                </p>
-                <span ngClass="sidebar-content" class="my-2 flex flex-col w-full justify-evenly">
-                    <div class="flex justify-between px-2 bg-ept-navy-blue border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
-                        <ng-icon name="matSearch" class="text-[40px] text-ept-blue-grey"></ng-icon>
-                        <input
-                            type="text"
-                            placeholder="Search here"
-                            class="w-full outline-none bg-transparent text-ept-off-white"
-                            [(ngModel)]="search"
-                        />
-                    </div>
-                    <div class="mt-2 px-2 flex justify-between border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
-                        <ng-icon name="heroAdjustmentsHorizontal" class="text-[40px] text-ept-blue-grey"></ng-icon>
-                        <select id="dropDown" class="w-full bg-ept-navy-blue rounded-2xl outline-none text-ept-off-white" (change)="selectCategory($event)" (click)="toggleDropDown()">
-                            <option value="Show All">Show All</option>
-                            <option *ngFor="let category of getEventCategories()" [value]="category">{{category}}</option>
-                        </select>
-                    </div>
-                </span>
-                <div class="text-xl text-left rounded-sm h-full overflow-y-scroll" [ngClass]="{'opacity-30':showDropDown}">
+                <div class="row-span-2">
+                    <p ngClass="sidebar-header sidebar-title" class="text-2xl">
+                        Available Events
+                    </p>
+                    <span ngClass="sidebar-content" class="my-2 flex flex-col w-full justify-evenly">
+                        <div class="flex justify-between px-2 bg-ept-navy-blue border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
+                            <ng-icon name="matSearch" class="text-[40px] text-ept-blue-grey"></ng-icon>
+                            <input
+                                type="text"
+                                placeholder="Search here"
+                                class="w-full outline-none bg-transparent text-ept-off-white"
+                                [(ngModel)]="search"
+                            />
+                        </div>
+                        <div class="mt-2 px-2 flex justify-between border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
+                            <ng-icon name="heroAdjustmentsHorizontal" class="text-[40px] text-ept-blue-grey"></ng-icon>
+                            <select id="dropDown" class="w-full bg-ept-navy-blue rounded-2xl outline-none text-ept-off-white" (change)="selectCategory($event)" (click)="toggleDropDown()">
+                                <option value="Show All">Show All</option>
+                                <option *ngFor="let category of getEventCategories()" [value]="category">{{category}}</option>
+                            </select>
+                        </div>
+                    </span>
+                </div>
+                <div class="row-span-6 text-xl text-left rounded-sm overflow-y-scroll" [ngClass]="{'opacity-30':showDropDown}">
                     <div *ngFor="let event of getEvents()" (click)="selectEvent(event)" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-md " [ngClass]="{'hover:bg-ept-blue-grey hover:bg-opacity-20 hover:text-[22px] hover:cursor-pointer transition-all duration-100': isSelectedEvent(event) || eventsSelected !== 2, 'bg-ept-blue-grey bg-opacity-20': isSelectedEvent(event), 'opacity-50': !isSelectedEvent(event) && eventsSelected === 2}">
                         <label [innerHTML]="highlightText(event, search)" [ngClass]="{'hover:cursor-pointer': isSelectedEvent(event) || eventsSelected !== 2}">{{event.Name}}</label>
                         <ng-icon *ngIf="isSelectedEvent(event)" class="text-ept-bumble-yellow self-center text-2xl" name="matCheckCircleOutline"></ng-icon>

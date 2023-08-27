@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IEvent } from '@event-participation-trends/api/event/util';
+import { IEvent, IPosition } from '@event-participation-trends/api/event/util';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
@@ -42,6 +42,7 @@ export class ComparePageComponent implements OnInit{
   selectedCategory = 'Show All';
   eventsSelected = 0;
   showDropDown = false;
+  selectedEvents: IEvent[] = [];
   
 
   constructor(private readonly appApiService: AppApiService, private readonly route: ActivatedRoute, private readonly router: Router) {}
@@ -103,7 +104,7 @@ export class ComparePageComponent implements OnInit{
     this.selectedCategory = event.target.value;
   }
 
-  selectEvent(event: IEvent): void {
+  async selectEvent(event: IEvent): Promise<void> {
     const index = this.eventList.findIndex((item) => {
       const sameName = item.event.Name === event.Name;
       const sameStartAndEndDate = item.event.StartDate === event.StartDate && item.event.EndDate === event.EndDate;
@@ -120,10 +121,22 @@ export class ComparePageComponent implements OnInit{
 
     if (this.eventList[index].selected) {
       this.eventsSelected++;
+      this.selectedEvents.push(event);
     }
     else {
       this.eventsSelected--;
+      const eventIndex = this.selectedEvents.findIndex((item) => {
+        const sameName = item.Name === event.Name;
+        const sameStartAndEndDate = item.StartDate === event.StartDate && item.EndDate === event.EndDate;
+        const sameCategory = item.Category === event.Category;
+
+        return sameName && sameStartAndEndDate && sameCategory;
+      });
+      this.selectedEvents.splice(eventIndex, 1);
     }
+
+    // this.getSelectedEvents();
+    console.log(this.selectedEvents);
   }
 
   highlightText(event: IEvent, search: string): string {
@@ -165,13 +178,15 @@ export class ComparePageComponent implements OnInit{
     }
   }
 
-  getSelectedEvents() : IEvent[] {
+  getSelectedEvents() {
     const eventList = this.eventList;
 
-    return eventList.filter((event) => {
+    const events =  eventList.filter((event) => {
       return event.selected;
     }).map((event) => {
       return event.event;
     });
+
+    this.selectedEvents = events;
   }
 }
