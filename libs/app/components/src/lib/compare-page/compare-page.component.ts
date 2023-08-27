@@ -5,7 +5,7 @@ import { IEvent } from '@event-participation-trends/api/event/util';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
-import { HeatmapContainerComponent } from '@event-participation-trends/app/components';
+import { HeatmapContainerComponent } from '../heatmap-container/heatmap-container.component';
 
 import { matCheckCircleOutline } from "@ng-icons/material-icons/outline";
 import { matRadioButtonUnchecked, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
