@@ -183,6 +183,22 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       return (y - this.canvasContainer.y()) / this.canvasContainer.scaleY();
     }
 
+    getComponentsTitle(): string {
+      if (this.preventCreatingWalls) {
+        return 'Drag and drop a component to the canvas';
+      } else {
+        return 'Deselect creating walls below to drag and drop a component to the canvas';
+      }
+    }
+
+    getWallTitle(): string {
+      if (this.preventCreatingWalls) {
+        return 'Click to enable creating walls';
+      } else {
+        return 'Click to disable creating walls';
+      }
+    }
+
     toggleEditing(): void {
       this.preventCreatingWalls = !this.preventCreatingWalls;
       this.activeItem = null;

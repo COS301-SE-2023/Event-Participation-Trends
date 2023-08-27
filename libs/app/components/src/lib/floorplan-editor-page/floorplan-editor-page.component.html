@@ -1,314 +1,330 @@
 <div class="top-0 left-0 w-full h-screen">
   <div class="grid grid-cols-36 gap-3 p-3 h-full">
     <div
-      class="tool-menu col-span-7 max-h-full overflow-y-scroll rounded-lg bg-white md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative flex flex-col justify-between items-center"
+      class="tool-menu col-span-7 max-h-full overflow-y-scroll rounded-lg bg-white md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative flex flex-col justify-between"
       ngClass="card-container"
     >
-      <div ngClass="card" [class.flipped]="isCardFlipped && isSensor()">
-          <h1 class="text-lg font-semibold text-center mt-5">Tools</h1>
-          <div class="flex flex-col items-start mb-2 mt-5 p-1">
-            <div class="flex items-center w-full">
-              <!-- Radio button for Component Selection -->
-              <input type="radio" id="radioSelection" name="options" class="sr-only" [checked]="preventCreatingWalls" (change)="toggleEditing()">
-              <label for="radioSelection" class="flex items-center cursor-pointer mr-4">
-                <!-- indicator -->
-                <div class="block w-4 h-4 p-2 border border-gray-600 rounded-full mr-2 transition" [ngClass]="{'bg-ept-off-white': !preventCreatingWalls, 'bg-blue-500': preventCreatingWalls}"></div>
-                <!-- label text -->
-                Component Selection
-              </label>
-            </div>
-            <div class="flex items-center w-full">
-              <!-- Radio button for Wall Creation -->
-              <input type="radio" id="radioCreation" name="options" class="sr-only" [checked]="!preventCreatingWalls" (change)="toggleEditing()">
-              <label for="radioCreation" class="flex items-center cursor-pointer mr-4">
-                <!-- indicator -->
-                <div class="block w-4 h-4 p-2 border border-gray-600 rounded-full mr-2 transition" [ngClass]="{'bg-ept-off-white': preventCreatingWalls, 'bg-blue-500': !preventCreatingWalls}"></div>
-                <!-- label text -->
-                Wall Creation
-              </label>
-            </div>
-          </div>                  
-          <h3
-            class="components-heading flex justify-between items-center mt-4 ml-2 md:text-md"
-            [ngClass]="{'opacity-50 pointer-events-none': !preventCreatingWalls}"
+      <h1 class="text-2xl font-semibold text-center mt-5">Tools</h1>                
+      <h2
+        class="components-heading flex justify-between items-center mt-4 ml-2 text-lg"
+        [ngClass]="{'opacity-50 pointer-events-none': !preventCreatingWalls}"
+      >
+        Components
+      </h2>
+      <div 
+        class="components-list mb-1 overflow-hidden" 
+        [ngClass]="{'cursor-not-allowed': !preventCreatingWalls}" 
+        [title]="getComponentsTitle()"
+      >
+        <div
+          class="overflow-y-auto max-h-fit flex ml-4"
+          [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
+        >
+          <img
+            id="sensorImage"
+            class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
+            draggable="true"
+            (dragstart)="onDragStart($event)"
+            src="assets/sensor.png"
+            alt="sensor"
+          />
+          <label class="text-ept-deep-grey opacity-40 mt-4 ml-4"
+            >Sensor</label
           >
-            Components
-          </h3>
-          <div class="components-list mb-1 overflow-hidden">
-            <div
-              class="overflow-y-auto max-h-fit flex ml-4"
-              [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
-            >
-              <img
-                id="sensorImage"
-                class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
-                draggable="true"
-                (dragstart)="onDragStart($event)"
-                src="assets/sensor.png"
-                alt="sensor"
-              />
-              <label class="text-ept-deep-grey opacity-40 mt-4 ml-4"
-                >Sensor</label
-              >
-            </div>
-            <div
-              class="overflow-y-auto max-h-52 flex ml-4"
-              [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
-            >
-              <img
-                class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
-                #stall
-                draggable="true"
-                (dragstart)="onDragStart($event)"
-                src="assets/stall-icon.png"
-                alt="stall"
-              />
-              <label class="text-ept-deep-grey opacity-40 mt-4 ml-4"
-                >Stall</label
-              >
-            </div>
-            <div
-              class="overflow-y-auto max-h-52 flex ml-4"
-              [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
-            >
-              <img
-                id="textBox"
-                class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
-                draggable="true"
-                (dragstart)="onDragStart($event)"
-                src="assets/text-selection-svgrepo-com.svg"
-                alt="sensor"
-              />
-              <label class="text-ept-deep-grey opacity-40 mt-4 ml-4"
-                >Text</label
-              >
-            </div>
-          </div>
-          <h3 *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="attributes-heading mt-3 ml-2 md:text-md">Component Attributes</h3>
-          <div
-            *ngIf="!shouldStackVertically"
-            id="attributes-container"
-            class="flex flex-col cursor-default"
-          >
-            <div *ngIf="showTextInput()" class="mt-2 p-2" lines="none">
-              <label>Text:</label>
-              <input
-                #textInput
-                id="textInput"
-                aria-label=""
-                class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[200px]"
-                type="text"
-                pattern="[a-zA-Z0-9 ]*"
-                [value]="activeItem ? getActiveItemText() : ''"
-                (input)="updateText($event)"
-                [attr.maxlength]="getMaxTextLength()"
-                label="Text:"
-                labelPlacement="floating"
-              />
-            </div>
-            <p 
-              *ngIf="showTextInput()"
-              class="text-ept-deep-grey mr-4 flex flex-row justify-end text-xs"
-              [ngClass]="{'opacity-50' : !selectedTextBox}">{{getTextLength()}}/{{getMaxTextLength()}}</p>
-            <div *ngIf="showLengthInput()" class="attributes-list flex flex-row items-center justify-evenly mt-2 p-2" lines="none">
-              <label class="flex mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall}">Length:</label>
-              <input
-                aria-label=""
-                class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
-                type="number"
-                step="0.5"
-                [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
-                (input)="updateWidth($event)"
-                [ngClass]="{'opacity-50 pointer-events-none' : !preventCreatingWalls || activeItem === null || !selectedWall}"
-              />
-            </div>
-            <div *ngIf="showAngleInput()" class="attributes-list flex flex-row items-center justify-evenly mt-2 p-2" lines="none">
-              <label class="flex mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor}">Angle:</label>
-              <input
-                aria-label=""
-                class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
-                type="number"
-                step="1"
-                [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
-                (input)="updateRotation($event)"
-                [ngClass]="{'opacity-50 pointer-events-none' : !preventCreatingWalls || activeItem === null || !selectedWall}"
-              />
-            </div>
-          </div>
-          <div
-            *ngIf="shouldStackVertically"
-            id="attributes-container"
-            class="flex flex-col items-center justify-evenly"
-          >
-            <div *ngIf="showTextInput()" class="mt-3">
-              <div class="p-1">
-              <input
-                #textInput
-                id="textInput"
-                aria-label=""
-                class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
-                type="text"
-                pattern="[a-zA-Z0-9 ]*"
-                [value]="activeItem ? getActiveItemText() : ''"
-                (input)="updateText($event)"
-                [disabled]="!preventCreatingWalls || activeItem === null|| !selectedTextBox"
-                maxlength="15"
-                label="Text:"
-                labelPlacement="floating"
-              />
-              <p class="text-ept-deep-grey opacity-40 mr-4 flex flex-row justify-end text-xs">{{getTextLength()}}/{{getMaxTextLength()}}</p>
-              </div>
-            </div>
-            <div *ngIf="showLengthInput()" class="mt-3">
-              <label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall}">Length:</label><br/>
-              <input
-                aria-label=""
-                class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
-                type="number"
-                step="0.5"
-                [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
-                (input)="updateWidth($event)"
-                [disabled]="!preventCreatingWalls || activeItem === null || !selectedWall"
-                [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor || !selectedWall}"
-              >
-            </div>
-            <div *ngIf="showAngleInput()" class="mt-3">
-              <label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor}">Angle:</label><br/>
-              <input
-                aria-label=""
-                class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-3 w-[100px]"
-                type="number"
-                step="1"
-                [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
-                (input)="updateRotation($event)"
-                [disabled]="!preventCreatingWalls || activeItem === null || selectedSensor"
-                [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor}"
-              >
-            </div>
         </div>
-        <div [ngClass]="{'hidden' : !showSensorLinking()}">
-          <h1 class="text-lg font-semibold text-center mt-5">Link Sensor</h1>
-          <hr class="mt-3 mb-3" />
-          <div class="flex flex-col items-start">
-            <div class="flex items-center w-full">
-              <input type="radio" name="linkOption" id="altOption" [checked]="hideScanner" (change)="hideQRCodeScanner()" [ngClass]="{'bg-ept-bumble-yellow': hideScanner}"/>
-              <label for="altOption" class="cursor-pointer">
-                Link with manual input
-              </label>
-            </div>
-            <div class="flex items-center w-full">
-              <input type="radio" name="linkOption" id="qrOption" [checked]="!hideScanner" (change)="showQRCodeScanner()" [ngClass]="{'bg-ept-bumble-yellow': !hideScanner}"/>
-              <label for="qrOption" class="cursor-pointer">
-                QR Code Scanner
-              </label>
-            </div>
+        <div
+          class="overflow-y-auto max-h-52 flex ml-4"
+          [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
+        >
+          <img
+            class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
+            #stall
+            draggable="true"
+            (dragstart)="onDragStart($event)"
+            src="assets/stall-icon.png"
+            alt="stall"
+          />
+          <label class="text-ept-deep-grey opacity-40 mt-4 ml-4"
+            >Stall</label
+          >
+        </div>
+        <div
+          class="overflow-y-auto max-h-52 flex ml-4"
+          [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
+        >
+          <img
+            id="textBox"
+            class="border-2 rounded-lg p-1 w-10 h-10 mt-2 cursor-grab"
+            draggable="true"
+            (dragstart)="onDragStart($event)"
+            src="assets/text-selection-svgrepo-com.svg"
+            alt="sensor"
+          />
+          <label class="text-ept-deep-grey opacity-40 mt-4 ml-4"
+            >Text</label
+          >
+        </div>
+        <hr class="m-3" />
+        <div
+          class="relative overflow-y-auto max-h-52 flex ml-4"
+          [title]="getWallTitle()"
+        >
+          <div class="absolute w-full h-full cursor-pointer" (click)="toggleEditing()"></div>
+          <img
+            id="wall"
+            class=" p-1 w-10 h-10 mt-2 cursor-pointer"
+            draggable="false"
+            src="assets/wall-creation-icon.svg"
+            alt="wall"
+            (click)="toggleEditing()"
+          />
+          <label 
+            class="text-ept-deep-grey mt-4 ml-4 cursor-pointer"
+            (click)="toggleEditing()"
+          >
+            Create walls
+            </label
+            >
+            <input
+            type="checkbox"
+            class="ml-8 mt-5 cursor-pointer w-4 h-4"
+            (click)="toggleEditing()"
+            [checked]="!preventCreatingWalls"
+            />
           </div>
-          <div #reader id="reader" class="m-2 w-[180px]" [ngClass]="{'hidden': hideScanner}"></div>
-          <form [formGroup]="macAddressForm" [ngClass]="{'hidden': !hideScanner}">
-            <div class="mt-4 flex flex-col items-center justify-evenly">
-              <div class="flex items-center">
-                <input
-                  id="macAddressBlock1"
-                  aria-label="MAC Address Block"
-                  class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
-                  type="text"
-                  maxlength="2"
-                  (input)="handleMacAddressInput($event, 0)"
-                  (focus)="setInputFocus(true)"
-                  (blur)="setInputFocus(false)"
-                  name="macAddressBlock1"
-                  formControlName="macAddressBlock1"
-                  [ngClass]="{ 'border-2 border-rose-500': macAddressBlock1?.hasError('required') && (macAddressBlock1?.dirty || macAddressBlock1?.touched), 'border-2 border-green-400' : macAddressBlock1?.valid && (macAddressBlock1?.dirty || macAddressBlock1?.touched)}"
-                  />
-                  <span class="ml-1 mr-1">:</span>
-                  <input
-                  id="macAddressBlock2"
-                  aria-label="MAC Address Block"
-                  class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
-                  type="text"
-                  maxlength="2"
-                  (input)="handleMacAddressInput($event, 1)"
-                  (focus)="setInputFocus(true)"
-                  (blur)="setInputFocus(false)"
-                  name="macAddressBlock2"
-                  formControlName="macAddressBlock2"
-                  [ngClass]="{ 'border-2 border-rose-500': macAddressBlock2?.hasError('required') && (macAddressBlock2?.dirty || macAddressBlock2?.touched), 'border-2 border-green-400' : macAddressBlock2?.valid && (macAddressBlock2?.dirty || macAddressBlock2?.touched)}"
-                />
-                <span class="ml-1 mr-1">:</span>
-                <input
-                  id="macAddressBlock3"
-                  aria-label="MAC Address Block"
-                  class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
-                  type="text"
-                  maxlength="2"
-                  (input)="handleMacAddressInput($event, 2)"
-                  (focus)="setInputFocus(true)"
-                  (blur)="setInputFocus(false)"
-                  name="macAddressBlock3"
-                  formControlName="macAddressBlock3"
-                  [ngClass]="{ 'border-2 border-rose-500': macAddressBlock3?.hasError('required') && (macAddressBlock3?.dirty || macAddressBlock3?.touched), 'border-2 border-green-400' : macAddressBlock3?.valid && (macAddressBlock3?.dirty || macAddressBlock3?.touched)}"
-                />
-                <span class="ml-1 mr-1">:</span>
-                <input
-                  id="macAddressBlock4"
-                  aria-label="MAC Address Block"
-                  class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
-                  type="text"
-                  maxlength="2"
-                  (input)="handleMacAddressInput($event, 3)"
-                  (focus)="setInputFocus(true)"
-                  (blur)="setInputFocus(false)"
-                  name="macAddressBlock4"
-                  formControlName="macAddressBlock4"
-                  [ngClass]="{ 'border-2 border-rose-500': macAddressBlock4?.hasError('required') && (macAddressBlock4?.dirty || macAddressBlock4?.touched), 'border-2 border-green-400' : macAddressBlock4?.valid && (macAddressBlock4?.dirty || macAddressBlock4?.touched)}"
-                />
-                <span class="ml-1 mr-1">:</span>
-                <input
-                  id="macAddressBlock5"
-                  aria-label="MAC Address Block"
-                  class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
-                  type="text"
-                  maxlength="2"
-                  (input)="handleMacAddressInput($event, 4)"
-                  (focus)="setInputFocus(true)"
-                  (blur)="setInputFocus(false)"
-                  name="macAddressBlock5"
-                  formControlName="macAddressBlock5"
-                  [ngClass]="{ 'border-2 border-rose-500': macAddressBlock5?.hasError('required') && (macAddressBlock5?.dirty || macAddressBlock5?.touched), 'border-2 border-green-400' : macAddressBlock5?.valid && (macAddressBlock5?.dirty || macAddressBlock5?.touched)}"
-                />
-                <span class="ml-1 mr-1">:</span>
-                <input
-                  id="macAddressBlock6"
-                  aria-label="MAC Address Block"
-                  class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
-                  type="text"
-                  maxlength="2"
-                  (input)="handleMacAddressInput($event, 5)"
-                  (focus)="setInputFocus(true)"
-                  (blur)="setInputFocus(false)"
-                  name="macAddressBlock6"
-                  formControlName="macAddressBlock6"
-                  [ngClass]="{ 'border-2 border-rose-500': macAddressBlock6?.hasError('required') && (macAddressBlock6?.dirty || macAddressBlock6?.touched), 'border-2 border-green-400' : macAddressBlock6?.valid && (macAddressBlock6?.dirty || macAddressBlock6?.touched)}"
-                />
-              </div>
-              <button
-                class="mt-3 bg-ept-deep-grey rounded-md text-ept-off-white p-1 text-sm/16 cursor-pointer"
-                [ngClass]="{'opacity-50 pointer-events-none': !canLinkSensorWithMacAddress}"
-                (click)="updateLinkedSensors()"
-                >Link Sensor</button
-              >
-            </div>
-          </form>
-          <!-- <div *ngIf="activeSensor$ | async as sensor" class="mt-3 flex flex-row justify-evenly"> -->
-            <!-- <p class="text-ept-deep-grey">Sensor Status:</p> -->
-            <!-- <ion-badge
-            color="{{ sensor['isLinked'] ? 'success' : 'danger' }}"
-            class="text-ept-off-white"
-            >{{ sensor['isLinked'] ? 'Linked' : 'Not Linked' }}</ion-badge> -->
-          <!-- </div> -->
+        </div>
+        <label 
+          *ngIf="!preventCreatingWalls"
+          class="text-ept-deep-grey opacity-40 mt-1 ml-4 cursor-pointer text-xs pointer-events-none"
+          title="Click and drag on canvas to create walls"
+        >
+          Click and drag on canvas to create walls
+        </label>
+      <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3" />
+      <h3 *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="attributes-heading mt-3 ml-2 md:text-md">Component Attributes</h3>
+      <div
+        *ngIf="!shouldStackVertically"
+        id="attributes-container"
+        class="flex flex-col cursor-default"
+      >
+        <div *ngIf="showTextInput()" class="mt-2 p-2" lines="none">
+          <label>Text:</label>
+          <input
+            #textInput
+            id="textInput"
+            aria-label=""
+            class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[200px]"
+            type="text"
+            pattern="[a-zA-Z0-9 ]*"
+            [value]="activeItem ? getActiveItemText() : ''"
+            (input)="updateText($event)"
+            [attr.maxlength]="getMaxTextLength()"
+            label="Text:"
+            labelPlacement="floating"
+          />
+        </div>
+        <p 
+          *ngIf="showTextInput()"
+          class="text-ept-deep-grey mr-4 flex flex-row justify-end text-xs"
+          [ngClass]="{'opacity-50' : !selectedTextBox}">{{getTextLength()}}/{{getMaxTextLength()}}</p>
+        <div *ngIf="showLengthInput()" class="attributes-list flex flex-row items-center justify-evenly mt-2 p-2" lines="none">
+          <label class="flex mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall}">Length:</label>
+          <input
+            aria-label=""
+            class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
+            type="number"
+            step="0.5"
+            [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
+            (input)="updateWidth($event)"
+            [ngClass]="{'opacity-50 pointer-events-none' : !preventCreatingWalls || activeItem === null || !selectedWall}"
+          />
+        </div>
+        <div *ngIf="showAngleInput()" class="attributes-list flex flex-row items-center justify-evenly mt-2 p-2" lines="none">
+          <label class="flex mr-3 min-w-fit" [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor}">Angle:</label>
+          <input
+            aria-label=""
+            class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
+            type="number"
+            step="1"
+            [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
+            (input)="updateRotation($event)"
+            [ngClass]="{'opacity-50 pointer-events-none' : !preventCreatingWalls || activeItem === null || !selectedWall}"
+          />
         </div>
       </div>
-      <div class="mt-auto mb-5">
+      <div
+        *ngIf="shouldStackVertically"
+        id="attributes-container"
+        class="flex flex-col items-center justify-evenly"
+      >
+        <div *ngIf="showTextInput()" class="mt-3">
+          <div class="p-1">
+          <input
+            #textInput
+            id="textInput"
+            aria-label=""
+            class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7"
+            type="text"
+            pattern="[a-zA-Z0-9 ]*"
+            [value]="activeItem ? getActiveItemText() : ''"
+            (input)="updateText($event)"
+            [disabled]="!preventCreatingWalls || activeItem === null|| !selectedTextBox"
+            maxlength="15"
+            label="Text:"
+            labelPlacement="floating"
+          />
+          <p class="text-ept-deep-grey opacity-40 mr-4 flex flex-row justify-end text-xs">{{getTextLength()}}/{{getMaxTextLength()}}</p>
+          </div>
+        </div>
+        <div *ngIf="showLengthInput()" class="mt-3">
+          <label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall}">Length:</label><br/>
+          <input
+            aria-label=""
+            class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
+            type="number"
+            step="0.5"
+            [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
+            (input)="updateWidth($event)"
+            [disabled]="!preventCreatingWalls || activeItem === null || !selectedWall"
+            [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor || !selectedWall}"
+          >
+        </div>
+        <div *ngIf="showAngleInput()" class="mt-3">
+          <label [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor}">Angle:</label><br/>
+          <input
+            aria-label=""
+            class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-3 w-[100px]"
+            type="number"
+            step="1"
+            [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
+            (input)="updateRotation($event)"
+            [disabled]="!preventCreatingWalls || activeItem === null || selectedSensor"
+            [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor}"
+          >
+        </div>
+      </div>
+      <hr [ngClass]="{'hidden' : !showSensorLinking()}" class="m-3" />
+      <div [ngClass]="{'hidden' : !showSensorLinking()}">
+        <h1 class="text-lg font-semibold text-center mb-3">Link Sensor</h1>
+        <div class="flex flex-col items-start ml-3">
+          <div class="flex items-center w-full">
+            <input type="radio" name="linkOption" id="altOption" [checked]="hideScanner" (change)="hideQRCodeScanner()" [ngClass]="{'bg-ept-bumble-yellow': hideScanner}"/>
+            <label for="altOption" class="cursor-pointer">
+              Link with manual input
+            </label>
+          </div>
+          <div class="flex items-center w-full">
+            <input type="radio" name="linkOption" id="qrOption" [checked]="!hideScanner" (change)="showQRCodeScanner()" [ngClass]="{'bg-ept-bumble-yellow': !hideScanner}"/>
+            <label for="qrOption" class="cursor-pointer">
+              QR Code Scanner
+            </label>
+          </div>
+        </div>
+        <div #reader id="reader" class="m-2 w-[180px]" [ngClass]="{'hidden': hideScanner}"></div>
+        <form [formGroup]="macAddressForm" [ngClass]="{'hidden': !hideScanner}">
+          <div class="mt-4 flex flex-col items-center justify-evenly">
+            <div class="flex items-center">
+              <input
+                id="macAddressBlock1"
+                aria-label="MAC Address Block"
+                class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
+                type="text"
+                maxlength="2"
+                (input)="handleMacAddressInput($event, 0)"
+                (focus)="setInputFocus(true)"
+                (blur)="setInputFocus(false)"
+                name="macAddressBlock1"
+                formControlName="macAddressBlock1"
+                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock1?.hasError('required') && (macAddressBlock1?.dirty || macAddressBlock1?.touched), 'border-2 border-green-400' : macAddressBlock1?.valid && (macAddressBlock1?.dirty || macAddressBlock1?.touched)}"
+                />
+                <span class="ml-1 mr-1">:</span>
+                <input
+                id="macAddressBlock2"
+                aria-label="MAC Address Block"
+                class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
+                type="text"
+                maxlength="2"
+                (input)="handleMacAddressInput($event, 1)"
+                (focus)="setInputFocus(true)"
+                (blur)="setInputFocus(false)"
+                name="macAddressBlock2"
+                formControlName="macAddressBlock2"
+                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock2?.hasError('required') && (macAddressBlock2?.dirty || macAddressBlock2?.touched), 'border-2 border-green-400' : macAddressBlock2?.valid && (macAddressBlock2?.dirty || macAddressBlock2?.touched)}"
+              />
+              <span class="ml-1 mr-1">:</span>
+              <input
+                id="macAddressBlock3"
+                aria-label="MAC Address Block"
+                class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
+                type="text"
+                maxlength="2"
+                (input)="handleMacAddressInput($event, 2)"
+                (focus)="setInputFocus(true)"
+                (blur)="setInputFocus(false)"
+                name="macAddressBlock3"
+                formControlName="macAddressBlock3"
+                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock3?.hasError('required') && (macAddressBlock3?.dirty || macAddressBlock3?.touched), 'border-2 border-green-400' : macAddressBlock3?.valid && (macAddressBlock3?.dirty || macAddressBlock3?.touched)}"
+              />
+              <span class="ml-1 mr-1">:</span>
+              <input
+                id="macAddressBlock4"
+                aria-label="MAC Address Block"
+                class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
+                type="text"
+                maxlength="2"
+                (input)="handleMacAddressInput($event, 3)"
+                (focus)="setInputFocus(true)"
+                (blur)="setInputFocus(false)"
+                name="macAddressBlock4"
+                formControlName="macAddressBlock4"
+                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock4?.hasError('required') && (macAddressBlock4?.dirty || macAddressBlock4?.touched), 'border-2 border-green-400' : macAddressBlock4?.valid && (macAddressBlock4?.dirty || macAddressBlock4?.touched)}"
+              />
+              <span class="ml-1 mr-1">:</span>
+              <input
+                id="macAddressBlock5"
+                aria-label="MAC Address Block"
+                class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
+                type="text"
+                maxlength="2"
+                (input)="handleMacAddressInput($event, 4)"
+                (focus)="setInputFocus(true)"
+                (blur)="setInputFocus(false)"
+                name="macAddressBlock5"
+                formControlName="macAddressBlock5"
+                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock5?.hasError('required') && (macAddressBlock5?.dirty || macAddressBlock5?.touched), 'border-2 border-green-400' : macAddressBlock5?.valid && (macAddressBlock5?.dirty || macAddressBlock5?.touched)}"
+              />
+              <span class="ml-1 mr-1">:</span>
+              <input
+                id="macAddressBlock6"
+                aria-label="MAC Address Block"
+                class="bg-slate-200 w-7 uppercase border-2 rounded-md text-center"
+                type="text"
+                maxlength="2"
+                (input)="handleMacAddressInput($event, 5)"
+                (focus)="setInputFocus(true)"
+                (blur)="setInputFocus(false)"
+                name="macAddressBlock6"
+                formControlName="macAddressBlock6"
+                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock6?.hasError('required') && (macAddressBlock6?.dirty || macAddressBlock6?.touched), 'border-2 border-green-400' : macAddressBlock6?.valid && (macAddressBlock6?.dirty || macAddressBlock6?.touched)}"
+              />
+            </div>
+            <button
+              class="mt-3 bg-ept-deep-grey rounded-md text-ept-off-white p-1 text-sm/16 cursor-pointer"
+              [ngClass]="{'opacity-50 pointer-events-none': !canLinkSensorWithMacAddress}"
+              (click)="updateLinkedSensors()"
+              >Link Sensor</button
+            >
+          </div>
+        </form>
+        <!-- <div *ngIf="activeSensor$ | async as sensor" class="mt-3 flex flex-row justify-evenly"> -->
+          <!-- <p class="text-ept-deep-grey">Sensor Status:</p> -->
+          <!-- <ion-badge
+          color="{{ sensor['isLinked'] ? 'success' : 'danger' }}"
+          class="text-ept-off-white"
+          >{{ sensor['isLinked'] ? 'Linked' : 'Not Linked' }}</ion-badge> -->
+        <!-- </div> -->
+      </div>
+      <div class="mt-auto mb-5 flex justify-center">
         <button
           (click)="saveFloorLayout()"
           class="create-event h-40px w-[100px] text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
