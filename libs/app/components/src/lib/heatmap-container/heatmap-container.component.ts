@@ -20,13 +20,21 @@ import Konva from 'konva';
 })
 export class HeatmapContainerComponent implements OnInit{
   @Input() public containerEvent: any | null = null;
+  @Input() public parentContainer: HTMLDivElement | null = null;
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
+
+  // Keys
+  shiftDown = false;
 
   // Heatmap
   heatmap: HeatMap | null = null;
   heatmapLayer: Konva.Layer | null = null;
   floorlayoutStage: Konva.Stage | null = null;
   floorlayoutBounds: {top: number; left: number; right: number; bottom: number; } | null | undefined = null;
+
+  //Zoom and recenter
+  minScale = 1; // Adjust this as needed
+  maxScale = 5.0; // Adjust this as needed
 
   // Charts
   chartColors = {
@@ -66,11 +74,19 @@ export class HeatmapContainerComponent implements OnInit{
       }
     });
     this.getImageFromJSONData(this.containerEvent._id);
+
+    window.addEventListener('keydown', (event: KeyboardEvent) => {
+      //now check if no input field has focus and the Delete key is pressed
+      if (event.shiftKey) {
+        this.handleKeyDown(event);
+      }
+    });
+    window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
   }
 
   async getImageFromJSONData(eventId: string) {
     const response = this.containerEvent.FloorLayout;
-    if (response) {
+    if (response && this.parentContainer) {
       // use the response to create an image
       this.floorlayoutStage = new Konva.Stage({
         container: 'floormap-'+this.containerEvent._id+'',
@@ -86,13 +102,13 @@ export class HeatmapContainerComponent implements OnInit{
       // if the bottom side position is less than the height of the container, set the y position to the height of the container
       // if the top side position is greater than 0, set the y position to 0
       // this.floorlayoutStage.on('dragmove', () => {
-      //   if (this.floorlayoutStage) {
+      //   if (this.floorlayoutStage && this.parentContainer) {
       //     const stageX = this.floorlayoutStage.x();
       //     const stageY = this.floorlayoutStage.y();
       //     const stageWidth = this.floorlayoutStage.width() * this.floorlayoutStage.scaleX();
       //     const stageHeight = this.floorlayoutStage.height() * this.floorlayoutStage.scaleY();
-      //     const containerWidth = this.heatmapContainer.nativeElement.offsetWidth *0.98;
-      //     const containerHeight = this.heatmapContainer.nativeElement.offsetHeight *0.98;
+      //     const containerWidth = this.parentContainer.offsetWidth *0.98;
+      //     const containerHeight = this.parentContainer.offsetHeight *0.98;
           
       //     // the stage must move beyond the container width and height but the following must be taken into account
       //     // if the stage's left position is inline with the container's left position, set the stage's x position to equal the container's left position
@@ -123,8 +139,8 @@ export class HeatmapContainerComponent implements OnInit{
       // const rect = new Konva.Rect({
       //   x: 0,
       //   y: 0,
-      //   width: this.floorlayoutStage.width(),
-      //   height: this.floorlayoutStage.height(),
+      //   width: this.parentContainer.offsetWidth,
+      //   height: this.parentContainer.offsetHeight,
       //   fill: this.chartColors['ept-bumble-yellow'],
       //   stroke: this.chartColors['ept-light-blue'],
       //   strokeWidth: 20,
@@ -161,68 +177,70 @@ export class HeatmapContainerComponent implements OnInit{
 
       // add event listener to the layer for scrolling
       const zoomFactor = 1.2; // Adjust this as needed
-      const minScale = 1; // Adjust this as needed
+      const minScale = 0.7; // Adjust this as needed
       const maxScale = 8.0; // Adjust this as needed
 
-      // this.floorlayoutStage.on('wheel', (e) => {
-      //   if (this.floorlayoutStage) {
-      //     e.evt.preventDefault(); // Prevent default scrolling behavior
-      
-      //     const oldScaleX = this.floorlayoutStage.scaleX();
-      //     const oldScaleY = this.floorlayoutStage.scaleY();
-      
-      //     // Calculate new scale based on scroll direction
-      //     const newScaleX = e.evt.deltaY > 0 ? oldScaleX / zoomFactor : oldScaleX * zoomFactor;
-      //     const newScaleY = e.evt.deltaY > 0 ? oldScaleY / zoomFactor : oldScaleY * zoomFactor;
-      
-      //     // Apply minimum and maximum scale limits
-      //     const clampedScaleX = Math.min(Math.max(newScaleX, minScale), maxScale);
-      //     const clampedScaleY = Math.min(Math.max(newScaleY, minScale), maxScale);
-      
-      //     const zoomCenterX = this.floorlayoutStage.getPointerPosition()?.x;
-      //     const zoomCenterY = this.floorlayoutStage.getPointerPosition()?.y;
-      
-      //     if (zoomCenterX && zoomCenterY) {
-      //       if (clampedScaleX === minScale && clampedScaleY === minScale) {
-      //         // Fully zoomed out - stop the user from zooming out further
-      //         const oldScaleX = this.floorlayoutStage.scaleX();
-      //         const oldScaleY = this.floorlayoutStage.scaleY();
-      //         // Get the center of the viewport as the zoom center
-      //         const zoomCenterX = this.floorlayoutStage.width() / 2;
-      //         const zoomCenterY = this.floorlayoutStage.height() / 2;
-          
-      //         // Calculate new position for zoom center
-      //         const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
-      //         const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
-          
-      //         this.floorlayoutStage.x(newPosX);
-      //         this.floorlayoutStage.y(newPosY);
-      //         this.floorlayoutStage.scaleX(clampedScaleX);
-      //         this.floorlayoutStage.scaleY(clampedScaleY);
-      //       } else {
-      //         // Calculate new position for zoom center
-      //         const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
-      //         const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
-      
-      //         this.floorlayoutStage.x(newPosX);
-      //         this.floorlayoutStage.y(newPosY);
-      //       }
-      
-      //       this.floorlayoutStage.scaleX(clampedScaleX);
-      //       this.floorlayoutStage.scaleY(clampedScaleY);
-      //     }
+      this.floorlayoutStage.on('wheel', (e) => {
+        if (!this.shiftDown) return;
 
-      //     console.log(this.floorlayoutStage.x(), this.floorlayoutStage.y());
-      //   }
-      // });
+        if (this.floorlayoutStage) {
+          e.evt.preventDefault(); // Prevent default scrolling behavior if Ctrl key is not pressed
+      
+          const oldScaleX = this.floorlayoutStage.scaleX();
+          const oldScaleY = this.floorlayoutStage.scaleY();
+      
+          // Calculate new scale based on scroll direction
+          const newScaleX = e.evt.deltaY > 0 ? oldScaleX / zoomFactor : oldScaleX * zoomFactor;
+          const newScaleY = e.evt.deltaY > 0 ? oldScaleY / zoomFactor : oldScaleY * zoomFactor;
+      
+          // Apply minimum and maximum scale limits
+          const clampedScaleX = Math.min(Math.max(newScaleX, minScale), maxScale);
+          const clampedScaleY = Math.min(Math.max(newScaleY, minScale), maxScale);
+      
+          const zoomCenterX = this.floorlayoutStage.getPointerPosition()?.x;
+          const zoomCenterY = this.floorlayoutStage.getPointerPosition()?.y;
+      
+          if (zoomCenterX && zoomCenterY) {
+            if (clampedScaleX === minScale && clampedScaleY === minScale) {
+              // Fully zoomed out - stop the user from zooming out further
+              const oldScaleX = this.floorlayoutStage.scaleX();
+              const oldScaleY = this.floorlayoutStage.scaleY();
+              // Get the center of the viewport as the zoom center
+              const zoomCenterX = this.floorlayoutStage.width() / 2;
+              const zoomCenterY = this.floorlayoutStage.height() / 2;
+          
+              // Calculate new position for zoom center
+              const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
+              const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
+          
+              this.floorlayoutStage.x(newPosX);
+              this.floorlayoutStage.y(newPosY);
+              this.floorlayoutStage.scaleX(clampedScaleX);
+              this.floorlayoutStage.scaleY(clampedScaleY);
+            } else {
+              // Calculate new position for zoom center
+              const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
+              const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
+      
+              this.floorlayoutStage.x(newPosX);
+              this.floorlayoutStage.y(newPosY);
+            }
+      
+            this.floorlayoutStage.scaleX(clampedScaleX);
+            this.floorlayoutStage.scaleY(clampedScaleY);
+          }
+
+          console.log(this.floorlayoutStage.x(), this.floorlayoutStage.y());
+        }
+      });
       this.recenterFloorlayout();
     }
   }
 
   async recenterFloorlayout() {
     if (this.floorlayoutStage && this.floorlayoutBounds) {
-      const minScale = 1; // Adjust this as needed
-      const maxScale = 8.0; // Adjust this as needed
+      const minScale = this.minScale;
+      const maxScale = this.maxScale;
 
       const floorLayoutWidth = this.floorlayoutBounds.right - this.floorlayoutBounds.left;
       const floorLayoutHeight = this.floorlayoutBounds.bottom - this.floorlayoutBounds.top;
@@ -267,5 +285,110 @@ export class HeatmapContainerComponent implements OnInit{
       this.floorlayoutStage.scaleY(clampedZoomLevel);
       this.floorlayoutStage.visible(true);
     }
+  }
+
+  zoomIn() {
+    if (this.floorlayoutStage) {
+      const oldScaleX = this.floorlayoutStage.scaleX();
+      const oldScaleY = this.floorlayoutStage.scaleY();
+  
+      // Calculate new scale based on zoom in factor
+      const newScaleX = oldScaleX * 1.2;
+      const newScaleY = oldScaleY * 1.2;
+  
+      // Apply minimum and maximum scale limits
+      const clampedScaleX = Math.min(Math.max(newScaleX, 1), this.maxScale);
+      const clampedScaleY = Math.min(Math.max(newScaleY, 1), this.maxScale);
+  
+      // Get the center of the viewport as the zoom center
+      const zoomCenterX = this.floorlayoutStage.width() / 2;
+      const zoomCenterY = this.floorlayoutStage.height() / 2;
+  
+      // Calculate new position for zoom center
+      const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
+      const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
+  
+      this.floorlayoutStage.x(newPosX);
+      this.floorlayoutStage.y(newPosY);
+      this.floorlayoutStage.scaleX(clampedScaleX);
+      this.floorlayoutStage.scaleY(clampedScaleY);
+    }
+  }
+  
+  zoomOut() {
+    if (this.floorlayoutStage) {
+      // zoom out should work as follows
+      // if we zoom out and a side exceeded its boundaries then set the x or y position to the boundary
+
+      const oldScaleX = this.floorlayoutStage.scaleX();
+      const oldScaleY = this.floorlayoutStage.scaleY();
+
+      // Calculate new scale based on zoom out factor
+      const newScaleX = oldScaleX / 1.2;
+      const newScaleY = oldScaleY / 1.2;
+
+      // Apply minimum and maximum scale limits
+      const clampedScaleX = Math.min(Math.max(newScaleX, 1), this.maxScale);
+      const clampedScaleY = Math.min(Math.max(newScaleY, 1), this.maxScale)
+
+      // Get the center of the viewport as the zoom center
+      const zoomCenterX = this.floorlayoutStage.width() / 2;
+      const zoomCenterY = this.floorlayoutStage.height() / 2;
+
+      // now check if the new position exceeds the boundaries of the container
+      const containerWidth = this.heatmapContainer.nativeElement.offsetWidth *0.98;
+      const containerHeight = this.heatmapContainer.nativeElement.offsetHeight *0.98;
+      const stageWidth = this.floorlayoutStage.width() * clampedScaleX;
+      const stageHeight = this.floorlayoutStage.height() * clampedScaleY;
+
+      let xFixed = false;
+      let yFixed = false;
+
+      if (this.floorlayoutStage.x() > 0) {
+        this.floorlayoutStage.x(0);
+        xFixed = true;
+      }
+      if (this.floorlayoutStage.x() < containerWidth - stageWidth) {
+        this.floorlayoutStage.x(containerWidth - stageWidth);
+        xFixed = true;
+      }
+      if (this.floorlayoutStage.y() > 0) {
+        this.floorlayoutStage.y(0);
+        yFixed = true;
+      }
+      if (this.floorlayoutStage.y() < containerHeight - stageHeight) {
+        this.floorlayoutStage.y(containerHeight - stageHeight);
+        yFixed = true;
+      }
+
+      // Calculate new position for zoom center
+      const newPosX = zoomCenterX - (zoomCenterX - this.floorlayoutStage.x()) * (clampedScaleX / oldScaleX);
+      const newPosY = zoomCenterY - (zoomCenterY - this.floorlayoutStage.y()) * (clampedScaleY / oldScaleY);
+
+      if (!xFixed) {
+        this.floorlayoutStage.x(newPosX);
+      }
+      if (!yFixed) {
+        this.floorlayoutStage.y(newPosY);
+      }
+
+      this.floorlayoutStage.scaleX(clampedScaleX);
+      this.floorlayoutStage.scaleY(clampedScaleY);
+      
+    }
+  }
+
+  handleKeyDown(event: KeyboardEvent): void {
+    this.shiftDown = false;
+    event.preventDefault();
+    
+    if (event.shiftKey) {
+      this.shiftDown = true;
+    }
+  }
+
+  handleKeyUp(event: KeyboardEvent): void {
+    this.shiftDown = false;
+    event.preventDefault();
   }
 }

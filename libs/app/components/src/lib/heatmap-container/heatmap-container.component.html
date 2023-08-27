@@ -2,13 +2,13 @@
     <div id="floormap-{{containerEvent._id}}" class="z-20 absolute w-full h-full top-0 left-0"></div>
     <div id="view-{{containerEvent._id}}" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
     <div class="flex flex-col justify-evenly absolute top-0 right-3">
-        <div class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
+        <div (click)="zoomIn()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
             <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
         </div>
-        <div class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
+        <div (click)="zoomOut()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
             <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
         </div>
-        <div class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
+        <div (click)="recenterFloorlayout()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50">
             <ng-icon name="matFilterCenterFocus" title="Recenter floor"></ng-icon>
         </div>
     </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IEvent, IPosition } from '@event-participation-trends/api/event/util';
@@ -43,6 +43,8 @@ export class ComparePageComponent implements OnInit{
   eventsSelected = 0;
   showDropDown = false;
   selectedEvents: IEvent[] = [];
+
+  parentContainer: HTMLDivElement | null = null;
   
 
   constructor(private readonly appApiService: AppApiService, private readonly route: ActivatedRoute, private readonly router: Router) {}
@@ -78,6 +80,7 @@ export class ComparePageComponent implements OnInit{
 
     setTimeout(() => {
       this.show = true;
+      this.parentContainer = document.getElementById('parentContainer') as HTMLDivElement;
     }, 200);
   }
 
