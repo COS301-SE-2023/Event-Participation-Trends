@@ -12,4 +12,12 @@
             <ng-icon name="matFilterCenterFocus" title="Recenter floor"></ng-icon>
         </div>
     </div>
+    <div *ngIf="!hasFloorlayout" class="w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10">
+        <ng-icon name="matWarningAmberRound" class="text-3xl text-ept-bumble-yellow self-center"></ng-icon>
+        <label class="m-2 text-xl text-ept-bumble-yellow opacity-100 z-100">No Floor layout for this event</label>
+    </div>
+    <div *ngIf="!hasData" class="w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10">
+        <ng-icon name="matErrorOutlineRound" class="text-3xl text-ept-light-red self-center"></ng-icon>
+        <label class="m-2 text-xl text-ept-light-red opacity-100 z-100">No data collected for this event</label>
+    </div>
 </div>

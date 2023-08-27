@@ -137,9 +137,6 @@ export class ComparePageComponent implements OnInit{
       });
       this.selectedEvents.splice(eventIndex, 1);
     }
-
-    // this.getSelectedEvents();
-    console.log(this.selectedEvents);
   }
 
   highlightText(event: IEvent, search: string): string {
@@ -181,15 +178,15 @@ export class ComparePageComponent implements OnInit{
     }
   }
 
-  getSelectedEvents() {
-    const eventList = this.eventList;
+  // getSelectedEvents() {
+  //   const eventList = this.eventList;
 
-    const events =  eventList.filter((event) => {
-      return event.selected;
-    }).map((event) => {
-      return event.event;
-    });
+  //   const events =  eventList.filter((event) => {
+  //     return event.selected;
+  //   }).map((event) => {
+  //     return event.event;
+  //   });
 
-    this.selectedEvents = events;
-  }
+  //   this.selectedEvents = events;
+  // }
 }

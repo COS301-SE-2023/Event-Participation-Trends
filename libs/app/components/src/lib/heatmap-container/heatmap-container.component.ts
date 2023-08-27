@@ -6,6 +6,8 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 
 import { matSearch, matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
+import { matWarningAmberRound, matErrorOutlineRound } from "@ng-icons/material-icons/round";
+
 import HeatMap from 'heatmap-ts';
 import Konva from 'konva';
 @Component({
@@ -15,7 +17,7 @@ import Konva from 'konva';
   templateUrl: './heatmap-container.component.html',
   styleUrls: ['./heatmap-container.component.css'],
   providers: [
-    provideIcons({matSearch, matFilterCenterFocus, matZoomIn, matZoomOut}),
+    provideIcons({matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matWarningAmberRound, matErrorOutlineRound}),
   ],
 })
 export class HeatmapContainerComponent implements OnInit{
@@ -31,6 +33,8 @@ export class HeatmapContainerComponent implements OnInit{
   heatmapLayer: Konva.Layer | null = null;
   floorlayoutStage: Konva.Stage | null = null;
   floorlayoutBounds: {top: number; left: number; right: number; bottom: number; } | null | undefined = null;
+  hasFloorlayout = false;
+  hasData = false;
 
   //Zoom and recenter
   minScale = 1; // Adjust this as needed
@@ -51,15 +55,21 @@ export class HeatmapContainerComponent implements OnInit{
   constructor(private readonly appApiService: AppApiService) {}
 
   async ngOnInit() {
-    console.log(this.containerEvent);
+    // check if the event has device positions
+    if (this.containerEvent.DevicePositions && this.containerEvent.DevicePositions.length > 0) {
+      this.hasData = true;
+    }
+    console.log(this.containerEvent.DevicePositions);
+
     // get the boundaries from the floorlayout
     if (this.containerEvent.FloorLayout) {
+      this.hasFloorlayout = true;
       const response = await this.appApiService.getFloorplanBoundaries(this.containerEvent._id);
       this.floorlayoutBounds = response.boundaries;
     }
 
     this.heatmapContainer = new ElementRef<HTMLDivElement>(document.getElementById('heatmapContainer-'+this.containerEvent._id) as HTMLDivElement);
-    console.log(this.heatmapContainer);
+  
     this.heatmap = new HeatMap({
       container: document.getElementById('view-'+this.containerEvent._id+'')!,
       maxOpacity: .6,
