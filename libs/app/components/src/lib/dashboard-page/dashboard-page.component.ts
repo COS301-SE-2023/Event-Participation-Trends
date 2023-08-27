@@ -1,3 +1,5 @@
+import { CommonModule } from "@angular/common";
+import { NgIconsModule, provideIcons } from "@ng-icons/core";
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
@@ -9,9 +11,13 @@ import 'chartjs-plugin-datalabels';
 import ChartStreaming from 'chartjs-plugin-streaming';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { IGetEventDevicePositionResponse, IGetEventFloorlayoutResponse, IGetEventResponse, IPosition } from '@event-participation-trends/api/event/util';
 import { set } from 'mongoose';
+
+import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown } from "@ng-icons/material-icons/baseline";
+import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
+import { heroUserGroupSolid } from "@ng-icons/heroicons/solid";
+import { heroBackward } from "@ng-icons/heroicons/outline";
 
 interface IAverageDataFound {
   id: number | null | undefined,
@@ -31,8 +37,13 @@ interface IHeatmapData {
 
 @Component({
   selector: 'event-participation-trends-dashboard-page',
+  standalone: true,
+  imports: [CommonModule, NgIconsModule],
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.css'],
+  providers: [
+    provideIcons({heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
+  ]
 })
 export class DashboardPageComponent implements OnInit {
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
