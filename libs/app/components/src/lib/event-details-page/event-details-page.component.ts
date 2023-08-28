@@ -35,6 +35,7 @@ export class EventDetailsPageComponent implements OnInit {
   public show = false;
   public loading = true;
   public requests: any[] = [];
+  public invite = '';
 
   //event
   public location = '';
@@ -240,5 +241,16 @@ export class EventDetailsPageComponent implements OnInit {
         modal?.classList.remove('opacity-0');
       }, 50);
     }, 200);
+  }
+
+  inviteUser() {
+    this.pressButton('#invite_user');
+
+    console.log(this.invite);
+
+    this.appApiService.acceptAccessRequest({
+      userEmail: this.invite,
+      eventId: this.event._id,
+    });
   }
 }
