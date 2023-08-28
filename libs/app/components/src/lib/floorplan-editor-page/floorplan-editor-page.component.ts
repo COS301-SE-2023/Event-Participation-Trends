@@ -55,6 +55,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     @ViewChild('textInput', {static: false}) textInputField!: ElementRef<HTMLInputElement>; // ION-INPUT
     @ViewChild('reader', {static: true}) qrCodeReader!: ElementRef;
     macAddrFromQR = '';
+    lightMode = false;
     isDropdownOpen = false;
     openDustbin = false;
     canvasItems: DroppedItem[] = [];
