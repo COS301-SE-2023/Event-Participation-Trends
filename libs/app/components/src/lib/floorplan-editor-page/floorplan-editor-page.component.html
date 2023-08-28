@@ -101,7 +101,7 @@
           Click and drag on canvas to create walls
         </label>
       <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3" />
-      <h3 *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="attributes-heading mt-3 ml-2 md:text-md">Component Attributes</h3>
+      <h2 *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="attributes-heading mt-3 ml-2 text-lg">Component Attributes</h2>
       <div
         *ngIf="!shouldStackVertically"
         id="attributes-container"
