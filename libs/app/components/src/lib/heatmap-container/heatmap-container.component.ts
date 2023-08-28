@@ -75,6 +75,10 @@ export class HeatmapContainerComponent implements OnInit{
       this.floorlayoutBounds = response.boundaries;
     }
 
+    if (!this.floorlayoutBounds) {
+      this.hasFloorlayout = false;
+    }
+
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       //now check if no input field has focus and the Delete key is pressed
       if (event.shiftKey) {
@@ -112,9 +116,6 @@ export class HeatmapContainerComponent implements OnInit{
 
     const positions = await this.appApiService.getEventDevicePosition(this.containerEvent._id, this.startDate, this.endDate);
     
-    if (!this.floorlayoutBounds) {
-      this.hasFloorlayout = false;
-    }
     if (positions.length === 0) {
       this.hasData = false;
     }
