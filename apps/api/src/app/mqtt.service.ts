@@ -72,7 +72,7 @@ export class MqttService {
         const positions = await this.anotherOne(sensors);
 
         this.buffer = new Array<any>();
-        if(process.env['MQTT_ENVIRONMENT'] === 'production')
+        if(process.env['MQTT_ENVIRONMENT'] === 'production' && positions.length > 0)
           this.eventService.addDevicePosition({
             eventId: (event as any)._id,
             position: positions
