@@ -8,6 +8,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
 import { NumberSymbol } from '@angular/common';
 import { Shape, ShapeConfig } from 'konva/lib/Shape';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+
+import { heroUserGroupSolid } from "@ng-icons/heroicons/solid";
+import { heroBackward } from "@ng-icons/heroicons/outline";
+import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown } from "@ng-icons/material-icons/baseline";
+import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
 
 export interface ISensorState {
   object: Konva.Circle,
@@ -23,8 +29,17 @@ interface DroppedItem {
 
 @Component({
   selector: 'event-participation-trends-floorplan-editor-page',
+  standalone: true,
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule,
+    NgIconsModule
+  ],
   templateUrl: './floorplan-editor-page.component.html',
-  styleUrls: ['./floorplan-editor-page.component.css'],
+  styleUrls: ['./floorplan-editor-page.component.css'], 
+  providers: [
+    provideIcons({heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
+  ],
 })
 
 export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
