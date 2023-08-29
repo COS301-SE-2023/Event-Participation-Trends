@@ -41,6 +41,8 @@ export class HeatmapContainerComponent implements OnInit{
   hasData = true;
   startDate: Date | null = null;
   endDate: Date | null = null;
+  currentTime: string | null = null;
+  totalSeconds = 0;
 
   //Zoom and recenter
   minScale = 1; // Adjust this as needed
@@ -68,6 +70,12 @@ export class HeatmapContainerComponent implements OnInit{
 
     this.startDate = startDate;
     this.endDate = endDate;
+    
+    //set current time in the format: hh:mm:ss
+    this.currentTime = new Date(startDate).toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+
+    // get the total seconds
+    this.totalSeconds = (endDate.getTime() - startDate.getTime()) / 1000;
 
     // get the boundaries from the floorlayout
     if (this.containerEvent.FloorLayout) {
@@ -119,6 +127,18 @@ export class HeatmapContainerComponent implements OnInit{
     if (positions.length === 0) {
       this.hasData = false;
     }
+  }
+
+  updateCurrentTime(event: any) {
+    //set the current time based on the value of the time range input
+    const time = event.target.value;
+
+    //add the time to the start date's seconds
+    const updatedTime = new Date(this.startDate!);
+    updatedTime.setSeconds(updatedTime.getSeconds() + parseInt(time));
+
+    //set the current time
+    this.currentTime = updatedTime.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
   }
 
   async getImageFromJSONData(eventId: string) {

@@ -28,10 +28,10 @@
         <label class="m-2 text-xl text-ept-light-red opacity-100 z-100">No data collected for this event</label>
     </div>
     <div *ngIf="show && hasData" class="self-center w-1/2 flex flex-col justify-evenly mx-3 absolute bottom-2 z-50 opacity-40 hover:opacity-100 text-ept-blue-grey">
-        <label class="opacity-50">Current Time: 00:00:00</label>
+        <label class="opacity-50">Current Time: {{currentTime}}</label>
         <div class="flex flex-row">
             <label class="opacity-50 whitespace-nowrap mr-2">Time range: </label>
-            <input type="range" min="0" max="100" value="0" class="w-full accent-ept-bumble-yellow" id="myRange"/>
+            <input type="range" step="5" min="0" max="{{totalSeconds}}" value="0" class="w-full accent-ept-bumble-yellow" id="myRange" (input)="updateCurrentTime($event)"/>
         </div>
     </div>
 </div>
