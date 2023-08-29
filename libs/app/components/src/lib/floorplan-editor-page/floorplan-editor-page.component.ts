@@ -2599,7 +2599,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     }
 
     showTextInput() : boolean {
-      return this.activeItem instanceof Konva.Group || this.activeItem instanceof Konva.Text
+      return (this.activeItem instanceof Konva.Group || this.activeItem instanceof Konva.Text) && this.activeItem != this.selectionGroup;
     }
 
     showLengthInput() : boolean {
