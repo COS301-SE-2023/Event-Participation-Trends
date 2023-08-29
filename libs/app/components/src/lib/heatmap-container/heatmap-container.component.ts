@@ -28,6 +28,7 @@ export class HeatmapContainerComponent implements OnInit{
   loadingContent = true;
   show = false;
   showFloorplan = false;
+  overTimeRange = false;
 
   // Keys
   shiftDown = false;
