@@ -10,10 +10,6 @@
             </div>
             <span *ngIf="show && eventsSelected > 0" class="ml-2 flex justify-between">
                 <label class="text-4xl p-2">Heatmaps<br><p class="text-sm opacity-50">Hold the Shift-Key down to zoom in/out with mousewheel</p></label>
-                <div class="self-center w-full flex justify-evenly mx-3">
-                    <label class="opacity-50 text-xl">Time range: </label>
-                    <input type="range" min="0" max="100" value="50" class="w-3/4" id="myRange"/>
-                </div>
             </span>
             <div *ngIf="show" class="grid grid-rows-2 w-full h-full gap-2 p-3">
                 <event-participation-trends-heatmap-container [parentContainer]="parentContainer" *ngFor="let event of selectedEvents" [containerEvent]="event"></event-participation-trends-heatmap-container>

@@ -25,6 +25,10 @@ export class HeatmapContainerComponent implements OnInit{
   @Input() public parentContainer: HTMLDivElement | null = null;
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
 
+  loadingContent = true;
+  show = false;
+  showFloorplan = false;
+
   // Keys
   shiftDown = false;
 
@@ -33,8 +37,10 @@ export class HeatmapContainerComponent implements OnInit{
   heatmapLayer: Konva.Layer | null = null;
   floorlayoutStage: Konva.Stage | null = null;
   floorlayoutBounds: {top: number; left: number; right: number; bottom: number; } | null | undefined = null;
-  hasFloorlayout = false;
-  hasData = false;
+  hasFloorlayout = true;
+  hasData = true;
+  startDate: Date | null = null;
+  endDate: Date | null = null;
 
   //Zoom and recenter
   minScale = 1; // Adjust this as needed
@@ -56,34 +62,22 @@ export class HeatmapContainerComponent implements OnInit{
 
   async ngOnInit() {
     // check if the event has device positions
-    if (this.containerEvent.DevicePositions && this.containerEvent.DevicePositions.length > 0) {
-      this.hasData = true;
-    }
-    console.log(this.containerEvent.DevicePositions);
+    const startDate = new Date(this.containerEvent.StartDate);
+    startDate.setDate(startDate.getDate() - 1);
+    const endDate = new Date(this.containerEvent.EndDate);
+
+    this.startDate = startDate;
+    this.endDate = endDate;
 
     // get the boundaries from the floorlayout
     if (this.containerEvent.FloorLayout) {
-      this.hasFloorlayout = true;
       const response = await this.appApiService.getFloorplanBoundaries(this.containerEvent._id);
       this.floorlayoutBounds = response.boundaries;
     }
 
-    this.heatmapContainer = new ElementRef<HTMLDivElement>(document.getElementById('heatmapContainer-'+this.containerEvent._id) as HTMLDivElement);
-  
-    this.heatmap = new HeatMap({
-      container: document.getElementById('view-'+this.containerEvent._id+'')!,
-      maxOpacity: .6,
-      radius: 50,
-      blur: 0.90,
-      gradient: {
-        0.0: this.chartColors['ept-off-white'],
-        0.25: this.chartColors['ept-light-blue'],
-        0.5: this.chartColors['ept-light-green'],
-        0.75: this.chartColors['ept-bumble-yellow'],
-        1.0: this.chartColors['ept-light-red']
-      }
-    });
-    this.getImageFromJSONData(this.containerEvent._id);
+    if (!this.floorlayoutBounds) {
+      this.hasFloorlayout = false;
+    }
 
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       //now check if no input field has focus and the Delete key is pressed
@@ -92,6 +86,39 @@ export class HeatmapContainerComponent implements OnInit{
       }
     });
     window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
+
+    this.loadingContent = false;
+
+    setTimeout(() => {
+      this.show = true;
+    }, 200);
+  }
+
+  async ngAfterViewInit() {     
+    setTimeout(() => {
+      this.heatmapContainer = new ElementRef<HTMLDivElement>(document.getElementById('heatmapContainer-'+this.containerEvent._id) as HTMLDivElement);
+  
+      this.heatmap = new HeatMap({
+        container: document.getElementById('view-'+this.containerEvent._id+'')!,
+        maxOpacity: .6,
+        radius: 50,
+        blur: 0.90,
+        gradient: {
+          0.0: this.chartColors['ept-off-white'],
+          0.25: this.chartColors['ept-light-blue'],
+          0.5: this.chartColors['ept-light-green'],
+          0.75: this.chartColors['ept-bumble-yellow'],
+          1.0: this.chartColors['ept-light-red']
+        }
+      });
+      this.getImageFromJSONData(this.containerEvent._id);   
+    }, 1000);
+
+    const positions = await this.appApiService.getEventDevicePosition(this.containerEvent._id, this.startDate, this.endDate);
+    
+    if (positions.length === 0) {
+      this.hasData = false;
+    }
   }
 
   async getImageFromJSONData(eventId: string) {
