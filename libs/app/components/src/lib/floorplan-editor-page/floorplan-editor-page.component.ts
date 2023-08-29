@@ -12,7 +12,7 @@ import { NgIconsModule, provideIcons } from '@ng-icons/core';
 
 import { heroUserGroupSolid } from "@ng-icons/heroicons/solid";
 import { heroBackward } from "@ng-icons/heroicons/outline";
-import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown } from "@ng-icons/material-icons/baseline";
+import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matRadioButtonUnchecked, matCheckCircleOutline } from "@ng-icons/material-icons/baseline";
 import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
 
 export interface ISensorState {
@@ -38,7 +38,7 @@ interface DroppedItem {
   templateUrl: './floorplan-editor-page.component.html',
   styleUrls: ['./floorplan-editor-page.component.css'], 
   providers: [
-    provideIcons({heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
+    provideIcons({matCheckCircleOutline, matRadioButtonUnchecked, heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
   ],
 })
 
@@ -203,15 +203,15 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       if (this.preventCreatingWalls) {
         return 'Drag and drop a component to the canvas';
       } else {
-        return 'Deselect creating walls below to drag and drop a component to the canvas';
+        return 'Disable creating walls below to drag and drop a component to the canvas';
       }
     }
 
     getWallTitle(): string {
       if (this.preventCreatingWalls) {
-        return 'Click to enable creating walls';
+        return 'Click button to enable creating walls';
       } else {
-        return 'Click to disable creating walls';
+        return 'Click button to disable creating walls';
       }
     }
 

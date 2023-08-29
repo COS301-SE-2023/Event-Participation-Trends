@@ -70,37 +70,31 @@
         </div>
         <hr class="m-3" />
         <div
-          class="relative overflow-y-auto max-h-52 flex ml-4"
+          class="relative overflow-y-auto max-h-52 flex ml-4 cursor-default"
           [title]="getWallTitle()"
         >
-          <div class="absolute w-full h-full cursor-pointer" (click)="toggleEditing()"></div>
+          <!-- <div class="absolute w-full h-full cursor-pointer" (click)="toggleEditing()"></div> -->
           <img
             id="wall"
-            class=" p-1 w-10 h-10 mt-2 cursor-pointer"
+            class=" p-1 w-10 h-10 mt-2 cursor-default"
             draggable="false"
             [src]="lightMode ? 'assets/wall-creation-icon.svg' : 'assets/white-wall-creation-icon.svg'"
             alt="wall"
-            (click)="toggleEditing()"
           />
-          <label 
-            class="text-ept-deep-grey mt-4 ml-4 cursor-pointer"
+          <button 
+            class="text-ept-deep-grey mt-4 ml-4 cursor-pointer bg-ept-blue-grey border-ept-off-white rounded-md p-1 text-sm  hover:text-ept-deep-grey hover:border-1"
             (click)="toggleEditing()"
             [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
           >
             Create walls
-            </label
-            >
-            <input
-            type="checkbox"
-            class="ml-8 mt-5 cursor-pointer w-4 h-4"
-            (click)="toggleEditing()"
-            [checked]="!preventCreatingWalls"
-            />
+          </button>
+          <p *ngIf="!preventCreatingWalls" class="italic text-ept-bumble-yellow text-sm mt-5 ml-8 cursor-default">(active)</p>
           </div>
         </div>
         <label 
           *ngIf="!preventCreatingWalls"
-          class="text-ept-deep-grey opacity-40 mt-1 ml-4 cursor-pointer text-xs pointer-events-none"
+          class="opacity-40 mt-1 ml-4 cursor-pointer text-xs pointer-events-none"
+          [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
           title="Click and drag on canvas to create walls"
         >
           Click and drag on canvas to create walls
