@@ -88,6 +88,14 @@ export class ComparePageComponent implements OnInit{
     this.showDropDown = !this.showDropDown;
   }
 
+  setDropDown(value: boolean): void {
+    this.showDropDown = value;
+  }
+
+  clearSearch(): void {
+    this.search = '';
+  }
+
   isSelected(category: string): boolean {
     return category === this.selectedCategory;
   }
@@ -105,6 +113,10 @@ export class ComparePageComponent implements OnInit{
 
   selectCategory(event: any): void {
     this.selectedCategory = event.target.value;
+
+    if (this.selectedCategory === 'Show All') {
+      this.clearSearch();
+    }
   }
 
   async selectEvent(event: IEvent): Promise<void> {
@@ -150,13 +162,17 @@ export class ComparePageComponent implements OnInit{
   }
 
   getEventCategories() : string[] {
-    const categoryList = this.categories;
+    const categoryList: string[] = [];
 
-    return categoryList.filter((category) => {
-      return category
-        ? category.toLowerCase().includes(this.search.toLowerCase())
-        : false;
+    this.events.forEach((event) => {
+      if (event && event.Name && event.Category) {
+        if (event.Name.toLowerCase().includes(this.search.toLowerCase()) && !categoryList.includes(event.Category)) {
+          categoryList.push(event.Category);
+        }
+      }
     });
+
+    return categoryList;
   }
 
   getEvents() : IEvent[] {
