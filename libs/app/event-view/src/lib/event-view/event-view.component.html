@@ -45,8 +45,8 @@
           class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
           (click)="goDashboard()"
           [ngClass]="{
-          'bg-ept-blue-grey text-ept-deep-grey': onDashboard(),
-          'bg-ept-navy-blue hover:bg-[#373a44]': !onDashboard(),
+          'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('dashboard'),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !isActiveRoute('dashboard'),
           'overflow-visible': expandDashboard,
         }"
           (mouseover)="showDashboard()"
@@ -75,8 +75,8 @@
           class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
           (click)="goDetails()"
           [ngClass]="{
-          'bg-ept-blue-grey text-ept-deep-grey': onDetails(),
-          'bg-ept-navy-blue hover:bg-[#373a44]': !onDetails(),
+          'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('details'),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !isActiveRoute('details'),
           'overflow-visible': expandDetails,
         }"
           (mouseover)="showDetails()"
@@ -106,8 +106,8 @@
           class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
           (click)="goFloorplan()"
           [ngClass]="{
-          'bg-ept-blue-grey text-ept-deep-grey': onFloorplan(),
-          'bg-ept-navy-blue hover:bg-[#373a44]': !onFloorplan(),
+          'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('floorplan'),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !isActiveRoute('floorplan'),
           'overflow-visible': expandFloorplan,
         }"
           (mouseover)="showFloorplan()"
