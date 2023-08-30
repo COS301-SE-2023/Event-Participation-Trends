@@ -1,0 +1,43 @@
+<div id="heatmapContainer-{{containerEvent._id}}" class="row-span-1 w-full h-full z-0 relative border-ept-blue-grey border-2 border-solid rounded-2xl">
+    <div
+        class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+        [ngClass]="{ 'opacity-0': !loadingContent }"
+        *ngIf="!show"
+    >
+        <span class="loading loading-spinner loading-lg"></span>
+    </div>
+    <div *ngIf="show" id="floormap-{{containerEvent._id}}" class="z-20 absolute w-full h-full top-0 left-0"></div>
+    <div *ngIf="show" id="view-{{containerEvent._id}}" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
+    <div *ngIf="show && (hasFloorlayout || hasData)" class="flex flex-col justify-evenly absolute top-0 right-3">
+        <div (click)="zoomIn()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+            <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
+        </div>
+        <div (click)="zoomOut()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+            <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
+        </div>
+        <div (click)="recenterFloorlayout()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+            <ng-icon name="matFilterCenterFocus" title="Recenter floor"></ng-icon>
+        </div>
+    </div>
+    <div *ngIf="show && !hasFloorlayout" class="w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10">
+        <ng-icon name="matWarningAmberRound" class="text-3xl text-ept-bumble-yellow self-center"></ng-icon>
+        <label class="m-2 text-xl text-ept-bumble-yellow opacity-100 z-100">No Floor layout for this event</label>
+    </div>
+    <div *ngIf="show && !hasData" class="w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10">
+        <ng-icon name="matErrorOutlineRound" class="text-3xl text-ept-light-red self-center"></ng-icon>
+        <label class="m-2 text-xl text-ept-light-red opacity-100 z-100">No data collected for this event</label>
+    </div>
+    <div *ngIf="show && hasData" class="w-fit pr-5 self-center flex flex-col justify-evenly mx-3 absolute bottom-11 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
+        <label>Current Time: {{currentTime}}</label>
+    </div>
+    <div *ngIf="show && hasData" class="w-full pr-5 self-center flex flex-row justify-evenly mx-3 absolute bottom-2 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
+        <label class="whitespace-nowrap mr-2 self-center">Time range: </label>
+        <div class="flex flex-col w-full">
+            <div class="flex justify-between">
+                <label class="">Start</label>
+                <label class="">End</label>
+            </div>
+            <input type="range" step="5" min="0" max="{{totalSeconds}}" value="0" class="w-full accent-ept-bumble-yellow hover:cursor-pointer" id="myRange" (input)="updateCurrentTime($event)"/>
+        </div>
+    </div>
+</div>

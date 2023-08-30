@@ -8,6 +8,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
 import { NumberSymbol } from '@angular/common';
 import { Shape, ShapeConfig } from 'konva/lib/Shape';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+
+import { heroUserGroupSolid } from "@ng-icons/heroicons/solid";
+import { heroBackward } from "@ng-icons/heroicons/outline";
+import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matRadioButtonUnchecked, matCheckCircleOutline } from "@ng-icons/material-icons/baseline";
+import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
+import { SmallScreenModalComponent } from '../small-screen-modal/small-screen-modal.component';
 
 export interface ISensorState {
   object: Konva.Circle,
@@ -24,9 +31,17 @@ interface DroppedItem {
 @Component({
   selector: 'event-participation-trends-floorplan-editor-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule,
+    NgIconsModule,
+    SmallScreenModalComponent
+  ],
   templateUrl: './floorplan-editor-page.component.html',
-  styleUrls: ['./floorplan-editor-page.component.css'],
+  styleUrls: ['./floorplan-editor-page.component.css'], 
+  providers: [
+    provideIcons({matCheckCircleOutline, matRadioButtonUnchecked, heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
+  ],
 })
 
 export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
@@ -42,6 +57,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     @ViewChild('textInput', {static: false}) textInputField!: ElementRef<HTMLInputElement>; // ION-INPUT
     @ViewChild('reader', {static: true}) qrCodeReader!: ElementRef;
     macAddrFromQR = '';
+    lightMode = false;
     isDropdownOpen = false;
     openDustbin = false;
     canvasItems: DroppedItem[] = [];
@@ -97,6 +113,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     componentSize = this.gridSize;
     zoomInDisabled = false;
     zoomOutDisabled = false;
+    centerDisabled = true;
+    centerPosition = {x: 0, y: 0};
     gridSizeLabel = 0;
     snapLabel = 0;
     selectedWall = false;
@@ -184,6 +202,22 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
     convertY(y: number): number {
       return (y - this.canvasContainer.y()) / this.canvasContainer.scaleY();
+    }
+
+    getComponentsTitle(): string {
+      if (this.preventCreatingWalls) {
+        return 'Drag and drop a component to the canvas';
+      } else {
+        return 'Disable creating walls below to drag and drop a component to the canvas';
+      }
+    }
+
+    getWallTitle(): string {
+      if (this.preventCreatingWalls) {
+        return 'Click button to enable creating walls';
+      } else {
+        return 'Click button to disable creating walls';
+      }
     }
 
     toggleEditing(): void {
@@ -663,7 +697,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       break;
                     case 'Path':
                       type = new Konva.Path(child.getAttrs());
-                      this.currentPathStrokeWidth = type.getAttr('strokeWidth');
+                      this.currentPathStrokeWidth = 3;
+                      type.setAttr('strokeWidth', this.currentPathStrokeWidth);
                       break;
                     case 'Circle':
                       type = new Konva.Circle(child.getAttrs());
@@ -691,6 +726,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
               this.defaultBehaviour(newCanvas);
               this.moveSensorsAndTooltipsToTop();
+              this.centerFloorPlan();
             });
           });
           }, 6);
@@ -698,6 +734,61 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         setTimeout(() => {
           this.isLoading = false;
         }, 1500);
+    }
+
+    centerFloorPlan(): void {
+      if (!this.canvas || !this.canvas.children) return;
+
+      while(this.currentScale != 1) {
+        this.zoomOut();
+        if (this.currentScale < 1) {
+          this.currentScale = 1;
+        }
+      }
+
+      this.canvasContainer.setAttr('x', 0);
+      this.canvasContainer.setAttr('y', 0);
+
+      let maxXCoordinate = 0;
+      let maxYCoordinate = 0;
+      let minXCoordinate = 1000000;
+      let minYCoordinate = 1000000;
+
+      for (let i = 1; i < this.canvas.children.length; i++) {
+        const child = this.canvas.children[i];
+        if (child.attrs.x > maxXCoordinate) {
+          maxXCoordinate = child.attrs.x;
+        }
+        if (child.attrs.y > maxYCoordinate) {
+          maxYCoordinate = child.attrs.y;
+        }
+        if (child.attrs.x < minXCoordinate) {
+          minXCoordinate = child.attrs.x;
+        }
+        if (child.attrs.y < minYCoordinate) {
+          minYCoordinate = child.attrs.y;
+        }
+      }
+
+      const floorplanCenterX = minXCoordinate + (maxXCoordinate - minXCoordinate) / 2;
+      const floorplanCenterY = minYCoordinate + (maxYCoordinate - minYCoordinate) / 2;
+
+      const originalCanvasCenterX = (this.canvasContainer.width() / 2) / 2;
+      const originalCanvasCenterY = (this.canvasContainer.height() / 2) / 2;
+      const originalCanvasX = this.canvasContainer.x();
+      const originalCanvasY = this.canvasContainer.y();
+
+      const newCanvasX = Math.abs(originalCanvasCenterX - floorplanCenterX);
+      const newCanvasY = Math.abs(originalCanvasCenterY - floorplanCenterY);
+
+      this.canvasContainer.setAttr('x', originalCanvasX - 2*newCanvasX);
+      this.canvasContainer.setAttr('y', originalCanvasY - 2*newCanvasY);
+
+      this.centerPosition = {x: originalCanvasX - 2*newCanvasX, y: originalCanvasY - 2*newCanvasY};
+
+      this.canvasContainer.draw();
+      this.canvasContainer.visible(true);
+      this.centerDisabled = true;
     }
 
     moveSensorsAndTooltipsToTop(): void {
@@ -859,10 +950,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         return;
       }
 
-      const mousePointTo = {
-        x: pointer.x / oldScale - stage.x() / oldScale,
-        y: pointer.y / oldScale - stage.y() / oldScale
-      };
+      // const mousePointTo = {
+      //   x: pointer.x / oldScale - stage.x() / oldScale,
+      //   y: pointer.y / oldScale - stage.y() / oldScale
+      // };
 
       let wheelDirection = 0;
       if (!direction) {
@@ -935,14 +1026,26 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.setZoomOutDisabled(this.displayedSnap);
       }
 
-      const x =
-        -(mousePointTo.x - pointer.x / newScale) * newScale;
-      const y =
-        -(mousePointTo.y - pointer.y / newScale) * newScale;
+      
+      const clampedScaleX = Math.min(Math.max(newScale, 1), 16);
+      const clampedScaleY = Math.min(Math.max(newScale, 1), 16);
 
-      const pos = this.boundFunc({ x, y }, newScale);
+      const oldScaleX = this.canvasContainer.scaleX();
+      const oldScaleY = this.canvasContainer.scaleY();
+      // Get the center of the viewport as the zoom center
+      const zoomCenterX = this.canvasContainer.width() / 2;
+      const zoomCenterY = this.canvasContainer.height() / 2;
+  
+      // Calculate new position for zoom center
+      const newPosX = zoomCenterX - (zoomCenterX - this.canvasContainer.x()) * (clampedScaleX / oldScaleX);
+      const newPosY = zoomCenterY - (zoomCenterY - this.canvasContainer.y()) * (clampedScaleY / oldScaleY);
+  
+      this.canvasContainer.x(newPosX);
+      this.canvasContainer.y(newPosY);
+      this.canvasContainer.scaleX(clampedScaleX);
+      this.canvasContainer.scaleY(clampedScaleY);
 
-      this.canvasContainer.scale({ x: newScale, y: newScale });
+      const pos = this.boundFunc({ x: newPosX, y: newPosY }, newScale);
       this.canvasContainer.position(pos);
     }
 
@@ -1023,6 +1126,11 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       const x = Math.min(0, Math.max(pos.x, stageWidth * (1 - scale)));
       const y = Math.min(0, Math.max(pos.y, stageHeight * (1 - scale)));
   
+      if (this.canvasContainer.position().x != this.centerPosition.x || 
+        this.canvasContainer.position().y != this.centerPosition.y) {
+          this.centerDisabled = false;
+      }
+
       return {
         x,
         y
@@ -1993,18 +2101,16 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       // set the grid lines when the window is resized
     @HostListener('window:resize', ['$event'])
     onResize(event: any) {
-      if (this.currentPage === '/event/createfloorplan') {
         this.checkScreenWidth();
-      }
       // remove gridlines and then add them again
-      this.removeGridLines();
+      // this.removeGridLines();
       const width = this.canvasParent.nativeElement.offsetWidth;
 
       this.canvasContainer.setAttrs({
         width: width*0.995,  //0.9783
         height: this.initialHeight,
       });
-      this.createGridLines();
+      // this.createGridLines();
     }
 
     removeGridLines(): void {
@@ -2105,33 +2211,20 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       checkScreenWidth() {
         this.shouldStackVertically = window.innerWidth < 1421;
         this.isLargeScreen = window.innerWidth > 1421;
-        this.screenTooSmall = window.innerWidth < 1052;
+        this.screenTooSmall = window.innerWidth < 1152;
 
         if (this.screenTooSmall && !this.alertPresented) {
           this.presentAlert();
         }
       }
 
-      async presentAlert() {
-        // const alert = await this.alertController.create({
-        //   header:'Screen too small',
-        //   message:'Please use a larger screen to create a floor plan',
-        //   buttons: [{text: 'OK', role: 'confirm', handler: () => {
-        //     //change query params
-        //     const queryParams : NavigationExtras = {
-        //       queryParams: {
-        //         m: this.currentPage === '/event/createfloorplan' && this.prevPage === '/event/eventdetails' ? 'true' : 'false',
-        //         id: this.params?.id,
-        //         queryParamsHandling: 'merge',
-        //       },
-        //     };
-        //     this.navController.navigateBack(this.prevPage, queryParams);
-        //     this.alertPresented = false;
-        //   }}]
-        // });
+      presentAlert(): void {
+        const modal = document.querySelector('#small-screen-modal');
 
-        // this.alertPresented = true;
-        // await alert.present();
+        modal?.classList.remove('hidden');
+        setTimeout(() => {
+          modal?.classList.remove('opacity-0');
+        }, 100);
       }
 
       adjustJSONData(json: Record<string, any>): void {
@@ -2542,7 +2635,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     }
 
     showTextInput() : boolean {
-      return this.activeItem instanceof Konva.Group || this.activeItem instanceof Konva.Text
+      return (this.activeItem instanceof Konva.Group || this.activeItem instanceof Konva.Text) && this.activeItem != this.selectionGroup;
     }
 
     showLengthInput() : boolean {

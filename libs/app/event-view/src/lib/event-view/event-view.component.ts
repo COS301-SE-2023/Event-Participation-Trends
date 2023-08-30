@@ -156,8 +156,18 @@ export class EventViewComponent implements OnInit {
   }
 
   goFloorplan() {
-    this.pressButton('#floorplan');
-    this.tab = Tab.Floorplan;
+    if (window.innerWidth < 850) {
+      const modal = document.querySelector('#small-screen-modal');
+
+        modal?.classList.remove('hidden');
+        setTimeout(() => {
+          modal?.classList.remove('opacity-0');
+        }, 100);
+    }
+    else {
+      this.pressButton('#floorplan');
+      this.tab = Tab.Floorplan;
+    }
   }
 
   onFloorplan() : boolean {
