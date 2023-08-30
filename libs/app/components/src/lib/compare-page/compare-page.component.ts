@@ -149,6 +149,8 @@ export class ComparePageComponent implements OnInit{
       });
       this.selectedEvents.splice(eventIndex, 1);
     }
+
+    this.showDropDown = false;
   }
 
   highlightText(event: IEvent, search: string): string {
