@@ -70,6 +70,7 @@
         </div>
         <hr class="m-3" />
         <div
+          *ngIf="!shouldStackVertically"
           class="relative overflow-y-auto max-h-52 flex ml-4 cursor-default"
           [title]="getWallTitle()"
         >
@@ -89,6 +90,30 @@
             Create walls
           </button>
           <p *ngIf="!preventCreatingWalls" class="italic text-ept-bumble-yellow text-sm mt-5 ml-8 cursor-default">(active)</p>
+          </div>
+          <div
+          *ngIf="shouldStackVertically"
+          class="relative overflow-y-auto max-h-52 flex ml-4 cursor-default"
+          [title]="getWallTitle()"
+        >
+          <!-- <div class="absolute w-full h-full cursor-pointer" (click)="toggleEditing()"></div> -->
+          <img
+            id="wall"
+            class=" p-1 w-10 h-10 mt-2 cursor-default"
+            draggable="false"
+            [src]="lightMode ? 'assets/wall-creation-icon.svg' : 'assets/white-wall-creation-icon.svg'"
+            alt="wall"
+          />
+          <div class="flex flex-col">
+            <button 
+              class="text-ept-deep-grey mt-4 ml-4 cursor-pointer bg-ept-blue-grey border-ept-off-white rounded-md p-1 text-sm  hover:text-ept-deep-grey hover:border-1"
+              (click)="toggleEditing()"
+              [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+            >
+              Create walls
+            </button>
+            <p *ngIf="!preventCreatingWalls" class="italic text-ept-bumble-yellow text-sm sm:text-xs mt-1 ml-[50px] cursor-default">(active)</p>
+          </div>
           </div>
         </div>
         <label 
@@ -445,3 +470,7 @@
     </div>
   </div>
 </div>
+<event-participation-trends-small-screen-modal
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="small-screen-modal"
+></event-participation-trends-small-screen-modal>

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Route } from '@angular/router';
 import { appEventViewRoutes } from './lib.routes';
 import { EventViewComponent } from './event-view/event-view.component';
-import { DashboardPageComponent, EventDetailsPageComponent, EventHelpComponent } from '@event-participation-trends/app/components';
+import { DashboardPageComponent, EventDetailsPageComponent, EventHelpComponent, SmallScreenModalComponent } from '@event-participation-trends/app/components';
 import { NgIconsModule } from '@ng-icons/core';
 import {
   heroArrowLeft,
@@ -26,6 +26,7 @@ import {
     DashboardPageComponent,
     EventHelpComponent,
     EventDetailsPageComponent,
+    SmallScreenModalComponent,
     NgIconsModule.withIcons({
       heroArrowLeft,
       heroChartBar,
