@@ -12,3 +12,5 @@ export * from './lib/event-help/event-help.component';
 export * from './lib/heatmap-container/heatmap-container.component';
 export * from './lib/small-screen-modal/small-screen-modal.component';
 export * from './lib/delete-confirm-modal/delete-confirm-modal.component';
+export * from './lib/link-sensor-modal/link-sensor-modal.component';
+export * from './lib/toast-modal/toast-modal.component';

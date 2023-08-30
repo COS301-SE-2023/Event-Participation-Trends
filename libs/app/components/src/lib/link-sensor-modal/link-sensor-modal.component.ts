@@ -7,11 +7,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IlinkSensorRequest } from '@event-participation-trends/api/sensorlinking';
 import { AppApiService } from '@event-participation-trends/app/api';
 import Konva from 'konva';
+import { ToastModalComponent } from '../toast-modal/toast-modal.component';
 
 @Component({
   selector: 'event-participation-trends-link-sensor-modal',
   standalone: true,
-  imports: [CommonModule, NgIconsModule, ReactiveFormsModule],
+  imports: [CommonModule, NgIconsModule, ReactiveFormsModule, ToastModalComponent],
   templateUrl: './link-sensor-modal.component.html',
   styleUrls: ['./link-sensor-modal.component.css'],
   providers: [
@@ -31,6 +32,12 @@ export class LinkSensorModalComponent implements OnInit{
   canLinkSensorWithMacAddress = false;
   macAddressForm!: FormGroup;
   inputHasFocus = false;
+  showToastLinking = false;
+  showToastSuccess = false;
+  showToastFailure = false;
+  toastMessage = '';
+  toastType = '';
+  toastClosed = false;
 
   constructor(
     private appApiService: AppApiService, private formBuilder: FormBuilder
@@ -88,6 +95,13 @@ export class LinkSensorModalComponent implements OnInit{
     this.closeModalEvent.emit(true);
   }
 
+  closeToastModal(): void {
+    this.showToastLinking = false;
+    this.showToastSuccess = false;
+    this.showToastFailure = false;
+    this.toastClosed = true;
+  }
+
   updateLinkedSensors() {
     const request: IlinkSensorRequest = {
       id: this.customId
@@ -96,17 +110,59 @@ export class LinkSensorModalComponent implements OnInit{
     const macAddress = (this.macAddrFromQR || this.macAddressBlocks.join(':')).toLowerCase();
     this.macAddrFromQR = '';
       this.appApiService.linkSensor(request, macAddress).then((res: any) => {
-        if (res['success']) {
-          // set the 'isLinked' attribute to true
-          // this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
-
-          //update active sensor
-          // this.store.dispatch(new UpdateActiveSensor(request.id));
-          this.activeItem.setAttr('fill', 'lime');
-
-          this.closeModal();
+        if (res['success']) {          
+          // this.closeModal();          
+          this.showLinkingToast(true);
+          // this.showSuccessToast();
+        }
+        else {
+          this.showLinkingToast(false);
         }
       });
+  }
+
+  showSuccessToast(): void {
+    this.showToastLinking = false;
+    this.showToastSuccess = true;
+    this.toastMessage = 'Sensor ' + this.customId + ' linked successfully!';
+    this.toastType = 'success';
+      
+    setTimeout(() => {
+      this.showToastSuccess = false;
+      document.querySelector('#linkSensorModal')?.classList.add('visible');
+      this.closeModal();
+      this.activeItem.setAttr('fill', 'lime');
+    }, 800); 
+  }
+
+  showLinkingToast(success: boolean): void {
+    document.querySelector('#linkSensorModal')?.classList.add('hidden');
+    this.showToastLinking = true;
+    this.toastMessage = 'Linking sensor...';
+    this.toastType = 'linking';
+      
+    setTimeout(() => {
+      this.showToastLinking = false;
+      if (success) {
+        this.showSuccessToast();
+      }
+      else {
+        this.showFailureToast();
+      }
+    }, 1500); 
+  }
+
+  showFailureToast(): void {
+    this.showToastLinking = false;
+    this.showToastFailure = true;
+    this.toastMessage = 'Failed to link sensor with id: ' + this.customId + '. Please try again.';
+    this.toastType = 'failure';
+      
+    setTimeout(() => {
+      this.showToastFailure = false; 
+      document.querySelector('#linkSensorModal')?.classList.add('visible');
+      this.closeModal();
+    }, 800); 
   }
 
   handleMacAddressInput(event: any, blockIndex: number) {

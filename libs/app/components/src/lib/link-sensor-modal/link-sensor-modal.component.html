@@ -1,4 +1,5 @@
 <div
+    id="linkSensorModal"
   class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
 >
   <div
@@ -33,7 +34,7 @@
           Link with manual input
         </label>
       </div>
-      <div class="flex items-center w-full cursor-pointer">
+      <div class="flex items-center w-full cursor-pointer mt-2">
         <input
           type="radio"
           name="linkOption"
@@ -214,3 +215,29 @@
     </form>
   </div>
 </div>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastLinking"
+    [toastMessage]="toastMessage" 
+    [toastType]="toastType"
+    [success]="showToastSuccess"
+    [failure]="showToastFailure"
+    [linking]="showToastLinking"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastSuccess"
+    [toastMessage]="toastMessage" 
+    [toastType]="toastType"
+    [success]="showToastSuccess"
+    [failure]="showToastFailure"
+    [linking]="showToastLinking"
+    (closeModalEvent)="closeToastModal()"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastFailure"
+    [toastMessage]="toastMessage" 
+    [toastType]="toastType"
+    [success]="showToastSuccess"
+    [failure]="showToastFailure"
+    [linking]="showToastLinking"
+    (closeModalEvent)="closeToastModal()"
+></event-participation-trends-toast-modal>

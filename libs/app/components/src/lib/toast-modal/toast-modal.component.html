@@ -1,0 +1,14 @@
+<div
+  class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
+>
+  <div
+    class="fixed w-screen h-screen top-0 left-0 bg-ept-navy-blue bg-opacity-80"
+  ></div>
+  <div
+    class="max-w-md bg-gradient-to-br z-50 rounded p-5"
+  >
+    <div *ngIf="success" class="alert alert-success text-ept-deep-grey bg-ept-light-green opacity-100">{{toastMessage}}</div>
+    <div *ngIf="failure" class="alert alert-danger text-ept-deep-grey bg-ept-light-red opacity-100">{{toastMessage}}</div>
+    <div *ngIf="linking" class="alert alert-info text-ept-deep-grey bg-ept-blue-grey opacity-100">{{toastMessage}}</div>
+  </div>
+</div>
