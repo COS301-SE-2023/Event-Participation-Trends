@@ -14,6 +14,7 @@ import { heroUserGroupSolid } from "@ng-icons/heroicons/solid";
 import { heroBackward } from "@ng-icons/heroicons/outline";
 import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matRadioButtonUnchecked, matCheckCircleOutline } from "@ng-icons/material-icons/baseline";
 import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
+import { SmallScreenModalComponent } from '../small-screen-modal/small-screen-modal.component';
 
 export interface ISensorState {
   object: Konva.Circle,
@@ -33,7 +34,8 @@ interface DroppedItem {
   imports: [
     CommonModule, 
     ReactiveFormsModule,
-    NgIconsModule
+    NgIconsModule,
+    SmallScreenModalComponent
   ],
   templateUrl: './floorplan-editor-page.component.html',
   styleUrls: ['./floorplan-editor-page.component.css'], 
@@ -2094,18 +2096,16 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       // set the grid lines when the window is resized
     @HostListener('window:resize', ['$event'])
     onResize(event: any) {
-      if (this.currentPage === '/event/createfloorplan') {
         this.checkScreenWidth();
-      }
       // remove gridlines and then add them again
-      this.removeGridLines();
+      // this.removeGridLines();
       const width = this.canvasParent.nativeElement.offsetWidth;
 
       this.canvasContainer.setAttrs({
         width: width*0.995,  //0.9783
         height: this.initialHeight,
       });
-      this.createGridLines();
+      // this.createGridLines();
     }
 
     removeGridLines(): void {
@@ -2154,33 +2154,20 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       checkScreenWidth() {
         this.shouldStackVertically = window.innerWidth < 1421;
         this.isLargeScreen = window.innerWidth > 1421;
-        this.screenTooSmall = window.innerWidth < 1052;
+        this.screenTooSmall = window.innerWidth < 1152;
 
         if (this.screenTooSmall && !this.alertPresented) {
           this.presentAlert();
         }
       }
 
-      async presentAlert() {
-        // const alert = await this.alertController.create({
-        //   header:'Screen too small',
-        //   message:'Please use a larger screen to create a floor plan',
-        //   buttons: [{text: 'OK', role: 'confirm', handler: () => {
-        //     //change query params
-        //     const queryParams : NavigationExtras = {
-        //       queryParams: {
-        //         m: this.currentPage === '/event/createfloorplan' && this.prevPage === '/event/eventdetails' ? 'true' : 'false',
-        //         id: this.params?.id,
-        //         queryParamsHandling: 'merge',
-        //       },
-        //     };
-        //     this.navController.navigateBack(this.prevPage, queryParams);
-        //     this.alertPresented = false;
-        //   }}]
-        // });
+      presentAlert(): void {
+        const modal = document.querySelector('#small-screen-modal');
 
-        // this.alertPresented = true;
-        // await alert.present();
+        modal?.classList.remove('hidden');
+        setTimeout(() => {
+          modal?.classList.remove('opacity-0');
+        }, 100);
       }
 
       adjustJSONData(json: Record<string, any>): void {
