@@ -142,7 +142,7 @@ export class DashboardPageComponent implements OnInit {
   async ngOnInit() {
     
     this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
-    
+
     if (!this.id) {
       this.router.navigate(['/home']);
     }
