@@ -1,0 +1,216 @@
+<div
+  class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
+>
+  <div
+    class="fixed w-screen h-screen top-0 left-0 bg-ept-navy-blue bg-opacity-80"
+  ></div>
+  <div
+    class="relative max-w-md bg-gradient-to-br from-ept-blue-grey from-[-30%] to-[#7a849c] z-50 rounded-2xl p-5"
+  >
+    <ng-icon
+      name="matClose"
+      class="text-3xl absolute right-2 top-2 text-ept-navy-blue cursor-pointer"
+      (click)="closeModal()"
+    ></ng-icon>
+    <h1 class="text-lg font-semibold text-center mb-3 mt-3 text-ept-deep-grey">
+      Linking {{ customId }}
+    </h1>
+    <div class="flex flex-col items-start ml-3">
+      <div class="flex items-center w-full cursor-pointer">
+        <input
+          type="radio"
+          name="linkOption"
+          id="altOption"
+          [checked]="hideScanner"
+          (change)="hideQRCodeScanner()"
+          [ngClass]="{ 'bg-ept-bumble-yellow': hideScanner }"
+        />
+        <label
+          for="altOption"
+          class="cursor-pointer sm:text-sm md:text-md"
+          [ngClass]="{ 'text-white': !lightMode }"
+        >
+          Link with manual input
+        </label>
+      </div>
+      <div class="flex items-center w-full cursor-pointer">
+        <input
+          type="radio"
+          name="linkOption"
+          id="qrOption"
+          [checked]="!hideScanner"
+          (change)="showQRCodeScanner()"
+          [ngClass]="{ 'bg-ept-bumble-yellow': !hideScanner }"
+        />
+        <label
+          for="qrOption"
+          class="cursor-pointer sm:text-sm md:text-md"
+          [ngClass]="{ 'text-white': !lightMode }"
+        >
+          QR Code Scanner
+        </label>
+      </div>
+    </div>
+    <div
+      #reader
+      id="reader"
+      class="m-2 w-[180px] rounded items-center p-2"
+      [ngClass]="{
+        hidden: hideScanner,
+        'bg-ept-off-white text-ept-deep-grey': !lightMode
+      }"
+    ></div>
+    <form *ngIf="hideScanner" [formGroup]="macAddressForm">
+      <div class="mt-4 flex flex-col items-center justify-evenly">
+        <div class="flex items-center">
+          <input
+            id="macAddressBlock1"
+            aria-label="MAC Address Block"
+            class="text-ept-deep-grey lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
+            type="text"
+            maxlength="2"
+            (input)="handleMacAddressInput($event, 0)"
+            (focus)="setInputFocus(true)"
+            (blur)="setInputFocus(false)"
+            name="macAddressBlock1"
+            formControlName="macAddressBlock1"
+            [ngClass]="{
+              'border-2 border-rose-500':
+                macAddressBlock1?.hasError('required') &&
+                (macAddressBlock1?.dirty || macAddressBlock1?.touched),
+              'border-2 border-green-400':
+                macAddressBlock1?.valid &&
+                (macAddressBlock1?.dirty || macAddressBlock1?.touched)
+            }"
+          />
+          <span class="ml-1 mr-1"
+            >:</span
+          >
+          <input
+            id="macAddressBlock2"
+            aria-label="MAC Address Block"
+            class="text-ept-deep-grey lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
+            type="text"
+            maxlength="2"
+            (input)="handleMacAddressInput($event, 1)"
+            (focus)="setInputFocus(true)"
+            (blur)="setInputFocus(false)"
+            name="macAddressBlock2"
+            formControlName="macAddressBlock2"
+            [ngClass]="{
+              'border-2 border-rose-500':
+                macAddressBlock2?.hasError('required') &&
+                (macAddressBlock2?.dirty || macAddressBlock2?.touched),
+              'border-2 border-green-400':
+                macAddressBlock2?.valid &&
+                (macAddressBlock2?.dirty || macAddressBlock2?.touched)
+            }"
+          />
+          <span class="ml-1 mr-1"
+            >:</span
+          >
+          <input
+            id="macAddressBlock3"
+            aria-label="MAC Address Block"
+            class="text-ept-deep-grey lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
+            type="text"
+            maxlength="2"
+            (input)="handleMacAddressInput($event, 2)"
+            (focus)="setInputFocus(true)"
+            (blur)="setInputFocus(false)"
+            name="macAddressBlock3"
+            formControlName="macAddressBlock3"
+            [ngClass]="{
+              'border-2 border-rose-500':
+                macAddressBlock3?.hasError('required') &&
+                (macAddressBlock3?.dirty || macAddressBlock3?.touched),
+              'border-2 border-green-400':
+                macAddressBlock3?.valid &&
+                (macAddressBlock3?.dirty || macAddressBlock3?.touched)
+            }"
+          />
+          <span class="ml-1 mr-1"
+            >:</span
+          >
+          <input
+            id="macAddressBlock4"
+            aria-label="MAC Address Block"
+            class="text-ept-deep-grey lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
+            type="text"
+            maxlength="2"
+            (input)="handleMacAddressInput($event, 3)"
+            (focus)="setInputFocus(true)"
+            (blur)="setInputFocus(false)"
+            name="macAddressBlock4"
+            formControlName="macAddressBlock4"
+            [ngClass]="{
+              'border-2 border-rose-500':
+                macAddressBlock4?.hasError('required') &&
+                (macAddressBlock4?.dirty || macAddressBlock4?.touched),
+              'border-2 border-green-400':
+                macAddressBlock4?.valid &&
+                (macAddressBlock4?.dirty || macAddressBlock4?.touched)
+            }"
+          />
+          <span class="ml-1 mr-1"
+            >:</span
+          >
+          <input
+            id="macAddressBlock5"
+            aria-label="MAC Address Block"
+            class="text-ept-deep-grey lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
+            type="text"
+            maxlength="2"
+            (input)="handleMacAddressInput($event, 4)"
+            (focus)="setInputFocus(true)"
+            (blur)="setInputFocus(false)"
+            name="macAddressBlock5"
+            formControlName="macAddressBlock5"
+            [ngClass]="{
+              'border-2 border-rose-500':
+                macAddressBlock5?.hasError('required') &&
+                (macAddressBlock5?.dirty || macAddressBlock5?.touched),
+              'border-2 border-green-400':
+                macAddressBlock5?.valid &&
+                (macAddressBlock5?.dirty || macAddressBlock5?.touched)
+            }"
+          />
+          <span class="ml-1 mr-1"
+            >:</span
+          >
+          <input
+            id="macAddressBlock6"
+            aria-label="MAC Address Block"
+            class="text-ept-deep-grey lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
+            type="text"
+            maxlength="2"
+            (input)="handleMacAddressInput($event, 5)"
+            (focus)="setInputFocus(true)"
+            (blur)="setInputFocus(false)"
+            name="macAddressBlock6"
+            formControlName="macAddressBlock6"
+            [ngClass]="{
+              'border-2 border-rose-500':
+                macAddressBlock6?.hasError('required') &&
+                (macAddressBlock6?.dirty || macAddressBlock6?.touched),
+              'border-2 border-green-400':
+                macAddressBlock6?.valid &&
+                (macAddressBlock6?.dirty || macAddressBlock6?.touched)
+            }"
+          />
+        </div>
+        <button
+          class="mt-3 rounded-md p-1 text-sm/16 cursor-pointer border-2 border-ept-navy-blue hover:bg-ept-navy-blue hover:text-ept-off-white"
+          [ngClass]="{
+            'opacity-50 pointer-events-none border-0': !canLinkSensorWithMacAddress,
+            'bg-ept-off-white text-ept-deep-grey': !lightMode,
+            'bg-ept-deep-grey text-ept-off-white': lightMode
+          }"
+          (click)="updateLinkedSensors()"
+        >
+          Link Sensor
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

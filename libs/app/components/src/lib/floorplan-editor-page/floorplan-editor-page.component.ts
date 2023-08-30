@@ -15,6 +15,7 @@ import { heroBackward } from "@ng-icons/heroicons/outline";
 import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matRadioButtonUnchecked, matCheckCircleOutline } from "@ng-icons/material-icons/baseline";
 import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
 import { SmallScreenModalComponent } from '../small-screen-modal/small-screen-modal.component';
+import { LinkSensorModalComponent } from '../link-sensor-modal/link-sensor-modal.component';
 
 export interface ISensorState {
   object: Konva.Circle,
@@ -35,7 +36,8 @@ interface DroppedItem {
     CommonModule, 
     ReactiveFormsModule,
     NgIconsModule,
-    SmallScreenModalComponent
+    SmallScreenModalComponent,
+    LinkSensorModalComponent
   ],
   templateUrl: './floorplan-editor-page.component.html',
   styleUrls: ['./floorplan-editor-page.component.css'], 
@@ -55,8 +57,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     @ViewChild('stall', {static: false}) stallElement!: ElementRef<HTMLImageElement>;
     @ViewChild('textBox', {static: false}) textElement!: ElementRef<HTMLImageElement>;
     @ViewChild('textInput', {static: false}) textInputField!: ElementRef<HTMLInputElement>; // ION-INPUT
-    @ViewChild('reader', {static: true}) qrCodeReader!: ElementRef;
-    macAddrFromQR = '';
+    linkingMenuVisible = true;
     lightMode = false;
     isDropdownOpen = false;
     openDustbin = false;
@@ -90,11 +91,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       stageScale: 1,
       stageX: 0,
       stageY: 0,
-    }
-    macAddressBlocks: string[] = [];
-    macAddressBlockElements : NodeListOf<HTMLInputElement> | undefined;
-    canLinkSensorWithMacAddress = false;
-    macAddressForm!: FormGroup;
+    };
     inputHasFocus = false;
     initialHeight = 0;
     scaleSnap = this.gridSize;
@@ -893,13 +890,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           this.activeItem = parent;
           this.setTransformer(parent, undefined);
         }
-      });
-      
-      //set ion-input elements where aria-label="MAC Address Block"
-      this.macAddressBlockElements = document.querySelectorAll('[aria-label="MAC Address Block"]');
-      
-      this.macAddressBlockElements.forEach((element: HTMLInputElement) => {
-        this.macAddressBlocks.push(element.value ? element.value.toString() : '');
       });
       
       window.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -2184,14 +2174,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
         this.alertPresented = false;
         this.checkScreenWidth();
-        this.macAddressForm = this.formBuilder.group({
-          macAddressBlock1: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
-          macAddressBlock2: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
-          macAddressBlock3: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
-          macAddressBlock4: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
-          macAddressBlock5: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
-          macAddressBlock6: ['', [Validators.required, Validators.pattern('^[0-9a-fA-F]{2}$')]],
-        });
 
         this.router.events.subscribe((val) => {
           this.currentPage = this.router.url.split('?')[0];
@@ -2224,6 +2206,25 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         modal?.classList.remove('hidden');
         setTimeout(() => {
           modal?.classList.remove('opacity-0');
+        }, 100);
+      }
+
+      openLinkingMenu(): void {
+        this.linkingMenuVisible = true;
+        const modal = document.querySelector('#link-sensor-modal');
+
+        modal?.classList.remove('hidden');
+        setTimeout(() => {
+          modal?.classList.remove('opacity-0');
+        }, 100);
+      }
+
+      closeLinkingMenu(): void {
+        this.linkingMenuVisible = false;
+        this.activeItem = null;
+
+        setTimeout(() => {
+          this.linkingMenuVisible = true;
         }, 100);
       }
 
@@ -2454,11 +2455,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       }
       this.isCardFlipped = false;
 
-      //clear macAddressBlocks
-      this.macAddressForm.reset();
-
-      this.canLinkSensorWithMacAddress = false;
-
       return false;
     }
 
@@ -2480,75 +2476,11 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
     toggleCardFlip() {
       this.isCardFlipped = !this.isCardFlipped;
-
-      //clear macAddressBlocks
-      this.macAddressForm.reset();
-
-      this.canLinkSensorWithMacAddress = false;
     }
 
     getSelectedSensorId(element: Konva.Circle) {
       return element.getAttr('id');
     }
-
-    updateLinkedSensors() {
-      const request: IlinkSensorRequest = {
-        id: this.activeItem.getAttr('customId')
-      };
-
-      const macAddress = (this.macAddrFromQR || this.macAddressBlocks.join(':')).toLowerCase();
-      this.macAddrFromQR = '';
-        this.appApiService.linkSensor(request, macAddress).then((res: any) => {
-          if (res['success']) {
-            // set the 'isLinked' attribute to true
-            // this.store.dispatch(new UpdateSensorLinkedStatus(request.id, true));
-
-            //update active sensor
-            // this.store.dispatch(new UpdateActiveSensor(request.id));
-            this.activeItem.setAttr('fill', 'lime');
-          }
-        });
-    }
-
-    handleMacAddressInput(event: any, blockIndex: number) {
-      // Format and store the value in your desired format
-      // Example: Assuming you have an array called macAddressBlocks to store the individual blocks
-      this.macAddressBlocks[blockIndex] = event.target.value.toString();
-      // Add any additional validation or formatting logic here
-      // Example: Restrict input to valid hexadecimal characters only
-      const validHexCharacters = /^[0-9A-Fa-f]*$/;
-      if (!validHexCharacters.test(event.target.value)) {
-        // Handle invalid input, show an error message, etc.
-      }
-
-      // Move focus to the next input when 2 characters are entered, 4 characters, etc.
-      if (event.target.value.length === 2 && validHexCharacters.test(event.target.value)) {
-        // map thorugh the macAddressBlocksElements and find the next input
-        const nextInput = this.macAddressBlockElements?.item(blockIndex + 1);
-        console.log(this.macAddressBlockElements, nextInput)
-        if (nextInput && nextInput?.value?.toString().length !== 2) {
-          nextInput.focus();
-
-          // check if input now has focus
-          if (nextInput !== document.activeElement) {
-            // if not, set the focus to the next input
-            nextInput.focus();
-          }
-        }
-      }
-
-      //check to see if all the blocks are filled nd satisfies the regex
-      if (this.macAddressBlocks.every((block) => block.valueOf().length === 2 && validHexCharacters.test(block))) {
-        // join the blocks together
-        const macAddress = this.macAddressBlocks.join(':');
-        // set the macAddress value in the form
-        this.macAddressForm.get('macAddress')?.setValue(macAddress);
-
-        this.canLinkSensorWithMacAddress = true;
-      } else {
-        this.canLinkSensorWithMacAddress = false;
-      }
-    }  
 
     zoomIn(): void {
       this.zoomOutDisabled = false;
@@ -2597,30 +2529,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
     // }
 
-    get macAddressBlock1() {
-      return this.macAddressForm.get('macAddressBlock1');
-    }
-
-    get macAddressBlock2() {
-      return this.macAddressForm.get('macAddressBlock2');
-    }
-
-    get macAddressBlock3() {
-      return this.macAddressForm.get('macAddressBlock3');
-    }
-
-    get macAddressBlock4() {
-      return this.macAddressForm.get('macAddressBlock4');
-    }
-
-    get macAddressBlock5() {
-      return this.macAddressForm.get('macAddressBlock5');
-    }
-
-    get macAddressBlock6() {
-      return this.macAddressForm.get('macAddressBlock6');
-    }
-
       chooseDustbinImage(): string {
         if (this.openDustbin && !this.onDustbin) {
           return 'assets/trash-open.svg';
@@ -2648,32 +2556,5 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
     showSensorLinking() : boolean {
       return this.activeItem instanceof Konva.Circle;
-    }
-
-    showQRCodeScanner(): void {
-      
-      const reader = document.getElementById('reader');
-      if (reader?.classList.contains('hidden')) {
-        reader?.classList.remove('hidden');
-      }
-      const html5QrcodeScanner = new Html5QrcodeScanner(
-        'reader',
-        { fps: 15 },
-        /* verbose= */ false);
-      html5QrcodeScanner.render((decoded, res)=>{
-        this.macAddrFromQR = decoded;
-        this.updateLinkedSensors();
-        if(html5QrcodeScanner.getState() == Html5QrcodeScannerState.SCANNING)
-          html5QrcodeScanner.pause();
-      } , undefined);
-
-      this.hideScanner = false;
-    }
-
-    hideQRCodeScanner(): void {
-      this.hideScanner = true;
-      //hide div with id='reader'
-      const reader = document.getElementById('reader');
-      reader?.classList.add('hidden');
     }
 }

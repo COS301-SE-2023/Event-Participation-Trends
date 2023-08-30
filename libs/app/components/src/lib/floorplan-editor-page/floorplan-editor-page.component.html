@@ -263,137 +263,20 @@
         </div>
       </div>
       <hr [ngClass]="{'hidden' : !showSensorLinking()}" class="m-3" />
-      <div [ngClass]="{'hidden' : !showSensorLinking()}">
+      <div [ngClass]="{'hidden' : !showSensorLinking()}" class="flex flex-col items-center">
         <h1 
           class="text-lg font-semibold text-center mb-3"
           [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
         >
           Link Sensor
         </h1>
-        <div class="flex flex-col items-start ml-3">
-          <div class="flex items-center w-full">
-            <input 
-              type="radio" 
-              name="linkOption" 
-              id="altOption" 
-              [checked]="hideScanner" 
-              (change)="hideQRCodeScanner()" 
-              [ngClass]="{'bg-ept-bumble-yellow': hideScanner}"
-            />
-            <label for="altOption" class="cursor-pointer sm:text-sm md:text-md" [ngClass]="{'text-white': !lightMode}">
-              Link with manual input
-            </label>
-          </div>
-          <div class="flex items-center w-full">
-            <input type="radio" name="linkOption" id="qrOption" [checked]="!hideScanner" (change)="showQRCodeScanner()" [ngClass]="{'bg-ept-bumble-yellow': !hideScanner}"/>
-            <label for="qrOption" class="cursor-pointer sm:text-sm md:text-md" [ngClass]="{'text-white': !lightMode}">
-              QR Code Scanner
-            </label>
-          </div>
-        </div>
-        <div #reader id="reader" class="m-2 w-[180px] rounded" [ngClass]="{'hidden': hideScanner, 'bg-ept-off-white' : !lightMode}"></div>
-        <form [formGroup]="macAddressForm" [ngClass]="{'hidden': !hideScanner}">
-          <div class="mt-4 flex flex-col items-center justify-evenly">
-            <div class="flex items-center">
-              <input
-                id="macAddressBlock1"
-                aria-label="MAC Address Block"
-                class="bg-slate-200 lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
-                type="text"
-                maxlength="2"
-                (input)="handleMacAddressInput($event, 0)"
-                (focus)="setInputFocus(true)"
-                (blur)="setInputFocus(false)"
-                name="macAddressBlock1"
-                formControlName="macAddressBlock1"
-                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock1?.hasError('required') && (macAddressBlock1?.dirty || macAddressBlock1?.touched), 'border-2 border-green-400' : macAddressBlock1?.valid && (macAddressBlock1?.dirty || macAddressBlock1?.touched)}"
-                />
-                <span class="ml-1 mr-1">:</span>
-                <input
-                id="macAddressBlock2"
-                aria-label="MAC Address Block"
-                class="bg-slate-200 lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
-                type="text"
-                maxlength="2"
-                (input)="handleMacAddressInput($event, 1)"
-                (focus)="setInputFocus(true)"
-                (blur)="setInputFocus(false)"
-                name="macAddressBlock2"
-                formControlName="macAddressBlock2"
-                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock2?.hasError('required') && (macAddressBlock2?.dirty || macAddressBlock2?.touched), 'border-2 border-green-400' : macAddressBlock2?.valid && (macAddressBlock2?.dirty || macAddressBlock2?.touched)}"
-              />
-              <span class="ml-1 mr-1">:</span>
-              <input
-                id="macAddressBlock3"
-                aria-label="MAC Address Block"
-                class="bg-slate-200 lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
-                type="text"
-                maxlength="2"
-                (input)="handleMacAddressInput($event, 2)"
-                (focus)="setInputFocus(true)"
-                (blur)="setInputFocus(false)"
-                name="macAddressBlock3"
-                formControlName="macAddressBlock3"
-                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock3?.hasError('required') && (macAddressBlock3?.dirty || macAddressBlock3?.touched), 'border-2 border-green-400' : macAddressBlock3?.valid && (macAddressBlock3?.dirty || macAddressBlock3?.touched)}"
-              />
-              <span class="ml-1 mr-1">:</span>
-              <input
-                id="macAddressBlock4"
-                aria-label="MAC Address Block"
-                class="bg-slate-200 lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
-                type="text"
-                maxlength="2"
-                (input)="handleMacAddressInput($event, 3)"
-                (focus)="setInputFocus(true)"
-                (blur)="setInputFocus(false)"
-                name="macAddressBlock4"
-                formControlName="macAddressBlock4"
-                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock4?.hasError('required') && (macAddressBlock4?.dirty || macAddressBlock4?.touched), 'border-2 border-green-400' : macAddressBlock4?.valid && (macAddressBlock4?.dirty || macAddressBlock4?.touched)}"
-              />
-              <span class="ml-1 mr-1">:</span>
-              <input
-                id="macAddressBlock5"
-                aria-label="MAC Address Block"
-                class="bg-slate-200 lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
-                type="text"
-                maxlength="2"
-                (input)="handleMacAddressInput($event, 4)"
-                (focus)="setInputFocus(true)"
-                (blur)="setInputFocus(false)"
-                name="macAddressBlock5"
-                formControlName="macAddressBlock5"
-                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock5?.hasError('required') && (macAddressBlock5?.dirty || macAddressBlock5?.touched), 'border-2 border-green-400' : macAddressBlock5?.valid && (macAddressBlock5?.dirty || macAddressBlock5?.touched)}"
-              />
-              <span class="ml-1 mr-1">:</span>
-              <input
-                id="macAddressBlock6"
-                aria-label="MAC Address Block"
-                class="bg-slate-200 lg:w-7 md:w-5 uppercase border-2 rounded-md text-center"
-                type="text"
-                maxlength="2"
-                (input)="handleMacAddressInput($event, 5)"
-                (focus)="setInputFocus(true)"
-                (blur)="setInputFocus(false)"
-                name="macAddressBlock6"
-                formControlName="macAddressBlock6"
-                [ngClass]="{ 'border-2 border-rose-500': macAddressBlock6?.hasError('required') && (macAddressBlock6?.dirty || macAddressBlock6?.touched), 'border-2 border-green-400' : macAddressBlock6?.valid && (macAddressBlock6?.dirty || macAddressBlock6?.touched)}"
-              />
-            </div>
-            <button
-              class="mt-3  rounded-md p-1 text-sm/16 cursor-pointer"
-              [ngClass]="{'opacity-50 pointer-events-none': !canLinkSensorWithMacAddress, 'bg-ept-blue-grey text-ept-deep-grey': !lightMode, 'bg-ept-deep-grey text-ept-off-white': lightMode}"
-              (click)="updateLinkedSensors()"
-              >Link Sensor</button
-            >
-          </div>
-        </form>
-        <!-- <div *ngIf="activeSensor$ | async as sensor" class="mt-3 flex flex-row justify-evenly"> -->
-          <!-- <p class="text-ept-deep-grey">Sensor Status:</p> -->
-          <!-- <ion-badge
-          color="{{ sensor['isLinked'] ? 'success' : 'danger' }}"
-          class="text-ept-off-white"
-          >{{ sensor['isLinked'] ? 'Linked' : 'Not Linked' }}</ion-badge> -->
-        <!-- </div> -->
+        <button 
+            class="text-ept-deep-grey cursor-pointer bg-ept-blue-grey border-ept-off-white rounded-md p-1 text-sm  hover:text-ept-deep-grey hover:border-1"
+            (click)="openLinkingMenu()"
+            [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+          >
+            Open linking menu
+          </button>
       </div>
       <div class="mt-auto mb-5 flex justify-center">
         <button
@@ -474,3 +357,11 @@
   class="transition-opacity duration-300 hidden opacity-0"
   id="small-screen-modal"
 ></event-participation-trends-small-screen-modal>
+<event-participation-trends-link-sensor-modal
+  *ngIf="linkingMenuVisible"
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="link-sensor-modal"
+  [activeItem]="activeItem"
+  [customId]="activeItem?.attrs?.customId"
+  (closeModalEvent)="closeLinkingMenu()"
+></event-participation-trends-link-sensor-modal>
