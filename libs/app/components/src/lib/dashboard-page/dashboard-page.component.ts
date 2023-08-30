@@ -69,6 +69,7 @@ export class DashboardPageComponent implements OnInit {
   // Functional
   eventStartTime: Date = new Date();
   eventEndTime: Date = new Date();
+  timeOffset = 0;
 
   // Cache
   floorlayoutScale = 1;
@@ -148,14 +149,20 @@ export class DashboardPageComponent implements OnInit {
   public event : any | null = null;
   public show = false;
   public loading = true;
-
+  
   async ngOnInit() {
     
     this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
 
     if (!this.id) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/home']);
     }
+    
+    if (!(await this.hasAccess())) {
+      this.router.navigate(['/home']);
+    }
+
+    this.timeOffset = (new Date()).getTimezoneOffset() * 60 * 1000;
     
     this.event = await this.appApiService.getEvent({ eventId: this.id });
 
@@ -163,20 +170,46 @@ export class DashboardPageComponent implements OnInit {
     const response = await this.appApiService.getFloorplanBoundaries(this.id);
     this.floorlayoutBounds = response.boundaries;
 
-    const eventStartDate = this.event.StartDate;
-    const eventEndDate = this.event.EndDate;
+    const eventStartDate = this.event.event.StartDate;
+    const eventEndDate = this.event.event.EndDate;
     
     if (eventStartDate) {
       this.eventStartTime = new Date(eventStartDate);
+      this.eventStartTime.setTime(this.eventStartTime.getTime() + this.timeOffset);
     }
     if (eventEndDate) {
       this.eventEndTime = new Date(eventEndDate);
+      this.eventEndTime.setTime(this.eventEndTime.getTime() + this.timeOffset);
     }
 
     this.loading = false;
     setTimeout(() => {
       this.show = true;
     }, 200);    
+  }
+
+  async hasAccess() {
+    const role = await this.appApiService.getRole();
+
+    if (role === 'admin') {
+      return new Promise((resolve) => {
+        resolve(true);
+      });
+    }
+
+    const subscribed_events = await this.appApiService.getSubscribedEvents();
+
+    for (const event of subscribed_events) {
+      if ((event as any)._id === this.id) {
+        return new Promise((resolve) => {
+          resolve(true);
+        });
+      }
+    }
+
+    return new Promise((resolve) => {
+      resolve(false);
+    });
   }
 
   dateToString(date: Date) {
@@ -188,10 +221,10 @@ export class DashboardPageComponent implements OnInit {
     setTimeout(() => {
       // set the number of hours of the event
       //------- testing data
-      this.eventStartTime = new Date();
-      this.eventStartTime.setHours(this.eventStartTime.getHours() - 411);
-      this.eventEndTime = new Date();
-      this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
+      // this.eventStartTime = new Date();
+      // this.eventStartTime.setHours(this.eventStartTime.getHours() - 411);
+      // this.eventEndTime = new Date();
+      // this.eventEndTime.setHours(this.eventEndTime.getHours() + 8);
       //---------------
       let hoursOfEvent = 0;
       if (this.eventStartTime.getHours() > this.eventEndTime.getHours()) {
@@ -233,6 +266,8 @@ export class DashboardPageComponent implements OnInit {
         Chart.register(ChartStreaming);
         this.heatmap = new HeatMap({
           container: document.getElementById('view')!,
+          width: 1000,
+          height: 1000,
           maxOpacity: .6,
           radius: 50,
           blur: 0.90,
@@ -259,17 +294,18 @@ export class DashboardPageComponent implements OnInit {
 
         // //! Testing purposes
 
-        now.setHours(now.getHours() - 410);
-        now.setMinutes(now.getMinutes() - 40);
-
-        console.log(now);
+        // now.setHours(now.getHours() - 371);
+        // now.setMinutes(now.getMinutes() - 0);
 
         // get positions this interval
 
         const intervalStart = new Date(now.getTime() - 5000);
         const intervalEnd = now;
 
-        const positions = await this.appApiService.getEventDevicePosition(this.id, intervalStart, intervalEnd);
+        const gmTime = new Date(intervalStart.getTime() + this.timeOffset);
+        const gmTimeEnd = new Date(intervalEnd.getTime() + this.timeOffset);
+
+        const positions = await this.appApiService.getEventDevicePosition(this.id, gmTime, gmTimeEnd);
         // add to heatmap
 
         // check to see if we don't need to reset the all positions detected array (if we are in a new hour)
@@ -300,8 +336,7 @@ export class DashboardPageComponent implements OnInit {
           });
 
           data.push({
-            x: 100,
-            y: 100,
+            x: 600, y: 100,
             value: 0,
             radius: 20
           });
@@ -461,6 +496,7 @@ export class DashboardPageComponent implements OnInit {
 
     // Get the ImageData URL (base64 encoded) from this.heatmap?.getDataURL()
     const base64Url = this.heatmap?.getDataURL();
+
     if (base64Url) {
       image.src = base64Url;
 

@@ -1,10 +1,11 @@
 import { AddDevicePosition, EventService } from '@event-participation-trends/api/event/feature';
 import { IGetAllEventsRequest } from '@event-participation-trends/api/event/util';
-import { PositioningService, SensorReading } from '@event-participation-trends/api/positioning';
+import { PositioningService, SensorReading, KalmanFilter } from '@event-participation-trends/api/positioning';
 import { Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { SensorlinkingService } from '@event-participation-trends/api/sensorlinking';
 import { Position } from '@event-participation-trends/api/event/data-access';
+import { Matrix } from 'ts-matrix';
 
 @Injectable()
 export class MqttService {
@@ -12,12 +13,14 @@ export class MqttService {
   private macToId: Map<string, number>;
   private buffer: Array<any>;
   private idNum: number;
+  private filters: Map<number, KalmanFilter>;
 
   constructor(private readonly sensorLinkingService: SensorlinkingService, private readonly positioningService: PositioningService, private readonly eventService: EventService) {
     this.sensors = new Array<string>();
     this.macToId = new Map<string, number>();
     this.buffer = new Array<any>();
     this.idNum = 0;
+    this.filters = new Map<number, KalmanFilter>();
   }
 
   async processData(data: any) {
@@ -62,24 +65,18 @@ export class MqttService {
             sensors.add({
               x: child?.attrs?.x,
               y: child?.attrs?.y,
-              id: child?.attrs?.customId,
+              id: child?.attrs?.uniqueId || child?.attrs?.customId,
             });
           }
         });
         const positions = await this.anotherOne(sensors);
+
         this.buffer = new Array<any>();
-        if(process.env['ENVIRONMENT'] === 'production')
+        if(process.env['MQTT_ENVIRONMENT'] === 'production' && positions.length > 0)
           this.eventService.addDevicePosition({
             eventId: (event as any)._id,
             position: positions
           })
-
-
-        // for devices
-        // find kalmann filter of device
-        // if not found, create new, with the first 2 parameeters being the measured x and y
-        // const estimation = kalman.update(new_time, new Matrix(2, 1, [[position.x], [position.y]]));
-        // kalman.predict();
       });
   }
 
@@ -103,6 +100,44 @@ export class MqttService {
         });
     }
     const positions = this.positioningService.getPositions(tempBuffer);
-    return positions;
+
+    if (!(process.env['MQTT_FILTER'] === 'kalman')) {
+      return positions;
+    }
+
+    const filteredPositions = new Array<Position>();
+
+    positions.map((position) => {
+      let filter = this.filters.get(position.id);
+
+      if (!filter) {
+        filter = new KalmanFilter(
+          position.x,
+          position.y,
+          position.timestamp.getTime() / 1000,
+          0.003,
+          0.5,
+          0.5
+        );
+      }
+
+      const estimated_position = filter.update(
+        new Matrix(2, 1, [[position.x], [position.y]]),
+        position.timestamp.getTime() / 1000
+      );
+
+      const filtered_position : Position = {
+        id: position.id,
+        x: estimated_position[0][0],
+        y: estimated_position[1][0],
+        timestamp: position.timestamp,
+      };
+
+      this.filters.set(position.id, filter);
+
+      filteredPositions.push(filtered_position);
+    });
+
+    return filteredPositions;
   };
 }

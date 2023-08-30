@@ -162,5 +162,11 @@
         </div>
       </div>
     </div>
+    <div class="flex justify-between align-middle">
+      <input class="bg-ept-blue-grey bg-opacity-10 rounded-xl p-2 text-ept-off-white outline-none" placeholder="email@domain.com" [(ngModel)]="invite"/>
+      <div id="invite_user" class="rounded-xl p-2 text-center flex justify-center align-middle bg-ept-blue-grey text-ept-deep-grey hover:scale-105 duration-300 transition-all" (click)="inviteUser()">Send Invite</div>
+    </div>
   </div>
 </div>
+<event-participation-trends-delete-confirm-modal id="delete-modal" class="hidden opacity-0 z-50 transition-all duration-300" event_id="{{getEventID()}}">
+</event-participation-trends-delete-confirm-modal>

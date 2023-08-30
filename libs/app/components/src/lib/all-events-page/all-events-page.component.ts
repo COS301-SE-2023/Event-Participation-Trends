@@ -65,9 +65,17 @@ export class AllEventsPageComponent implements OnInit {
 
     if (this.role !== 'admin') {
       this.subscribed_events = await this.appApiService.getSubscribedEvents();
+
+      // if event is public and not in subscribed events, add it to subscribed_events
+      this.all_events.forEach((event) => {
+        if (event.PublicEvent && !this.in(this.subscribed_events, event)) {
+          this.subscribed_events.push(event);
+        }
+      });
+
       this.non_subscribed_events = this.all_events.filter((event: any) => {
         return (
-          !this.hasAccess(event) &&
+          !this.hasAccess(event) && !event.PublicEvent &&
           this.my_events.filter((my_event) => {
             return my_event._id == event._id;
           }).length == 0
@@ -89,10 +97,20 @@ export class AllEventsPageComponent implements OnInit {
     this.show_all_events = false;
   }
 
+  in(events: any[], event: any): boolean {
+    for (let i = 0; i < events.length; i++) {
+      if (events[i]._id == event._id) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   getURL(event: any) {
     if (this.role == 'admin') {
       this.router.navigate(['/event/' + event._id + '/details']);
-    } else if (this.role == 'manager' && this.hasAccess(event)) {
+    } else if (this.role == 'manager' && this.managesEvent(event)) {
       this.router.navigate(['/event/' + event._id + '/details']);
     } else {
       this.router.navigate(['/event/' + event._id + '/dashboard']);
@@ -133,6 +151,16 @@ export class AllEventsPageComponent implements OnInit {
         this.nonSubscribedActiveEvents().length == 0
       );
     }
+  }
+
+  managesEvent(event: any): boolean {
+    for (let i = 0; i < this.my_events.length; i++) {
+      if (this.my_events[i]._id == event._id) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   hasAccess(event: any): boolean {

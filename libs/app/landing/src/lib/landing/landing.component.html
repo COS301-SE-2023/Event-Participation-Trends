@@ -11,10 +11,10 @@
     <div
       class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex items-center z-50"
     >
-      Event Participation Trends
+      <div class="hidden md:block mr-3">Event Participation Trends</div>
       <a routerLink="/home">
         <div
-          class="btn hover:bg-ept-navy-blue rounded-full w-12 h-10 flex justify-center items-center border-none ml-3 mb-1"
+          class="btn hover:bg-ept-navy-blue rounded-full w-12 h-10 flex justify-center items-center border-none mb-1"
           *ngIf="loggedIn"
         >
           <ng-icon
@@ -53,11 +53,11 @@
 >
   <div
     id="welcome"
-    class="snap-start min-h-screen w-full mt-[15vh] mb-[50vh] px-6 pt-16 flex justify-normal items-center"
+    class="hidden md:flex snap-start min-h-screen w-full mt-[15vh] mb-[50vh] px-6 pt-16 justify-normal items-center"
   >
     <div class="w-full grid grid-cols-12 h-full">
       <div
-        class="col-span-7 ml-36 mr-10 font-montserrat h-full flex justify-center items-center"
+        class="col-span-7 lg:ml-36 mr-10 font-montserrat h-full flex justify-center items-center"
       >
         <div>
           <div class="text-6xl font-semibold my-6">
@@ -82,11 +82,40 @@
         <div
           class="w-[50vw] h-[40vw] rounded-[100%] rotate-[-14deg] bg-ept-blue-grey flex justify-center items-center"
         >
-          <div class="rotate-[14deg] mr-48 mb-16">
+          <div class="rotate-[14deg] md:mr-24 lg:mr-48 mb-16">
             <!-- <span
               class="loading loading-dots loading-lg text-ept-navy-blue"
             ></span> -->
-            <img src="assets/ept_logo.png" alt="Image not found" height="300" width="300" class="animate-[bounce_5s_ease-in-out_infinite] z-50" />
+            <img src="assets/ept_logo.png" alt="Image not found" width="100px" height="100px" class="animate-[bounce_5s_ease-in-out_infinite] z-50 w-[200px] lg:w-[300px]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    id="welcome-mobile"
+    class="snap-start min-h-screen w-full mt-[15vh] mb-[50vh] px-6 pt-16 flex md:hidden justify-normal items-center"
+  >
+    <div class="w-full h-full">
+      <div
+        class="col-span-7 font-montserrat h-full flex justify-center items-center"
+      >
+        <div>
+          <div class="text-5xl font-semibold my-6 flex flex-col justify-center">
+            Welcome to <br />
+            <span class="text-ept-bumble-yellow">Event </span>
+            <span
+              class="bg-gradient-to-r from-ept-bumble-yellow to-ept-blue-grey text-transparent bg-clip-text"
+              >Participation</span
+            >
+            <span class="text-ept-bumble-yellow"> Trends</span>
+          </div>
+          <div class="text-left">
+            Our system leverages Wi-Fi sensors to provide accurate and real-time
+            tracking of participants within event spaces. With our solution,
+            event managers can effortlessly create and configure events, while
+            viewers gain access to valuable insights through visualizations like
+            heatmaps and flowmaps.
           </div>
         </div>
       </div>
@@ -96,44 +125,44 @@
     id="how-to"
     class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-start items-center"
   >
-    <div class="h-fit ml-36 pb-20">
-      <div class="text-6xl font-semibold">Using the app</div>
+    <div class="h-fit md:ml-20 lg:ml-36  pb-20">
+      <div class="text-4xl md:text-6xl font-semibold">Using the app</div>
       <div class="ml-5">
-        <div class="flex items-center mt-10">
-          <div class="mx-3 text-ept-bumble-yellow text-4xl font-bold w-8">
-            1.
+        <div class="flex items-start justify-start mt-10">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold w-8">
+            <div class="w-8">1.</div>
           </div>
-          <div class="text-2xl font-montserrat">Create an event</div>
+          <div class="text-lg md:text-2xl font-montserrat">Create an event</div>
         </div>
-        <div class="flex items-center mt-8">
-          <div class="mx-3 text-ept-bumble-yellow text-4xl font-bold w-8">
-            2.
+        <div class="flex items-start justify-start mt-8">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold">
+            <div class="w-8">2.</div>
           </div>
-          <div class="text-2xl font-montserrat">
+          <div class="text-lg md:text-2xl font-montserrat">
             Create a floorplan for the event by setting a start- & end time
           </div>
         </div>
-        <div class="flex items-center mt-8">
-          <div class="mx-3 text-ept-bumble-yellow text-4xl font-bold w-8">
-            3.
+        <div class="flex items-start justify-start mt-8">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold w-8">
+            <div class="w-8">3.</div>
           </div>
-          <div class="text-2xl font-montserrat">
+          <div class="text-lg md:text-2xl font-montserrat">
             Link the physical sensors to the event
           </div>
         </div>
-        <div class="flex items-center mt-8">
-          <div class="mx-3 text-ept-bumble-yellow text-4xl font-bold w-8">
-            4.
+        <div class="flex items-start justify-start mt-8">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold w-8">
+            <div class="w-8">4.</div>
           </div>
-          <div class="text-2xl font-montserrat">
+          <div class="text-lg md:text-2xl font-montserrat">
             Wait for the event to start
           </div>
         </div>
-        <div class="flex items-center mt-8">
-          <div class="mx-3 text-ept-bumble-yellow text-4xl font-bold w-8">
-            5.
+        <div class="flex items-start justify-start mt-8">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold w-8">
+            <div class="w-8">5.</div>
           </div>
-          <div class="text-2xl font-montserrat">
+          <div class="text-lg md:text-2xl font-montserrat">
             View the generated maps on the dashboard
           </div>
         </div>
@@ -146,13 +175,13 @@
   >
     <div>
       <div class="flex justify-center items-center">
-        <div class="text-6xl font-semibold mb-10">
+        <div class="text-3xl md:text-6xl font-semibold mb-10 text-center">
           Frequently Asked Questions
         </div>
       </div>
-      <div class="grid grid-cols-2 mx-[15vw]">
-        <div>
-          <div class="my-2 mx-1">
+      <div class="grid grid-cols-2 md:mx-[15vw]">
+        <div class="col-span-2 md:col-span-1">
+          <div class="mt-2 mx-1">
             <div
               class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
             >
@@ -171,7 +200,7 @@
               </div>
             </div>
           </div>
-          <div class="my-2 mx-1">
+          <div class="mt-2 mx-1">
             <div
               class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
             >
@@ -191,8 +220,8 @@
             </div>
           </div>
         </div>
-        <div>
-          <div class="my-2 mx-1">
+        <div class="col-span-2 md:col-span-1">
+          <div class="mt-2 mx-1">
             <div
               class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
             >
@@ -211,7 +240,7 @@
               </div>
             </div>
           </div>
-          <div class="my-2 mx-1">
+          <div class="mt-2 mx-1">
             <div
               class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
             >
@@ -240,7 +269,7 @@
     *ngIf="!loggedIn"
   >
     <div class="mb-16">
-      <div class="text-6xl font-semibold font-poppins mb-8">
+      <div class="text-center text-4xl md:text-6xl font-semibold font-poppins mb-8">
         Login with Google
       </div>
       <div class="flex justify-center">
@@ -273,7 +302,7 @@
     *ngIf="loggedIn"
   >
     <div>
-      <div class="text-6xl font-semibold font-poppins mb-8">
+      <div class="text-center text-4xl md:text-6xl font-semibold font-poppins mb-8">
         Continue To Home
       </div>
       <div class="flex justify-center">
@@ -294,29 +323,29 @@
   >
     <div>
       <div class="flex justify-center">
-        <div class="text-6xl font-semibold font-poppins mb-8">Contact Us</div>
+        <div class="text-4xl md:text-6xl font-semibold font-poppins mb-8">Contact Us</div>
       </div>
-      <div class="flex justify-center">
-        <div class="grid grid-cols-2">
-          <div class="font-montserrat text-2xl my-3">
+      <div class="flex justify-center text-base sm:text-xl md:text-2xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+          <div class="font-montserrat my-3">
             <span class="text-ept-bumble-yellow">lukas</span
             ><span class="font-semibold">@</span
             ><span class="text-ept-blue-grey">eventparticipationtrends</span
             >.co.za
           </div>
-          <div class="font-montserrat text-2xl my-3">
+          <div class="font-montserrat my-3">
             <span class="text-ept-bumble-yellow">stefan</span
             ><span class="font-semibold">@</span
             ><span class="text-ept-blue-grey">eventparticipationtrends</span
             >.co.za
           </div>
-          <div class="font-montserrat text-2xl my-3">
+          <div class="font-montserrat my-3">
             <span class="text-ept-bumble-yellow">arno</span
             ><span class="font-semibold">@</span
             ><span class="text-ept-blue-grey">eventparticipationtrends</span
             >.co.za
           </div>
-          <div class="font-montserrat text-2xl my-3">
+          <div class="font-montserrat my-3">
             <span class="text-ept-bumble-yellow">reuben</span
             ><span class="font-semibold">@</span
             ><span class="text-ept-blue-grey">eventparticipationtrends</span
@@ -325,7 +354,7 @@
         </div>
       </div>
       <div class="flex justify-center">
-        <div class="font-montserrat text-2xl my-3">
+        <div class="font-montserrat text-base sm:text-xl md:text-2xl my-3">
           <span class="text-ept-bumble-yellow">luca</span
           ><span class="font-semibold">@</span
           ><span class="text-ept-blue-grey">eventparticipationtrends</span
