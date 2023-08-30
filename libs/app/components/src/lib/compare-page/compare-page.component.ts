@@ -74,6 +74,8 @@ export class ComparePageComponent implements OnInit{
       for (const event of this.events) {
         this.eventList.push({event, selected: false});
       }
+    } else {
+      this.router.navigate(['/home']);
     }
 
     this.loading = false;

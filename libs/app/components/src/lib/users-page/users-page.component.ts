@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { FormsModule } from '@angular/forms';
 import { NgIconComponent } from '@ng-icons/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'event-participation-trends-users-page',
@@ -13,7 +14,7 @@ import { NgIconComponent } from '@ng-icons/core';
 })
 export class UsersPageComponent implements OnInit {
 
-  constructor(private appApiService: AppApiService) {}
+  constructor(private appApiService: AppApiService, private router: Router) {}
 
   public users: any[] = [];
   public search = '';
@@ -24,6 +25,12 @@ export class UsersPageComponent implements OnInit {
   public disable_search = false;
 
   async ngOnInit() {
+    const role = await this.appApiService.getRole();
+
+    if (role != 'admin') {
+      this.router.navigate(['/home']);
+    }
+
     this.users = await this.appApiService.getAllUsers();
 
     this.loading = false;

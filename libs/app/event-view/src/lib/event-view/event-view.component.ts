@@ -198,4 +198,8 @@ export class EventViewComponent implements OnInit {
       this.showHelpModal();
     }, 100);
   }
+
+  isActiveRoute(route: string): boolean {
+    return this.router.url.includes(route);
+  }
 }
