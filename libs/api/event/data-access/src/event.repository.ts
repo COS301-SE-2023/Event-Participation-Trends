@@ -28,7 +28,10 @@ export class EventRepository {
         if(imgDoc.length)
             await this.imageModel.updateOne(
                 { eventId: {$eq: image.eventId}},
-                { $set: { imageBase64: image.imageBase64 } });
+                { $set: { imageBase64: image.imageBase64, 
+                          imageScale: image.imageScale,
+                          imageType: image.imageType,
+                }});
         else
             await this.imageModel.create(image);        
     }   
@@ -37,6 +40,11 @@ export class EventRepository {
         return await this.imageModel.find(
             {eventId :{$eq: eventID}},
             { _id: 1 })
+    }
+
+    async findImageByEventId(eventID: Types.ObjectId){
+        return await this.imageModel.find(
+            {eventId :{$eq: eventID}})
     }
 
     async addImageToEvent(eventId: Types.ObjectId, imageId: Types.ObjectId){
