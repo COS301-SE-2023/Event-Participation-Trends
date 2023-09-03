@@ -3,7 +3,6 @@ import { CommandHandler, EventPublisher, ICommandHandler } from "@nestjs/cqrs";
 import { Image } from "../models";
 import { Status } from "@event-participation-trends/api/user/util";
 import { Types } from "mongoose";
-import { HttpException } from "@nestjs/common";
 
 @CommandHandler(UploadImageCommand)
 export class UploadImageHandler implements ICommandHandler<UploadImageCommand, IImageUploadResponse> {
@@ -45,6 +44,8 @@ export class UploadImageHandler implements ICommandHandler<UploadImageCommand, I
                 const data = {
                     eventId: eventIdObj,
                     imageBase64: request.floorlayoutImg,
+                    imageScale: request.imageScale,
+                    imageType: request.imageType,
                 }
         
                 const event = this.publisher.mergeObjectContext(Image.fromData(data));
