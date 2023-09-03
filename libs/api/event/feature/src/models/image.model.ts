@@ -9,6 +9,8 @@ export class Image extends AggregateRoot implements IImage {
     constructor(
         public eventId: Types.ObjectId | undefined | null,
         public imageBase64:  string | undefined | null,
+        public imageScale: number | undefined | null,
+        public imageType: string | undefined | null,
     ){
         super();
     }
@@ -21,6 +23,8 @@ export class Image extends AggregateRoot implements IImage {
         const instance = new Image(
             image.eventId,
             image.imageBase64,
+            image.imageScale,
+            image.imageType,
         );
         return instance;
     }
@@ -29,6 +33,8 @@ export class Image extends AggregateRoot implements IImage {
         return {
             eventId: this.eventId,
             imageBase64: this.imageBase64,
+            imageScale: this.imageScale,
+            imageType: this.imageType,
         };
     }
 }
