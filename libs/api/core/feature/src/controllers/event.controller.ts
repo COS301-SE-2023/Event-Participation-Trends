@@ -37,6 +37,7 @@ import {
     IGetFloorplanBoundariesRequest,
     IDeleteEventRequest,
     IDeleteEventResponse,
+    IImageUploadRequest,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -468,7 +469,30 @@ export class EventController {
     return this.eventService.getManagedEventCategories(extractRequest);
   }
 
+  @Post('uploadImage')
+  @SetMetadata('role', Role.MANAGER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async uploadImage(
+    @Req() req: Request,
+    @Body() requestBody: IImageUploadRequest
+  ): Promise<ISendViewRequestResponse> {
+    const request: any = req;
 
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: viewer email not provided', 400);
+
+    if (requestBody.eventId == undefined || requestBody.eventId == null)
+      throw new HttpException('Bad Request: eventId not provided', 400);
+
+    if (requestBody.floorlayoutImg == undefined || requestBody.floorlayoutImg == null)
+      throw new HttpException('Bad Request: floorlayoutImg not provided', 400);
+
+    const extractRequest: IImageUploadRequest = {
+      eventId: requestBody.eventId,
+      floorlayoutImg: requestBody.floorlayoutImg,
+    };
+    return this.eventService.uploadImage(extractRequest);
+  }
 
 }
 
