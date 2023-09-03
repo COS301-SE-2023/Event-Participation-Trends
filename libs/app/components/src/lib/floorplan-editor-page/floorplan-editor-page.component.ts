@@ -16,6 +16,7 @@ import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matRadioButtonUnc
 import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
 import { SmallScreenModalComponent } from '../small-screen-modal/small-screen-modal.component';
 import { LinkSensorModalComponent } from '../link-sensor-modal/link-sensor-modal.component';
+import { ToastModalComponent } from '../toast-modal/toast-modal.component';
 
 export interface ISensorState {
   object: Konva.Circle,
@@ -37,7 +38,8 @@ interface DroppedItem {
     ReactiveFormsModule,
     NgIconsModule,
     SmallScreenModalComponent,
-    LinkSensorModalComponent
+    LinkSensorModalComponent,
+    ToastModalComponent
   ],
   templateUrl: './floorplan-editor-page.component.html',
   styleUrls: ['./floorplan-editor-page.component.css'], 
@@ -154,6 +156,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     STALL_IMAGE_URL = 'assets/stall-icon.png';
     eventId = '';
     hideScanner = true;
+    showToast = true;
     
     id = '';
     event: any | null | undefined = null;
@@ -214,6 +217,14 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         return 'Click button to enable creating walls';
       } else {
         return 'Click button to disable creating walls';
+      }
+    }
+
+    getUploadImageTitle(): string {
+      if (this.preventCreatingWalls) {
+        return 'Upload an image of a floor plan';
+      } else {
+        return 'Disable creating walls above to upload an image of a floorplan to the canvas';
       }
     }
 
@@ -2228,6 +2239,14 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         }, 100);
       }
 
+      closeToast(): void {
+        this.showToast = false;
+
+        setTimeout(() => {
+          this.showToast = true;
+        }, 100);
+      }
+
       adjustJSONData(json: Record<string, any>): void {
         // adjust children's attributes
         json['children'].forEach((child: any) => {
@@ -2557,4 +2576,35 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     showSensorLinking() : boolean {
       return this.activeItem instanceof Konva.Circle;
     }
+  
+  uploadFloorplanImage(event: any) {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+
+    if (fileInput) {
+      fileInput.addEventListener('change', () => {
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+          return;
+        }
+        const selectedFile = fileInput.files[0];
+  
+        if (selectedFile) {
+          const fileType = selectedFile.type;
+  
+          if (!fileType.startsWith('image/')) {
+            this.showToast = true;
+            const modal = document.querySelector('#toast-modal');
+
+            modal?.classList.remove('hidden');
+            setTimeout(() => {
+              modal?.classList.remove('opacity-0');
+            }, 100);
+            
+            fileInput.value = ''; // Clear the input field
+          }
+        }
+      });
+    }
+
+    fileInput?.click();
+  }
 }

@@ -1,7 +1,7 @@
 <div *ngIf="isLoading" class="top-0 left-0 w-full h-screen flex">
   <div class="m-auto flex justify-between">
     <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">Getting things ready</h1>
-    <span class="loading loading-dots loading-lg ml-2 text-ept-blue-grey"></span>
+    <span class="loading loading-dots loading-lg ml-2 text-ept-blue-grey ept-of"></span>
   </div>
 </div>
 <div class="top-0 left-0 w-full h-screen">
@@ -284,7 +284,30 @@
             Open linking menu
           </button>
       </div>
-      <div class="mt-auto mb-5 flex justify-center">
+      <div class="mt-auto mb-5 flex flex-col justify-between items-center">
+        <div 
+          [title]="getUploadImageTitle()" 
+          class="flex flex-col items-center mb-10"
+          [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'opacity-50 hover:opacity-100':preventCreatingWalls}"
+        >
+          <p 
+            class="text-sm text-ept-blue-grey" 
+            (click)="uploadFloorplanImage($event)"
+            [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'cursor-pointer':preventCreatingWalls}"
+          >
+            Upload image of a floorplan
+          </p>
+          <input type="file" id="fileInput" accept="image/*" capture="camera" hidden/>
+          <img
+            id="uploadImage"
+            class=" p-1 w-20 h-20 mt-2"
+            draggable="false"
+            [src]="lightMode ? 'assets/black-alt-upload-frame-svgrepo-com.svg' : 'assets/blue-alt-upload-frame-svgrepo-com.svg'"
+            alt="uploadImage"
+            (click)="uploadFloorplanImage($event)"
+            [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'cursor-pointer':preventCreatingWalls}"
+          />
+        </div>
         <button
           (click)="saveFloorLayout()"
           class="create-event h-40px w-[100px] text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
@@ -371,3 +394,17 @@
   [customId]="activeItem?.attrs?.customId"
   (closeModalEvent)="closeLinkingMenu()"
 ></event-participation-trends-link-sensor-modal>
+<event-participation-trends-toast-modal
+  *ngIf="showToast"
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="toast-modal"
+  [toastHeading]="'Invalid file extension'"
+  [toastMessage]="'Please select an image file when uploading an image of a floor plan.'" 
+  [toastType]="'failure'"
+  [success]="false"
+  [failure]="true"
+  [linking]="false"
+  (closeModalEvent)="closeToast()"
+  [busyUploadingFloorplan]="true"
+></event-participation-trends-toast-modal>
+
