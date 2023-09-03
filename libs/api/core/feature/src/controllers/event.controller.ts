@@ -38,6 +38,7 @@ import {
     IDeleteEventRequest,
     IDeleteEventResponse,
     IImageUploadRequest,
+    IGetEventFloorlayoutImageRequest,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -469,7 +470,7 @@ export class EventController {
     return this.eventService.getManagedEventCategories(extractRequest);
   }
 
-  @Post('uploadImage')
+  @Post('uploadFloorlayoutImage')
   @SetMetadata('role', Role.MANAGER)
   @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
   async uploadImage(
@@ -490,8 +491,28 @@ export class EventController {
     const extractRequest: IImageUploadRequest = {
       eventId: requestBody.eventId,
       floorlayoutImg: requestBody.floorlayoutImg,
+      imageScale: requestBody.imageScale,
+      imageType: requestBody.imageType,
     };
     return this.eventService.uploadImage(extractRequest);
+  }
+
+  @Get('getFloorLayoutImage')
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
+  async getFloorLayoutImage(
+    @Req() req: Request,
+    @Query() query: any 
+  ): Promise<IGetEventFloorlayoutImageRequest> {
+    const request: any = req;
+
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: Manager email not provided', 400);
+
+    const extractRequest: IGetEventFloorlayoutImageRequest = {
+        eventId: query.eventId,
+    };
+    return this.eventService.getEventFloorLayoutImage(extractRequest);
   }
 
 }
