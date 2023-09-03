@@ -5,6 +5,7 @@ import * as mongoose from 'mongoose';
 import { Event,
          Sensor,
          Stall,
+         Image,
 } from '../schemas';
 import { Types } from 'mongoose';
 
@@ -14,11 +15,35 @@ export class EventRepository {
         @InjectModel(Event.name) private eventModel: mongoose.Model<Event>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
         @InjectModel(Stall.name) private stallModel: mongoose.Model<Stall>,
+        @InjectModel(Image.name) private imageModel: mongoose.Model<Image>,
     ){}
 
     async createEvent(event: IEventDetails){
         await this.eventModel.create(event);
     }   
+
+    async uploadImage(image: Image){
+        const imgDoc = await this.imageModel.find(
+            {eventId :{$eq: image.eventId}});
+        if(imgDoc.length)
+            await this.imageModel.updateOne(
+                { eventId: {$eq: image.eventId}},
+                { $set: { imageBase64: image.imageBase64 } });
+        else
+            await this.imageModel.create(image);        
+    }   
+
+    async findImageIdByEventId(eventID: Types.ObjectId){
+        return await this.imageModel.find(
+            {eventId :{$eq: eventID}},
+            { _id: 1 })
+    }
+
+    async addImageToEvent(eventId: Types.ObjectId, imageId: Types.ObjectId){
+        return await this.eventModel.updateOne(
+            { _id: {$eq: eventId}},
+            {$set: {FloorLayoutImg :imageId}});
+    }
 
     async getAllEvents(){
         return await this.eventModel.find().select("-Devices");
