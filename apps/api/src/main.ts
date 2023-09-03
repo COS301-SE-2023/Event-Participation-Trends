@@ -9,12 +9,19 @@ import { Transport } from '@nestjs/microservices'
 import { AppModule } from './app/app.module';
 import cookieParser = require('cookie-parser');
 import { MqttModule } from './app/mqtt.module';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
+  //change maximum size of requests
+  const expressApp = app.getHttpAdapter().getInstance() as express.Application;
+  expressApp.use(express.json({ limit: '16mb' }));
+
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   app.use(cookieParser());
+  
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
