@@ -21,3 +21,4 @@ export * from './get-managed-event-categories.request';
 export * from './get-floorplan-boundaries.request';
 export * from './delete-event.request';
 export * from './upload-image.request';
+export * from './get-event-floorlayout-image.request';
