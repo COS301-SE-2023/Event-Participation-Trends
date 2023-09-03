@@ -7,6 +7,7 @@ import { NgIconsModule, provideIcons } from '@ng-icons/core';
 
 import { matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matRedo } from "@ng-icons/material-icons/baseline";
 import { matWarningAmberRound, matErrorOutlineRound } from "@ng-icons/material-icons/round";
+import { matPlayCircleOutline, matPauseCircleOutline } from "@ng-icons/material-icons/outline";
 
 import HeatMap from 'heatmap-ts';
 import Konva from 'konva';
@@ -24,7 +25,7 @@ interface IHeatmapData {
   templateUrl: './heatmap-container.component.html',
   styleUrls: ['./heatmap-container.component.css'],
   providers: [
-    provideIcons({matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matWarningAmberRound, matErrorOutlineRound, matRedo}),
+    provideIcons({matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matWarningAmberRound, matErrorOutlineRound, matRedo, matPlayCircleOutline, matPauseCircleOutline}),
   ],
 })
 export class HeatmapContainerComponent implements OnInit{
@@ -36,6 +37,7 @@ export class HeatmapContainerComponent implements OnInit{
   show = false;
   showFloorplan = false;
   overTimeRange = false;
+  changingTimeRange = false;
 
   // Keys
   shiftDown = false;
@@ -216,6 +218,9 @@ export class HeatmapContainerComponent implements OnInit{
   }
 
   updateCurrentTime(event: any) {
+    // stop the interval of the auto play if it is active
+    this.changingTimeRange = true;
+
     //set the current time based on the value of the time range input
     const time = event.target.value;
 
@@ -543,5 +548,27 @@ export class HeatmapContainerComponent implements OnInit{
     // Create and dispatch a new "change" event
     const event = new Event('change', { bubbles: true });
     rangeElement.dispatchEvent(event);
+  }
+
+  async playFlowOfHeatmap() {
+    const rangeElement = document.getElementById('myRange') as HTMLInputElement;
+
+    // set the changing time range to false
+    this.changingTimeRange = false;
+
+    // increase or decrease the value of the range element by 5 seconds on an interval until the end time is reached
+    const interval = setInterval(() => {
+      if (this.changingTimeRange) {
+        clearInterval(interval);
+        return;
+      }
+
+      if (parseInt(rangeElement.value) < this.totalSeconds) {
+        this.addFiveSeconds(true);
+      } else {
+        this.overTimeRange = true;
+        clearInterval(interval);
+      }
+    }, 1000);
   }
 }
