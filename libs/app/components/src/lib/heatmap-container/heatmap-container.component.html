@@ -26,8 +26,9 @@
             <ng-icon name="matRedo" class="m-0 p-0 self-center transform scale-x-[-1]"></ng-icon>
             <label class="text-sm m-0 p-0 hover:cursor-pointer">-5s</label>
         </div>
-        <div (click)="playFlowOfHeatmap()" title="Play flow of heatmap" class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
-            <ng-icon name="matPlayCircleOutline"></ng-icon>
+        <div class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+            <ng-icon (click)="playFlowOfHeatmap()" title="Play flow of heatmap" *ngIf="paused" name="matPlayCircleOutline"></ng-icon>
+            <ng-icon (click)="pauseFlowOfHeatmap()" title="Pause flow of heatmap" *ngIf="!paused" name="matPauseCircleOutline"></ng-icon>
         </div>
     </div>
     <div *ngIf="show && !hasFloorlayout" class="w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10">

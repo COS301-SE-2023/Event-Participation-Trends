@@ -38,6 +38,7 @@ export class HeatmapContainerComponent implements OnInit{
   showFloorplan = false;
   overTimeRange = false;
   changingTimeRange = false;
+  paused = true;
 
   // Keys
   shiftDown = false;
@@ -220,6 +221,7 @@ export class HeatmapContainerComponent implements OnInit{
   updateCurrentTime(event: any) {
     // stop the interval of the auto play if it is active
     this.changingTimeRange = true;
+    this.paused = true;
 
     //set the current time based on the value of the time range input
     const time = event.target.value;
@@ -551,6 +553,8 @@ export class HeatmapContainerComponent implements OnInit{
   }
 
   async playFlowOfHeatmap() {
+    this.paused = false;
+
     const rangeElement = document.getElementById('myRange') as HTMLInputElement;
 
     // set the changing time range to false
@@ -569,6 +573,11 @@ export class HeatmapContainerComponent implements OnInit{
         this.overTimeRange = true;
         clearInterval(interval);
       }
-    }, 1000);
+    }, 500);
+  }
+
+  pauseFlowOfHeatmap() {
+    this.paused = true;
+    this.changingTimeRange = true;
   }
 }
