@@ -1,15 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IEvent } from '@event-participation-trends/api/event/util';
+import { IEvent, IPosition } from '@event-participation-trends/api/event/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 
-import { matSearch, matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
+import { matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matRedo } from "@ng-icons/material-icons/baseline";
 import { matWarningAmberRound, matErrorOutlineRound } from "@ng-icons/material-icons/round";
 
 import HeatMap from 'heatmap-ts';
 import Konva from 'konva';
+
+interface IHeatmapData {
+  x: number,
+  y: number,
+  value: number,
+  radius: number
+}
 @Component({
   selector: 'event-participation-trends-heatmap-container',
   standalone: true,
@@ -17,7 +24,7 @@ import Konva from 'konva';
   templateUrl: './heatmap-container.component.html',
   styleUrls: ['./heatmap-container.component.css'],
   providers: [
-    provideIcons({matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matWarningAmberRound, matErrorOutlineRound}),
+    provideIcons({matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matWarningAmberRound, matErrorOutlineRound, matRedo}),
   ],
 })
 export class HeatmapContainerComponent implements OnInit{
@@ -42,8 +49,9 @@ export class HeatmapContainerComponent implements OnInit{
   hasData = true;
   startDate: Date | null = null;
   endDate: Date | null = null;
-  currentTime: string | null = null;
+  currentTime = '';
   totalSeconds = 0;
+  positions: IPosition[] = [];
 
   //Zoom and recenter
   minScale = 1; // Adjust this as needed
@@ -66,7 +74,7 @@ export class HeatmapContainerComponent implements OnInit{
   async ngOnInit() {
     // check if the event has device positions
     const startDate = new Date(this.containerEvent.StartDate);
-    startDate.setDate(startDate.getDate() - 1);
+    startDate.setDate(startDate.getDate() - 1); // for test Event: Demo 3
     const endDate = new Date(this.containerEvent.EndDate);
 
     this.startDate = startDate;
@@ -123,11 +131,88 @@ export class HeatmapContainerComponent implements OnInit{
       this.getImageFromJSONData(this.containerEvent._id);   
     }, 1000);
 
-    const positions = await this.appApiService.getEventDevicePosition(this.containerEvent._id, this.startDate, this.endDate);
+    this.positions = await this.appApiService.getEventDevicePosition(this.containerEvent._id, this.startDate, this.endDate);
     
-    if (positions.length === 0) {
+    if (this.positions.length === 0) {
       this.hasData = false;
+
     }
+    //sort the positions by timestamp
+    this.positions.sort((a: IPosition, b: IPosition) => {
+      if (!a.timestamp || !b.timestamp) return 0;
+      return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+    });
+
+    // set the heatmap data to the positions that were detected in the first 5 seconds
+    // only run through the positions until a timestamp is found that is 5 seconds greater than the start date
+    this.setHeatmapIntervalData(this.startDate!);
+  }
+
+  async setHeatmapIntervalData(startTime: Date) {
+    const positionsToUse: IHeatmapData[] = [];
+
+    //find the first index where the timestamp is within 5 seconds of the start time
+    const index = this.positions.findIndex((position: IPosition) => {
+      if (position.timestamp) {
+        if (Math.abs(startTime.getTime() - new Date(position.timestamp).getTime()) <= 5000) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    for (let i = index; i < this.positions.length; i++) {
+      const position = this.positions[i];
+      
+      if (position && position.timestamp && position.x && position.y) {
+        const positionDate = new Date(position.timestamp);
+        console.log("position: " + positionDate);
+
+        if (Math.abs(startTime.getTime() - positionDate.getTime()) <= 5000) {
+          if (position.x != null && position.y != null) {
+            positionsToUse.push({
+              x: position.x,
+              y: position.y,
+              value: 20,
+              radius: 10
+            });
+          } else {
+            positionsToUse.push({
+              x: 100,
+              y: 100,
+              value: 0,
+              radius: 20
+            });
+          }
+
+          positionsToUse.push({
+            x: 100,
+            y: 100,
+            value: 0,
+            radius: 20
+          });
+
+        } else {
+          break;
+        }
+      }
+    }
+    console.log(positionsToUse);
+    this.setHeatmapData(positionsToUse);
+  }
+
+  updateHeatmap(event: any) {
+    //set the current time based on the value of the time range input
+    const time = event.target.value;
+
+    //add the time to the start date's seconds
+    const updatedTime = new Date(this.startDate!);
+    updatedTime.setSeconds(updatedTime.getSeconds() + parseInt(time));
+
+    //set the current time
+    this.currentTime = updatedTime.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+
+    this.setHeatmapIntervalData(updatedTime);
   }
 
   updateCurrentTime(event: any) {
@@ -142,6 +227,56 @@ export class HeatmapContainerComponent implements OnInit{
     this.currentTime = updatedTime.toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
   }
 
+  setHeatmapData(data: IHeatmapData[]) {
+    // remove the old heatmap layer
+    this.floorlayoutStage?.find('Layer').forEach((layer) => {
+      if (layer.name() === 'heatmapLayer') {
+        layer.destroy();
+      }
+    });
+
+    this.heatmap?.setData({
+      max: 100,
+      min: 1,
+      data: data
+    });
+
+    this.heatmap?.repaint();
+
+    // create an image from using the decoded base64 data url string
+    // Create a new Image object
+    const image = new Image();
+
+    // Get the ImageData URL (base64 encoded) from this.heatmap?.getDataURL()
+    const base64Url = this.heatmap?.getDataURL();
+    if (base64Url) {
+      image.src = base64Url;
+
+      // Use the image's onload event to retrieve the dimensions
+      image.onload = () => {
+        const originalWidth = image.width;     // Width of the loaded image
+        const originalHeight = image.height;   // Height of the loaded image
+
+        // For example:
+        const heatmapLayer = new Konva.Layer({
+          name: 'heatmapLayer',
+          visible: true
+        });
+        const heatmapImage = new Konva.Image({
+          image: image,
+          x: 0,
+          y: 0,
+          width: originalWidth,
+          height: originalHeight,
+        });
+
+        heatmapLayer.add(heatmapImage);
+        this.floorlayoutStage?.add(heatmapLayer);
+      };
+    }
+
+  }
+
   async getImageFromJSONData(eventId: string) {
     const response = this.containerEvent.FloorLayout;
     if (response && this.parentContainer) {
@@ -154,60 +289,8 @@ export class HeatmapContainerComponent implements OnInit{
         visible: false,
       });
 
-      // listen for when the stage is dragged and ensure teh following:
-      // if the right side position is less than the width of the container, set the x position to the width of the container
-      // if the left side position is greater than 0, set the x position to 0
-      // if the bottom side position is less than the height of the container, set the y position to the height of the container
-      // if the top side position is greater than 0, set the y position to 0
-      // this.floorlayoutStage.on('dragmove', () => {
-      //   if (this.floorlayoutStage && this.parentContainer) {
-      //     const stageX = this.floorlayoutStage.x();
-      //     const stageY = this.floorlayoutStage.y();
-      //     const stageWidth = this.floorlayoutStage.width() * this.floorlayoutStage.scaleX();
-      //     const stageHeight = this.floorlayoutStage.height() * this.floorlayoutStage.scaleY();
-      //     const containerWidth = this.parentContainer.offsetWidth *0.98;
-      //     const containerHeight = this.parentContainer.offsetHeight *0.98;
-          
-      //     // the stage must move beyond the container width and height but the following must be taken into account
-      //     // if the stage's left position is inline with the container's left position, set the stage's x position to equal the container's left position
-      //     // meaning if we move to the right it does not matter but once we move left and the stage's left position is inline with the container's left position, set the stage's x position to equal the container's left position
-      //     // if the stage's right position is inline with the container's right position, set the stage's x position to equal the container's right position - the stage's width
-      //     // meaning if we move to the left it does not matter but once we move right and the stage's right position is inline with the container's right position, set the stage's x position to equal the container's right position - the stage's width
-      //     // if the stage's top position is inline with the container's top position, set the stage's y position to equal the container's top position
-      //     // meaning if we move down it does not matter but once we move up and the stage's top position is inline with the container's top position, set the stage's y position to equal the container's top position
-      //     // if the stage's bottom position is inline with the container's bottom position, set the stage's y position to equal the container's bottom position - the stage's height
-      //     // meaning if we move up it does not matter but once we move down and the stage's bottom position is inline with the container's bottom position, set the stage's y position to equal the container's bottom position - the stage's height
-
-      //     if (this.floorlayoutStage.x() > 0) {
-      //       this.floorlayoutStage.x(0);
-      //     }
-      //     if (this.floorlayoutStage.x() < containerWidth - stageWidth) {
-      //       this.floorlayoutStage.x(containerWidth - stageWidth);
-      //     }
-      //     if (this.floorlayoutStage.y() > 0) {
-      //       this.floorlayoutStage.y(0);
-      //     }
-      //     if (this.floorlayoutStage.y() < containerHeight - stageHeight) {
-      //       this.floorlayoutStage.y(containerHeight - stageHeight);
-      //     }
-      //   }
-      // });
-
-      // add rect to fill the stage
-      // const rect = new Konva.Rect({
-      //   x: 0,
-      //   y: 0,
-      //   width: this.parentContainer.offsetWidth,
-      //   height: this.parentContainer.offsetHeight,
-      //   fill: this.chartColors['ept-bumble-yellow'],
-      //   stroke: this.chartColors['ept-light-blue'],
-      //   strokeWidth: 20,
-      // });
-
-      // this.floorlayoutStage.add(new Konva.Layer().add(rect));
-
       // create node from JSON string
-      this.heatmapLayer = Konva.Node.create(response, 'floormap');
+      this.heatmapLayer = Konva.Node.create(response, 'floormap-'+ this.containerEvent._id);
       if (this.heatmapLayer) {
         this.heatmapLayer?.setAttr('name', 'floorlayoutLayer');
 
@@ -448,5 +531,17 @@ export class HeatmapContainerComponent implements OnInit{
   handleKeyUp(event: KeyboardEvent): void {
     this.shiftDown = false;
     event.preventDefault();
+  }
+
+  addFiveSeconds(valid: boolean) {
+    const rangeElement = document.getElementById('myRange') as HTMLInputElement;
+
+    // increase or decrease the value of the range element by 5 seconds
+    const newValue = valid ? parseInt(rangeElement.value) + 5 : parseInt(rangeElement.value) - 5;
+    rangeElement.value = newValue.toString();
+
+    // Create and dispatch a new "change" event
+    const event = new Event('change', { bubbles: true });
+    rangeElement.dispatchEvent(event);
   }
 }
