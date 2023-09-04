@@ -26,6 +26,11 @@ import {
   matCompareArrowsRound,
 } from '@ng-icons/material-icons/round';
 
+import {
+  matMenu,
+  matClose
+} from '@ng-icons/material-icons/baseline';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -47,7 +52,9 @@ import {
       matGroupRound,
       matEventRound,
       matCompareArrowsRound,
-      heroArrowsRightLeft
+      heroArrowsRightLeft,
+      matMenu,
+      matClose
     }),
   ],
   declarations: [HomeComponent],
