@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
 
   // Navbar
   public showMenuBar = false;
-  public navBarVisible = true;
+  public navBarVisible = false;
   // Events
   public expandEvents = false;
   public overflowEvents = false;
@@ -173,16 +173,31 @@ export class HomeComponent implements OnInit {
   events() {
     this.tab = Tab.Events;
     this.pressButton('#events-link');
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
   }
 
   users() {
     this.tab = Tab.Users;
     this.pressButton('#users-link');
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
   }
 
   compare() {
     this.tab = Tab.Compare;
     this.pressButton('#compare-link');
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
   }
 
   profile_press() {
