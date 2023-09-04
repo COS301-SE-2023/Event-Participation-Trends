@@ -55,6 +55,7 @@ export class HeatmapContainerComponent implements OnInit{
   currentTime = '';
   totalSeconds = 0;
   positions: IPosition[] = [];
+  highlightTimes: {startSeconds: number, endSeconds: number}[] = [];
 
   //Zoom and recenter
   minScale = 1; // Adjust this as needed
@@ -146,9 +147,92 @@ export class HeatmapContainerComponent implements OnInit{
       return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
     });
 
+    // run through the positions
+    this.setHighlightPoints();
+
     // set the heatmap data to the positions that were detected in the first 5 seconds
     // only run through the positions until a timestamp is found that is 5 seconds greater than the start date
     this.setHeatmapIntervalData(this.startDate!);
+  }
+
+  async setHighlightPoints() {
+    if (!this.startDate) return;
+
+    let startInterval = 0;
+    let endInterval = 0;
+
+    // get positions in a 5 second interval and check if there is any data
+    // first position seconds
+    startInterval = this.positions[0].timestamp ? new Date(this.positions[0].timestamp).getTime() : 0;
+    let gap = 0;
+    if (this.totalSeconds > 10800) {
+      gap = 300;
+    }
+    else if (this.totalSeconds > 3600) {
+      gap = 120;
+    } else if (this.totalSeconds > 1800) {
+      gap = 60;
+    } else if (this.totalSeconds > 900) {
+      gap = 20;
+    } else if (this.totalSeconds > 600) {
+      gap = 5;
+    } else {
+      gap = 1;
+    }
+
+    // find first position where the position and the next position are not within the gap
+    for (let i = 1; i < this.positions.length-1; i++) {
+      const position = this.positions[i];
+      const nextPosition = this.positions[i+1];
+      if (position.timestamp && nextPosition.timestamp) {
+        const positionDate = new Date(position.timestamp).getTime();
+        const nextPositionDate = new Date(nextPosition.timestamp).getTime();
+        if (nextPositionDate - positionDate > gap * 1000) {
+          endInterval = positionDate;
+          
+          // add the interval to the highlight times
+          this.highlightTimes.push({
+            startSeconds: (startInterval - this.startDate?.getTime()) / 1000,
+            endSeconds: (endInterval - this.startDate?.getTime()) / 1000
+          });
+
+          // set the start interval to the next position
+          startInterval = nextPositionDate;
+          endInterval = 0;
+        }
+      }
+    }
+
+    this.createHighlightPoints();
+  }
+
+  async createHighlightPoints() {
+    const container = document.getElementById('container-'+this.containerEvent._id);
+
+    const rangeInput = document.createElement('myRange-' + this.containerEvent._id);
+
+    const highlightPointsContainer = document.getElementById('highlightPointsContainer-'+this.containerEvent._id);
+
+    console.log(this.highlightTimes);
+    //create the highlight points
+    for (let i = 0; i < this.highlightTimes.length; i++) {
+      const highlightPoint = document.createElement('div');
+      highlightPoint.style.left = ((this.highlightTimes[i].startSeconds / this.totalSeconds) * 100) + '%';
+      highlightPoint.style.width = (((this.highlightTimes[i].endSeconds - this.highlightTimes[i].startSeconds) / this.totalSeconds) * 100) + '%';
+      // highlightPoint.style.height = container?.clientHeight ? (container?.clientHeight - rangeInput.offsetHeight) + 'px' : '100%';
+
+      highlightPoint.classList.add('absolute');
+      highlightPoint.classList.add('h-1/2');
+      //  opacity-50 z-1 cursor-pointer rounded-2xl bg-ept-light-blue');
+      highlightPoint.classList.add('opacity-50');
+      highlightPoint.classList.add('z-1');
+      highlightPoint.classList.add('cursor-pointer');
+      highlightPoint.classList.add('rounded-md');
+      highlightPoint.classList.add('bg-ept-light-blue');
+      highlightPoint.classList.add('self-center');
+
+      highlightPointsContainer?.appendChild(highlightPoint);
+    }
   }
 
   async setHeatmapIntervalData(startTime: Date) {
@@ -189,7 +273,7 @@ export class HeatmapContainerComponent implements OnInit{
           }
 
           positionsToUse.push({
-            x: 100,
+            x: 600,
             y: 100,
             value: 0,
             radius: 20
@@ -541,7 +625,7 @@ export class HeatmapContainerComponent implements OnInit{
   }
 
   addFiveSeconds(valid: boolean) {
-    const rangeElement = document.getElementById('myRange') as HTMLInputElement;
+    const rangeElement = document.getElementById('myRange-'+this.containerEvent._id) as HTMLInputElement;
 
     // increase or decrease the value of the range element by 5 seconds
     const newValue = valid ? parseInt(rangeElement.value) + 5 : parseInt(rangeElement.value) - 5;
@@ -555,7 +639,7 @@ export class HeatmapContainerComponent implements OnInit{
   async playFlowOfHeatmap() {
     this.paused = false;
 
-    const rangeElement = document.getElementById('myRange') as HTMLInputElement;
+    const rangeElement = document.getElementById('myRange-'+this.containerEvent._id) as HTMLInputElement;
 
     // set the changing time range to false
     this.changingTimeRange = false;

@@ -42,13 +42,16 @@
     <div *ngIf="show && hasData" class="w-fit pr-5 self-center flex flex-col justify-evenly mx-3 absolute bottom-11 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
         <label>Event Time: {{currentTime}}</label>
     </div>
-    <div *ngIf="show && hasData" class="w-full pr-5 self-center flex flex-row justify-evenly mx-3 absolute bottom-2 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
-        <div class="flex flex-col w-full mx-3">
+    <div *ngIf="show && hasData" class="w-full pr-5 self-center flex flex-row justify-evenly mx-3 absolute bottom-1 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
+        <div class="flex flex-col justify-center  w-full mx-3">
             <div class="flex justify-between">
                 <label class="">Start</label>
                 <label class="">End</label>
             </div>
-            <input type="range" step="5" min="0" max="{{totalSeconds}}" value="0" class="w-full accent-ept-bumble-yellow hover:cursor-pointer" id="myRange" (input)="updateCurrentTime($event)" (change)="updateHeatmap($event)"/>
+            <div class="relative text-center h-full flex justify-center" id="container-{{containerEvent._id}}">
+                <input type="range" step="5" min="0" max="{{totalSeconds}}" value="0" class="z-50 w-full accent-ept-bumble-yellow hover:cursor-pointer self-center" id="myRange-{{containerEvent._id}}" (input)="updateCurrentTime($event)" (change)="updateHeatmap($event)"/>
+                <div id="highlightPointsContainer-{{containerEvent._id}}" class="absolute top-0 left-0 w-full h-full pointer-events-none z-50 flex justify-center"></div>
+            </div>
         </div>
     </div>
 </div>
