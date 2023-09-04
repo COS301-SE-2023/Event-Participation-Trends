@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { ToastModalComponent } from '../toast-modal/toast-modal.component';
 import { matClose } from '@ng-icons/material-icons/baseline';
+import Konva from 'konva';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'event-participation-trends-floorplan-upload-modal',
   standalone: true,
-  imports: [CommonModule, NgIconsModule, ToastModalComponent],
+  imports: [CommonModule, NgIconsModule, ToastModalComponent, FormsModule],
   templateUrl: './floorplan-upload-modal.component.html',
   styleUrls: ['./floorplan-upload-modal.component.css'],
   providers: [
@@ -16,6 +18,8 @@ import { matClose } from '@ng-icons/material-icons/baseline';
 })
 export class FloorplanUploadModalComponent {
   @Output() closeModalEvent = new EventEmitter<boolean>();
+  @Output() uploadedFloorplan = new EventEmitter<Konva.Image>();
+  @Output() uploadedFloorplanScale = new EventEmitter<number>();
   showToastUploading = false;
   showToastSuccess = false;
   showToastFailure = false;
@@ -26,6 +30,9 @@ export class FloorplanUploadModalComponent {
   toastMessage = '';
   toastHeading = '';
   uploadedImage = new Image();
+  uploadingImage = false;
+  alreadyUploaded = false;
+  fileType = 'PNG';
 
   closeModal(): void {
     this.closeModalEvent.emit(true);
@@ -54,9 +61,9 @@ export class FloorplanUploadModalComponent {
         const selectedFile = fileInput.files[0];
   
         if (selectedFile) {
-          const fileType = selectedFile.type;
+          this.fileType = selectedFile.type;
   
-          if (!fileType.startsWith('image/')) {
+          if (!this.fileType.startsWith('image/')) {
             this.showToast = true;
             this.hideModal = true;
             this.busyUploadingFloorplan = true;
@@ -71,7 +78,6 @@ export class FloorplanUploadModalComponent {
             fileInput.value = ''; // Clear the input field
           }
           else {
-            this.nothingUploaded = false;
             const previewImage = document.getElementById('previewFloorplanImage') as HTMLImageElement;
             if (!previewImage) return;
 
@@ -85,11 +91,73 @@ export class FloorplanUploadModalComponent {
             
             // Read the selected file as a data URL
             reader.readAsDataURL(selectedFile);
+
+            this.uploadingImage = true;
+            
+            if (this.alreadyUploaded) {
+              this.nothingUploaded = true; // hide previous image before it gets updated
+            }
+
+            setTimeout(() => {
+              this.uploadingImage = false;
+              this.nothingUploaded = false;
+              this.alreadyUploaded = true;
+            }, 1000);
           }
         }
       });
     }
 
     fileInput?.click();
+  }
+
+  completeUpload(): void {
+    this.uploadedFloorplan.emit(new Konva.Image({
+      image: this.uploadedImage,
+      draggable: true,
+      x: 0,
+      y: 0,
+    }));
+  }
+  private isDragging = false;
+  private offsetX = 0;
+  private offsetY = 0;
+
+  onMouseDown(event: MouseEvent) {
+    this.isDragging = true;
+    this.offsetX = event.clientX;
+    this.offsetY = event.clientY;
+    const imageContainer = document.getElementById('imageContainerInner');
+    
+    if (imageContainer) {
+      imageContainer.style.cursor = 'grabbing';
+    }
+  }
+
+  onMouseMove(event: MouseEvent) {
+    if (this.isDragging) {
+      const container = document.getElementById('imageContainerInner');
+      if (!container) return;
+      const img = document.getElementById('previewFloorplanImage');
+
+      const deltaX = event.clientX - this.offsetX;
+      const deltaY = event.clientY - this.offsetY;
+
+      container.scrollLeft -= deltaX;
+      container.scrollTop -= deltaY;
+
+      this.offsetX = event.clientX;
+      this.offsetY = event.clientY;
+    }
+  }
+
+  onMouseUp() {
+    this.isDragging = false;
+    
+    const imageContainer = document.getElementById('imageContainerInner');
+    
+    if (imageContainer) {
+      imageContainer.style.cursor = 'grab';
+    }
   }
 }
