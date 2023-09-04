@@ -17,6 +17,7 @@ import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-
 import { SmallScreenModalComponent } from '../small-screen-modal/small-screen-modal.component';
 import { LinkSensorModalComponent } from '../link-sensor-modal/link-sensor-modal.component';
 import { ToastModalComponent } from '../toast-modal/toast-modal.component';
+import { FloorplanUploadModalComponent } from '../floorplan-upload-modal/floorplan-upload-modal.component';
 
 export interface ISensorState {
   object: Konva.Circle,
@@ -39,7 +40,8 @@ interface DroppedItem {
     NgIconsModule,
     SmallScreenModalComponent,
     LinkSensorModalComponent,
-    ToastModalComponent
+    ToastModalComponent,
+    FloorplanUploadModalComponent
   ],
   templateUrl: './floorplan-editor-page.component.html',
   styleUrls: ['./floorplan-editor-page.component.css'], 
@@ -157,6 +159,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     eventId = '';
     hideScanner = true;
     showToast = true;
+    uploadModalVisible = true;
     
     id = '';
     event: any | null | undefined = null;
@@ -2207,6 +2210,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.screenTooSmall = window.innerWidth < 1152;
 
         if (this.screenTooSmall && !this.alertPresented) {
+          this.showToast = false;
+          this.uploadModalVisible = false;
+          this.linkingMenuVisible = false;
           this.presentAlert();
         }
       }
@@ -2244,6 +2250,14 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
         setTimeout(() => {
           this.showToast = true;
+        }, 100);
+      }
+
+      closeUploadModal(): void {
+        this.uploadModalVisible = false;
+
+        setTimeout(() => {
+          this.uploadModalVisible = true;
         }, 100);
       }
 
@@ -2576,35 +2590,14 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     showSensorLinking() : boolean {
       return this.activeItem instanceof Konva.Circle;
     }
-  
-  uploadFloorplanImage(event: any) {
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
 
-    if (fileInput) {
-      fileInput.addEventListener('change', () => {
-        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-          return;
-        }
-        const selectedFile = fileInput.files[0];
-  
-        if (selectedFile) {
-          const fileType = selectedFile.type;
-  
-          if (!fileType.startsWith('image/')) {
-            this.showToast = true;
-            const modal = document.querySelector('#toast-modal');
+  openFloorplanUploadModal(): void {
+    this.uploadModalVisible = true;
+    const modal = document.querySelector('#upload-floorpan-modal');
 
-            modal?.classList.remove('hidden');
-            setTimeout(() => {
-              modal?.classList.remove('opacity-0');
-            }, 100);
-            
-            fileInput.value = ''; // Clear the input field
-          }
-        }
-      });
-    }
-
-    fileInput?.click();
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
   }
 }

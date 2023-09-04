@@ -14,3 +14,4 @@ export * from './lib/small-screen-modal/small-screen-modal.component';
 export * from './lib/delete-confirm-modal/delete-confirm-modal.component';
 export * from './lib/link-sensor-modal/link-sensor-modal.component';
 export * from './lib/toast-modal/toast-modal.component';
+export * from './lib/floorplan-upload-modal/floorplan-upload-modal.component';
