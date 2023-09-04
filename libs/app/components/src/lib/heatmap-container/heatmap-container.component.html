@@ -9,13 +9,13 @@
     <div *ngIf="show" id="floormap-{{containerEvent._id}}" class="z-20 absolute w-full h-full top-0 left-0"></div>
     <div *ngIf="show" id="view-{{containerEvent._id}}" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
     <div *ngIf="show && (hasFloorlayout || hasData)" class="flex flex-col justify-evenly absolute top-0 right-3">
-        <div (click)="zoomIn()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+        <div (click)="zoomIn()" class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
         </div>
-        <div (click)="zoomOut()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+        <div (click)="zoomOut()" class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
         </div>
-        <div (click)="recenterFloorlayout()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+        <div (click)="recenterFloorlayout()" class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon name="matFilterCenterFocus" title="Recenter floor"></ng-icon>
         </div>
         <div (click)="addFiveSeconds(true)" title="Add 5 seconds to timeline" class="flex flex-col mt-2 opacity-50 text-lg border-ept-blue-grey border-2 border-solid rounded-lg text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
@@ -25,6 +25,10 @@
         <div (click)="addFiveSeconds(false)" title="Substract 5 seconds from timeline" class="flex flex-col mt-2 opacity-50 text-lg border-ept-blue-grey border-2 border-solid rounded-lg text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon name="matRedo" class="m-0 p-0 self-center transform scale-x-[-1]"></ng-icon>
             <label class="text-sm m-0 p-0 hover:cursor-pointer">-5s</label>
+        </div>
+        <div class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+            <ng-icon (click)="playFlowOfHeatmap()" title="Play flow of heatmap" *ngIf="paused" name="matPlayCircleOutline"></ng-icon>
+            <ng-icon (click)="pauseFlowOfHeatmap()" title="Pause flow of heatmap" *ngIf="!paused" name="matPauseCircleOutline"></ng-icon>
         </div>
     </div>
     <div *ngIf="show && !hasFloorlayout" class="w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10">
@@ -38,13 +42,16 @@
     <div *ngIf="show && hasData" class="w-fit pr-5 self-center flex flex-col justify-evenly mx-3 absolute bottom-11 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
         <label>Event Time: {{currentTime}}</label>
     </div>
-    <div *ngIf="show && hasData" class="w-full pr-5 self-center flex flex-row justify-evenly mx-3 absolute bottom-2 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
-        <div class="flex flex-col w-full mx-3">
+    <div *ngIf="show && hasData" class="w-full pr-5 self-center flex flex-row justify-evenly mx-3 absolute bottom-1 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
+        <div class="flex flex-col justify-center  w-full mx-3">
             <div class="flex justify-between">
                 <label class="">Start</label>
                 <label class="">End</label>
             </div>
-            <input type="range" step="5" min="0" max="{{totalSeconds}}" value="0" class="w-full accent-ept-bumble-yellow hover:cursor-pointer" id="myRange" (input)="updateCurrentTime($event)" (change)="updateHeatmap($event)"/>
+            <div class="relative text-center h-full flex justify-center" id="container-{{containerEvent._id}}">
+                <input type="range" step="5" min="0" max="{{totalSeconds}}" value="0" class="z-50 w-full accent-ept-bumble-yellow hover:cursor-pointer self-center" id="myRange-{{containerEvent._id}}" (input)="updateCurrentTime($event)" (change)="updateHeatmap($event)"/>
+                <div id="highlightPointsContainer-{{containerEvent._id}}" class="absolute top-0 left-0 w-full h-full pointer-events-none z-50 flex justify-center"></div>
+            </div>
         </div>
     </div>
 </div>
