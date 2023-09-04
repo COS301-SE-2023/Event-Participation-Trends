@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AppApiService } from '@event-participation-trends/app/api';
 
 enum Tab {
@@ -24,6 +24,7 @@ export class EventViewComponent implements OnInit {
   public id: string | null = '';
   public tab = Tab.None;
   public manager_access = false;
+  public screenTooSmall = false;
 
   // Navbar
   // Back
@@ -98,6 +99,7 @@ export class EventViewComponent implements OnInit {
 
   async ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
+    this.screenTooSmall = window.innerWidth < 1152;
 
     
     if (!this.id) {
@@ -146,28 +148,57 @@ export class EventViewComponent implements OnInit {
   }
 
   goDetails() {
+    this.screenTooSmall = window.innerWidth < 1152;
     this.pressButton('#details');
     this.tab = Tab.Details;
   }
 
   goDashboard() {
+    this.screenTooSmall = window.innerWidth < 1152;
     this.pressButton('#dashboard');
     this.tab = Tab.Dashboard;
   }
 
   goFloorplan() {
-    if (window.innerWidth < 850) {
-      const modal = document.querySelector('#small-screen-modal');
+    this.screenTooSmall = window.innerWidth < 1152;
+    this.pressButton('#floorplan-link');
+    
+    if (this.screenTooSmall) {
+      this.showSmallScreenModal();
+      return;
+    }
+    this.router.navigate(['floorplan'], { relativeTo: this.route }); 
+    this.tab = Tab.Floorplan;
+  }
 
-        modal?.classList.remove('hidden');
-        setTimeout(() => {
-          modal?.classList.remove('opacity-0');
-        }, 100);
-    }
-    else {
-      this.pressButton('#floorplan');
-      this.tab = Tab.Floorplan;
-    }
+  // floorplan_press() { 
+  //   this.screenTooSmall = window.innerWidth < 1152;   
+  //   this.pressButton('#floorplan-link');
+
+  //   if (this.screenTooSmall) {
+  //     setTimeout(() => {
+  //       this.showSmallScreenModal();
+  //     }, 100);
+  //   }
+  //   else {
+
+  //   }
+  // }
+
+  showSmallScreenModal() {
+    const modal = document.querySelector('#small-screen-modal');
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
+  }
+
+  closeSmallScreenModal() {
+    const modal = document.querySelector('#small-screen-modal');
+    modal?.classList.add('opacity-0');
+    setTimeout(() => {
+      modal?.classList.add('hidden');
+    }, 100);
   }
 
   onFloorplan() : boolean {
