@@ -1,5 +1,5 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppApiService } from '@event-participation-trends/app/api';
 
 enum Tab {
@@ -162,7 +162,7 @@ export class EventViewComponent implements OnInit {
   goFloorplan() {
     this.screenTooSmall = window.innerWidth < 1152;
     this.pressButton('#floorplan-link');
-    
+
     if (this.screenTooSmall) {
       this.showSmallScreenModal();
       return;
@@ -170,20 +170,6 @@ export class EventViewComponent implements OnInit {
     this.router.navigate(['floorplan'], { relativeTo: this.route }); 
     this.tab = Tab.Floorplan;
   }
-
-  // floorplan_press() { 
-  //   this.screenTooSmall = window.innerWidth < 1152;   
-  //   this.pressButton('#floorplan-link');
-
-  //   if (this.screenTooSmall) {
-  //     setTimeout(() => {
-  //       this.showSmallScreenModal();
-  //     }, 100);
-  //   }
-  //   else {
-
-  //   }
-  // }
 
   showSmallScreenModal() {
     const modal = document.querySelector('#small-screen-modal');
