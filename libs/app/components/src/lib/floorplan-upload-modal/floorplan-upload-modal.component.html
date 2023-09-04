@@ -1,0 +1,148 @@
+<div
+    id="uploadModal"
+    [ngClass]="{ hidden: hideModal }"
+  class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
+>
+  <div
+    class="fixed w-screen h-screen top-0 left-0 bg-ept-navy-blue bg-opacity-80"
+  ></div>
+  <div
+    class="relative md:w-[750px] lg:w-[950px] h-[500px] bg-gradient-to-br from-ept-blue-grey from-[-30%] to-[#7a849c] z-50 rounded-2xl p-5 pt-4 flex flex-col items-center"
+  >
+    <ng-icon
+      name="matClose"
+      class="text-3xl absolute right-4 top-4 text-ept-navy-blue cursor-pointer"
+      (click)="closeModal()"
+    ></ng-icon>
+    <h1 class="md:text-md lg:text-lg text-center text-ept-deep-grey m-3 mt-0 font-semibold">Upload image of a floor plan</h1>
+    <div class="content-container grid grid-cols-4 gap-4 grid-rows-1 p-2 h-[500px]">
+        <div class="inputs-container min-w-fit flex flex-col items-center justify-between p-3 pt-0 pb-1 col-start-1 col-end-2">
+            <div class="flex flex-col justify-center items-center">
+                <label class="text-sm text-center max-w-sm">Upload image file</label>
+                <input type="file" id="fileInput" accept="image/*" capture="camera" hidden/>
+                <img
+                    id="uploadImage"
+                    class=" p-1 w-12 h-12 mt-4 opacity-50 hover:opacity-100 cursor-pointer"
+                    draggable="false"
+                    [src]="true ? 'assets/black-alt-upload-frame-svgrepo-com.svg' : 'assets/blue-alt-upload-frame-svgrepo-com.svg'"
+                    alt="uploadImage"
+                    (click)="uploadFloorplanImage()"
+                />
+            </div>
+            <hr class="opacity-80 bg-ept-off-white text-ept-deep-grey z-0 w-full">
+            <div class="flex flex-col justify-center mt-2">
+                <label for="fileTypes" class="text-sm text-left max-w-sm mb-4">Choose image file type</label>
+                <select 
+                    name="fileTypes" 
+                    id="fileTypes" 
+                    class="bg-ept-off-white rounded-sm text-ept-deep-grey pl-3 pr-3 cursor-pointer self-center"
+                    [(ngModel)]="fileType.split('/')[1]"    
+                >
+                    <option [value]="'png'">PNG</option>
+                    <option [value]="'jpg'">JPG</option>
+                    <option [value]="'jpeg'">JPEG</option>
+                    <option [value]="'svg+xml'">SVG</option>
+                    <option [value]="'vnd.adobe.photoshop'">PSD</option>
+                    <option [value]="'webp'">WEBP</option>
+                    <option [value]="'tiff'">TIFF</option>
+                    <option [value]="'gif'">GIF</option>
+                </select>
+            </div>
+            <hr class="opacity-80 bg-ept-off-white text-ept-deep-grey z-0 w-full">
+            <div class="flex flex-col justify-between mt-2">
+                <label class="text-sm text-left mb-2">True scale for the image:</label>
+                <div class="flex items-center justify-center mt-2">
+                    <input 
+                        type="number" 
+                        title="Enter the true scale for the floor plan"
+                        [defaultValue]="0.5"
+                        min="0.5"
+                        max="10"
+                        step="0.5"
+                        class="p-1 text-md rounded shadow-md w-12 text-ept-deep-grey text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <label class="text-sm text-left max-w-sm ml-2">cm = </label>
+                    <input 
+                        type="number" 
+                        title="Enter the true scale for the floor plan"
+                        [defaultValue]="2"
+                        min="2"
+                        max="10"
+                        step="0.5"
+                        class="p-1 ml-2 text-md rounded shadow-md w-12 text-ept-deep-grey text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <label class="text-sm text-left max-w-sm ml-2">m</label>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="ml-0 mr-0 opacity-80 border-l-2 border-solid border-ept-deep-grey"></div> -->
+        <div 
+            class="relative image-view-container flex flex-col items-center justify-center ml-3 pl-10 pr-3 border-l-2 border-solid border-ept-deep-grey col-start-2 col-span-3"
+            [ngClass]="{'justify-between': !nothingUploaded}"
+        >
+            <label *ngIf="nothingUploaded && !uploadingImage" class="text-sm text-center opacity-75 italic">Upload image for preview</label>
+            <label class="text-sm opacity-75 italic" [ngClass]="{'hidden': nothingUploaded }">Preview of uploaded image</label>
+            <img
+                id="previewFloorplanImage"
+                class="mt-2 w-full h-[280px] object-cover opacity-100 pointer-events-none rounded-xl"
+                [ngClass]="{'hidden': nothingUploaded }"
+                draggable="false"
+                alt="floorplanImage"
+            />
+            <div class="m-auto flex justify-between" [ngClass]="{'hidden':!uploadingImage}">
+                <h1 class="sm:text-sm md:text-md lg:text-lg text-ept-blue-grey">Uploading image</h1>
+                <span class="loading loading-spinner loading-sm ml-2 text-ept-blue-grey"></span>
+            </div>
+        </div>
+    </div>
+    <button 
+        class="text-ept-blue-grey cursor-pointer bg-ept-navy-blue bg-opacity-80 border-ept-off-white rounded-md p-1 text-sm mt-4  hover:text-ept-off-white"
+        [ngClass]="{'pointer-events-none opacity-50': nothingUploaded}"
+        (click)="completeUpload()"
+    >
+        Complete upload
+    </button>
+  </div>
+</div>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastUploading"
+    class="z-50"
+    [toastMessage]="'Uploading...'" 
+    [toastType]="''"
+    [success]="showToastSuccess"
+    [failure]="showToastFailure"
+    [linking]="showToastUploading"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastSuccess"
+    class="z-50"
+    [toastMessage]="toastMessage" 
+    [toastType]="'success'"
+    [success]="showToastSuccess"
+    [failure]="showToastFailure"
+    [linking]="showToastUploading"
+    (closeModalEvent)="closeToastModal()"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastSuccess"
+    class="z-50"
+    [toastMessage]="toastMessage" 
+    [toastType]="'failure'"
+    [success]="showToastSuccess"
+    [failure]="showToastFailure"
+    [linking]="showToastUploading"
+    (closeModalEvent)="closeToastModal()"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal
+  *ngIf="showToast"
+  class="transition-opacity duration-100 hidden opacity-0"
+  id="toast-modal"
+  [toastHeading]="'Invalid file extension'"
+  [toastMessage]="'Please select an image file when uploading an image of a floor plan.'" 
+  [toastType]="'failure'"
+  [success]="false"
+  [failure]="true"
+  [linking]="false"
+  (closeModalEvent)="closeToastModal()"
+  [busyUploadingFloorplan]="true"
+></event-participation-trends-toast-modal>

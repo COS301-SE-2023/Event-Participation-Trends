@@ -101,9 +101,8 @@
         *ngIf="manager_access"
       >
         <a
-          routerLink="floorplan"
           id="floorplan-link"
-          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          class="overflow-hidden cursor-pointer absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
           (click)="goFloorplan()"
           [ngClass]="{
           'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('floorplan'),
@@ -162,9 +161,9 @@
 <event-participation-trends-event-help
   class="transition-opacity duration-300 hidden opacity-0"
   id="help-modal"
->
-
+></event-participation-trends-event-help>
 <event-participation-trends-small-screen-modal
   class="transition-opacity duration-300 hidden opacity-0"
   id="small-screen-modal"
+  (justCloseModal)="closeSmallScreenModal()"
 ></event-participation-trends-small-screen-modal>

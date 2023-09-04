@@ -291,8 +291,8 @@
           [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'opacity-50 hover:opacity-100':preventCreatingWalls}"
         >
           <p 
-            class="text-sm text-ept-blue-grey" 
-            (click)="uploadFloorplanImage($event)"
+            class="text-sm text-ept-blue-grey text-center" 
+            (click)="openFloorplanUploadModal()"
             [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'cursor-pointer':preventCreatingWalls}"
           >
             Upload image of a floor plan
@@ -304,7 +304,7 @@
             draggable="false"
             [src]="lightMode ? 'assets/black-alt-upload-frame-svgrepo-com.svg' : 'assets/blue-alt-upload-frame-svgrepo-com.svg'"
             alt="uploadImage"
-            (click)="uploadFloorplanImage($event)"
+            (click)="openFloorplanUploadModal()"
             [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'cursor-pointer':preventCreatingWalls}"
           />
         </div>
@@ -383,7 +383,7 @@
   </div>
 </div>
 <event-participation-trends-small-screen-modal
-  class="transition-opacity duration-300 hidden opacity-0"
+  class="transition-opacity duration-50 hidden opacity-0"
   id="small-screen-modal"
 ></event-participation-trends-small-screen-modal>
 <event-participation-trends-link-sensor-modal
@@ -394,17 +394,11 @@
   [customId]="activeItem?.attrs?.customId"
   (closeModalEvent)="closeLinkingMenu()"
 ></event-participation-trends-link-sensor-modal>
-<event-participation-trends-toast-modal
-  *ngIf="showToast"
-  class="transition-opacity duration-300 hidden opacity-0"
-  id="toast-modal"
-  [toastHeading]="'Invalid file extension'"
-  [toastMessage]="'Please select an image file when uploading an image of a floor plan.'" 
-  [toastType]="'failure'"
-  [success]="false"
-  [failure]="true"
-  [linking]="false"
-  (closeModalEvent)="closeToast()"
-  [busyUploadingFloorplan]="true"
-></event-participation-trends-toast-modal>
+<event-participation-trends-floorplan-upload-modal
+*ngIf="uploadModalVisible"
+class="transition-opacity duration-300 hidden opacity-0"
+id="upload-floorpan-modal"
+(closeModalEvent)="closeUploadModal()"
+>
+</event-participation-trends-floorplan-upload-modal>
 
