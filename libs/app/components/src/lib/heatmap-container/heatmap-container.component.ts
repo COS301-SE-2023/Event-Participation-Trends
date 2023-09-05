@@ -139,20 +139,21 @@ export class HeatmapContainerComponent implements OnInit{
     
     if (this.positions.length === 0) {
       this.hasData = false;
-
     }
+    else {
+      // run through the positions
+      this.setHighlightPoints();
+
+      // set the heatmap data to the positions that were detected in the first 5 seconds
+      // only run through the positions until a timestamp is found that is 5 seconds greater than the start date
+      this.setHeatmapIntervalData(this.startDate!);
+    }
+    
     //sort the positions by timestamp
     this.positions.sort((a: IPosition, b: IPosition) => {
       if (!a.timestamp || !b.timestamp) return 0;
       return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
     });
-
-    // run through the positions
-    this.setHighlightPoints();
-
-    // set the heatmap data to the positions that were detected in the first 5 seconds
-    // only run through the positions until a timestamp is found that is 5 seconds greater than the start date
-    this.setHeatmapIntervalData(this.startDate!);
   }
 
   async setHighlightPoints() {
