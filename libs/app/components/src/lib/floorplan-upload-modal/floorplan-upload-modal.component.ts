@@ -62,12 +62,29 @@ export class FloorplanUploadModalComponent {
   
         if (selectedFile) {
           this.fileType = selectedFile.type;
-  
-          if (!this.fileType.startsWith('image/')) {
+
+          // test if the selected file is not more than 16MB
+          if (selectedFile.size > 16000000) {
+            this.showToast = true;
+            this.hideModal = true;
+            this.busyUploadingFloorplan = true;
+            this.toastHeading = 'File Too Large';
+            this.toastMessage = 'Please select a file that is less than 16MB';
+            const modal = document.querySelector('#toast-modal');
+
+            modal?.classList.remove('hidden');
+            setTimeout(() => {
+              modal?.classList.remove('opacity-0');
+            }, 100);
+            
+            fileInput.value = ''; // Clear the input field
+          }  
+          else if (!this.fileType.startsWith('image/')) {
             this.showToast = true;
             this.hideModal = true;
             this.busyUploadingFloorplan = true;
             this.toastHeading = 'Invalid File Extension';
+            this.toastMessage = 'Please select an image file when uploading an image of a floor plan.';
             const modal = document.querySelector('#toast-modal');
 
             modal?.classList.remove('hidden');
