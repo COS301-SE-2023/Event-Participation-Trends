@@ -52,8 +52,8 @@
                     </div>
                 </div>
             </div>
-            <span class="mt-1 ml-2 flex justify-between">
-                <label *ngIf="show && eventsSelected > 0" class="text-4xl p-2">Heatmaps<br><p *ngIf="showSidePanel" class="text-sm opacity-50">Hold the Shift-Key down to zoom in/out with mousewheel</p></label>
+            <span *ngIf="show && eventsSelected > 0" class="mt-1 ml-2 flex justify-between">
+                <label class="text-4xl p-2">Heatmaps<br><p *ngIf="showSidePanel" class="text-sm opacity-50">Hold the Shift-Key down to zoom in/out with mousewheel</p></label>
             </span>
             <div *ngIf="show" class="grid grid-rows-2 w-full h-full gap-2 p-3 z-40">
                 <event-participation-trends-heatmap-container [parentContainer]="parentContainer" *ngFor="let event of selectedEvents" [containerEvent]="event"></event-participation-trends-heatmap-container>

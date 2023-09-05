@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
@@ -8,6 +8,7 @@ import { IUpdateEventDetailsRequest } from '@event-participation-trends/api/even
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { matDeleteRound } from '@ng-icons/material-icons/round';
+import { matCheckBox, matCancelPresentation } from '@ng-icons/material-icons/baseline';
 import { DeleteConfirmModalComponent } from '../delete-confirm-modal/delete-confirm-modal.component';
 
 @Component({
@@ -21,7 +22,7 @@ import { DeleteConfirmModalComponent } from '../delete-confirm-modal/delete-conf
   ],
   templateUrl: './event-details-page.component.html',
   styleUrls: ['./event-details-page.component.css'],
-  providers: [provideIcons({ heroInboxSolid, matDeleteRound })],
+  providers: [provideIcons({ heroInboxSolid, matDeleteRound, matCheckBox, matCancelPresentation })],
 })
 export class EventDetailsPageComponent implements OnInit {
   constructor(
@@ -36,6 +37,7 @@ export class EventDetailsPageComponent implements OnInit {
   public loading = true;
   public requests: any[] = [];
   public invite = '';
+  public showRequestBtnText = true;
 
   //event
   public location = '';
@@ -103,6 +105,14 @@ export class EventDetailsPageComponent implements OnInit {
     this.old_isPublic = this.isPublic;
     this.old_start_time = this.start_time;
     this.old_end_time = this.end_time;
+
+    // test if window size is less than 950px
+    if ((window.innerWidth < 950 && window.innerWidth > 768) || window.innerWidth < 680) {
+      this.showRequestBtnText = false;
+    }
+    else {
+      this.showRequestBtnText = true;
+    }  
 
     this.loading = false;
     setTimeout(() => {
@@ -252,5 +262,14 @@ export class EventDetailsPageComponent implements OnInit {
       userEmail: this.invite,
       eventId: this.event._id,
     });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if ((window.innerWidth < 950 && window.innerWidth > 768) || window.innerWidth < 680) {
+      this.showRequestBtnText = false;
+    } else {
+      this.showRequestBtnText = true;
+    } 
   }
 }

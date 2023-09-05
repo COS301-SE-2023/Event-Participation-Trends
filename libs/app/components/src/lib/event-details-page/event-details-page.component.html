@@ -1,6 +1,6 @@
-<div class="top-0 left-0 w-full h-full grid grid-cols-3 grid-rows-3">
+<div class="p-5 mt-14 lg:mt-0 top-0 left-0 w-full h-full gap-4 grid grid-cols-1 md:grid-cols-2 overflow-y-scroll md:overflow-y-hidden">
   <div
-    class="col-span-1 row-span-3 flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-6"
+    class="w-full col-span-1 lg:row-span-3 flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-6"
   >
     <div
       class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
@@ -18,7 +18,7 @@
         {{ event.Name }}
       </div>
 
-      <div id="location" class="">
+      <div id="location" class="my-4 md:my-0">
         <div class="text-2xl font-semibold font-poppins">Location</div>
         <div>
           <input
@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div id="category" class="">
+      <div id="category" class="my-4 md:my-0">
         <div class="text-2xl font-semibold font-poppins">Category</div>
         <div>
           <input
@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <div id="start" class="">
+      <div id="start" class="my-4 md:my-0">
         <div class="text-2xl font-semibold font-poppins">Start Time</div>
         <div>
           <input
@@ -53,7 +53,7 @@
         </div>
       </div>
 
-      <div id="end" class="">
+      <div id="end" class="my-4 md:my-0">
         <div class="text-2xl font-semibold font-poppins">End Time</div>
         <div>
           <input
@@ -65,7 +65,7 @@
       </div>
 
       <div
-        class="col-start-11 col-span-3 flex justify-center align-middle drop-shadow-[0_10px_10px_rgba(0,0,0,0.2)]"
+        class="my-2 md:my-0 col-span-3 flex justify-center align-middle drop-shadow-[0_10px_10px_rgba(0,0,0,0.2)]"
       >
         <div
           class="bg-ept-navy-blue font-poppins font-semibold text-lg rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1"
@@ -94,7 +94,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-5 font-poppins font-semibold text-xl">
+      <div class="my-2 md:my-0 grid grid-cols-5 font-poppins font-semibold text-xl">
         <div
           id="save_event"
           class="mr-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center items-center"
@@ -130,12 +130,12 @@
     </div>
   </div>
   <div
-    class="col-span-1 row-span-3 flex flex-col relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-6"
+    class="w-full col-span-1 lg:row-span-3 flex flex-col relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-6"
   >
     <div class="text-2xl font-poppins font-semibold mb-3">Requests</div>
-    <div class="overflow-y-scroll relative h-full">
+    <div class="relative h-full" [ngClass]="{'overflow-y-scroll': requests.length > 0}">
       <div
-        class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 z-50"
+        class="my-4 md:my-0 md:absolute md:top-0 md:left-0 w-full h-full flex flex-col md:justify-center items-center transition-opacity duration-200 z-50"
         *ngIf="emptyRequests()"
       >
         <ng-icon name="heroInboxSolid" class="text-6xl"></ng-icon>
@@ -144,26 +144,42 @@
         </div>
       </div>
       <div
-        class="p-3 grid grid-cols-5 border-b-2 border-b-ept-blue-grey border-opacity-10 items-center"
+        class="p-3 pl-0 grid grid-cols-7 md:grid-cols-5 border-b-2 border-b-ept-blue-grey border-opacity-10 justify-start md:items-center"
         *ngFor="let request of requests"
       >
-        <div class="col-span-3">{{ request.Email }}</div>
+        <div class="col-span-5 md:col-span-3 break-words self-center">{{ request.Email }}</div>
         <div
+          *ngIf="showRequestBtnText"
           class="p-2 bg-ept-bumble-yellow text-ept-deep-grey rounded-2xl text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
           (click)="acceptRequest(request)"
         >
           Accept
         </div>
         <div
-          class="p-2 bg-ept-blue-grey text-ept-deep-grey rounded-2xl text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          *ngIf="!showRequestBtnText"
+          class="justify-end w-fit bg-ept-bumble-yellow p-1 text-ept-deep-grey rounded-lg text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          (click)="acceptRequest(request)"
+        >
+          <ng-icon name="matCheckBox" class="text-3xl self-center"></ng-icon>
+        </div>
+        <div
+          *ngIf="showRequestBtnText"
+          class="self-end p-2 bg-ept-blue-grey text-ept-deep-grey rounded-2xl text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
           (click)="declineRequest(request)"
         >
           Decline
         </div>
+        <div
+          *ngIf="!showRequestBtnText"
+          class="justify-end w-fit bg-ept-blue-grey p-1 text-ept-deep-grey rounded-lg text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          (click)="declineRequest(request)"
+        >
+          <ng-icon name="matCancelPresentation" class="text-3xl self-center"></ng-icon>
+        </div>
       </div>
     </div>
-    <div class="flex justify-between align-middle">
-      <input class="bg-ept-blue-grey bg-opacity-10 rounded-xl p-2 text-ept-off-white outline-none" placeholder="email@domain.com" [(ngModel)]="invite"/>
+    <div class="mt-4 md:mt-0 flex justify-between align-middle">
+      <input class="w-full mr-4 bg-ept-blue-grey bg-opacity-10 rounded-xl p-2 text-ept-off-white outline-none" placeholder="email@domain.com" [(ngModel)]="invite"/>
       <div id="invite_user" class="rounded-xl p-2 text-center flex justify-center align-middle bg-ept-blue-grey text-ept-deep-grey hover:scale-105 duration-300 transition-all" (click)="inviteUser()">Send Invite</div>
     </div>
   </div>
