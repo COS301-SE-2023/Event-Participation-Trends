@@ -22,6 +22,7 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
   @Output() uploadedFloorplanScale = new EventEmitter<number>();
   @ViewChild('previewFloorplanImage', { static: false }) previewFloorplanImage!: ElementRef<HTMLDivElement>;
 
+  fileInput = document.getElementById('fileInput') as HTMLInputElement;
   showToastUploading = false;
   showToastSuccess = false;
   showToastFailure = false;
@@ -55,6 +56,9 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
   }
 
   closeModal(): void {
+    this.uploadingImage = false;
+    this.uploadedImage = new Image();
+    this.uploadedImage.src = '';
     this.closeModalEvent.emit(true);
   }
 
@@ -71,14 +75,17 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
   }
 
   uploadFloorplanImage(): void {
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
 
-    if (fileInput) {
-      fileInput.addEventListener('change', () => {
-        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    if (this.fileInput) {
+      this.fileInput.value = '';
+  
+      this.fileType = '';
+
+      this.fileInput.addEventListener('change', () => {
+        if (!this.fileInput || !this.fileInput.files || this.fileInput.files.length === 0) {
           return;
         }
-        const selectedFile = fileInput.files[0];
+        const selectedFile = this.fileInput.files[0];
   
         if (selectedFile) {
           this.fileType = selectedFile.type;
@@ -97,7 +104,7 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
               modal?.classList.remove('opacity-0');
             }, 100);
             
-            fileInput.value = ''; // Clear the input field
+            this.fileInput.value = ''; // Clear the input field
           }  
           else if (!this.fileType.startsWith('image/')) {
             this.showToast = true;
@@ -112,7 +119,7 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
               modal?.classList.remove('opacity-0');
             }, 100);
             
-            fileInput.value = ''; // Clear the input field
+            this.fileInput.value = ''; // Clear the input field
           }
           else {
             this.uploadedImage = new Image();
@@ -191,17 +198,19 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
       });
     }
 
-    fileInput?.click();
+    this.fileInput?.click();
   }
 
   completeUpload(): void {
     this.uploadedFloorplan.emit(new Konva.Image({
-      id: 'uploadedFloorplan-',
+      id: 'uploadedFloorplan-' + this.generateUniqueId(),
       image: this.uploadedImage,
       draggable: true,
       x: 0,
       y: 0,
     }));
+
+    this.closeModalEvent.emit(true);
   }
 
   onMouseDown(): void {    
@@ -210,5 +219,11 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
 
   onMouseUp(): void {
     document.body.style.cursor = 'default';
+  }
+
+  generateUniqueId() : string {
+    const timestamp = Date.now();
+    const randomNumber = Math.floor(Math.random() * 1000000);
+    return `${timestamp}-${randomNumber}`;
   }
 }
