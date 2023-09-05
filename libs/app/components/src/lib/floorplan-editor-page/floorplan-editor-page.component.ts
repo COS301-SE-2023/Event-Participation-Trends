@@ -1659,10 +1659,11 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             (item) => item.konvaObject === movedObject
         );
 
+        const isUploadedFloorplan = this.activeItem.getAttr('name')?.toString().includes('uploadedFloorplan-') ? true : false;
         // set bounderies for the object such that the object cannot be move beyond the borders of the canvas
         
             
-        if (droppedItem) {
+        if (droppedItem || isUploadedFloorplan) {
             const canvasWidth = this.canvasElement.nativeElement.offsetWidth;
             const canvasHeight = this.canvasElement.nativeElement.offsetHeight;
             const objectWidth = movedObject.width() * movedObject.scaleX();
@@ -1702,7 +1703,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             // droppedItem.konvaObject?.setAttrs({
             //     draggable: false
             // });
-            const element = droppedItem.konvaObject;
+            const element = droppedItem ? droppedItem.konvaObject : this.activeItem;
             if (element) this.updateTooltipID(element);
             this.canvas.batchDraw();
         
@@ -2261,6 +2262,36 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         }, 100);
       }
 
+      onFloorplanUploaded(floorplan: Konva.Image): void {
+        const newFloorplanImage = new Konva.Image({
+          x: 0,
+          y: 0,
+          image: floorplan.image(),
+          width: floorplan.width() / this.componentSize,
+          height: floorplan.height() / this.componentSize,
+          draggable: false,
+          id: floorplan.id(),
+        });
+
+        const newGroup = new Konva.Group({
+          x: 0,
+          y: 0,
+          draggable: true,
+          id: newFloorplanImage.id(),
+          width: newFloorplanImage.width(),
+          height: newFloorplanImage.height(),
+          name: 'uploadedFloorplan-'+newFloorplanImage.id(),
+        });
+
+        newGroup.add(newFloorplanImage);
+
+        this.setMouseEvents(newGroup);
+
+        this.canvas.add(newGroup);
+        this.moveSensorsAndTooltipsToTop();
+        this.canvas.draw();
+      }
+
       adjustJSONData(json: Record<string, any>): void {
         // adjust children's attributes
         json['children'].forEach((child: any) => {
@@ -2576,7 +2607,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     }
 
     showTextInput() : boolean {
-      return (this.activeItem instanceof Konva.Group || this.activeItem instanceof Konva.Text) && this.activeItem != this.selectionGroup;
+      return (this.activeItem instanceof Konva.Group && !this.activeItem.getAttr('id').includes('uploaded') || this.activeItem instanceof Konva.Text) && this.activeItem != this.selectionGroup;
     }
 
     showLengthInput() : boolean {

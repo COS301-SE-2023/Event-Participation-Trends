@@ -287,7 +287,7 @@
       <div class="mt-auto mb-5 flex flex-col justify-between items-center">
         <div 
           [title]="getUploadImageTitle()" 
-          class="flex flex-col items-center mb-10"
+          class="flex flex-col items-center mb-10 mt-4"
           [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'opacity-50 hover:opacity-100':preventCreatingWalls}"
         >
           <p 
@@ -300,7 +300,7 @@
           <input type="file" id="fileInput" accept="image/*" capture="camera" hidden/>
           <img
             id="uploadImage"
-            class=" p-1 w-20 h-20 mt-2"
+            class=" p-1 w-[60px] h-[60px] mt-2"
             draggable="false"
             [src]="lightMode ? 'assets/black-alt-upload-frame-svgrepo-com.svg' : 'assets/blue-alt-upload-frame-svgrepo-com.svg'"
             alt="uploadImage"
@@ -399,6 +399,7 @@
 class="transition-opacity duration-300 hidden opacity-0"
 id="upload-floorpan-modal"
 (closeModalEvent)="closeUploadModal()"
+(uploadedFloorplan)="onFloorplanUploaded($event)"
 >
 </event-participation-trends-floorplan-upload-modal>
 

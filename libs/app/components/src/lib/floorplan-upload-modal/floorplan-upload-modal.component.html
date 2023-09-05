@@ -14,7 +14,7 @@
       class="text-3xl absolute right-4 top-4 text-ept-navy-blue cursor-pointer"
       (click)="closeModal()"
     ></ng-icon>
-    <h1 class="md:text-md lg:text-lg text-center text-ept-deep-grey m-3 mt-0 font-semibold">Upload image of a floor plan</h1>
+    <h1 class="text-xl text-center text-ept-deep-grey m-3 mt-0 font-semibold">Upload image of a floor plan</h1>
     <div class="content-container grid grid-cols-4 gap-4 grid-rows-1 p-2 h-[500px]">
         <div class="inputs-container min-w-fit flex flex-col items-center justify-between p-3 pt-0 pb-1 col-start-1 col-end-2">
             <div class="flex flex-col justify-center items-center">
@@ -81,22 +81,30 @@
             [ngClass]="{'justify-between': !nothingUploaded}"
         >
             <label *ngIf="nothingUploaded && !uploadingImage" class="text-sm text-center opacity-75 italic">Upload image for preview</label>
-            <label class="text-sm opacity-75 italic" [ngClass]="{'hidden': nothingUploaded }">Preview of uploaded image</label>
-            <img
-                id="previewFloorplanImage"
-                class="mt-2 w-full h-[280px] object-cover opacity-100 pointer-events-none rounded-xl"
+            <label class="text-md opacity-75 italic" [ngClass]="{'hidden': nothingUploaded }">Preview of uploaded image</label>
+            <label class="text-sm opacity-75 italic" [ngClass]="{'hidden': nothingUploaded && !largeImage}">Hint: drag on image to view other parts of it</label>
+            <div
+                class="mt-2 w-full h-[280px] bg-ept-off-white opacity-100 rounded-xl"
                 [ngClass]="{'hidden': nothingUploaded }"
-                draggable="false"
-                alt="floorplanImage"
-            />
+                #previewFloorplanImage 
+                id="previewFloorplanImage"
+                (mousedown)="onMouseDown()"
+                (mouseup)="onMouseUp()"   
+            >
+                <div 
+                    #canvasImage 
+                    id="canvasImage" 
+                    class="w-full h-full rounded-xl overflow-hidden cursor-grab"
+                ></div>
+            </div>
             <div class="m-auto flex justify-between" [ngClass]="{'hidden':!uploadingImage}">
-                <h1 class="sm:text-sm md:text-md lg:text-lg text-ept-blue-grey">Uploading image</h1>
-                <span class="loading loading-spinner loading-sm ml-2 text-ept-blue-grey"></span>
+                <h1 class="sm:text-sm md:text-md lg:text-lg text-ept-bumble-yellow">Uploading image</h1>
+                <span class="loading loading-spinner loading-sm ml-2 text-ept-bumble-yellow"></span>
             </div>
         </div>
     </div>
     <button 
-        class="text-ept-blue-grey cursor-pointer bg-ept-navy-blue bg-opacity-80 border-ept-off-white rounded-md p-1 text-sm mt-4  hover:text-ept-off-white"
+        class="text-ept-off-white cursor-pointer bg-ept-navy-blue bg-opacity-80 border-ept-off-white rounded-md p-1 text-sm mt-4  hover:text-ept-light-green"
         [ngClass]="{'pointer-events-none opacity-50': nothingUploaded}"
         (click)="completeUpload()"
     >
@@ -137,8 +145,8 @@
   *ngIf="showToast"
   class="transition-opacity duration-100 hidden opacity-0"
   id="toast-modal"
-  [toastHeading]="'Invalid file extension'"
-  [toastMessage]="'Please select an image file when uploading an image of a floor plan.'" 
+  [toastHeading]="toastHeading"
+  [toastMessage]="toastMessage" 
   [toastType]="'failure'"
   [success]="false"
   [failure]="true"

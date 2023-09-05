@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { ToastModalComponent } from '../toast-modal/toast-modal.component';
@@ -16,10 +16,13 @@ import { FormsModule } from '@angular/forms';
     provideIcons({matClose})
   ],
 })
-export class FloorplanUploadModalComponent {
+export class FloorplanUploadModalComponent implements AfterViewInit {
   @Output() closeModalEvent = new EventEmitter<boolean>();
   @Output() uploadedFloorplan = new EventEmitter<Konva.Image>();
   @Output() uploadedFloorplanScale = new EventEmitter<number>();
+  @ViewChild('previewFloorplanImage', { static: false }) previewFloorplanImage!: ElementRef<HTMLDivElement>;
+
+  fileInput = document.getElementById('fileInput') as HTMLInputElement;
   showToastUploading = false;
   showToastSuccess = false;
   showToastFailure = false;
@@ -33,8 +36,29 @@ export class FloorplanUploadModalComponent {
   uploadingImage = false;
   alreadyUploaded = false;
   fileType = 'PNG';
+  canvasContainer!: Konva.Stage;
+  canvas!: Konva.Layer;
+  largeImage = false;
+  private isDragging = false;
+  private offsetX = 0;
+  private offsetY = 0;
+
+  ngAfterViewInit(): void {
+    this.canvasContainer = new Konva.Stage({
+      container: 'canvasImage',
+      width: 556.69,
+      height: 280,
+    });
+
+    this.canvas = new Konva.Layer();
+
+    this.canvasContainer.add(this.canvas);
+  }
 
   closeModal(): void {
+    this.uploadingImage = false;
+    this.uploadedImage = new Image();
+    this.uploadedImage.src = '';
     this.closeModalEvent.emit(true);
   }
 
@@ -51,23 +75,28 @@ export class FloorplanUploadModalComponent {
   }
 
   uploadFloorplanImage(): void {
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
 
-    if (fileInput) {
-      fileInput.addEventListener('change', () => {
-        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    if (this.fileInput) {
+      this.fileInput.value = '';
+  
+      this.fileType = '';
+
+      this.fileInput.addEventListener('change', () => {
+        if (!this.fileInput || !this.fileInput.files || this.fileInput.files.length === 0) {
           return;
         }
-        const selectedFile = fileInput.files[0];
+        const selectedFile = this.fileInput.files[0];
   
         if (selectedFile) {
           this.fileType = selectedFile.type;
-  
-          if (!this.fileType.startsWith('image/')) {
+
+          // test if the selected file is not more than 16MB
+          if (selectedFile.size > 16000000) {
             this.showToast = true;
             this.hideModal = true;
             this.busyUploadingFloorplan = true;
-            this.toastHeading = 'Invalid File Extension';
+            this.toastHeading = 'File Too Large';
+            this.toastMessage = 'Please select a file that is less than 16MB';
             const modal = document.querySelector('#toast-modal');
 
             modal?.classList.remove('hidden');
@@ -75,18 +104,79 @@ export class FloorplanUploadModalComponent {
               modal?.classList.remove('opacity-0');
             }, 100);
             
-            fileInput.value = ''; // Clear the input field
+            this.fileInput.value = ''; // Clear the input field
+          }  
+          else if (!this.fileType.startsWith('image/')) {
+            this.showToast = true;
+            this.hideModal = true;
+            this.busyUploadingFloorplan = true;
+            this.toastHeading = 'Invalid File Extension';
+            this.toastMessage = 'Please select an image file when uploading an image of a floor plan.';
+            const modal = document.querySelector('#toast-modal');
+
+            modal?.classList.remove('hidden');
+            setTimeout(() => {
+              modal?.classList.remove('opacity-0');
+            }, 100);
+            
+            this.fileInput.value = ''; // Clear the input field
           }
           else {
-            const previewImage = document.getElementById('previewFloorplanImage') as HTMLImageElement;
-            if (!previewImage) return;
+            this.uploadedImage = new Image();
+            if (!this.uploadedImage) return;
 
             // Create a FileReader to read the selected file
             const reader = new FileReader();
             
-            reader.onload = function(event) {
-                // Set the src attribute of the img element to the data URL of the selected image
-                previewImage.setAttribute('src', event?.target?.result as string);
+            reader.onload = (event) => {
+              if (!event || !event.target) {
+                return;
+              }
+                this.uploadedImage.src = event.target.result as string;
+
+                this.uploadedImage.onload = () => {
+                  const image = new Konva.Image({
+                    id: 'previewFloorplanImage',
+                    image: this.uploadedImage,
+                    x: 0,
+                    y: 0,
+                    width: 1.5*this.canvasContainer.width(),
+                    height: 1.5*this.canvasContainer.height(),
+                    fill: 'red',
+                    cornerRadius: 10,
+                  });
+
+                  this.largeImage = false; // reset for next image
+
+                  if (image.height() > this.canvasContainer.height() || image.width() > this.canvasContainer.width()) {
+                    setTimeout(() => {
+                      this.largeImage = true;
+                    }, 1000);
+                    image.draggable(true);
+
+                    image.on('mousedown', () => {
+                      this.canvasContainer.container().style.cursor = 'grabbing';
+                    });
+
+                    image.on('mouseup', () => {
+                      this.canvasContainer.container().style.cursor = 'grab';
+                    });
+                    
+                    //set bound on drag to check if the image's width or height is larger than the canvas
+                    image.dragBoundFunc((pos) => {
+                      const stageWidth = this.canvasContainer.width();
+                      const stageHeight = this.canvasContainer.height();
+                      const x = Math.min(0, Math.max(pos.x, stageWidth - image.width()));
+                      const y = Math.min(0, Math.max(pos.y, stageHeight - image.height()));
+                  
+                      return { x, y };
+                    });
+                  }
+
+                  this.canvas.add(image);
+                  this.canvas.draw();
+                  this.canvasContainer.visible(true);
+                };
             };
             
             // Read the selected file as a data URL
@@ -108,56 +198,32 @@ export class FloorplanUploadModalComponent {
       });
     }
 
-    fileInput?.click();
+    this.fileInput?.click();
   }
 
   completeUpload(): void {
     this.uploadedFloorplan.emit(new Konva.Image({
+      id: 'uploadedFloorplan-' + this.generateUniqueId(),
       image: this.uploadedImage,
       draggable: true,
       x: 0,
       y: 0,
     }));
-  }
-  private isDragging = false;
-  private offsetX = 0;
-  private offsetY = 0;
 
-  onMouseDown(event: MouseEvent) {
-    this.isDragging = true;
-    this.offsetX = event.clientX;
-    this.offsetY = event.clientY;
-    const imageContainer = document.getElementById('imageContainerInner');
-    
-    if (imageContainer) {
-      imageContainer.style.cursor = 'grabbing';
-    }
+    this.closeModalEvent.emit(true);
   }
 
-  onMouseMove(event: MouseEvent) {
-    if (this.isDragging) {
-      const container = document.getElementById('imageContainerInner');
-      if (!container) return;
-      const img = document.getElementById('previewFloorplanImage');
-
-      const deltaX = event.clientX - this.offsetX;
-      const deltaY = event.clientY - this.offsetY;
-
-      container.scrollLeft -= deltaX;
-      container.scrollTop -= deltaY;
-
-      this.offsetX = event.clientX;
-      this.offsetY = event.clientY;
-    }
+  onMouseDown(): void {    
+    document.body.style.cursor = 'grabbing';
   }
 
-  onMouseUp() {
-    this.isDragging = false;
-    
-    const imageContainer = document.getElementById('imageContainerInner');
-    
-    if (imageContainer) {
-      imageContainer.style.cursor = 'grab';
-    }
+  onMouseUp(): void {
+    document.body.style.cursor = 'default';
+  }
+
+  generateUniqueId() : string {
+    const timestamp = Date.now();
+    const randomNumber = Math.floor(Math.random() * 1000000);
+    return `${timestamp}-${randomNumber}`;
   }
 }
