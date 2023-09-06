@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
@@ -42,6 +42,7 @@ export class AllEventsPageComponent implements OnInit {
   public show_search = true;
   public disable_search = false;
   public show_all_events = true;
+  public largeScreen = false;
 
   public create = false;
 
@@ -355,5 +356,14 @@ export class AllEventsPageComponent implements OnInit {
     setTimeout(() => {
       modal?.classList.remove('opacity-0');
     }, 100);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth > 1024) {
+      this.largeScreen = true;
+    } else {
+      this.largeScreen = false;
+    }
   }
 }
