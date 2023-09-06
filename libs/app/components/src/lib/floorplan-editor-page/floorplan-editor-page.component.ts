@@ -73,7 +73,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     // activeLine: Konva.Line | null = null;
     activeItem: any = null;
     // lines: Konva.Line[] = [];
-    transformer = new Konva.Transformer();
+    transformer = new Konva.Transformer({name: 'transformer'});
     preventCreatingWalls = true; // to prevent creating walls
     transformers: Konva.Transformer[] = [this.transformer];
     sensors: ISensorState[] | undefined = [];
@@ -354,6 +354,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             this.setMouseEvents(group);
             this.canvas.add(group);
             this.canvas.draw();
+            this.reorderCanvasItems();
             droppedItem.konvaObject = group;
             this.stallCount++;
           } 
@@ -384,6 +385,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             this.setMouseEvents(circle);
             this.canvas.add(circle);
             this.canvas.draw();
+            this.reorderCanvasItems();
             droppedItem.konvaObject = circle;
             // this.store.dispatch(new AddSensor(circle));
             // this.sensors$.subscribe(sensors => {
@@ -417,6 +419,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             this.setMouseEvents(text);
             this.canvas.add(text);
             this.canvas.draw();
+            this.reorderCanvasItems();
             droppedItem.konvaObject = text;
           }
         });
@@ -1279,6 +1282,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       const selectionBox = new Konva.Rect({
         fill: 'rgba(0,0,255,0.2)',
         visible: false,
+        name: 'selectionBox'
       });
 
       const rect = new Konva.Rect({
@@ -1286,6 +1290,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         visible: false,
         draggable: false,
         cursor: 'move',
+        name: 'rectOverlay',
       })
 
       this.canvas.add(selectionBox);
@@ -1659,7 +1664,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             (item) => item.konvaObject === movedObject
         );
 
-        const isUploadedFloorplan = this.activeItem.getAttr('name')?.toString().includes('uploadedFloorplan-') ? true : false;
+        const isUploadedFloorplan = this.activeItem.getAttr('name')?.toString().includes('uploadedFloorplan') ? true : false;
         // set bounderies for the object such that the object cannot be move beyond the borders of the canvas
         
             
@@ -1690,6 +1695,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         
             if (positionX < minX) {
                 movedObject.setAttr('x', minX);
+                console.log('prevented')
             } else if (positionX > maxX) {
                 movedObject.setAttr('x', maxX);
             }
@@ -1892,6 +1898,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         path.on('dragmove', this.onObjectMoving.bind(this));
         this.canvas.add(path);
         this.canvas.batchDraw();
+        this.reorderCanvasItems();
 
         this.paths.push(path);
         this.isDraggingLine = true;
@@ -2054,6 +2061,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           bottom: stage.y() + height,
           right: stage.x() + width,
           draggable: false,
+          name: 'gridGroup',
         });
         for (let i = 0; i < width / grid; i++) {
           const distance = i * grid;
@@ -2280,7 +2288,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           id: newFloorplanImage.id(),
           width: newFloorplanImage.width(),
           height: newFloorplanImage.height(),
-          name: 'uploadedFloorplan-'+newFloorplanImage.id(),
+          name: 'uploadedFloorplan',
         });
 
         newGroup.add(newFloorplanImage);
@@ -2290,6 +2298,117 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.canvas.add(newGroup);
         this.moveSensorsAndTooltipsToTop();
         this.canvas.draw();
+        this.reorderCanvasItems();
+      }
+
+      reorderCanvasItems() : void {
+        //take the canvas layer and reorder the items such that the uploaded floorplan is at the bottom, stalls, walls and textboxes are one level above
+        // and the sensors then one level above that and finally the tooltips are at the top
+        const canvasItems = this.canvas.children;
+        const newCanvas = new Konva.Layer();
+
+        if (!canvasItems) return;
+
+        const canvasItemsArray : KonvaTypes[] = [];
+
+        canvasItems.forEach((item: any) => {
+          canvasItemsArray.push(item);
+        });
+
+        const gridGroup = canvasItemsArray.find((item: any) => {
+          return item.attrs.name === 'gridGroup';
+        });
+
+        const uploadedFloorplan = canvasItemsArray.filter((item: any) => {
+          return item.attrs.name === 'uploadedFloorplan';
+        });
+
+        const stalls = canvasItemsArray.filter((item: any) => {
+          return item.attrs.name === 'stall';
+        });
+
+        const walls = canvasItemsArray.filter((item: any) => {
+          return item.attrs.name === 'wall';
+        });
+
+        const textboxes = canvasItemsArray.filter((item: any) => {
+          return item.attrs.name === 'textBox';
+        });
+
+        const sensors = canvasItemsArray.filter((item: any) => {
+          return item.attrs.name === 'sensor';
+        });
+
+        const tooltips = canvasItemsArray.filter((item: any) => {
+          return item.getAttr('id').includes('tooltip');
+        });
+
+        const transformer = canvasItemsArray.find((item: any) => {
+          return item instanceof Konva.Transformer;
+        });
+
+        const selectionBox = canvasItemsArray.find((item: any) => {
+          return item.attrs.name === 'selectionBox';
+        });
+
+        const rectOverlay = canvasItemsArray.find((item: any) => {
+          return item.attrs.name === 'rectOverlay';
+        });
+
+        const newCanvasItemsArray = [];
+
+        if (gridGroup) {
+          newCanvasItemsArray.push(gridGroup);
+        }
+
+        uploadedFloorplan.forEach((item: any) => {
+          newCanvasItemsArray.push(item);
+        });
+
+        walls.forEach((item: any) => {
+          newCanvasItemsArray.push(item);
+        });
+
+        stalls.forEach((item: any) => {
+          newCanvasItemsArray.push(item);
+        });
+
+        textboxes.forEach((item: any) => {
+          newCanvasItemsArray.push(item);
+        });
+
+        sensors.forEach((item: any) => {
+          newCanvasItemsArray.push(item);
+        });
+
+        tooltips.forEach((item: any) => {
+          newCanvasItemsArray.push(item);
+        });
+
+        if (transformer) {
+          newCanvasItemsArray.push(transformer);
+        }
+
+        if (selectionBox) {
+          newCanvasItemsArray.push(selectionBox);
+        }
+
+        if (rectOverlay) {
+          newCanvasItemsArray.push(rectOverlay);
+        }
+
+        this.canvasContainer.removeChildren();
+        this.canvas.removeChildren();
+
+        // add the items to the canvas
+        newCanvasItemsArray.forEach((item: any) => {
+          newCanvas.add(item);
+        });
+
+        this.canvas = newCanvas;
+        this.canvasContainer.add(newCanvas);
+        this.canvas.draw();
+        console.log(this.canvas);
       }
 
       adjustJSONData(json: Record<string, any>): void {

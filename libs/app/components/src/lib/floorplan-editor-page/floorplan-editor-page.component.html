@@ -1,7 +1,7 @@
 <div *ngIf="isLoading" class="top-0 left-0 w-full h-screen flex">
   <div class="m-auto flex justify-between">
     <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">Getting things ready</h1>
-    <span class="loading loading-dots loading-lg ml-2 text-ept-blue-grey ept-of"></span>
+    <span class="loading loading-dots loading-lg ml-3 text-ept-blue-grey ept-of"></span>
   </div>
 </div>
 <div class="top-0 left-0 w-full h-screen">
@@ -77,7 +77,7 @@
         <hr class="m-3" />
         <div
           *ngIf="!shouldStackVertically"
-          class="relative overflow-y-auto max-h-52 flex ml-4 cursor-default"
+          class="relative overflow-y-auto max-h-52 flex ml-4 mb-4 cursor-default"
           [title]="getWallTitle()"
         >
           <!-- <div class="absolute w-full h-full cursor-pointer" (click)="toggleEditing()"></div> -->
@@ -130,13 +130,13 @@
         >
           Click and drag on canvas to create walls
         </label>
-      <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3" />
+      <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3 mt-2" />
       <h2 
         *ngIf="showLengthInput() || showAngleInput() || showTextInput()" 
-        class="attributes-heading mt-3 ml-2 text-lg"
+        class="attributes-heading ml-3 text-lg"
         [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
       >
-        Component Attributes
+        Attributes
       </h2>
       <div
         *ngIf="!shouldStackVertically"
@@ -144,16 +144,17 @@
         class="flex flex-col cursor-default"
       >
         <div *ngIf="showTextInput()" class="mt-2 p-2 flex flex-row items-center justify-evenly" lines="none">
-          <label [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}">Text:</label><br>
+          <label class="" [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}">Text:</label><br>
           <input
             #textInput
             id="textInput"
             aria-label=""
-            class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[200px] justify-center"
+            class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mr-3  w-[120px] justify-center"
             [ngClass]="{'bg-white border-ept-blue-grey': !lightMode}"
             type="text"
             pattern="[a-zA-Z0-9 ]*"
             [value]="activeItem ? getActiveItemText() : ''"
+            [disabled]="!preventCreatingWalls || activeItem === null || !selectedTextBox"
             (input)="updateText($event)"
             [attr.maxlength]="getMaxTextLength()"
             label="Text:"
@@ -162,59 +163,78 @@
         </div>
         <p 
           *ngIf="showTextInput()"
-          class="text-ept-deep-grey mr-4 opacity-40 flex flex-row justify-end text-xs"
+          class="text-ept-deep-grey mr-10 opacity-40 flex flex-row justify-end text-xs"
           [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
         >
           {{getTextLength()}}/{{getMaxTextLength()}}
         </p>
         <div *ngIf="showLengthInput()" class="attributes-list flex flex-row items-center justify-evenly mt-2 p-2" lines="none">
           <label 
-            class="flex mr-3 min-w-fit" 
+            class="flex mr-3 ml-6 min-w-fit" 
             [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall, 'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
           >
             Length:
           </label>
-          <input
-            aria-label=""
-            class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
-            type="number"
-            step="0.5"
-            [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
-            (input)="updateWidth($event)"
-            [ngClass]="{'opacity-50 pointer-events-none' : !preventCreatingWalls || activeItem === null || !selectedWall, 'bg-white border-ept-blue-grey': !lightMode}"
-          />
+          <div class="flex">
+            <input
+              aria-label=""
+              class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[80px]"
+              type="number"
+              step="0.5"
+              [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
+              (input)="updateWidth($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null || !selectedWall"
+              [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall, 'bg-white border-ept-blue-grey': !lightMode}"
+            />
+            <p 
+              class="text-ept-deep-grey opacity-40 mr-2 mt-4 ml-2 flex flex-row justify-end text-xs italic"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              meter(s)
+            </p>
+          </div>
         </div>
         <div *ngIf="showAngleInput()" class="attributes-list flex flex-row items-center justify-evenly mt-2 p-2" lines="none">
           <label 
-            class="flex mr-3 min-w-fit" 
+            class="flex mr-[18px] ml-5 min-w-fit" 
             [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
           >
             Angle:
           </label>
-          <input
-            aria-label=""
-            class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
-            type="number"
-            step="1"
-            [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
-            (input)="updateRotation($event)"
-            [ngClass]="{'opacity-50 pointer-events-none' : !preventCreatingWalls || activeItem === null || !selectedWall, 'bg-white border-ept-blue-grey': !lightMode}"
-          />
+          <div class="flex">
+            <input
+              aria-label=""
+              class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[80px]"
+              type="number"
+              step="1"
+              [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
+              (input)="updateRotation($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null || selectedSensor"
+              [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'bg-white border-ept-blue-grey': !lightMode}"
+            />
+            <p 
+              class="text-ept-deep-grey opacity-40 mt-4 ml-2 flex flex-row justify-end text-xs italic"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              degree(s)
+            </p>
+          </div>
         </div>
+        <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3 mt-2" />
       </div>
       <div
         *ngIf="shouldStackVertically"
         id="attributes-container"
-        class="flex flex-col items-center justify-evenly"
+        class="flex flex-col justify-evenly"
       >
-        <div *ngIf="showTextInput()" class="mt-3">
+        <div *ngIf="showTextInput()" class="mt-3 self-center">
           <div class="p-1">
             <label [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}">Text:</label><br>
             <input
               #textInput
               id="textInput"
               aria-label=""
-              class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[150px]"
+              class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-1 w-[150px]"
               [ngClass]="{'bg-white border-ept-blue-grey': !lightMode}"
               type="text"
               pattern="[a-zA-Z0-9 ]*"
@@ -226,7 +246,7 @@
               labelPlacement="floating"
             />
             <p 
-              class="text-ept-deep-grey opacity-40 mr-4 flex flex-row justify-end text-xs"
+              class="text-ept-deep-grey opacity-40 mt-0.5 flex flex-row justify-end text-xs"
               [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
             >
               {{getTextLength()}}/{{getMaxTextLength()}}
@@ -235,38 +255,57 @@
         </div>
         <div *ngIf="showLengthInput()" class="mt-3">
           <label 
+            class="ml-7"
             [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall, 'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
           >
             Length:
           </label><br/>
-          <input
-            aria-label=""
-            class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[100px]"
-            type="number"
-            step="0.5"
-            [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
-            (input)="updateWidth($event)"
-            [disabled]="!preventCreatingWalls || activeItem === null || !selectedWall"
-            [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor || !selectedWall, 'bg-white border-ept-blue-grey': !lightMode}"
-          >
+          <div class="flex">
+            <input
+              aria-label=""
+              class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-1 ml-7 w-[100px]"
+              type="number"
+              step="0.5"
+              [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
+              (input)="updateWidth($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null || !selectedWall"
+              [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor || !selectedWall, 'bg-white border-ept-blue-grey': !lightMode}"
+            >
+            <p 
+              class="text-ept-deep-grey opacity-40 mr-2 mt-4 ml-2 flex flex-row justify-end text-xs italic"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              meter(s)
+            </p>
+          </div>
         </div>
-        <div *ngIf="showAngleInput()" class="mt-3">
+        <div *ngIf="showAngleInput()" [ngClass]="{'mt-0': showTextInput(), 'mt-3' : !showTextInput()}">
           <label 
+            class="ml-7"
             [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'text-white': !lightMode}"
           >
             Angle:
           </label><br/>
-          <input
-            aria-label=""
-            class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-3 w-[100px]"
-            type="number"
-            step="1"
-            [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
-            (input)="updateRotation($event)"
-            [disabled]="!preventCreatingWalls || activeItem === null || selectedSensor"
-            [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'bg-white border-ept-blue-grey': !lightMode}"
-          >
+          <div class="flex">
+            <input
+              aria-label=""
+              class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-1 ml-7 w-[100px]"
+              type="number"
+              step="1"
+              [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
+              (input)="updateRotation($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null || selectedSensor"
+              [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'bg-white border-ept-blue-grey': !lightMode}"
+            >
+            <p 
+              class="text-ept-deep-grey opacity-40 mr-2 mt-4 ml-2 flex flex-row justify-end text-xs italic"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              degree(s)
+            </p>
+          </div>
         </div>
+        <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3 mt-4" />
       </div>
       <hr [ngClass]="{'hidden' : !showSensorLinking()}" class="m-3" />
       <div [ngClass]="{'hidden' : !showSensorLinking()}" class="flex flex-col items-center">
@@ -287,11 +326,16 @@
       <div class="mt-auto mb-5 flex flex-col justify-between items-center">
         <div 
           [title]="getUploadImageTitle()" 
-          class="flex flex-col items-center mb-10 mt-4"
-          [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'opacity-50 hover:opacity-100':preventCreatingWalls}"
+          class="flex flex-col items-center mt-1"
+          [ngClass]="{
+            'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 
+            'opacity-50 hover:opacity-100':preventCreatingWalls,
+            'mb-10' : !shouldStackVertically,
+            'mb-5' : shouldStackVertically
+          }"
         >
           <p 
-            class="text-sm text-ept-blue-grey text-center" 
+            class="text-sm text-ept-blue-grey text-center ml-2 mr-2" 
             (click)="openFloorplanUploadModal()"
             [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'cursor-pointer':preventCreatingWalls}"
           >
@@ -318,7 +362,7 @@
     <div
         id="canvasParent"
         #canvasParent
-        class="relative col-span-29 bg-white rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2"
+        class="relative col-span-29 bg-white rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2 overflow-hidden"
         (drop)="onDrop($event)"
         (dragover)="onDragOver($event)"
         >
@@ -334,11 +378,13 @@
         >
             Click and drag to create walls
         </p>
-        <div
-            id="canvasElement"
-            #canvasElement
-            class="border-ept-off-white border-2 rounded-lg md:rounded-xl w-full h-full"
-        ></div>
+        <div class="overflow-hidden mr-2 w-full h-full border-2 rounded-lg md:rounded-xl">
+          <div
+              id="canvasElement"
+              #canvasElement
+              class="border-ept-off-white border-2 rounded-lg md:rounded-xl w-full h-full"
+          ></div>
+        </div>
         <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <img
             #dustbin

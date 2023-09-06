@@ -7,9 +7,21 @@
   <div class="max-w-md bg-gradient-to-br z-50 rounded p-5">
     <div
       *ngIf="success"
-      class="alert alert-success text-ept-deep-grey bg-ept-light-green opacity-100"
+      class="relative alert alert-success text-ept-deep-grey bg-ept-light-green opacity-100"
     >
-      {{ toastMessage }}
+      <ng-icon
+        *ngIf="busyUploadingFloorplan"
+        name="matClose"
+        class="text-2xl absolute right-2 top-2 text-ept-navy-blue cursor-pointer"
+        (click)="closeModal()"
+      ></ng-icon>
+      <div *ngIf="toastHeading !== ''" class="flex flex-col">
+        <h1 class="text-lg font-semibold text-center mb-3 mt-3 text-ept-deep-grey">
+          {{ toastHeading }}
+        </h1>
+        <p [ngClass]="{'m-3 text-center':busyUploadingFloorplan}">{{ toastMessage }}</p>
+      </div>
+      <p *ngIf="toastHeading === ''" [ngClass]="{'mt-3 text-center':busyUploadingFloorplan}">{{ toastMessage }}</p>
     </div>
     <div
       *ngIf="failure"
@@ -25,7 +37,7 @@
         <h1 class="text-lg font-semibold text-center mb-3 mt-3 text-ept-deep-grey">
           {{ toastHeading }}
         </h1>
-        <p [ngClass]="{'mt-3 text-center':busyUploadingFloorplan}">{{ toastMessage }}</p>
+        <p [ngClass]="{'m-3 text-center':busyUploadingFloorplan}">{{ toastMessage }}</p>
       </div>
       <p *ngIf="toastHeading === ''" [ngClass]="{'mt-3 text-center':busyUploadingFloorplan}">{{ toastMessage }}</p>
     </div>

@@ -39,7 +39,7 @@
                     [(ngModel)]="fileType.split('/')[1]"    
                 >
                     <option [value]="'png'">PNG</option>
-                    <option [value]="'jpg'">JPG</option>
+                    <!-- <option [value]="'jpg'">JPG</option> -->
                     <option [value]="'jpeg'">JPEG</option>
                     <option [value]="'svg+xml'">SVG</option>
                     <option [value]="'vnd.adobe.photoshop'">PSD</option>
@@ -115,13 +115,13 @@
 <event-participation-trends-toast-modal 
     *ngIf="showToastUploading"
     class="z-50"
-    [toastMessage]="'Uploading...'" 
+    [toastMessage]="'Completing upload...'" 
     [toastType]="''"
     [success]="showToastSuccess"
     [failure]="showToastFailure"
     [linking]="showToastUploading"
 ></event-participation-trends-toast-modal>
-<event-participation-trends-toast-modal 
+<!-- <event-participation-trends-toast-modal 
     *ngIf="showToastSuccess"
     class="z-50"
     [toastMessage]="toastMessage" 
@@ -132,7 +132,7 @@
     (closeModalEvent)="closeToastModal()"
 ></event-participation-trends-toast-modal>
 <event-participation-trends-toast-modal 
-    *ngIf="showToastSuccess"
+    *ngIf="showToastFailure"
     class="z-50"
     [toastMessage]="toastMessage" 
     [toastType]="'failure'"
@@ -140,16 +140,16 @@
     [failure]="showToastFailure"
     [linking]="showToastUploading"
     (closeModalEvent)="closeToastModal()"
-></event-participation-trends-toast-modal>
+></event-participation-trends-toast-modal> -->
 <event-participation-trends-toast-modal
   *ngIf="showToast"
   class="transition-opacity duration-100 hidden opacity-0"
   id="toast-modal"
   [toastHeading]="toastHeading"
   [toastMessage]="toastMessage" 
-  [toastType]="'failure'"
-  [success]="false"
-  [failure]="true"
+  [toastType]="''"
+  [success]="showToastSuccess"
+  [failure]="showToastFailure"
   [linking]="false"
   (closeModalEvent)="closeToastModal()"
   [busyUploadingFloorplan]="true"
