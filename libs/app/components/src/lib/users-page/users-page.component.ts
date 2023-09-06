@@ -25,6 +25,7 @@ export class UsersPageComponent implements OnInit {
   public disable_search = false;
   public viewerText = 'V';
   public managerText = 'M';
+  public largeScreen = false;
 
   async ngOnInit() {
     const role = await this.appApiService.getRole();
@@ -44,6 +45,12 @@ export class UsersPageComponent implements OnInit {
       this.viewerText = 'Viewer';
       this.managerText = 'Manager';
     }  
+
+    if (window.innerWidth > 1024) {
+      this.largeScreen = true;
+    } else {
+      this.largeScreen = false;
+    }
 
     this.loading = false;
     setTimeout(() => {
@@ -121,6 +128,12 @@ export class UsersPageComponent implements OnInit {
       this.viewerText = 'V';
       this.managerText = 'M';
     } 
+
+    if (window.innerWidth > 1024) {
+      this.largeScreen = true;
+    } else {
+      this.largeScreen = false;
+    }
   }
 
 }

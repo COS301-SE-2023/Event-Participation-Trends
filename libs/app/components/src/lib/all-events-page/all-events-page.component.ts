@@ -56,6 +56,12 @@ export class AllEventsPageComponent implements OnInit {
         this.loadEvents();
       }
     });
+
+    if (window.innerWidth > 1024) {
+      this.largeScreen = true;
+    } else {
+      this.largeScreen = false;
+    }
   }
 
   async loadEvents() {
