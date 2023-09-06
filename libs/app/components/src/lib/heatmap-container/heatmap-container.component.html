@@ -18,24 +18,24 @@
         <div (click)="recenterFloorlayout()" class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon name="matFilterCenterFocus" title="Recenter floor"></ng-icon>
         </div>
-        <div (click)="addFiveSeconds(true)" title="Add 5 seconds to timeline" class="flex flex-col mt-2 opacity-50 text-lg border-ept-blue-grey border-2 border-solid rounded-lg text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+        <div *ngIf="hasData" (click)="addFiveSeconds(true)" title="Add 5 seconds to timeline" class="flex flex-col mt-2 opacity-50 text-lg border-ept-blue-grey border-2 border-solid rounded-lg text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon name="matRedo" class="m-0 p-0 self-center"></ng-icon>
             <label class="text-sm m-0 p-0 hover:cursor-pointer">+5s</label>
         </div>
-        <div (click)="addFiveSeconds(false)" title="Substract 5 seconds from timeline" class="flex flex-col mt-2 opacity-50 text-lg border-ept-blue-grey border-2 border-solid rounded-lg text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+        <div *ngIf="hasData" (click)="addFiveSeconds(false)" title="Substract 5 seconds from timeline" class="flex flex-col mt-2 opacity-50 text-lg border-ept-blue-grey border-2 border-solid rounded-lg text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon name="matRedo" class="m-0 p-0 self-center transform scale-x-[-1]"></ng-icon>
             <label class="text-sm m-0 p-0 hover:cursor-pointer">-5s</label>
         </div>
-        <div class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+        <div *ngIf="hasData" class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon (click)="playFlowOfHeatmap()" title="Play flow of heatmap" *ngIf="paused" name="matPlayCircleOutline"></ng-icon>
             <ng-icon (click)="pauseFlowOfHeatmap()" title="Pause flow of heatmap" *ngIf="!paused" name="matPauseCircleOutline"></ng-icon>
         </div>
     </div>
-    <div *ngIf="show && !hasFloorlayout" class="w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10">
+    <div *ngIf="show && !hasFloorlayout" class="z-50 w-3/4 md:w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10" [ngClass]="{'w-fit': !hasData}">
         <ng-icon name="matWarningAmberRound" class="text-3xl text-ept-bumble-yellow self-center"></ng-icon>
         <label class="m-2 text-xl text-ept-bumble-yellow opacity-100 z-100">No Floor layout for this event</label>
     </div>
-    <div *ngIf="show && !hasData" class="w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10">
+    <div *ngIf="show && !hasData" class="z-50 w-3/4 md:w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10" [ngClass]="{'w-fit': !hasFloorlayout}">
         <ng-icon name="matErrorOutlineRound" class="text-3xl text-ept-light-red self-center"></ng-icon>
         <label class="m-2 text-xl text-ept-light-red opacity-100 z-100">No data collected for this event</label>
     </div>

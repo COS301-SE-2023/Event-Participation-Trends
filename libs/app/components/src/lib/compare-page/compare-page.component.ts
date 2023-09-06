@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IEvent, IPosition } from '@event-participation-trends/api/event/util';
@@ -38,6 +38,9 @@ export class ComparePageComponent implements OnInit{
   public show_search = true;
   public role = 'viewer';
   public search = '';
+  public showSidePanel = false;
+  public sidePanelToggled = false;
+  public hintText = 'Use the tab on the right to select events.';
 
   selectedCategory = 'Show All';
   eventsSelected = 0;
@@ -77,6 +80,16 @@ export class ComparePageComponent implements OnInit{
     } else {
       this.router.navigate(['/home']);
     }
+
+    // test if window size is less than 1100px
+    if (window.innerWidth < 1100) {
+      this.showSidePanel = false;
+      this.hintText = 'Use the button in the top right corner to select events.';
+    }
+    else {
+      this.showSidePanel = true;
+      this.hintText = 'Use the tab on the right to select events.';
+    }  
 
     this.loading = false;
 
@@ -198,15 +211,31 @@ export class ComparePageComponent implements OnInit{
     }
   }
 
-  // getSelectedEvents() {
-  //   const eventList = this.eventList;
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.hideSidePanel();
+    if (event.target.innerWidth > 1100) {
+      this.showSidePanel = true;
+      this.hintText = 'Use the tab on the right to select events.';
+    } else {
+      this.showSidePanel = false;
+      this.hintText = 'Use the button in the top right corner to select events.';
+    } 
+  }
 
-  //   const events =  eventList.filter((event) => {
-  //     return event.selected;
-  //   }).map((event) => {
-  //     return event.event;
-  //   });
+  openSidePanel() {
+    const element = document.getElementById('sidePanel');
+    if (element) {
+      element.style.width = '315px';
+    }
+    this.sidePanelToggled = true;
+  }
 
-  //   this.selectedEvents = events;
-  // }
+  hideSidePanel() {
+    this.sidePanelToggled = false;
+    const element = document.getElementById('sidePanel');
+    if (element) {
+      element.style.width = '0px';
+    }
+  }
 }

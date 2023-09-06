@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppApiService } from '@event-participation-trends/app/api';
 
@@ -15,6 +15,8 @@ enum Tab {
   styleUrls: ['./event-view.component.css'],
 })
 export class EventViewComponent implements OnInit {
+  @ViewChild('navBarContainer') navBarContainer!: ElementRef<HTMLDivElement>;
+
   constructor(
     private appApiService: AppApiService,
     private router: Router,
@@ -27,6 +29,8 @@ export class EventViewComponent implements OnInit {
   public screenTooSmall = false;
 
   // Navbar
+  public showMenuBar = false;
+  public navBarVisible = false;
   // Back
   public expandBack = false;
   public overflowBack = false;
@@ -131,6 +135,14 @@ export class EventViewComponent implements OnInit {
     else if (t === 'floorplan') {
       this.tab = Tab.Floorplan;
     }
+
+    // test if window size is less than 1024px
+    if (window.innerWidth < 1024) {
+      this.showMenuBar = false;
+    }
+    else {
+      this.showMenuBar = true;
+    } 
   }
 
   pressButton(id: string) {
@@ -151,12 +163,22 @@ export class EventViewComponent implements OnInit {
     this.screenTooSmall = window.innerWidth < 1152;
     this.pressButton('#details');
     this.tab = Tab.Details;
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
   }
 
   goDashboard() {
     this.screenTooSmall = window.innerWidth < 1152;
     this.pressButton('#dashboard');
     this.tab = Tab.Dashboard;
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
   }
 
   goFloorplan() {
@@ -169,6 +191,11 @@ export class EventViewComponent implements OnInit {
     }
     this.router.navigate(['floorplan'], { relativeTo: this.route }); 
     this.tab = Tab.Floorplan;
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
   }
 
   showSmallScreenModal() {
@@ -218,5 +245,34 @@ export class EventViewComponent implements OnInit {
 
   isActiveRoute(route: string): boolean {
     return this.router.url.includes(route);
+  }
+
+  // // test when the window size is less than 1024px
+  // // test when the window size is greater than 1024px
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth > 1024) {
+      this.showMenuBar = true;
+      this.navBarVisible = false;
+    } else {
+      this.showMenuBar = false;
+    } 
+  }
+
+  showNavBar() {
+    
+    const element = document.getElementById('navbar');
+    if (element) {
+      element.style.width = '390px';
+    }
+    this.navBarVisible = true;
+  }
+
+  hideNavBar() {
+    this.navBarVisible = false;
+    const element = document.getElementById('navbar');
+    if (element) {
+      element.style.width = '0px';
+    }
   }
 }
