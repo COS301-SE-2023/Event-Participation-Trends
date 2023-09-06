@@ -354,6 +354,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             this.setMouseEvents(group);
             this.canvas.add(group);
             this.canvas.draw();
+            this.reorderCanvasItems();
             droppedItem.konvaObject = group;
             this.stallCount++;
           } 
@@ -384,6 +385,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             this.setMouseEvents(circle);
             this.canvas.add(circle);
             this.canvas.draw();
+            this.reorderCanvasItems();
             droppedItem.konvaObject = circle;
             // this.store.dispatch(new AddSensor(circle));
             // this.sensors$.subscribe(sensors => {
@@ -417,6 +419,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             this.setMouseEvents(text);
             this.canvas.add(text);
             this.canvas.draw();
+            this.reorderCanvasItems();
             droppedItem.konvaObject = text;
           }
         });
@@ -1895,6 +1898,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         path.on('dragmove', this.onObjectMoving.bind(this));
         this.canvas.add(path);
         this.canvas.batchDraw();
+        this.reorderCanvasItems();
 
         this.paths.push(path);
         this.isDraggingLine = true;
@@ -2404,8 +2408,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.canvas = newCanvas;
         this.canvasContainer.add(newCanvas);
         this.canvas.draw();
-
-
+        console.log(this.canvas);
       }
 
       adjustJSONData(json: Record<string, any>): void {
