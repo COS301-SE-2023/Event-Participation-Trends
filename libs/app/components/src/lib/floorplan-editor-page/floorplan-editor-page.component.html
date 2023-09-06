@@ -362,7 +362,7 @@
     <div
         id="canvasParent"
         #canvasParent
-        class="relative col-span-29 bg-white rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2"
+        class="relative col-span-29 bg-white rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2 overflow-hidden"
         (drop)="onDrop($event)"
         (dragover)="onDragOver($event)"
         >
@@ -378,11 +378,13 @@
         >
             Click and drag to create walls
         </p>
-        <div
-            id="canvasElement"
-            #canvasElement
-            class="border-ept-off-white border-2 rounded-lg md:rounded-xl w-full h-full"
-        ></div>
+        <div class="overflow-hidden mr-2 w-full h-full border-2 rounded-lg md:rounded-xl">
+          <div
+              id="canvasElement"
+              #canvasElement
+              class="border-ept-off-white border-2 rounded-lg md:rounded-xl w-full h-full"
+          ></div>
+        </div>
         <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <img
             #dustbin
