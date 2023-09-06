@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { NgIconsModule, provideIcons } from "@ng-icons/core";
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
@@ -53,6 +53,9 @@ export class DashboardPageComponent implements OnInit {
   @ViewChild('flowmapContainer') flowmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalDevicesBarChart') totalDevicesBarChart!: ElementRef<HTMLCanvasElement>;
 
+  @ViewChild('userCountDataStreamingChartSmall') userCountDataStreamingChartSmall!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('totalDevicesBarChartSmall') totalDevicesBarChartSmall!: ElementRef<HTMLCanvasElement>;
+  
   // Frontend
   isLoading = true;
   activeDevices = 4;
@@ -64,7 +67,10 @@ export class DashboardPageComponent implements OnInit {
   currentClampedScaleX = 1;
   currentClampedScaleY = 1;
   floorlayoutBounds: {top: number; left: number; right: number; bottom: number; } | null | undefined = null;
-
+  showStatsOnSide = false;
+  largeScreen = false;
+  mediumScreen = false;
+  floorlayoutSnapshot: string | null = null;
 
   // Functional
   eventStartTime: Date = new Date();
@@ -170,6 +176,10 @@ export class DashboardPageComponent implements OnInit {
     const response = await this.appApiService.getFloorplanBoundaries(this.id);
     this.floorlayoutBounds = response.boundaries;
 
+    //get event floorplan    
+    const layout = await this.appApiService.getEventFloorLayout(this.id);
+    this.floorlayoutSnapshot = layout;
+
     const eventStartDate = this.event.event.StartDate;
     const eventEndDate = this.event.event.EndDate;
     
@@ -182,10 +192,55 @@ export class DashboardPageComponent implements OnInit {
       this.eventEndTime.setTime(this.eventEndTime.getTime() + this.timeOffset);
     }
 
+    // test if window size is less than 700px
+    if (window.innerWidth < 1300) {
+      this.showStatsOnSide = false;
+    }
+    else {
+      this.showStatsOnSide = true;
+    } 
+
+    if (window.innerWidth < 1024) {
+      this.largeScreen = false;
+    } else {
+      this.largeScreen = true;
+    }
+
+    if (window.innerWidth >= 768 && window.innerWidth < 1024) {
+      this.mediumScreen = true;
+    } else {
+      this.mediumScreen = false;
+    }
+
     this.loading = false;
     setTimeout(() => {
       this.show = true;
     }, 200);    
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth > 1300) {
+      this.showStatsOnSide = true;
+    } else {
+      this.showStatsOnSide = false;
+    }
+
+    if (event.target.innerWidth < 1024) {
+      this.largeScreen = false;
+    } else {
+      this.largeScreen = true;
+    }
+
+    if (event.target.innerWidth >= 768 && event.target.innerWidth < 1024) {
+      this.mediumScreen = true;
+    } else {
+      this.mediumScreen = false;
+    }
+
+    this.getImageFromJSONData(this.id);
+    this.renderUserCountDataStreaming();
+    this.renderTotalDevicesBarChart();
   }
 
   async hasAccess() {
@@ -526,7 +581,7 @@ export class DashboardPageComponent implements OnInit {
   }        
 
   async getImageFromJSONData(eventId: string) {
-    const response = await this.appApiService.getEventFloorLayout(eventId);
+    const response = this.floorlayoutSnapshot;
     if (response) {
       // use the response to create an image
       this.floorlayoutStage = new Konva.Stage({
@@ -828,6 +883,11 @@ export class DashboardPageComponent implements OnInit {
   
 
   renderUserCountDataStreaming() {
+    // check if canvas is already in use
+    if (this.streamingUserCountChart) {
+      this.streamingUserCountChart.destroy();
+    }
+
     const chartData: number[] = [];
     const chartLabels: string[] = [];
 
@@ -840,6 +900,15 @@ export class DashboardPageComponent implements OnInit {
     });
 
     const ctx: CanvasRenderingContext2D | null = this.userCountDataStreamingChart.nativeElement?.getContext("2d");
+
+    // let ctx: CanvasRenderingContext2D | null;
+    
+    // if (this.largeScreen) {
+    //   ctx = this.userCountDataStreamingChart.nativeElement?.getContext("2d");
+    // } else {
+    //   ctx = this.userCountDataStreamingChartSmall.nativeElement?.getContext("2d");
+    // }
+    
     let gradientStroke = null;
     if (ctx) {
       gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
@@ -916,8 +985,14 @@ export class DashboardPageComponent implements OnInit {
         },
       }
     };
-    
     const userCountDataStreamingCanvas = this.userCountDataStreamingChart.nativeElement;
+    // let userCountDataStreamingCanvas;
+    // if (this.largeScreen) {
+    //   userCountDataStreamingCanvas = this.userCountDataStreamingChart.nativeElement;
+    // } else {
+    //   userCountDataStreamingCanvas = this.userCountDataStreamingChartSmall.nativeElement;
+    // }
+
 
     if (userCountDataStreamingCanvas) {
       const userCountDataStreamingCtx = userCountDataStreamingCanvas.getContext('2d', { willReadFrequently: true });
@@ -932,6 +1007,11 @@ export class DashboardPageComponent implements OnInit {
   }
 
   renderTotalDevicesBarChart(){
+    // check if canvas is already in use
+    if (this.devicesBarChart) {
+      this.devicesBarChart.destroy();
+    }
+
     const chartData: number[] = [];
     const chartLabels: string[] = [];
 
@@ -996,6 +1076,13 @@ export class DashboardPageComponent implements OnInit {
     };
     
     const deviceBarChartCanvas = this.totalDevicesBarChart.nativeElement;
+    // let deviceBarChartCanvas;
+    
+    // if (this.largeScreen) {
+    //   deviceBarChartCanvas = this.totalDevicesBarChart.nativeElement;
+    // } else {
+    //   deviceBarChartCanvas = this.totalDevicesBarChartSmall.nativeElement;
+    // }
 
     if (deviceBarChartCanvas) {
       const deviceBarChartCtx = deviceBarChartCanvas.getContext('2d');
