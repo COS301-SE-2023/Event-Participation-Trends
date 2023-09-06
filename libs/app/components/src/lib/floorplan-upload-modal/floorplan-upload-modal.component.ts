@@ -65,9 +65,38 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
   closeToastModal(): void {
     this.hideModal = false;
     this.showToastUploading = false;
-    this.showToastSuccess = false;
     this.showToastFailure = false;
     this.showToast = false;
+
+    if (this.showToastSuccess) {
+      this.showToastSuccess = false;
+      this.hideModal = true;
+      setTimeout(() => {
+        this.showToast = true;
+        this.hideModal = false;
+      }, 100);
+      
+      this.uploadedFloorplan.emit(new Konva.Image({
+        id: 'uploadedFloorplan-' + this.generateUniqueId(),
+        image: this.uploadedImage,
+        draggable: true,
+        x: 0,
+        y: 0,
+        width: 1.5*this.canvasContainer.width(),
+        height: 1.5*this.canvasContainer.width(),
+      }));
+      this.closeModalEvent.emit(true);
+    }
+    else if (this.showToastFailure) {
+      this.showToastFailure = false;
+      this.hideModal = true;
+      setTimeout(() => {
+        this.showToast = true;
+        this.hideModal = false;
+      }, 100);
+    }
+    this.showToastSuccess = false;
+    this.showToastFailure = false;
 
     setTimeout(() => {
       this.showToast = true;
@@ -108,6 +137,7 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
           }  
           else if (!this.fileType.startsWith('image/')) {
             this.showToast = true;
+            this.showToastFailure = true; 
             this.hideModal = true;
             this.busyUploadingFloorplan = true;
             this.toastHeading = 'Invalid File Extension';
@@ -122,6 +152,7 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
             this.fileInput.value = ''; // Clear the input field
           }
           else {
+            this.canvas.removeChildren();
             this.uploadedImage = new Image();
             if (!this.uploadedImage) return;
 
@@ -133,6 +164,8 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
                 return;
               }
                 this.uploadedImage.src = event.target.result as string;
+                const isWideImage = this.uploadedImage.width > this.canvasContainer.width();
+                const isTallImage = this.uploadedImage.height > this.canvasContainer.height();
 
                 this.uploadedImage.onload = () => {
                   const image = new Konva.Image({
@@ -202,15 +235,23 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
   }
 
   completeUpload(): void {
-    this.uploadedFloorplan.emit(new Konva.Image({
-      id: 'uploadedFloorplan-' + this.generateUniqueId(),
-      image: this.uploadedImage,
-      draggable: true,
-      x: 0,
-      y: 0,
-    }));
-
-    this.closeModalEvent.emit(true);
+    this.showToastUploading = true;
+    this.showToast = true;
+    this.hideModal = true;
+    this.busyUploadingFloorplan = true;
+    this.toastHeading = 'Successfully Uploaded';
+    this.toastMessage = 'Your floor plan has been successfully uploaded. It should be displayed in the top left corner of the canvas.';
+    
+    setTimeout(() => {
+      this.showToastUploading = false;
+      this.showToastSuccess = true;
+      const modal = document.querySelector('#toast-modal');
+      
+      modal?.classList.remove('hidden');
+      setTimeout(() => {
+        modal?.classList.remove('opacity-0');
+      }, 100);
+    }, 1000);
   }
 
   onMouseDown(): void {    
