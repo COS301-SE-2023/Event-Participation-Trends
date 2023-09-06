@@ -12,3 +12,5 @@ export * from './add-event-viewer.command';
 export * from './add-device-position.command';
 export * from './delete-event.command';
 export * from './remove-event-from-viewers.command';
+export * from './upload-image.command';
+export * from './add-image-to-event.command';

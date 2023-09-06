@@ -17,6 +17,8 @@ import {
     AddViewerHandler,
     DeleteEventHandler,
     RemoveEventFromViewersHandler,
+    UploadImageHandler,
+    AddImageToEventHandler,
 } from './commands';
 
 import { 
@@ -30,6 +32,7 @@ import {
     GetManagedEventCategoriesHandler,
     GetFloorplanBoundariesQueryHandler,
     GetAllActiveEventsHandler,
+    GetEventFloorlayoutImageHandler,
  } from './queries';
 
 import {
@@ -45,6 +48,8 @@ import {
     AddViewerEventHandler,
     DeleteEventEventHandler,
     RemoveEventFromViewersEventHandler,
+    UploadImageEventHandler,
+    AddImageToEventEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -64,6 +69,8 @@ export const CommandHandlers = [
     AddViewerHandler,
     DeleteEventHandler,
     RemoveEventFromViewersHandler,
+    UploadImageHandler,
+    AddImageToEventHandler
 ]
 
 export const EventHandlers = [
@@ -79,6 +86,8 @@ export const EventHandlers = [
     AddViewerEventHandler,
     DeleteEventEventHandler,
     RemoveEventFromViewersEventHandler,
+    UploadImageEventHandler,
+    AddImageToEventEventHandler,
 ];
 
 export const QueryHandlers = [
@@ -93,6 +102,7 @@ export const QueryHandlers = [
     GetManagedEventCategoriesHandler,
     GetFloorplanBoundariesQueryHandler,
     GetAllActiveEventsHandler,
+    GetEventFloorlayoutImageHandler,
 ];
 
 

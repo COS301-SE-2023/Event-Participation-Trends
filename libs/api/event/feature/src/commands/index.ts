@@ -12,3 +12,5 @@ export * from './update-stall.handler';
 export * from './add-event-viewer.handler';
 export * from './delete-event.handler';
 export * from './remove-event-from-viewers.handler';
+export * from './upload-image.handler';
+export * from './add-image-to-event.handler';

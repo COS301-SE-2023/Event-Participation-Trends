@@ -11,3 +11,5 @@ export * from './add-device-position.event.handler';
 export * from './add-event-viewer.handler';
 export * from './delete-event.handler';
 export * from './remove-event-from-viewers.handler';
+export * from './upload-image-event.handler';
+export * from './add-image-to-event.event';

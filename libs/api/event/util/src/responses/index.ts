@@ -22,3 +22,5 @@ export * from './get-managed-event-categories.response';
 export * from './get-floorplan-boundaries.response';
 export * from './delete-event.response';
 export * from './get-all-active-events.response';
+export * from './upload-image.response';
+export * from './get-event-floorlayout-image.response';
