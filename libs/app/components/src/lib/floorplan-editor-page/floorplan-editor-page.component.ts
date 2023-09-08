@@ -312,6 +312,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             image.setAttr('name', 'stallImage');
             image.setAttr('x', 0);
             image.setAttr('y', 0);
+            this.stallCount = this.canvasItems.filter(item => item.name.includes('stall')).length;
+
             const group = new Konva.Group({
               id: 'stall-' + this.stallCount,
               name: 'stall',
@@ -356,7 +358,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             this.canvas.draw();
             this.reorderCanvasItems();
             droppedItem.konvaObject = group;
-            this.stallCount++;
           } 
           else if (droppedItem.name.includes('sensor')) {
             image.setAttr('name', 'sensor');
@@ -364,7 +365,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             const sensor = this.canvas.findOne('.sensor');
 
             // create circle to represent sensor
-            const sensorCount = this.sensors ? this.sensors.length+1 : 1;
+            const sensorCount = this.canvasItems.filter(item => item.name.includes('sensor')).length;
             const circle = new Konva.Circle({
               id: 'sensor-' + sensorCount,
               name: 'sensor',
@@ -1789,6 +1790,27 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           });
 
         }
+
+        // remove tooltip if the object is a stall or sensor
+        if (selectedObject.hasName('stall') || selectedObject.hasName('sensor')) {
+          this.tooltips.forEach((tooltip) => {
+            if (selectedObject.hasName('stall')) {
+              const stallText = (selectedObject as Konva.Group).children?.find((child) => child instanceof Konva.Text)?.getAttr('text');
+              if (tooltip.getAttr('id').includes(stallText)) {
+                tooltip.destroy();
+                this.tooltips.splice(this.tooltips.indexOf(tooltip), 1);
+              }
+            }
+            else if (selectedObject.hasName('sensor')) {
+              const sensorID = (selectedObject as Konva.Circle).getAttr('customId');
+              if (tooltip.getAttr('id').includes(sensorID)) {
+                tooltip.destroy();
+                this.tooltips.splice(this.tooltips.indexOf(tooltip), 1);
+              }
+            }
+          });
+        }
+
       
         document.body.style.cursor = 'default';
         this.removeMouseEvents(selectedObject);
