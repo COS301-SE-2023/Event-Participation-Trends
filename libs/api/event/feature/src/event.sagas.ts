@@ -76,7 +76,8 @@ export class EventsSagas {
         ofType(UploadImageEvent),
         map((event: UploadImageEvent) => new AddImageToEventCommand({
                 eventId: <string> <unknown> event.image.eventId, 
-                floorlayoutImg: event.image.imageBase64, 
+                imgBase64: event.image.imageBase64, 
+                imageObj: event.image.imageObj,
                 imageScale: event.image.imageScale, 
                 imageType: event.image.imageType,
         })),

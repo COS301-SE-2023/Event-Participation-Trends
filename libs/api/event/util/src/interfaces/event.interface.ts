@@ -11,7 +11,7 @@ export interface IEvent {
     Category?: string | undefined | null;
     Location?: string | undefined | null;
     FloorLayout?: IFloorLayout | undefined | null;
-    FloorLayoutImg?: Types.ObjectId | undefined | null;
+    FloorLayoutImg?: Types.ObjectId[] | undefined | null;
     Stalls?: IStall[] | undefined | null;
     Sensors?: ISensor[] | undefined | null;
     Devices?: IPosition[] | undefined | null;

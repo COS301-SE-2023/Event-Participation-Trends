@@ -16,6 +16,22 @@ export class AddImageToEventEventHandler implements IEventHandler<AddImageToEven
         if(request.eventId != undefined && request.imageId != undefined){
             await this.eventRepository.addImageToEvent(request.eventId,request.imageId);
         }
+
+        //ensure all images added to event
+        if(request.eventId){
+            const eventDoc = await this.eventRepository.getEventById(request.eventId);
+            const numImgEvent = eventDoc[0].FloorLayout?.length;
+            const ImgOfEventId = await this.eventRepository.findImagesIdByEventId(request.eventId);
+
+            if(numImgEvent != ImgOfEventId.length){
+                //Add each image individually
+                    ImgOfEventId.forEach(async img =>{
+                        if(request.eventId)
+                            await this.eventRepository.addImageToEvent(request.eventId,img._id);
+                    })
+            }
+        }
+    
     }
 
 }

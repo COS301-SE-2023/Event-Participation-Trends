@@ -11,6 +11,7 @@ export class Image extends AggregateRoot implements IImage {
         public imageBase64:  string | undefined | null,
         public imageScale: number | undefined | null,
         public imageType: string | undefined | null,
+        public imageObj: string | undefined | null,
     ){
         super();
     }
@@ -25,6 +26,7 @@ export class Image extends AggregateRoot implements IImage {
             image.imageBase64,
             image.imageScale,
             image.imageType,
+            image.imageObj
         );
         return instance;
     }
@@ -35,6 +37,7 @@ export class Image extends AggregateRoot implements IImage {
             imageBase64: this.imageBase64,
             imageScale: this.imageScale,
             imageType: this.imageType,
+            imageObj: this.imageObj
         };
     }
 }

@@ -485,12 +485,17 @@ export class EventController {
     if (requestBody.eventId == undefined || requestBody.eventId == null)
       throw new HttpException('Bad Request: eventId not provided', 400);
 
-    if (requestBody.floorlayoutImg == undefined || requestBody.floorlayoutImg == null)
-      throw new HttpException('Bad Request: floorlayoutImg not provided', 400);
+    if (requestBody.imgBase64 == undefined || requestBody.imgBase64 == null)
+      throw new HttpException('Bad Request: imgBase64 not provided', 400);
+
+    if (requestBody.imageObj == undefined || requestBody.imageObj == null)
+      throw new HttpException('Bad Request: imageObj not provided', 400);
+
 
     const extractRequest: IImageUploadRequest = {
       eventId: requestBody.eventId,
-      floorlayoutImg: requestBody.floorlayoutImg,
+      imgBase64: requestBody.imgBase64,
+      imageObj: requestBody.imageObj,
       imageScale: requestBody.imageScale,
       imageType: requestBody.imageType,
     };

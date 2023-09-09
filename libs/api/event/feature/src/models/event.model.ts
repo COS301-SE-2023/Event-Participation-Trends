@@ -19,7 +19,7 @@ export class Event extends AggregateRoot implements IEvent {
         public Category?: string | undefined | null,
         public Location?: string | undefined | null,
         public FloorLayout?: IFloorLayout | undefined | null,
-        public FloorLayoutImg?: Types.ObjectId | undefined | null,
+        public FloorLayoutImg?: Types.ObjectId[] | undefined | null,
         public Stalls?: IStall[] | undefined | null,
         public Sensors?: ISensor[] | undefined | null,
         public Devices?: IPosition[] | undefined | null,

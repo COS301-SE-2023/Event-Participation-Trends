@@ -10,6 +10,9 @@ export class Image{
     imageBase64: string | undefined | null;
 
     @Prop({ type: String, required: true })
+    imageObj: string | undefined | null;
+
+    @Prop({ type: String, required: true })
     imageType: string | undefined | null;
 
     @Prop({ type: Number, required: true })
