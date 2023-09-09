@@ -18,19 +18,20 @@ export class AddImageToEventHandler implements ICommandHandler<AddImageToEventCo
         
         const request = command.request; 
         const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
-        let imageDoc = await this.eventRepositroy.findImageIdByEventId(eventIdObj);
-
+        
         const SLEEP = promisify(setTimeout);
+        await SLEEP(1000);
+        const imageDoc = await this.eventRepositroy.findImagesIdByEventId(eventIdObj);
 
-        while(!imageDoc.length){
-            await SLEEP(500);
-            imageDoc = await this.eventRepositroy.findImageIdByEventId(eventIdObj);
-        }
-
+        /*  Adding lastly added image to event, will be at bottom of collection
+        *   There is a sposibility that this is not the correct image, the db funcitons
+        *   are configed to not add duplicates so this will not be a problem, in AddImageToEventEventHandler
+        *   there is a check to ensure all images are correcly linked to the event
+        */
         if(imageDoc[0]._id){
             const data: IAddImageToEvent ={
                 eventId: eventIdObj,
-                imageId: imageDoc[0]._id
+                imageId: imageDoc[imageDoc.length -1]._id  
             }
 
             const event = this.publisher.mergeObjectContext(AddImageToEvent.fromData(data));
