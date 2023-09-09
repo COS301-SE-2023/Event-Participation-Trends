@@ -28,8 +28,8 @@ export class Event{
     @Prop({ type: String })
     FloorLayout: string | undefined | null;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Image' })
-    FloorLayoutImg: Types.ObjectId | undefined | null;
+    @Prop({ type:  [{type: mongoose.Schema.Types.ObjectId ,ref: 'Imange'}] })
+    FloorLayoutImgs: Types.ObjectId[] | undefined | null;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Stall' })
     Stalls: Stall[] | undefined | null;
