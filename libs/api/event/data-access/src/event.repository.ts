@@ -23,20 +23,10 @@ export class EventRepository {
     }   
 
     async uploadImage(image: Image){
-        const imgDoc = await this.imageModel.find(
-            {eventId :{$eq: image.eventId}});
-        if(imgDoc.length)
-            await this.imageModel.updateOne(
-                { eventId: {$eq: image.eventId}},
-                { $set: { imageBase64: image.imageBase64, 
-                          imageScale: image.imageScale,
-                          imageType: image.imageType,
-                }});
-        else
-            await this.imageModel.create(image);        
+        await this.imageModel.create(image);   
     }   
 
-    async findImageIdByEventId(eventID: Types.ObjectId){
+    async findImagesIdByEventId(eventID: Types.ObjectId){
         return await this.imageModel.find(
             {eventId :{$eq: eventID}},
             { _id: 1 })
@@ -50,7 +40,7 @@ export class EventRepository {
     async addImageToEvent(eventId: Types.ObjectId, imageId: Types.ObjectId){
         return await this.eventModel.updateOne(
             { _id: {$eq: eventId}},
-            {$set: {FloorLayoutImg :imageId}});
+            { $addToSet: {FloorLayoutImgs :imageId}});
     }
 
     async getAllEvents(){
