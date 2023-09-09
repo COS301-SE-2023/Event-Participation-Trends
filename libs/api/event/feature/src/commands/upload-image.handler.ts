@@ -17,7 +17,7 @@ export class UploadImageHandler implements ICommandHandler<UploadImageCommand, I
         const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
 
         //check if of the correct format
-        if(request.floorlayoutImg != undefined && request.floorlayoutImg != null){
+        if(request.imgBase64 != undefined && request.imgBase64 != null){
             
             let validFormat =false;
 
@@ -32,7 +32,7 @@ export class UploadImageHandler implements ICommandHandler<UploadImageCommand, I
                 'data:image/tiff;base64',
             ];
 
-            const temp = request.floorlayoutImg.substring(0,37);
+            const temp = request.imgBase64.substring(0,37);
 
             validTypeArr.forEach(str=>{
                 if(temp.indexOf(str) != -1)
@@ -43,9 +43,10 @@ export class UploadImageHandler implements ICommandHandler<UploadImageCommand, I
 
                 const data = {
                     eventId: eventIdObj,
-                    imageBase64: request.floorlayoutImg,
+                    imageBase64: request.imgBase64,
                     imageScale: request.imageScale,
                     imageType: request.imageType,
+                    imageObj: request.imageObj
                 }
         
                 const event = this.publisher.mergeObjectContext(Image.fromData(data));
