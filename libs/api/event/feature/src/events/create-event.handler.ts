@@ -29,7 +29,7 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             Category: event.event.Category,
             Location: event.event.Location,  
             FloorLayout: null,
-            FloorLayoutImg: null,
+            FloorLayoutImg: new Array<Types.ObjectId>(),
             Stalls: null,
             Sensors: null,
             Devices: Array<Position>(),
