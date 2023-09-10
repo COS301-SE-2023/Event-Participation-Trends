@@ -14,3 +14,5 @@ export * from './delete-event.event';
 export * from './remove-event-from-viewers.event';
 export * from './upload-image.event';
 export * from './add-image-to-event.event';
+export * from './delete-event-image.event';
+export * from './remove-image-from-event.event';
