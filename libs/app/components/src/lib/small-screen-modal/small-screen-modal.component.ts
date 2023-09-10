@@ -20,9 +20,17 @@ export class SmallScreenModalComponent {
   constructor(private router: Router, private route: ActivatedRoute) {}
 
   closeModal() {
+    // extract event id from url
+    const id = this.router.url.split('/')[2];
+
+    if (!id) {
+      this.router.navigate(['/home']);
+    }
+
     // Navigating from the current route's parent to the 'details' sibling route
     if (!this.router.url.includes('details')) {
-      this.router.navigate(['details'], { relativeTo: this.route.parent });    
+      this.router.navigateByUrl(`/event/${id}/details`);
+      this.justCloseModal.emit(true);
     }
     else {
       this.justCloseModal.emit(true);

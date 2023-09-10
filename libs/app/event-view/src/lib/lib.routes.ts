@@ -22,7 +22,17 @@ export const appEventViewRoutes: Route[] = [
             {
                 path: 'floorplan',
                 component: FloorplanEditorPageComponent
+            },
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: './details'
             }
         ]
     },
+    {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: './details'
+    }
 ];
