@@ -2585,32 +2585,18 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
         // save the JSON data to the database
         this.appApiService.updateFloorLayout(this.eventId, jsonString).then((res: any) => {
-          this.showToastUploading = false;
-          res ? this.showToastSuccess = true : this.showToastError = true; 
-
-          this.toastHeading = res ? 'Success' : 'Error';
-          this.toastMessage = res ? 'Floor Layout Saved' : 'Error Saving Floor Layout';
           console.log(res);
 
           setTimeout(() => {
-            this.showToast = false;            
-            const toast = document.getElementById('toast-modal');
-            toast?.classList.remove('hidden');
-            setTimeout(() => {
-              toast?.classList.remove('opacity-0');
-            }, 100);
+            this.showToastUploading = false;
+            res ? this.showToastSuccess = true : this.showToastError = true; 
 
             setTimeout(() => {
-              toast?.classList.add('opacity-0');
-              setTimeout(() => {
-                toast?.classList.add('hidden');
-              }, 100);
               this.showToastSuccess = false;
               this.showToastError = false;
-              this.showToast = true;
               if (res) this.router.navigate(['details'], { relativeTo: this.route.parent });
-            })
-          }, 1500);
+            }, 1000)
+          }, 2000);
         });
       }
 

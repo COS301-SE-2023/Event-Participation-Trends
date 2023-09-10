@@ -460,17 +460,22 @@ id="upload-floorpan-modal"
     [failure]="false"
     [linking]="true"
 ></event-participation-trends-toast-modal>
-<event-participation-trends-toast-modal
-  *ngIf="showToast"
-  class="transition-opacity duration-100 hidden opacity-0"
-  id="toast-modal"
-  [toastHeading]="toastHeading"
-  [toastMessage]="toastMessage" 
-  [toastType]="''"
-  [success]="showToastSuccess"
-  [failure]="showToastError"
-  [linking]="false"
-  (closeModalEvent)="closeToast()"
-  [busyUploadingFloorplan]="true"
+<event-participation-trends-toast-modal 
+    *ngIf="showToastSuccess"
+    class="z-50"
+    [toastMessage]="'Floor layout saved successfully.'" 
+    [toastType]="'success'"
+    [success]="true"
+    [failure]="false"
+    [linking]="false"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastError"
+    class="z-50"
+    [toastMessage]="'Error saving floor layout.'" 
+    [toastType]="'success'"
+    [success]="false"
+    [failure]="true"
+    [linking]="false"
 ></event-participation-trends-toast-modal>
 
