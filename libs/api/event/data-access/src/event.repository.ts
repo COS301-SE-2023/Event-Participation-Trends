@@ -32,9 +32,25 @@ export class EventRepository {
             { _id: 1 })
     }
 
+    async getImageById(imageId: Types.ObjectId){
+        return await this.imageModel.find(
+            {_id: {$eq: imageId}});
+    }
+
     async findImageByEventId(eventID: Types.ObjectId){
         return await this.imageModel.find(
             {eventId :{$eq: eventID}})
+    }
+
+    async removeImage(imageId: Types.ObjectId){
+        return await this.imageModel.deleteOne(
+            {_id: {$eq: imageId}});
+    }
+
+    async removeEventImage(eventId: Types.ObjectId, imageId: Types.ObjectId){
+        return await this.eventModel.updateOne(
+            {_id :{$eq: eventId}},
+            { $pull: { FloorLayoutImgs: imageId } });
     }
 
     async addImageToEvent(eventId: Types.ObjectId, imageId: Types.ObjectId){

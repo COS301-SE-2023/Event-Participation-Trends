@@ -24,3 +24,4 @@ export * from './delete-event.response';
 export * from './get-all-active-events.response';
 export * from './upload-image.response';
 export * from './get-event-floorlayout-image.response';
+export * from './delete-event-image.respons';

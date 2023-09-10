@@ -19,6 +19,8 @@ import {
     RemoveEventFromViewersHandler,
     UploadImageHandler,
     AddImageToEventHandler,
+    RemoveEventImageHandler,
+    DeleteEventImageHandler,
 } from './commands';
 
 import { 
@@ -50,6 +52,8 @@ import {
     RemoveEventFromViewersEventHandler,
     UploadImageEventHandler,
     AddImageToEventEventHandler,
+    RemoveEventImageEventHandler,
+    DeleteEventImageEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -70,7 +74,9 @@ export const CommandHandlers = [
     DeleteEventHandler,
     RemoveEventFromViewersHandler,
     UploadImageHandler,
-    AddImageToEventHandler
+    AddImageToEventHandler,
+    RemoveEventImageHandler,
+    DeleteEventImageHandler,
 ]
 
 export const EventHandlers = [
@@ -88,6 +94,8 @@ export const EventHandlers = [
     RemoveEventFromViewersEventHandler,
     UploadImageEventHandler,
     AddImageToEventEventHandler,
+    RemoveEventImageEventHandler,
+    DeleteEventImageEventHandler,
 ];
 
 export const QueryHandlers = [

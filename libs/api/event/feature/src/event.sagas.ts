@@ -5,6 +5,8 @@ import {
     AddViewerEvent,
     DeleteEventEvent,
     UploadImageEvent,
+    DeleteEventImageEvent,
+    RemoveEventImageCommand,
 } from '@event-participation-trends/api/event/util';
 import {
     AddViewingEventCommand,
@@ -19,6 +21,7 @@ import{
 import { Injectable } from '@nestjs/common';
 import { ICommand, ofType, Saga } from '@nestjs/cqrs';
 import { from, map, mergeMap, Observable } from 'rxjs';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class EventsSagas {
@@ -80,6 +83,17 @@ export class EventsSagas {
                 imageObj: event.image.imageObj,
                 imageScale: event.image.imageScale, 
                 imageType: event.image.imageType,
+        })),
+      );
+    };
+
+    @Saga()
+    onImageDelete = (events$: Observable<any>): Observable<ICommand> => {
+      return events$.pipe(
+        ofType(DeleteEventImageEvent),
+        map((event: DeleteEventImageEvent) => new RemoveEventImageCommand({
+                eventId: <Types.ObjectId> <unknown> event.event.eventId, 
+                imageId: <Types.ObjectId> <unknown> event.event.imageId, 
         })),
       );
     };

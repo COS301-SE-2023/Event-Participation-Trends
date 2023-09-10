@@ -14,3 +14,5 @@ export * from './delete-event.command';
 export * from './remove-event-from-viewers.command';
 export * from './upload-image.command';
 export * from './add-image-to-event.command';
+export * from './delete-event-image.command';
+export * from './remove-image-from-event.command';

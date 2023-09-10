@@ -46,7 +46,7 @@ export class UsersPageComponent implements OnInit {
       this.managerText = 'Manager';
     }  
 
-    if (window.innerWidth > 1024) {
+    if (window.innerWidth >= 1024) {
       this.largeScreen = true;
     } else {
       this.largeScreen = false;
@@ -129,7 +129,7 @@ export class UsersPageComponent implements OnInit {
       this.managerText = 'M';
     } 
 
-    if (window.innerWidth > 1024) {
+    if (window.innerWidth >= 1024) {
       this.largeScreen = true;
     } else {
       this.largeScreen = false;

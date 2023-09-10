@@ -40,6 +40,7 @@ export class ComparePageComponent implements OnInit{
   public search = '';
   public showSidePanel = false;
   public sidePanelToggled = false;
+  public largeScreen = false;
   public hintText = 'Use the tab on the right to select events.';
 
   selectedCategory = 'Show All';
@@ -90,6 +91,12 @@ export class ComparePageComponent implements OnInit{
       this.showSidePanel = true;
       this.hintText = 'Use the tab on the right to select events.';
     }  
+
+    if (window.innerWidth > 1024) {
+      this.largeScreen = true;
+    }  else {
+      this.largeScreen = false;
+    }
 
     this.loading = false;
 
@@ -221,6 +228,12 @@ export class ComparePageComponent implements OnInit{
       this.showSidePanel = false;
       this.hintText = 'Use the button in the top right corner to select events.';
     } 
+
+    if (event.target.innerWidth > 1024) {
+      this.largeScreen = true;
+    }  else {
+      this.largeScreen = false;
+    }
   }
 
   openSidePanel() {

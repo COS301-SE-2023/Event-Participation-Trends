@@ -69,6 +69,7 @@
                 </div>
             </div>
         </div>
+        <div *ngIf="!largeScreen" class="opacity-0 my-4">_</div>
         <div *ngIf="showSidePanel" class="pb-3 row-span-3 m-5 ml-0 border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'bg-ept-navy-blue': show, 'col-span-3':showSidePanel}">
             <div
                 class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"

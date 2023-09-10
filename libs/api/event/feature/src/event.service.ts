@@ -65,6 +65,9 @@ import {
     IImageUploadResponse,
     IGetEventFloorlayoutImageRequest,
     GetEventFloorlayoutImageQuery,
+    IDeleteEventImageRequest,
+    DeleteEventImageCommand,
+    IDeleteEventImageResponse,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -182,5 +185,9 @@ export class EventService {
 
     async getEventFloorLayoutImage(request: IGetEventFloorlayoutImageRequest) {
         return await this.queryBus.execute<GetEventFloorlayoutImageQuery, IGetEventFloorlayoutImageRequest>(new GetEventFloorlayoutImageQuery(request));
+    }
+
+    async deleteImage(request: IDeleteEventImageRequest) {
+        return await this.commandBus.execute<DeleteEventImageCommand, IDeleteEventImageResponse>(new DeleteEventImageCommand(request));
     }
 }
