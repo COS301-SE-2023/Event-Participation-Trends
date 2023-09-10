@@ -19,7 +19,9 @@ import { FormsModule } from '@angular/forms';
 export class FloorplanUploadModalComponent implements AfterViewInit {
   @Output() closeModalEvent = new EventEmitter<boolean>();
   @Output() uploadedFloorplan = new EventEmitter<Konva.Image>();
-  @Output() uploadedFloorplanScale = new EventEmitter<number>();
+  @Output() imageType = new EventEmitter<string>();
+  @Output() imageScale = new EventEmitter<number>();
+  @Output() imageBase64 = new EventEmitter<string>();
   @ViewChild('previewFloorplanImage', { static: false }) previewFloorplanImage!: ElementRef<HTMLDivElement>;
 
   fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -160,10 +162,19 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
             const reader = new FileReader();
             
             reader.onload = (event) => {
-              if (!event || !event.target) {
+              if (!event || !event.target || !event.target.result) {
                 return;
               }
-                this.uploadedImage.src = event.target.result as string;
+              this.uploadedImage.src = event.target.result.toString();
+              this.imageBase64.emit(this.uploadedImage.src);
+              this.imageType.emit(this.fileType);
+
+              const trueScaleCM = document.getElementById('trueScaleCentimeters') as HTMLInputElement;
+              const trueScaleM = document.getElementById('trueScaleMeters') as HTMLInputElement;
+
+              const scale = parseFloat(trueScaleM.value) / parseFloat(trueScaleCM.value);
+              this.imageScale.emit(scale);
+
                 const isWideImage = this.uploadedImage.width > this.canvasContainer.width();
                 const isTallImage = this.uploadedImage.height > this.canvasContainer.height();
 

@@ -444,8 +444,33 @@
 *ngIf="uploadModalVisible"
 class="transition-opacity duration-300 hidden opacity-0"
 id="upload-floorpan-modal"
+(imageType)="setUploadedImageType($event)"
+(imageScale)="setUploadedImageScale($event)"
+(imageBase64)="setUploadedImageBase64($event)"
 (closeModalEvent)="closeUploadModal()"
 (uploadedFloorplan)="onFloorplanUploaded($event)"
 >
 </event-participation-trends-floorplan-upload-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastUploading"
+    class="z-50"
+    [toastMessage]="'Saving...'" 
+    [toastType]="''"
+    [success]="false"
+    [failure]="false"
+    [linking]="true"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal
+  *ngIf="showToast"
+  class="transition-opacity duration-100 hidden opacity-0"
+  id="toast-modal"
+  [toastHeading]="toastHeading"
+  [toastMessage]="toastMessage" 
+  [toastType]="''"
+  [success]="showToastSuccess"
+  [failure]="showToastError"
+  [linking]="false"
+  (closeModalEvent)="closeToast()"
+  [busyUploadingFloorplan]="true"
+></event-participation-trends-toast-modal>
 

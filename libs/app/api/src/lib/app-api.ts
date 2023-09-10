@@ -30,6 +30,8 @@ import {
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
+  IImageUploadRequest,
+  IImageUploadResponse,
   IPosition,
   ISendViewRequestResponse,
   IUpdateEventDetailsRequest,
@@ -336,6 +338,33 @@ export class AppApiService {
         {
           eventId: eventId,
           floorlayout: floorLayout,
+        },
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.status || Status.FAILURE;
+  }
+
+  async updateFloorplanImages(
+    eventId: string,
+    base64: string,
+    object: string,
+    scale: number,
+    type: string
+  ): Promise<Status> {
+    const response = await firstValueFrom(
+      this.http.post<IImageUploadResponse>(
+        '/api/event/uploadFloorlayoutImage',
+        {
+          eventId: eventId,
+          imgBase64: base64,
+          imageObj: object,
+          imageScale: scale,
+          imageType: type
         },
         {
           headers: {
