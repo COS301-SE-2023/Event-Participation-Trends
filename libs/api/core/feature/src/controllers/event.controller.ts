@@ -39,6 +39,8 @@ import {
     IDeleteEventResponse,
     IImageUploadRequest,
     IGetEventFloorlayoutImageRequest,
+    IDeleteEventImageRequest,
+    IDeleteEventImageResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -491,7 +493,6 @@ export class EventController {
     if (requestBody.imageObj == undefined || requestBody.imageObj == null)
       throw new HttpException('Bad Request: imageObj not provided', 400);
 
-
     const extractRequest: IImageUploadRequest = {
       eventId: requestBody.eventId,
       imgBase64: requestBody.imgBase64,
@@ -500,6 +501,31 @@ export class EventController {
       imageType: requestBody.imageType,
     };
     return this.eventService.uploadImage(extractRequest);
+  }
+  @Post('removeFloorlayoutImage')
+  @SetMetadata('role', Role.MANAGER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async removeImage(
+    @Req() req: Request,
+    @Body() requestBody: IDeleteEventImageRequest
+  ): Promise<IDeleteEventImageResponse> {
+    const request: any = req;
+
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: viewer email not provided', 400);
+
+    if (requestBody.eventId == undefined || requestBody.eventId == null)
+      throw new HttpException('Bad Request: eventId not provided', 400);
+
+    if (requestBody.imageId == undefined || requestBody.imageId == null)
+      throw new HttpException('Bad Request: imageId not provided', 400);
+
+    const extractRequest: IDeleteEventImageRequest = {
+      eventId: requestBody.eventId,
+      imageId: requestBody.imageId,
+      userEmail: request.user['email'],
+    };
+    return this.eventService.deleteImage(extractRequest);
   }
 
   @Get('getFloorLayoutImage')
