@@ -22,3 +22,4 @@ export * from './get-floorplan-boundaries.request';
 export * from './delete-event.request';
 export * from './upload-image.request';
 export * from './get-event-floorlayout-image.request';
+export * from './delete-event-image.request';
