@@ -24,12 +24,14 @@ import {
   IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
   IGetEventDevicePositionResponse,
+  IGetEventFloorlayoutImageResponse,
   IGetEventFloorlayoutResponse,
   IGetEventResponse,
   IGetFloorplanBoundariesResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
+  IImage,
   IImageUploadRequest,
   IImageUploadResponse,
   IPosition,
@@ -374,6 +376,22 @@ export class AppApiService {
       )
     );
     return response.status || Status.FAILURE;
+  }
+
+  async getFloorLayoutImages(
+    eventId: string
+  ): Promise<IImage[]> {
+    const response = await firstValueFrom(
+      this.http.get<IGetEventFloorlayoutImageResponse>(
+        `/api/event/getFloorLayoutImage?eventId=${eventId}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.images || [];
   }
 
   async getNewEventSensorId(): Promise<string> {

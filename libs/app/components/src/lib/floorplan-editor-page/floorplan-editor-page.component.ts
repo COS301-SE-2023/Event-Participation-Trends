@@ -720,10 +720,65 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             });
             this.initialHeight = this.canvasContainer.height();
 
-            this.route.queryParams.subscribe(params => {              
-              const newCanvas = new Konva.Layer();
+            const newCanvas = new Konva.Layer();
+            const apiPromises: Promise<any>[] = [];
 
-              this.appApiService.getEventFloorLayout(this.eventId).then((res: any) => {
+            this.route.queryParams.subscribe(params => {              
+              let uploadedImagesLayer = new Konva.Layer();
+
+              const firstPromise = this.appApiService.getFloorLayoutImages(this.eventId).then((response: any) => {
+                if (response === null || response === '' || response.length === 0) return;
+                
+                response.forEach((obj: any) => {
+                  const imageObjects = obj.imageObj;
+                  const imageBase64 = obj.imageBase64;
+                  const imageType = obj.imageType;
+                  const imageScale = obj.imageScale;
+
+                  if (imageObjects && imageBase64) {
+                    uploadedImagesLayer = Konva.Node.create(JSON.parse(imageObjects), 'next-container');
+                    
+                    const group = new Konva.Group(uploadedImagesLayer.getAttrs());
+                    group.setAttrs({
+                      x: uploadedImagesLayer.getAttr('x') ? uploadedImagesLayer.getAttr('x') : 0,
+                      y: uploadedImagesLayer.getAttr('y') ? uploadedImagesLayer.getAttr('y') : 0,
+                      draggable: true,
+                      cursor: 'move',
+                    });
+                    
+                    uploadedImagesLayer.children?.forEach(child => {
+                      const image = new Konva.Image(child.getAttrs());
+                      const img = new Image();
+                      img.src = imageBase64;
+                      image.setAttr('image', img);
+                      image.setAttr('x', child.getAttr('x') ? child.getAttr('x') : 0);
+                      image.setAttr('y', child.getAttr('y') ? child.getAttr('y') : 0);
+
+                      const uploadedImage: UploadedImage = {
+                        id: image.id(),
+                        type: imageType,
+                        scale: imageScale,
+                        base64: imageBase64
+                      };
+                      this.uploadedImages.push(uploadedImage);
+
+                      group.add(image);
+                      this.setMouseEvents(group);
+                      const newDroppedItem = {
+                        name: 'uploadedFloorplan',
+                        konvaObject: group,
+                      };
+                      this.canvasItems.push(newDroppedItem);
+                      newCanvas.add(group);
+                    });
+                  }
+                });
+                // this.reorderCanvasItems();
+              });
+
+              apiPromises.push(firstPromise);
+
+              const secondPromise = this.appApiService.getEventFloorLayout(this.eventId).then((res: any) => {
                 if (res === null || res === '') {
                   this.defaultBehaviour(newCanvas);
                   return;
@@ -736,7 +791,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                   width: width*0.995, //was 0.9783
                   height: window.innerHeight-40,
                 });
-                this.canvas = Konva.Node.create(json, 'container');
+                this.canvas = Konva.Node.create(json, 'container'); 
 
                 this.canvas.children?.forEach(child => {
                   let type : KonvaTypes;
@@ -774,11 +829,18 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
                   this.canvasItems.push({name: child.getAttr('name'), konvaObject: type});
                 });
+              });
 
-              this.defaultBehaviour(newCanvas);
-              this.moveSensorsAndTooltipsToTop();
-              this.centerFloorPlan();
-            });
+              apiPromises.push(secondPromise);
+
+              Promise.all(apiPromises).then(() => {
+                
+                this.defaultBehaviour(newCanvas);
+                this.moveSensorsAndTooltipsToTop();
+                this.centerFloorPlan();
+                this.reorderCanvasItems();
+              });
+            
           });
           }, 6);
           
@@ -2349,11 +2411,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       }
 
       onFloorplanUploaded(floorplan: Konva.Image): void {
-        console.log({
-          type: this.uploadedImageType,
-          scale: this.uploadedImageScale,
-          base64: this.uploadedImageBase64
-        })
         const newFloorplanImage = new Konva.Image({
           x: 0,
           y: 0,
@@ -2400,7 +2457,16 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       reorderCanvasItems() : void {
         //take the canvas layer and reorder the items such that the uploaded floorplan is at the bottom, stalls, walls and textboxes are one level above
         // and the sensors then one level above that and finally the tooltips are at the top
-        const canvasItems = this.canvas.children;
+        
+        let canvasItems = null;
+        if (!this.canvas || !this.canvas.children) {
+          this.canvas = this.canvasContainer.getLayers()[0];
+          canvasItems = this.canvas.children;
+        }
+        else {
+          canvasItems = this.canvas.children;
+        }
+        
         const newCanvas = new Konva.Layer();
 
         if (!canvasItems) return;
@@ -2512,7 +2578,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         });
         this.canvasContainer.add(newCanvas);
         this.canvas.draw();
-        console.log(this.canvas);
       }
 
       adjustJSONData(json: Record<string, any>): void {
