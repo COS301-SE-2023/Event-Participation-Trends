@@ -16,3 +16,4 @@ export * from './upload-image.event';
 export * from './add-image-to-event.event';
 export * from './delete-event-image.event';
 export * from './remove-image-from-event.event';
+export * from './update-floorlayout-image.event';

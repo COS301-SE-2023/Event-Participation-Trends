@@ -14,3 +14,4 @@ export * from './add-device-position.interface';
 export * from './delete-event.interface';
 export * from './image.interface';
 export * from './add-image-to-event.interface';
+export * from './update-floorlayout-image.interface';

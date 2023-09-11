@@ -24,3 +24,4 @@ export * from './upload-image.request';
 export * from './get-event-floorlayout-image.request';
 export * from './delete-event-image.request';
 export * from './get-event-statistics.request';
+export * from './update-event-floorlayout-image.request';
