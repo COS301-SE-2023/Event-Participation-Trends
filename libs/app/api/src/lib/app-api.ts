@@ -17,6 +17,7 @@ import {
   ICreateEventResponse,
   IDeclineViewRequestRequest,
   IDeclineViewRequestResponse,
+  IDeleteEventImageResponse,
   IDeleteEventResponse,
   IEvent,
   IEventDetails,
@@ -367,6 +368,29 @@ export class AppApiService {
           imageObj: object,
           imageScale: scale,
           imageType: type
+        },
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.status || Status.FAILURE;
+  }
+
+  async removeFloorplanImage(
+    userEmail: string, 
+    eventId: string, 
+    imageId: string
+  ): Promise<Status> {
+    const response = await firstValueFrom(
+      this.http.post<IDeleteEventImageResponse>(
+        '/api/event/removeFloorlayoutImage',
+        {
+          userEmail: userEmail,
+          eventId: eventId,
+          imageId: imageId
         },
         {
           headers: {

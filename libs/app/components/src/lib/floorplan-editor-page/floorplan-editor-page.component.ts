@@ -734,6 +734,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                   const imageBase64 = obj.imageBase64;
                   const imageType = obj.imageType;
                   const imageScale = obj.imageScale;
+                  const imageID = obj._id;
 
                   if (imageObjects && imageBase64) {
                     uploadedImagesLayer = Konva.Node.create(JSON.parse(imageObjects), 'next-container');
@@ -744,6 +745,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       y: uploadedImagesLayer.getAttr('y') ? uploadedImagesLayer.getAttr('y') : 0,
                       draggable: true,
                       cursor: 'move',
+                      databaseID: imageID,
                     });
                     
                     uploadedImagesLayer.children?.forEach(child => {
@@ -753,9 +755,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       image.setAttr('image', img);
                       image.setAttr('x', child.getAttr('x') ? child.getAttr('x') : 0);
                       image.setAttr('y', child.getAttr('y') ? child.getAttr('y') : 0);
+                      image.setAttr('databaseID', imageID); //overwrite id to be the same as the id in the database
 
                       const uploadedImage: UploadedImage = {
-                        id: image.id(),
+                        id: image.getAttr('databaseID'),
                         type: imageType,
                         scale: imageScale,
                         base64: imageBase64
@@ -1294,7 +1297,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       if(!this.preventCreatingWalls) return;
 
       this.transformer.detach();
-      this.transformer.destroy();
 
       if (this.selectedTextBox) {
         this.transformer = new Konva.Transformer({
@@ -1911,11 +1913,18 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         }
 
         if (selectedObject.hasName('uploadedFloorplan')) {
-          const imageID = (selectedObject as Konva.Group).getChildren()[0].getAttr('id');
+          const imageID = (selectedObject as Konva.Group).getChildren()[0].getAttr('databaseID');
 
           this.uploadedImages.forEach((image) => {
             if (image.id === imageID) {
               this.uploadedImages.splice(this.uploadedImages.indexOf(image), 1);
+
+              // remove image from database
+              this.appApiService.getEmail().then((email) => {
+                this.appApiService.removeFloorplanImage(email, this.eventId, imageID).then((res) => {
+                  console.log(res);
+                });
+              });
             }
           });
         }
@@ -2173,7 +2182,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.canvasContainer.off('mousemove', this.onMouseMove.bind(this));
       
         // Remove the mouse up event listener
-        this.canvasContainer.off('mouseup', this.onMouseUp.bind(this));        
+        this.canvasContainer.off('mouseup', this.onMouseUp.bind(this));
       }
       
       createGridLines() {
