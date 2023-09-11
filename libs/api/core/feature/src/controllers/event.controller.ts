@@ -546,6 +546,24 @@ export class EventController {
     return this.eventService.getEventFloorLayoutImage(extractRequest);
   }
 
+  @Get('getEventStatistics')
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
+  async getEventStatistics(
+    @Req() req: Request,
+    @Query() query: any 
+  ): Promise<IGetEventFloorlayoutImageRequest> {
+    const request: any = req;
+
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: Manager email not provided', 400);
+
+    const extractRequest: IGetEventFloorlayoutImageRequest = {
+        eventId: query.eventId,
+    };
+    return this.eventService.getEventStatistics(extractRequest);
+  }
+
 }
 
 function computePreviousDayDate(): Date{
