@@ -68,6 +68,8 @@ import {
     IDeleteEventImageRequest,
     DeleteEventImageCommand,
     IDeleteEventImageResponse,
+    IGetEventStatisticsRequest,
+    GetEventStatisticsQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -189,5 +191,9 @@ export class EventService {
 
     async deleteImage(request: IDeleteEventImageRequest) {
         return await this.commandBus.execute<DeleteEventImageCommand, IDeleteEventImageResponse>(new DeleteEventImageCommand(request));
+    }
+
+    async getEventStatistics(request: IGetEventStatisticsRequest) {
+        return await this.queryBus.execute<GetEventStatisticsQuery, IGetEventStatisticsRequest>(new GetEventStatisticsQuery(request));
     }
 }
