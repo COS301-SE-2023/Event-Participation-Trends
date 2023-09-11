@@ -274,4 +274,28 @@ export class EventRepository {
         return await this.eventModel.find(
             {Manager: {$eq: managerID}}).select("Category").distinct("Category");
     }
+
+    async updateEventFloorlayoutImageimgBase64(imageId: Types.ObjectId, imgBase64: string){
+        return await this.imageModel.updateOne(
+        {_id :{$eq: imageId}},
+        {$set: {imageBase64 :imgBase64}})
+    }
+
+    async updateEventFloorlayoutImageimageObj(imageId: Types.ObjectId, imageObj: string){
+        return await this.imageModel.updateOne(
+        {_id :{$eq: imageId}},
+        {$set: {imageObj :imageObj}})
+    }
+
+    async updateEventFloorlayoutImageimageScale(imageId: Types.ObjectId, imageScale: number){
+        return await this.imageModel.updateOne(
+        {_id :{$eq: imageId}},
+        {$set: {imageScale :imageScale}})
+    }
+
+    async updateEventFloorlayoutImageimageType(imageId: Types.ObjectId, imageType: string){
+        return await this.imageModel.updateOne(
+        {_id :{$eq: imageId}},
+        {$set: {imageType :imageType}})
+    }
 }
