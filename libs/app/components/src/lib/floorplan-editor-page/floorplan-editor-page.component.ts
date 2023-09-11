@@ -2641,12 +2641,14 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               const imageBase64 = image.base64;
               const imageObj = JSON.stringify(floorplan);
               
-              this.appApiService.updateFloorplanImages(this.eventId, imageBase64, imageObj, imageScale, imageType).then((res: any) => {
-                console.log(res);
-              });
+              // this.appApiService.updateFloorplanImages(this.eventId, imageBase64, imageObj, imageScale, imageType).then((res: any) => {
+              //   console.log(res);
+              // });
             }
           });
-        });      
+        });  
+        
+        // ADD HERE THE CODE TO ADD NEW IMAGES TO THE DATABASE
 
         // save the JSON data to the database
         this.appApiService.updateFloorLayout(this.eventId, jsonString).then((res: any) => {
