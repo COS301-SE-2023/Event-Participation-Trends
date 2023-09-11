@@ -351,7 +351,7 @@ export class AppApiService {
     return response.status || Status.FAILURE;
   }
 
-  async updateFloorplanImages(
+  async addNewFloorplanImages(
     eventId: string,
     base64: string,
     object: string,
