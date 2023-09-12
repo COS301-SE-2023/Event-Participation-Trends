@@ -646,6 +646,7 @@ export class DashboardPageComponent implements OnInit {
 
       // create node from JSON string
       this.heatmapLayer = Konva.Node.create(response, 'floormap');
+      console.log(this.heatmapLayer)
       if (this.heatmapLayer) {
         this.heatmapLayer?.setAttr('name', 'floorlayoutLayer');
 

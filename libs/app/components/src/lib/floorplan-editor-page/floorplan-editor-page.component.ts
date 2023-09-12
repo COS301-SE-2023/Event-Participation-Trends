@@ -2652,9 +2652,11 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               const imageBase64 = image.base64;
               const imageObj = JSON.stringify(floorplan);
               
-              // this.appApiService.updateFloorplanImages(this.eventId, imageBase64, imageObj, imageScale, imageType).then((res: any) => {
-              //   console.log(res);
-              // });
+              this.appApiService.getEmail().then((email) => {
+                this.appApiService.updateFloorplanImages(this.eventId, image.id, email, imageBase64, imageObj, imageScale, imageType).then((res: any) => {
+                  console.log(res);
+                });
+              });
             }
           });
 
@@ -2672,20 +2674,20 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         });
 
         // save the JSON data to the database
-        // this.appApiService.updateFloorLayout(this.eventId, jsonString).then((res: any) => {
-        //   console.log(res);
+        this.appApiService.updateFloorLayout(this.eventId, jsonString).then((res: any) => {
+          console.log(res);
 
-        //   setTimeout(() => {
-        //     this.showToastUploading = false;
-        //     res ? this.showToastSuccess = true : this.showToastError = true; 
+          setTimeout(() => {
+            this.showToastUploading = false;
+            res ? this.showToastSuccess = true : this.showToastError = true; 
 
-        //     setTimeout(() => {
-        //       this.showToastSuccess = false;
-        //       this.showToastError = false;
-        //       if (res) this.router.navigate(['details'], { relativeTo: this.route.parent });
-        //     }, 1000)
-        //   }, 2000);
-        // });
+            setTimeout(() => {
+              this.showToastSuccess = false;
+              this.showToastError = false;
+              if (res) this.router.navigate(['details'], { relativeTo: this.route.parent });
+            }, 1000)
+          }, 2000);
+        });
       }
 
     async presentToastSuccess(position: 'top' | 'middle' | 'bottom', message: string) {

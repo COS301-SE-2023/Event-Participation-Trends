@@ -33,12 +33,12 @@ import {
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
   IImage,
-  IImageUploadRequest,
   IImageUploadResponse,
   IPosition,
   ISendViewRequestResponse,
   IUpdateEventDetailsRequest,
   IUpdateEventDetailsResponse,
+  IUpdateEventFloorLayoutImgResponse,
   IUpdateFloorlayoutResponse,
 } from '@event-participation-trends/api/event/util';
 import { firstValueFrom } from 'rxjs';
@@ -391,6 +391,37 @@ export class AppApiService {
           userEmail: userEmail,
           eventId: eventId,
           imageId: imageId
+        },
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.status || Status.FAILURE;
+  }
+
+  async updateFloorplanImages(
+    eventId: string,
+    imageId: string,
+    managerEmail: string,
+    imgBase64: string,
+    imageObj: string,
+    imageScale: number,
+    imageType: string
+  ): Promise<Status> {
+    const response = await firstValueFrom(
+      this.http.post<IUpdateEventFloorLayoutImgResponse>(
+        '/api/event/updateEventFloorlayoutImage',
+        {
+          eventId: eventId,
+          imageId: imageId,
+          managerEmail: managerEmail,
+          imgBase64: imgBase64,
+          imageObj: imageObj,
+          imageScale: imageScale,
+          imageType: imageType
         },
         {
           headers: {
