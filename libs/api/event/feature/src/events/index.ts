@@ -15,3 +15,4 @@ export * from './upload-image-event.handler';
 export * from './add-image-to-event.event';
 export * from './delete-event-image.handler';
 export * from './remove-image-from-event.handler';
+export * from './update-event-floorlayout.handler';

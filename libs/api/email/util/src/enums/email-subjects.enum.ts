@@ -8,4 +8,5 @@ export enum EmailSubject{
     ROLE_CHANGED= "Event Participation Trends: Role Change",
     EVENT_DETAILS_UPDATED= "Event Participation Trends: Event Details Updated",
     EVENT_DELETED= "Event Participation Trends: Event Deleted",
+    EVENT_FLOORLAYOUT_IMAGE_UPDATED = "Event Participation Trends: Event Floorlayout image Updated",
 }

@@ -41,6 +41,10 @@ import {
     IGetEventFloorlayoutImageRequest,
     IDeleteEventImageRequest,
     IDeleteEventImageResponse,
+    IUpdateEventFloorLayoutImgRequest,
+    IUpdateEventFloorLayoutImgResponse,
+    IGetEventFloorlayoutImageResponse,
+    IGetEventStatisticsResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -534,7 +538,7 @@ export class EventController {
   async getFloorLayoutImage(
     @Req() req: Request,
     @Query() query: any 
-  ): Promise<IGetEventFloorlayoutImageRequest> {
+  ): Promise<IGetEventFloorlayoutImageResponse> {
     const request: any = req;
 
     if (request.user['email'] == undefined || request.user['email'] == null)
@@ -545,6 +549,51 @@ export class EventController {
     };
     return this.eventService.getEventFloorLayoutImage(extractRequest);
   }
+
+  @Get('getEventStatistics')
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
+  async getEventStatistics(
+    @Req() req: Request,
+    @Query() query: any 
+  ): Promise<IGetEventStatisticsResponse> {
+    const request: any = req;
+
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: Manager email not provided', 400);
+
+    const extractRequest: IGetEventFloorlayoutImageRequest = {
+        eventId: query.eventId,
+    };
+    return this.eventService.getEventStatistics(extractRequest);
+  }
+
+  @Post('updateEventFloorlayoutImage')
+  @SetMetadata('role',Role.MANAGER)
+  @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
+  async updateEventFloorlayoutImage(
+      @Req() req: Request,
+      @Body() requestBody: IUpdateEventFloorLayoutImgRequest,
+  ): Promise<IUpdateEventFloorLayoutImgResponse> {
+    const request: any = req;
+
+    if(!requestBody.imageId)
+          throw new HttpException("Bad Request: imageId not provided", 400);
+
+    if(!requestBody.eventId)
+          throw new HttpException("Bad Request: eventId not provided", 400);
+
+  const extractRequest: IUpdateEventFloorLayoutImgRequest = {
+    eventId: requestBody.eventId,
+    imageId: requestBody.imageId,
+    managerEmail: request.user['email'],
+    imgBase64: requestBody.imgBase64,
+    imageObj: requestBody.imageObj,
+    imageScale: requestBody.imageScale,
+    imageType: requestBody.imageType,
+  };
+  return this.eventService.updateEventFloorLayoutImage(extractRequest);
+}
 
 }
 

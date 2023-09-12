@@ -68,6 +68,13 @@ import {
     IDeleteEventImageRequest,
     DeleteEventImageCommand,
     IDeleteEventImageResponse,
+    IGetEventStatisticsRequest,
+    GetEventStatisticsQuery,
+    IUpdateEventFloorLayoutImgRequest,
+    UpdateEventFloorLayoutImgCommand,
+    IUpdateEventFloorLayoutImgResponse,
+    IGetEventStatisticsResponse,
+    IGetEventFloorlayoutImageResponse,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -184,10 +191,18 @@ export class EventService {
     }
 
     async getEventFloorLayoutImage(request: IGetEventFloorlayoutImageRequest) {
-        return await this.queryBus.execute<GetEventFloorlayoutImageQuery, IGetEventFloorlayoutImageRequest>(new GetEventFloorlayoutImageQuery(request));
+        return await this.queryBus.execute<GetEventFloorlayoutImageQuery, IGetEventFloorlayoutImageResponse>(new GetEventFloorlayoutImageQuery(request));
     }
 
     async deleteImage(request: IDeleteEventImageRequest) {
         return await this.commandBus.execute<DeleteEventImageCommand, IDeleteEventImageResponse>(new DeleteEventImageCommand(request));
+    }
+
+    async getEventStatistics(request: IGetEventStatisticsRequest) {
+        return await this.queryBus.execute<GetEventStatisticsQuery, IGetEventStatisticsResponse>(new GetEventStatisticsQuery(request));
+    }
+
+    async updateEventFloorLayoutImage(request: IUpdateEventFloorLayoutImgRequest) {
+        return await this.commandBus.execute<UpdateEventFloorLayoutImgCommand, IUpdateEventFloorLayoutImgResponse>(new UpdateEventFloorLayoutImgCommand(request));
     }
 }
