@@ -176,6 +176,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     showToastError = false;
     toastHeading = '';
     toastMessage = '';
+    existingFloorLayoutImages: UploadedImage[] = [];
     
     id = '';
     event: any | null | undefined = null;
@@ -764,6 +765,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                         base64: imageBase64
                       };
                       this.uploadedImages.push(uploadedImage);
+                      this.existingFloorLayoutImages.push(uploadedImage);
 
                       group.add(image);
                       this.setMouseEvents(group);
@@ -2641,10 +2643,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
         this.showToastUploading = true;
 
-        // save the uploaded Images to the database
+        // update the existing images in the database
         uploadedFloorplans.forEach((floorplan: any) => {
-          this.uploadedImages.forEach((image: UploadedImage) => {
-            if (floorplan.attrs.id === image.id) {
+          this.existingFloorLayoutImages.forEach((image: UploadedImage) => {
+            if (floorplan.attrs.databaseID === image.id) {
               const imageType = image.type;
               const imageScale = image.scale;
               const imageBase64 = image.base64;
@@ -2655,25 +2657,35 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               // });
             }
           });
-        });  
-        
-        // ADD HERE THE CODE TO ADD NEW IMAGES TO THE DATABASE
+
+          this.uploadedImages.forEach((image) => {
+            const imageType = image.type;
+            const imageScale = image.scale;
+            const imageBase64 = image.base64;
+            const imageObj = JSON.stringify(floorplan);
+            if (!this.existingFloorLayoutImages.includes(image) && floorplan.attrs.id === image.id) {
+              this.appApiService.addNewFloorplanImages(this.eventId, imageBase64, imageObj, imageScale, imageType).then((res: any) => {
+                console.log(res);
+              });
+            }
+          });
+        });
 
         // save the JSON data to the database
-        this.appApiService.updateFloorLayout(this.eventId, jsonString).then((res: any) => {
-          console.log(res);
+        // this.appApiService.updateFloorLayout(this.eventId, jsonString).then((res: any) => {
+        //   console.log(res);
 
-          setTimeout(() => {
-            this.showToastUploading = false;
-            res ? this.showToastSuccess = true : this.showToastError = true; 
+        //   setTimeout(() => {
+        //     this.showToastUploading = false;
+        //     res ? this.showToastSuccess = true : this.showToastError = true; 
 
-            setTimeout(() => {
-              this.showToastSuccess = false;
-              this.showToastError = false;
-              if (res) this.router.navigate(['details'], { relativeTo: this.route.parent });
-            }, 1000)
-          }, 2000);
-        });
+        //     setTimeout(() => {
+        //       this.showToastSuccess = false;
+        //       this.showToastError = false;
+        //       if (res) this.router.navigate(['details'], { relativeTo: this.route.parent });
+        //     }, 1000)
+        //   }, 2000);
+        // });
       }
 
     async presentToastSuccess(position: 'top' | 'middle' | 'bottom', message: string) {
