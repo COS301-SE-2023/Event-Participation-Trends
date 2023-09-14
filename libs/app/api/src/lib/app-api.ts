@@ -28,6 +28,8 @@ import {
   IGetEventFloorlayoutImageResponse,
   IGetEventFloorlayoutResponse,
   IGetEventResponse,
+  IGetEventStatisticsRequest,
+  IGetEventStatisticsResponse,
   IGetFloorplanBoundariesResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
@@ -269,6 +271,20 @@ export class AppApiService {
       )
     );
     return response.status || Status.FAILURE;
+  }
+
+  async getEventStatistics(eventId: IEventId): Promise<IGetEventStatisticsResponse> {
+    const response = await firstValueFrom(
+      this.http.get<IGetEventStatisticsResponse>(
+        `/api/event/getEventStatistics?eventId=${eventId.eventId}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        },
+      )
+    );
+    return response;
   }
 
   // REQUESTS //

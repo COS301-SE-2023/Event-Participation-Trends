@@ -101,8 +101,8 @@ export class GetEventStatisticsHandler
     }
 
     total_attendance = uniqueDevices.size;
-    average_attendance = total_unique_devices / devicesOverTime.size;
-    average_attendance_time = total_attendance_time / deviceTimeRange.size;
+    average_attendance = total_unique_devices / devicesOverTime.size ? total_unique_devices / devicesOverTime.size : 0;
+    average_attendance_time = total_attendance_time / deviceTimeRange.size ? total_attendance_time / deviceTimeRange.size : 0;
 
     //compute statistics end
 

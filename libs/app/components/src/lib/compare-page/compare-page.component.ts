@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IEvent, IPosition } from '@event-participation-trends/api/event/util';
+import { IEvent, IGetEventStatisticsResponse, IPosition } from '@event-participation-trends/api/event/util';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
@@ -11,6 +11,16 @@ import { matCheckCircleOutline } from "@ng-icons/material-icons/outline";
 import { matRadioButtonUnchecked, matSearch, matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
 import { heroAdjustmentsHorizontal } from "@ng-icons/heroicons/outline";
 import { heroInboxSolid } from '@ng-icons/heroicons/solid'; 
+
+class Stats {
+  id = 0
+  total_attendance = 0
+  average_attendance = 0
+  peak_attendance = 0
+  turnover_rate = 0
+  average_attendance_time = 0
+  max_attendance_time = 0
+}
 
 @Component({
   selector: 'event-participation-trends-compare-page',
@@ -47,6 +57,7 @@ export class ComparePageComponent implements OnInit{
   eventsSelected = 0;
   showDropDown = false;
   selectedEvents: IEvent[] = [];
+  eventStats: Stats[] = [];
 
   parentContainer: HTMLDivElement | null = null;
   
@@ -159,6 +170,23 @@ export class ComparePageComponent implements OnInit{
     if (this.eventList[index].selected) {
       this.eventsSelected++;
       this.selectedEvents.push(event);
+
+      const response = await this.appApiService.getEventStatistics({eventId: (event as any)._id});
+
+      const stats = {
+        id: (event as any)._id,
+        total_attendance: response.total_attendance!,
+        average_attendance: response.average_attendance!,
+        peak_attendance: response.peak_attendance!,
+        turnover_rate: response.turnover_rate!,
+        average_attendance_time: response.average_attendance!,
+        max_attendance_time: response.max_attendance_time!,
+      };
+
+      console.log(stats);
+      console.log(this.eventStats);
+
+      this.eventStats.push(stats);
     }
     else {
       this.eventsSelected--;
@@ -170,6 +198,11 @@ export class ComparePageComponent implements OnInit{
         return sameName && sameStartAndEndDate && sameCategory;
       });
       this.selectedEvents.splice(eventIndex, 1);
+
+      const statsIndex = this.eventStats.findIndex((item) => {
+        return item.id === (event as any)._id;
+      });
+      this.eventStats.splice(statsIndex, 1);
     }
 
     this.showDropDown = false;
@@ -250,5 +283,37 @@ export class ComparePageComponent implements OnInit{
     if (element) {
       element.style.width = '0px';
     }
+  }
+
+  getFirstEventStats(): Stats {
+    if (this.eventStats.length === 0) {
+      return {
+        id: 0,
+        total_attendance: 0,
+        average_attendance: 0,
+        peak_attendance: 0,
+        turnover_rate: 0,
+        average_attendance_time: 0,
+        max_attendance_time: 0,
+      };
+    }
+
+    return this.eventStats[0];
+  }
+
+  getSecondEventStats(): Stats {
+    if (this.eventStats.length <= 1) {
+      return {
+        id: 0,
+        total_attendance: 0,
+        average_attendance: 0,
+        peak_attendance: 0,
+        turnover_rate: 0,
+        average_attendance_time: 0,
+        max_attendance_time: 0,
+      };
+    }
+
+    return this.eventStats[1];
   }
 }
