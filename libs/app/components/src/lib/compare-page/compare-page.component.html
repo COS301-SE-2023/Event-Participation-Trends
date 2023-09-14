@@ -68,10 +68,12 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="show && eventStats.length >= 2" class="w-full p-3 z-40"> 
+            <div *ngIf="show && eventStats.length >= 1" class="w-full p-3 z-40"> 
                 <div class="mx-24 rounded-2xl bg-ept-navy-blue p-3 text-lg font-poppins font-semibold">
-                    <div class="text-4xl font-poppins font-semibold flex justify-center">
-                        <div>Event Statistics</div>
+                    <div class="font-poppins font-semibold grid grid-cols-12">
+                        <div class="col-span-3 text-lg text-left">{{getFirstEventStats().name}}</div>
+                        <div class="col-span-6 text-4xl text-center">Event Statistics</div>
+                        <div class="col-span-3 text-lg text-right">{{getSecondEventStats().name}}</div>
                     </div>
                     <div class="w-full bg-ept-blue-grey rounded-2xl h-1 opacity-20 my-3"></div>
                     <div class="flex justify-center mx-12">
@@ -156,6 +158,14 @@
                             >
                                 <div>{{getSecondEventStats().max_attendance_time}}</div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-rows-2">
+                        <div class="rounded-md h-full">
+                            <canvas id="firstAttendanceOverTime" #firstAttendanceOverTime class="w-full h-full"></canvas>
+                        </div>
+                        <div class="rounded-md h-full">
+                            <canvas id="secondAttendanceOverTime" #secondAttendanceOverTime class="w-full h-full"></canvas>
                         </div>
                     </div>
                 </div>
