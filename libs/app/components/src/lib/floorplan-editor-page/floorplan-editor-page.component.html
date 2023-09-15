@@ -365,6 +365,7 @@
         class="relative col-span-29 bg-white rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2 overflow-hidden"
         (drop)="onDrop($event)"
         (dragover)="onDragOver($event)"
+        [ngClass]="{'pointer-events-none': canvasItems.length === 0 && preventCreatingWalls}"
         >
         <p
             class="bg-white z-50 rounded-md text-center text-2xl text-ept-deep-grey text-opacity-30 font-semibold mt-10 absolute top-1/2 left-1/3"

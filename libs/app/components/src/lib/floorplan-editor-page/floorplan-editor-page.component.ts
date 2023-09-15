@@ -731,7 +731,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
               const firstPromise = this.appApiService.getFloorLayoutImages(this.eventId).then((response: any) => {
                 if (response === null || response === '' || response.length === 0) return;
-                
+
                 response.forEach((obj: any) => {
                   const imageObjects = obj.imageObj;
                   const imageBase64 = obj.imageBase64;
@@ -750,6 +750,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       cursor: 'move',
                       databaseID: imageID,
                     });
+                    console.log(uploadedImagesLayer)
                     
                     uploadedImagesLayer.children?.forEach(child => {
                       const image = new Konva.Image(child.getAttrs());
@@ -848,6 +849,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                 this.moveSensorsAndTooltipsToTop();
                 this.centerFloorPlan();
                 this.reorderCanvasItems();
+                if (this.canvasItems.length === 0) {
+                  this.canvasContainer.x(0);
+                  this.canvasContainer.y(0);
+                }
               });
             
           });
@@ -942,7 +947,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           fill: 'white',
           opacity: 1,
         });
-        console.log(type)
         const oldText = type.getChildren().find(child => child instanceof Konva.Text) as Konva.Text;
         type.children = type.children?.filter(child => child.getClassName() !== 'Text');
         const newText = new Konva.Text({
@@ -1277,7 +1281,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           this.canvas.batchDraw();
         }
       }
-      else if (event.ctrlKey) {
+      else if (event.ctrlKey && this.canvasItems.length !== 0) {
         this.ctrlDown = true;
         document.body.style.cursor = 'grab';
         if (this.mouseDown) {
@@ -2164,9 +2168,14 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
           //add line to canvasItems array
           this.canvasItems.push({
-            name: 'path',
+            name: 'wall',
             konvaObject: this.activePath,
           });
+          console.log(this.canvasItems);
+          this.removeDuplicates();
+          console.log(this.canvasItems);
+          this.removeFaultyPaths();
+          console.log(this.canvasItems);
 
           // set the height of the wall
           const height = Math.abs(snapPoint.y - this.activePath.y());
@@ -2189,6 +2198,32 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       
         // Remove the mouse up event listener
         this.canvasContainer.off('mouseup', this.onMouseUp.bind(this));
+      }
+
+      removeDuplicates() {
+        //loop through canvasItems array and remove duplicates
+        const unique: DroppedItem[] = [];
+        this.canvasItems.forEach((item) => {
+          if (!unique.some((uniqueItem) => uniqueItem.konvaObject === item.konvaObject)) {
+            unique.push(item);
+          }
+        });
+        this.canvasItems = unique;
+      }
+
+      removeFaultyPaths() {
+        const faultyPaths = this.canvasItems.filter((item) => 
+          item.konvaObject?.hasName('wall') &&
+          item.konvaObject?.getAttr('data') === 'M0,0 L0,0'
+        );
+        faultyPaths.forEach((path) => {
+          path.konvaObject?.remove();
+        });
+        // remove them from canvasItems
+        this.canvasItems = this.canvasItems.filter((item) =>
+          item.konvaObject?.hasName('wall') &&
+          item.konvaObject?.getAttr('data') !== 'M0,0 L0,0'
+        );
       }
       
       createGridLines() {
@@ -2585,6 +2620,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.canvas = newCanvas;
         this.canvasItems = [];
         this.canvas.children?.forEach((item: any) => {
+          if (item.attrs.name === 'gridGroup' || item instanceof Konva.Transformer || item.attrs.name === 'selectionBox' || item.attrs.name === 'rectOverlay') {
+            return;
+          }
           const droppedItem = {
             name: item.attrs.name,
             konvaObject: item,
@@ -2632,7 +2670,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         });
 
         // remove the grid lines, transformers and groups from the JSON data
-        json.children = json.children.filter((child: any) => {
+        json.children = json.children.filter((child: KonvaTypes) => {
+          if (child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor' || child.attrs.name === 'textBox' || child.attrs.name === 'uploadedFloorplan') {
+            child.attrs.opacity = 1;
+          }
           return child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor' || child.attrs.name === 'textBox' || child.attrs.name === 'uploadedFloorplan';
         });
         
