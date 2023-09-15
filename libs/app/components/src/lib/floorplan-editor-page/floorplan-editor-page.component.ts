@@ -273,7 +273,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
           // set mouse enter and mouse leave events
           item.konvaObject?.on('mouseenter', () => {
-            document.body.style.cursor = 'not-allowed';
+            if (item.konvaObject?.getAttr('name') !== 'gridGroup') {
+              document.body.style.cursor = 'not-allowed';
+            }
           });
           item.konvaObject?.on('mouseleave', () => {
             document.body.style.cursor = 'default';
@@ -820,7 +822,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       break;
                     case 'Group':
                       type = new Konva.Group(child.getAttrs());
-                      this.addGroupChildren(type, child);
+                      if (type.hasName('stall')) {
+                        this.addGroupChildren(type, child);
+                      }
                       break;
                     case 'Text':
                       type = new Konva.Text(child.getAttrs());
@@ -938,7 +942,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           fill: 'white',
           opacity: 1,
         });
-        
+        console.log(type)
         const oldText = type.getChildren().find(child => child instanceof Konva.Text) as Konva.Text;
         type.children = type.children?.filter(child => child.getClassName() !== 'Text');
         const newText = new Konva.Text({
