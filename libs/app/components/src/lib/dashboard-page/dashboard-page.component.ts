@@ -70,7 +70,8 @@ export class DashboardPageComponent implements OnInit {
   showStatsOnSide = false;
   largeScreen = false;
   mediumScreen = false;
-  floorlayoutSnapshot: string | null = null;
+  floorlayoutSnapshot: string | null = null;  
+  STALL_IMAGE_URL = 'assets/stall-icon.png';
 
   // Functional
   eventStartTime: Date = new Date();
@@ -646,7 +647,6 @@ export class DashboardPageComponent implements OnInit {
 
       // create node from JSON string
       this.heatmapLayer = Konva.Node.create(response, 'floormap');
-      console.log(this.heatmapLayer)
       if (this.heatmapLayer) {
         this.heatmapLayer?.setAttr('name', 'floorlayoutLayer');
 
@@ -665,6 +665,22 @@ export class DashboardPageComponent implements OnInit {
         this.heatmapLayer?.find('Circle').forEach((circle) => {
           if (circle.name() == 'sensor') {
             circle.attrs.stroke = this.chartColors['ept-blue-grey'];
+          }
+        });
+        // run through the layer and change the image attribute for the stalls
+        this.heatmapLayer?.find('Group').forEach((group) => {
+          if (group.name() == 'stall') {
+            (group as Konva.Group).children?.forEach((child) => {
+              if (child instanceof Konva.Image) {
+                const image = new Image();
+                image.onload = () => {
+                  // This code will execute once the image has finished loading.
+                  child.attrs.image = image;
+                  this.heatmapLayer?.draw();
+                };
+                image.src = this.STALL_IMAGE_URL;
+              }
+            });
           }
         });
 
