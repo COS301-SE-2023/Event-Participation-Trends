@@ -114,7 +114,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     gridLines !: Konva.Group;
     currentPathStrokeWidth = 0;
     currentGridStrokeWidth = 0;
-    currentSensorCircleStrokeWidth = 0;
+    currentSensorCircleStrokeWidth = 1;
     snaps: number[] = [];
     wheelCounter = 0;
     contentLoaded = false;
@@ -382,6 +382,16 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             image.setAttr('name', 'sensor');
 
             const sensor = this.canvas.findOne('.sensor');
+            
+            if (sensor) {
+              this.currentSensorCircleStrokeWidth = sensor.getAttr('strokeWidth');
+            }
+            else if (this.currentScale !== 1){
+              this.currentSensorCircleStrokeWidth = this.currentGridStrokeWidth;
+            }
+            else {
+              this.currentSensorCircleStrokeWidth = 1;
+            }
 
             // create circle to represent sensor
             const sensorCount = this.canvasItems.filter(item => item.konvaObject?.getAttr('name').includes('sensor')).length + 1;
@@ -393,7 +403,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               radius: 2,
               fill: 'red',
               stroke: 'black',
-              strokeWidth: this.currentSensorCircleStrokeWidth === 0 && !sensor ? 1 : sensor.getAttr('strokeWidth'),
+              strokeWidth: this.currentSensorCircleStrokeWidth,
               draggable: true,
               cursor: 'move',
             });
