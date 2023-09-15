@@ -2629,7 +2629,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
         // remove the grid lines, transformers and groups from the JSON data
         json.children = json.children.filter((child: any) => {
-          return child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor' || child.attrs.name === 'textBox';
+          return child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor' || child.attrs.name === 'textBox' || child.attrs.name === 'uploadedFloorplan';
         });
         
         const adjustedJson = JSON.parse(JSON.stringify(json));
