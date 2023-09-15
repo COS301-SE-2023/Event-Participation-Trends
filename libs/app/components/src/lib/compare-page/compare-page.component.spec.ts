@@ -7,9 +7,19 @@ import { matRadioButtonUnchecked, matSearch, matFilterCenterFocus, matZoomIn, ma
 import { heroAdjustmentsHorizontal } from "@ng-icons/heroicons/outline";
 import { heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
-import { IEvent } from '@event-participation-trends/api/event/util';
+import { IEvent, IGetAllEventsResponse, IGetEventStatisticsResponse } from '@event-participation-trends/api/event/util';
+
+class Stats {
+  id = 0
+  total_attendance = 0
+  average_attendance = 0
+  peak_attendance = 0
+  turnover_rate = 0
+  average_attendance_time = 0
+  max_attendance_time = 0
+}
 
 describe('ComparePageComponent', () => {
   let component: ComparePageComponent;
@@ -91,6 +101,8 @@ describe('ComparePageComponent', () => {
 
     // mock the call to getAllEvents from the AppApiService
     jest.spyOn(appApiService, 'getAllEvents').mockResolvedValue(mockEvents);
+    // mock the call to getEventStatistics from the AppApiService
+    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(new Stats());
 
     component.events = mockEvents;
     for (const event of component.events) {
@@ -159,7 +171,8 @@ describe('ComparePageComponent', () => {
 
     // mock the call to getAllEvents from the AppApiService
     jest.spyOn(appApiService, 'getAllEvents').mockResolvedValue(mockEvents);
-
+    // mock the call to getEventStatistics from the AppApiService
+    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(new Stats());
     component.events = mockEvents;
     for (const event of component.events) {
       component.eventList.push({event, selected: false});
@@ -234,6 +247,8 @@ describe('ComparePageComponent', () => {
 
     // mock the call to getAllEvents from the AppApiService
     jest.spyOn(appApiService, 'getAllEvents').mockResolvedValue(mockEvents);
+    // mock the call to getEventStatistics from the AppApiService
+    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(new Stats());
 
     component.events = mockEvents;
     for (const event of component.events) {
@@ -251,5 +266,231 @@ describe('ComparePageComponent', () => {
 
     // check if the event was deselected
     expect(component.eventList[0].selected).toBe(false);
+  });
+
+  it('should select a category and filter the event list', () => {
+    const mockEvents: IEvent[] = [
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'Test Event 1',
+        Category: 'Test Category 1',
+        Location: 'Test Location 1',
+        FloorLayout: null,
+        FloorLayoutImg: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+        PublicEvent: false,
+      },
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'Test Event 2',
+        Category: 'Test Category 1',
+        Location: 'Test Location 10',
+        FloorLayout: null,
+        FloorLayoutImg: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+        PublicEvent: false,
+      },
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'Test Event 3',
+        Category: 'Test Category 2',
+        Location: 'Test Location 111',
+        FloorLayout: null,
+        FloorLayoutImg: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+        PublicEvent: false,
+      },
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'Test Event 15',
+        Category: 'Test Category 3',
+        Location: 'Test Location 110',
+        FloorLayout: null,
+        FloorLayoutImg: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+        PublicEvent: false,
+      },
+    ];
+    //mock the call to get events
+    jest.spyOn(appApiService, 'getAllEvents').mockResolvedValue(mockEvents);
+    // mock the call to get categories
+    jest.spyOn(appApiService, 'getManagedEventCategories').mockResolvedValue(['Test Category 1', 'Test Category 2', 'Test Category 3']);
+
+    // set events to the mock events
+    component.events = mockEvents;
+    // set categories to the mock categories
+    component.categories = ['Test Category 1', 'Test Category 2', 'Test Category 3'];
+
+    // set the selected category to "Test Category 1"
+    component.selectedCategory = 'Test Category 1';
+
+    expect(component.selectedCategory).toBe('Test Category 1');
+
+    // test if getEvents() returns the filtered events
+    expect(component.getEvents()).toEqual([mockEvents[0], mockEvents[1]]);
+  });
+
+  it('should select the "Show All" category and show all events', () => {
+    const mockEvents: IEvent[] = [
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'Test Event 1',
+        Category: 'Test Category 1',
+        Location: 'Test Location 1',
+        FloorLayout: null,
+        FloorLayoutImg: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+        PublicEvent: false,
+      },
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'Test Event 2',
+        Category: 'Test Category 1',
+        Location: 'Test Location 10',
+        FloorLayout: null,
+        FloorLayoutImg: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+        PublicEvent: false,
+      },
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'Test Event 3',
+        Category: 'Test Category 2',
+        Location: 'Test Location 111',
+        FloorLayout: null,
+        FloorLayoutImg: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+        PublicEvent: false,
+      },
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'Test Event 15',
+        Category: 'Test Category 3',
+        Location: 'Test Location 110',
+        FloorLayout: null,
+        FloorLayoutImg: null,
+        Stalls: null,
+        Sensors: null,
+        Devices: null,
+        Manager: null,
+        Requesters: null,
+        Viewers: null,
+        PublicEvent: false,
+      },
+    ];
+    //mock the call to get events
+    jest.spyOn(appApiService, 'getAllEvents').mockResolvedValue(mockEvents);
+    // mock the call to get categories
+    jest.spyOn(appApiService, 'getManagedEventCategories').mockResolvedValue(['Test Category 1', 'Test Category 2', 'Test Category 3']);
+
+    // set events to the mock events
+    component.events = mockEvents;
+    // set categories to the mock categories
+    component.categories = ['Test Category 1', 'Test Category 2', 'Test Category 3'];
+
+    // set the selected category to "Test Category 1"
+    component.selectedCategory = 'Test Category 1';
+
+    expect(component.selectedCategory).toBe('Test Category 1');
+
+    // test if getEvents() returns the filtered events
+    expect(component.getEvents()).toEqual([mockEvents[0], mockEvents[1]]);
+
+    // set the selected category to "Show All"
+    component.selectedCategory = 'Show All';
+
+    expect(component.selectedCategory).toBe('Show All');
+
+    // test if getEvents() returns all events
+    expect(component.getEvents()).toEqual(mockEvents);
+  });
+
+  // =========================================
+  // =========== INTEGRATION TESTS ===========
+  // =========================================
+  it('should call getEvents() and getManagedCategories() and both must have the same categories', async () => {
+    let endpoint = 'api/event/getAllEvents';
+
+    const categories: string[] = [];
+    const httpClient: HttpClient = TestBed.inject(HttpClient);
+    httpClient.get<IGetAllEventsResponse>(endpoint).subscribe((response) => {
+      component.events = response.events;
+      
+      for (const event of component.events) {
+        if (event.Category && !categories.includes(event.Category)) {
+          categories.push(event.Category);
+        }
+      }
+
+      // sort the categories
+      categories.sort((a, b) => {
+        if (a < b) { return -1; }
+        if (a > b) { return 1; }
+        return 0;
+      });
+
+      return categories;
+    });
+
+    // make a call to get the categories
+    endpoint = 'api/event/getManagedEventCategories';
+    httpClient.get<string[]>(endpoint).subscribe((response) => {
+      component.categories = response;
+
+      // sort the categories
+      component.categories.sort((a, b) => {
+        if (a < b) { return -1; }
+        if (a > b) { return 1; }
+        return 0;
+      });
+
+      return component.categories;
+    });
+
+    // test if the categories are correct
+    expect(component.categories).toEqual(categories);
   });
 });
