@@ -114,7 +114,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     gridLines !: Konva.Group;
     currentPathStrokeWidth = 0;
     currentGridStrokeWidth = 0;
-    currentSensorCircleStrokeWidth = 0;
+    currentSensorCircleStrokeWidth = 1;
     snaps: number[] = [];
     wheelCounter = 0;
     contentLoaded = false;
@@ -273,7 +273,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
           // set mouse enter and mouse leave events
           item.konvaObject?.on('mouseenter', () => {
-            document.body.style.cursor = 'not-allowed';
+            if (item.konvaObject?.getAttr('name') !== 'gridGroup') {
+              document.body.style.cursor = 'not-allowed';
+            }
           });
           item.konvaObject?.on('mouseleave', () => {
             document.body.style.cursor = 'default';
@@ -380,6 +382,16 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             image.setAttr('name', 'sensor');
 
             const sensor = this.canvas.findOne('.sensor');
+            
+            if (sensor) {
+              this.currentSensorCircleStrokeWidth = sensor.getAttr('strokeWidth');
+            }
+            else if (this.currentScale !== 1){
+              this.currentSensorCircleStrokeWidth = this.currentGridStrokeWidth;
+            }
+            else {
+              this.currentSensorCircleStrokeWidth = 1;
+            }
 
             // create circle to represent sensor
             const sensorCount = this.canvasItems.filter(item => item.konvaObject?.getAttr('name').includes('sensor')).length + 1;
@@ -391,7 +403,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               radius: 2,
               fill: 'red',
               stroke: 'black',
-              strokeWidth: this.currentSensorCircleStrokeWidth === 0 && !sensor ? 1 : sensor.getAttr('strokeWidth'),
+              strokeWidth: this.currentSensorCircleStrokeWidth,
               draggable: true,
               cursor: 'move',
             });
@@ -609,18 +621,45 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       const tooltipID = element.getAttr('text') ? element.getAttr('text') : element.getAttr('id');
 
       const alreadyExistingTooltip = this.tooltips.find(tooltip => tooltip.getAttr('id').includes(tooltipID));
+      
+      if (this.currentScale !== 1) {
+        if (!alreadyExistingTooltip) {
+          this.currentLabelPointerHeight = this.currentGridStrokeWidth * 4;
+          this.currentLabelPointerWidth = this.currentGridStrokeWidth * 4;
+          this.currentLabelShadowBlur = this.currentGridStrokeWidth * 10;
+          this.currentLabelShadowOffsetX = this.currentGridStrokeWidth * 10;
+          this.currentLabelShadowOffsetY = this.currentGridStrokeWidth * 10;
+          this.currentLabelFontSize = this.currentGridStrokeWidth * 10;
+        }
+        else {
+          this.currentLabelPointerHeight = this.currentLabelPointerHeight * 1;
+          this.currentLabelPointerWidth = this.currentLabelPointerWidth * 1;
+          this.currentLabelShadowBlur = this.currentLabelShadowBlur * 1;
+          this.currentLabelShadowOffsetX = this.currentLabelShadowOffsetX * 1;
+          this.currentLabelShadowOffsetY = this.currentLabelShadowOffsetY * 1;
+          this.currentLabelFontSize = this.currentLabelFontSize * 1;          
+        }
+      }
+      else {
+        this.currentLabelPointerHeight = 4;
+        this.currentLabelPointerWidth = 4;
+        this.currentLabelShadowBlur = 10;
+        this.currentLabelShadowOffsetX = 10;
+        this.currentLabelShadowOffsetY = 10;
+        this.currentLabelFontSize = 10;
+      }
 
       if (alreadyExistingTooltip) {
         const tag = alreadyExistingTooltip.getChildren()[0];
         const text = alreadyExistingTooltip.getChildren()[1];
 
-        tag.setAttr('pointerWidth', this.currentLabelPointerWidth === 0 ? 4 : this.currentLabelPointerWidth);
-        tag.setAttr('pointerHeight', this.currentLabelPointerHeight === 0 ? 4 : this.currentLabelPointerHeight);
-        tag.setAttr('shadowBlur', this.currentLabelShadowBlur === 0 ? 10 : this.currentLabelShadowBlur);
-        tag.setAttr('shadowOffsetX', this.currentLabelShadowOffsetX === 0 ? 10 : this.currentLabelShadowOffsetX);
-        tag.setAttr('shadowOffsetY', this.currentLabelShadowOffsetY === 0 ? 10 : this.currentLabelShadowOffsetY);
+        tag.setAttr('pointerWidth', this.currentLabelPointerWidth);
+        tag.setAttr('pointerHeight', this.currentLabelPointerHeight);
+        tag.setAttr('shadowBlur', this.currentLabelShadowBlur);
+        tag.setAttr('shadowOffsetX', this.currentLabelShadowOffsetX);
+        tag.setAttr('shadowOffsetY', this.currentLabelShadowOffsetY );
 
-        text.setAttr('fontSize', this.currentLabelFontSize === 0 ? 10 : this.currentLabelFontSize);
+        text.setAttr('fontSize', this.currentLabelFontSize);
 
         alreadyExistingTooltip.setAttr('x', element instanceof Konva.Circle ? positionX : positionX + 5);
         alreadyExistingTooltip.setAttr('y', element instanceof Konva.Circle ? positionY - 3 : positionY);
@@ -639,13 +678,13 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         new Konva.Tag({
           fill: 'black',
           pointerDirection: 'down',
-          pointerWidth: this.currentLabelPointerWidth ===0  ? 4 : this.currentLabelPointerWidth,
-          pointerHeight: this.currentLabelPointerHeight === 0 ? 4 : this.currentLabelPointerHeight,
+          pointerWidth: this.currentLabelPointerWidth,
+          pointerHeight: this.currentLabelPointerHeight,
           lineJoin: 'round',
           shadowColor: 'black',
-          shadowBlur: this.currentLabelShadowBlur === 0 ? 10 : this.currentLabelShadowBlur,
-          shadowOffsetX: this.currentLabelShadowOffsetX === 0 ? 10 : this.currentLabelShadowOffsetX,
-          shadowOffsetY: this.currentLabelShadowOffsetY === 0 ? 10 : this.currentLabelShadowOffsetY,
+          shadowBlur: this.currentLabelShadowBlur,
+          shadowOffsetX: this.currentLabelShadowOffsetX,
+          shadowOffsetY: this.currentLabelShadowOffsetY,
           shadowOpacity: 0.5,
         })
       );
@@ -653,7 +692,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         new Konva.Text({
           text: tooltipID,
           fontFamily: 'Calibri',
-          fontSize: this.currentLabelFontSize === 0 ? 10 : this.currentLabelFontSize,
+          fontSize: this.currentLabelFontSize,
           padding: 2,
           fill: 'white',
         })
@@ -729,7 +768,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
               const firstPromise = this.appApiService.getFloorLayoutImages(this.eventId).then((response: any) => {
                 if (response === null || response === '' || response.length === 0) return;
-                
+
                 response.forEach((obj: any) => {
                   const imageObjects = obj.imageObj;
                   const imageBase64 = obj.imageBase64;
@@ -748,6 +787,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       cursor: 'move',
                       databaseID: imageID,
                     });
+                    console.log(uploadedImagesLayer)
                     
                     uploadedImagesLayer.children?.forEach(child => {
                       const image = new Konva.Image(child.getAttrs());
@@ -820,7 +860,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       break;
                     case 'Group':
                       type = new Konva.Group(child.getAttrs());
-                      this.addGroupChildren(type, child);
+                      if (type.hasName('stall')) {
+                        this.addGroupChildren(type, child);
+                      }
                       break;
                     case 'Text':
                       type = new Konva.Text(child.getAttrs());
@@ -844,6 +886,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                 this.moveSensorsAndTooltipsToTop();
                 this.centerFloorPlan();
                 this.reorderCanvasItems();
+                if (this.canvasItems.length === 0) {
+                  this.canvasContainer.x(0);
+                  this.canvasContainer.y(0);
+                }
               });
             
           });
@@ -861,6 +907,29 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.zoomOut();
         if (this.currentScale < 1) {
           this.currentScale = 1;
+          this.currentGridStrokeWidth = 1;
+          this.currentPathStrokeWidth = 3;
+          this.currentSensorCircleStrokeWidth = 1;
+          this.currentLabelPointerHeight = 4;
+          this.currentLabelPointerWidth = 4;
+          this.currentLabelShadowBlur = 10;
+          this.currentLabelShadowOffsetX = 10;
+          this.currentLabelShadowOffsetY = 10;
+          this.currentLabelFontSize = 10;
+
+          // loop through all tooltips
+          this.tooltips.forEach(tooltip => {
+            const tag = tooltip.getChildren()[0];
+            const text = tooltip.getChildren()[1];
+
+            tag.setAttr('pointerWidth', this.currentLabelPointerWidth);
+            tag.setAttr('pointerHeight', this.currentLabelPointerHeight);
+            tag.setAttr('shadowBlur', this.currentLabelShadowBlur);
+            tag.setAttr('shadowOffsetX', this.currentLabelShadowOffsetX);
+            tag.setAttr('shadowOffsetY', this.currentLabelShadowOffsetY );
+
+            text.setAttr('fontSize', this.currentLabelFontSize);
+          });
         }
       }
 
@@ -938,7 +1007,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           fill: 'white',
           opacity: 1,
         });
-        
         const oldText = type.getChildren().find(child => child instanceof Konva.Text) as Konva.Text;
         type.children = type.children?.filter(child => child.getClassName() !== 'Text');
         const newText = new Konva.Text({
@@ -1122,16 +1190,15 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
         
         this.updateStrokeWidths(2);
+        this.updateLabelSize(2, this.maxReached);
         if (newScale < 8) {
           this.maxReached = oldScale >= 8 ? true : false;
           this.tooltipAllowedVisible = true;
-          this.updateLabelSize(2, this.maxReached);
           this.maxReached = false;
         }
         else {
           this.tooltipAllowedVisible = false;
           this.setAllTootipsVisibility(false);
-          this.updateLabelSize(0.5, this.maxReached);
         }
         this.setZoomInDisabled(this.displayedSnap);
         this.setZoomOutDisabled(this.displayedSnap);
@@ -1189,13 +1256,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       this.tooltips.forEach((tooltip: any) => {
         tooltip.children?.forEach((child: any) => {
           if (child instanceof Konva.Text) {
-            const prevSize = child.getAttr('fontSize')
-            if (maxWasReached) {
-              child.fontSize(prevSize);
-            }
-            else {
-              child.fontSize(prevSize * scale);
-            }
+            const prevSize = child.getAttr('fontSize');
+            child.fontSize(prevSize * scale);
             this.currentLabelFontSize = prevSize * scale;
           }
           else if (child instanceof Konva.Tag) {
@@ -1205,20 +1267,12 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             const prevShadowOffsetX = child.getAttr('shadowOffsetX');
             const prevShadowOffsetY = child.getAttr('shadowOffsetY');
             
-            if (maxWasReached) {
-              child.pointerWidth(prevPointerWidth);
-              child.pointerHeight(prevPointerHeight);
-              child.shadowBlur(prevShadowBlur);
-              child.shadowOffsetX(prevShadowOffsetX);
-              child.shadowOffsetY(prevShadowOffsetY);
-            }
-            else {
               child.pointerWidth(prevPointerWidth * scale);
               child.pointerHeight(prevPointerHeight * scale);
               child.shadowBlur(prevShadowBlur * scale);
               child.shadowOffsetX(prevShadowOffsetX * scale);
               child.shadowOffsetY(prevShadowOffsetY * scale);
-            }
+            
 
             this.currentLabelPointerWidth = prevPointerWidth * scale;
             this.currentLabelPointerHeight = prevPointerHeight * scale;
@@ -1273,7 +1327,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           this.canvas.batchDraw();
         }
       }
-      else if (event.ctrlKey) {
+      else if (event.ctrlKey && this.canvasItems.length !== 0) {
         this.ctrlDown = true;
         document.body.style.cursor = 'grab';
         if (this.mouseDown) {
@@ -2160,9 +2214,14 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
           //add line to canvasItems array
           this.canvasItems.push({
-            name: 'path',
+            name: 'wall',
             konvaObject: this.activePath,
           });
+          console.log(this.canvasItems);
+          this.removeDuplicates();
+          console.log(this.canvasItems);
+          this.removeFaultyPaths();
+          console.log(this.canvasItems);
 
           // set the height of the wall
           const height = Math.abs(snapPoint.y - this.activePath.y());
@@ -2185,6 +2244,32 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       
         // Remove the mouse up event listener
         this.canvasContainer.off('mouseup', this.onMouseUp.bind(this));
+      }
+
+      removeDuplicates() {
+        //loop through canvasItems array and remove duplicates
+        const unique: DroppedItem[] = [];
+        this.canvasItems.forEach((item) => {
+          if (!unique.some((uniqueItem) => uniqueItem.konvaObject === item.konvaObject)) {
+            unique.push(item);
+          }
+        });
+        this.canvasItems = unique;
+      }
+
+      removeFaultyPaths() {
+        const faultyPaths = this.canvasItems.filter((item) => 
+          item.konvaObject?.hasName('wall') &&
+          item.konvaObject?.getAttr('data') === 'M0,0 L0,0'
+        );
+        faultyPaths.forEach((path) => {
+          path.konvaObject?.remove();
+        });
+        // remove them from canvasItems
+        this.canvasItems = this.canvasItems.filter((item) =>
+          item.konvaObject?.hasName('wall') &&
+          item.konvaObject?.getAttr('data') !== 'M0,0 L0,0'
+        );
       }
       
       createGridLines() {
@@ -2581,6 +2666,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.canvas = newCanvas;
         this.canvasItems = [];
         this.canvas.children?.forEach((item: any) => {
+          if (item.attrs.name === 'gridGroup' || item instanceof Konva.Transformer || item.attrs.name === 'selectionBox' || item.attrs.name === 'rectOverlay') {
+            return;
+          }
           const droppedItem = {
             name: item.attrs.name,
             konvaObject: item,
@@ -2628,8 +2716,11 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         });
 
         // remove the grid lines, transformers and groups from the JSON data
-        json.children = json.children.filter((child: any) => {
-          return child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor' || child.attrs.name === 'textBox';
+        json.children = json.children.filter((child: KonvaTypes) => {
+          if (child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor' || child.attrs.name === 'textBox' || child.attrs.name === 'uploadedFloorplan') {
+            child.attrs.opacity = 1;
+          }
+          return child.attrs.name === 'wall' || child.attrs.name === 'stall' || child.attrs.name === 'sensor' || child.attrs.name === 'textBox' || child.attrs.name === 'uploadedFloorplan';
         });
         
         const adjustedJson = JSON.parse(JSON.stringify(json));

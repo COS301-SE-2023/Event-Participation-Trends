@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { NgIconsModule, provideIcons } from "@ng-icons/core";
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
@@ -11,7 +11,7 @@ import 'chartjs-plugin-datalabels';
 import ChartStreaming from 'chartjs-plugin-streaming';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IGetEventDevicePositionResponse, IGetEventFloorlayoutResponse, IGetEventResponse, IPosition } from '@event-participation-trends/api/event/util';
+import { IGetEventDevicePositionResponse, IGetEventFloorlayoutResponse, IGetEventResponse, IImage, IPosition } from '@event-participation-trends/api/event/util';
 import { set } from 'mongoose';
 
 import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown } from "@ng-icons/material-icons/baseline";
@@ -45,7 +45,7 @@ interface IHeatmapData {
     provideIcons({heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
   ]
 })
-export class DashboardPageComponent implements OnInit {
+export class DashboardPageComponent implements OnInit, AfterViewInit {
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
@@ -70,7 +70,10 @@ export class DashboardPageComponent implements OnInit {
   showStatsOnSide = false;
   largeScreen = false;
   mediumScreen = false;
-  floorlayoutSnapshot: string | null = null;
+  floorlayoutSnapshot: string | null = null;  
+  floorlayoutImages: IImage[] = [];
+  STALL_IMAGE_URL = 'assets/stall-icon.png';
+  noFloorPlan = false;
 
   // Functional
   eventStartTime: Date = new Date();
@@ -174,11 +177,17 @@ export class DashboardPageComponent implements OnInit {
 
     // get the boundaries from the floorlayout
     const response = await this.appApiService.getFloorplanBoundaries(this.id);
-    this.floorlayoutBounds = response.boundaries;
+    this.floorlayoutBounds = response?.boundaries;
 
     //get event floorplan    
     const layout = await this.appApiService.getEventFloorLayout(this.id);
     this.floorlayoutSnapshot = layout;
+    if (!layout) {
+      this.noFloorPlan = true;
+    }
+
+    const images = await this.appApiService.getFloorLayoutImages(this.id);
+    this.floorlayoutImages = images;
 
     const eventStartDate = this.event.event.StartDate;
     const eventEndDate = this.event.event.EndDate;
@@ -212,10 +221,10 @@ export class DashboardPageComponent implements OnInit {
       this.mediumScreen = false;
     }
 
-    this.loading = false;
     setTimeout(() => {
       this.show = true;
-    }, 200);    
+      this.loading = false;
+    }, 1600);    
   }
 
   @HostListener('window:resize', ['$event'])
@@ -272,6 +281,9 @@ export class DashboardPageComponent implements OnInit {
   }
 
   async ngAfterViewInit() {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1500);
     // wait until the heatmap container is rendered
     setTimeout(() => {
       // set the number of hours of the event
@@ -582,7 +594,9 @@ export class DashboardPageComponent implements OnInit {
 
   async getImageFromJSONData(eventId: string) {
     const response = this.floorlayoutSnapshot;
-    if (response) {
+    const imageResponse = this.floorlayoutImages;
+
+    if (response || imageResponse) {
       // use the response to create an image
       this.floorlayoutStage = new Konva.Stage({
         container: 'floormap',
@@ -644,33 +658,73 @@ export class DashboardPageComponent implements OnInit {
 
       // this.floorlayoutStage.add(new Konva.Layer().add(rect));
 
-      // create node from JSON string
-      this.heatmapLayer = Konva.Node.create(response, 'floormap');
-      console.log(this.heatmapLayer)
-      if (this.heatmapLayer) {
-        this.heatmapLayer?.setAttr('name', 'floorlayoutLayer');
-
-        // run through the layer and set the components not to be draggable
-        this.heatmapLayer?.children?.forEach(element => {
-          element.draggable(false);
-        });
-
-        // run through the layer and change the colors of the walls
-        this.heatmapLayer?.find('Path').forEach((path) => {
-          if (path.name() == 'wall') {
-            path.attrs.stroke = this.chartColors['ept-blue-grey'];
-          }
-        });
-        // run through the layer and change the colors of the border of the sensors
-        this.heatmapLayer?.find('Circle').forEach((circle) => {
-          if (circle.name() == 'sensor') {
-            circle.attrs.stroke = this.chartColors['ept-blue-grey'];
-          }
-        });
-
-        // // add the node to the layer
-        this.floorlayoutStage.add(this.heatmapLayer);
+      if (response) {
+        this.heatmapLayer = Konva.Node.create(response, 'floormap');
+        if (this.heatmapLayer) {
+          this.heatmapLayer?.setAttr('name', 'floorlayoutLayer');
+  
+          // run through the layer and set the components not to be draggable
+          this.heatmapLayer?.children?.forEach(element => {
+            element.draggable(false);
+          });
+  
+          // run through the layer and change the colors of the walls
+          this.heatmapLayer?.find('Path').forEach((path) => {
+            if (path.name() == 'wall') {
+              path.attrs.stroke = this.chartColors['ept-blue-grey'];
+            }
+          });
+          // run through the layer and change the colors of the border of the sensors
+          this.heatmapLayer?.find('Circle').forEach((circle) => {
+            if (circle.name() == 'sensor') {
+              circle.attrs.stroke = this.chartColors['ept-blue-grey'];
+            }
+          });
+          // run through the layer and change the image attribute for the stalls
+          this.heatmapLayer?.find('Group').forEach((group) => {
+            if (group.name() == 'stall') {
+              (group as Konva.Group).children?.forEach((child) => {
+                if (child instanceof Konva.Image) {
+                  const image = new Image();
+                  image.onload = () => {
+                    // This code will execute once the image has finished loading.
+                    child.attrs.image = image;
+                    this.heatmapLayer?.draw();
+                  };
+                  image.src = this.STALL_IMAGE_URL;
+                }
+              });
+            }
+          });
+  
+          imageResponse.forEach((image: any) => {
+            const imageID = image._id;
+            const imageSrc = image.imageBase64;
+      
+            this.heatmapLayer?.find('Group').forEach((group) => {
+              if (group.name() === 'uploadedFloorplan') {
+                if (group.getAttr('databaseID') === imageID) {
+                    (group as Konva.Group).children?.forEach((child) => {
+                      if (child instanceof Konva.Image) {
+                        const image = new Image();
+                        image.onload = () => {
+                          // This code will execute once the image has finished loading.
+                          child.attrs.image = image;
+                          this.heatmapLayer?.draw();
+                        };
+                        image.src = imageSrc;
+                      }
+                    });
+                  }
+                }
+              });
+            });
+  
+          // // add the node to the layer
+          this.floorlayoutStage.add(this.heatmapLayer);
+        }
       }
+      
 
       // add event listener to the layer for scrolling
       const zoomFactor = 1.2; // Adjust this as needed
