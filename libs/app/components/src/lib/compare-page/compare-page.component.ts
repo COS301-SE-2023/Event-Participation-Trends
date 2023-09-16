@@ -455,7 +455,7 @@ export class ComparePageComponent implements OnInit {
             },
             title: {
               display: true,
-              text: this.getFirstEventStats().name + ' devices of over time',
+              text: this.getFirstEventStats().name,
               color: this.chartColors['ept-off-white'], // Set the title text color to white
             },
           },
@@ -563,7 +563,7 @@ export class ComparePageComponent implements OnInit {
             },
             title: {
               display: true,
-              text: this.getSecondEventStats().name + ' devices of over time',
+              text: this.getSecondEventStats().name,
               color: this.chartColors['ept-off-white'], // Set the title text color to white
             },
           },
