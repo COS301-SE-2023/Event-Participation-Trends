@@ -1,4 +1,14 @@
-<div class="mt-16 lg:mt-0 top-0 left-0 w-full h-screen overflow-y-scroll">
+<div *ngIf="isLoading" class="top-0 left-0 w-full h-screen flex">
+    <div class="m-auto flex justify-between">
+      <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">Fetching floor plan data</h1>
+      <span class="loading loading-dots loading-lg ml-3 text-ept-blue-grey ept-of"></span>
+    </div>
+</div>
+<div [ngClass]="{'hidden':!noFloorPlan}" class="z-50 mt-16 lg:mt-0 top-0 left-0 w-full h-screen flex flex-col justify-center items-center">
+    <img src="assets/blueprint-svgrepo-com-blue-grey.svg" class="pointer-events-none  rounded-full w-32 h-32 sm:w-36 sm:h-36 lg:w-44 lg:h-44 xl:w-52 xl:h-52" alt="Empty state"/>
+    <h1 class="sm:text-xl lg:text-2xl xl:text-3xl mt-10">There seems to be no floor plan to provide any data.</h1>
+</div>
+<div [ngClass]="{'hidden': noFloorPlan}" class="mt-16 lg:mt-0 top-0 left-0 w-full h-screen overflow-y-scroll">
     <div class="grid grid-rows-3 w-full h-full" [ngClass]="{'grid-cols-3': !showStatsOnSide, 'grid-cols-4': showStatsOnSide || mediumScreen}">
         <div #heatmapContainer class="border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'col-span-4 md:row-span-2 m-2 lg:m-5 lg:ml-2': !showStatsOnSide, 'col-span-3 row-span-3 m-5 ml-2': showStatsOnSide}"  (mouseleave)="hideToggleButton()" (mouseover)="showToggleButton()">
             <div

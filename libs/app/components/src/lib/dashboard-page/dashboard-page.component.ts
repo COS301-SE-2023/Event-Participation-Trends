@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { NgIconsModule, provideIcons } from "@ng-icons/core";
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
@@ -45,7 +45,7 @@ interface IHeatmapData {
     provideIcons({heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
   ]
 })
-export class DashboardPageComponent implements OnInit {
+export class DashboardPageComponent implements OnInit, AfterViewInit {
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('totalUserCountChart') totalUserCountChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('totalDeviceCountChart') totalDeviceCountChart!: ElementRef<HTMLCanvasElement>;
@@ -73,6 +73,7 @@ export class DashboardPageComponent implements OnInit {
   floorlayoutSnapshot: string | null = null;  
   floorlayoutImages: IImage[] = [];
   STALL_IMAGE_URL = 'assets/stall-icon.png';
+  noFloorPlan = false;
 
   // Functional
   eventStartTime: Date = new Date();
@@ -176,11 +177,14 @@ export class DashboardPageComponent implements OnInit {
 
     // get the boundaries from the floorlayout
     const response = await this.appApiService.getFloorplanBoundaries(this.id);
-    this.floorlayoutBounds = response.boundaries;
+    this.floorlayoutBounds = response?.boundaries;
 
     //get event floorplan    
     const layout = await this.appApiService.getEventFloorLayout(this.id);
     this.floorlayoutSnapshot = layout;
+    if (!layout) {
+      this.noFloorPlan = true;
+    }
 
     const images = await this.appApiService.getFloorLayoutImages(this.id);
     this.floorlayoutImages = images;
@@ -217,10 +221,10 @@ export class DashboardPageComponent implements OnInit {
       this.mediumScreen = false;
     }
 
-    this.loading = false;
     setTimeout(() => {
       this.show = true;
-    }, 200);    
+      this.loading = false;
+    }, 1600);    
   }
 
   @HostListener('window:resize', ['$event'])
@@ -277,6 +281,9 @@ export class DashboardPageComponent implements OnInit {
   }
 
   async ngAfterViewInit() {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1500);
     // wait until the heatmap container is rendered
     setTimeout(() => {
       // set the number of hours of the event
