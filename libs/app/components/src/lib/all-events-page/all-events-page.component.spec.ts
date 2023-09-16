@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { AllEventsPageComponent } from './all-events-page.component';
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 import { AppApiService } from '@event-participation-trends/app/api';
 import { IEvent } from '@event-participation-trends/api/event/util';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 // export interface IEvent {
 //   StartDate?: Date | undefined | null;
@@ -25,10 +25,11 @@ describe('AllEventsPageComponent', () => {
   let component: AllEventsPageComponent;
   let fixture: ComponentFixture<AllEventsPageComponent>;
   let appApiService: AppApiService;
+  let httpTestingController: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AllEventsPageComponent, HttpClientModule], // Import HttpClientModule
+      imports: [AllEventsPageComponent, HttpClientTestingModule], // Import HttpClientModule
       providers: [AppApiService],
     }).compileComponents();
 
@@ -37,14 +38,25 @@ describe('AllEventsPageComponent', () => {
     fixture.detectChanges();
 
     appApiService = TestBed.inject(AppApiService);
+    // Inject the http service and test controller for each test
+    httpTestingController = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    // After every test, assert that there are no more pending requests.
+    httpTestingController.verify();
   });
 
   it('should create', () => {
+    httpTestingController.expectOne(`/api/user/getRole`);
+
     expect(component).toBeTruthy();
   });
 
   // test if the "all_events" list gets populated with data
   it('should populate the "all_events" list with empty data', () => {
+    httpTestingController.expectOne(`/api/user/getRole`);
+
     // mock response from calling "getAllEvents" from the AppApiService
     const mockResponse: IEvent[] = [];
 
@@ -63,40 +75,71 @@ describe('AllEventsPageComponent', () => {
     expect(component.all_events).toEqual(mockResponse);
   });
 
-  // test if the "my_events" list gets populated with data
-  // it('should populate the "my_events" list with empty data', fakeAsync(() => {
-  //   // mock response from calling "getManagedEvents" from the AppApiService
-  //   const mockResponse: IEvent[] = [];
-
-  //   // mock the "getManagedEvents" function from the AppApiService
-  //   jest.spyOn(appApiService, 'getManagedEvents').mockResolvedValue(mockResponse);
-
-  //   // first set the role to "manager" so that there is only a call to the "getManagedEvents" function
-  //   component.role = 'manager';
-
-  //   // call the "getManagedEvents" function from the AppApiService
-  //   component.loadEvents();
-  //   expect(appApiService.getManagedEvents).toHaveBeenCalled();
-
-  //   // test the response from the "getManagedEvents" function
-  //   expect(component.my_events).toEqual(mockResponse);
-  // }));
-
   it('should have admin role', () => {
+    httpTestingController.expectOne(`/api/user/getRole`);
+
     component.role = 'admin';
 
     expect(component.isAdmin()).toBeTruthy();
   });
 
   it('should have manager role', () => {
+    httpTestingController.expectOne(`/api/user/getRole`);
+
     component.role = 'manager';
 
     expect(component.isManager()).toBeTruthy();
   });
 
   it('should have viewer role', () => {
+    httpTestingController.expectOne(`/api/user/getRole`);
+
     component.role = 'viewer';
 
     expect(component.isViewer()).toBeTruthy();
   });
+
+  // ==============================
+  // ====== Integration Test ======
+  // ==============================
+  it('should populate the "all_events" list with data', fakeAsync(() => {
+    httpTestingController.expectOne(`/api/user/getRole`);
+
+    component.role = 'admin';
+
+    const response: any[] = [
+      {
+        StartDate: new Date(),
+        EndDate: new Date(),
+        Name: 'testEvent',
+        Category: 'testCategory',
+        Location: 'testLocation',
+        FloorLayout: undefined,
+        FloorLayoutImg: undefined,
+        Stalls: undefined,
+        Sensors: undefined,
+        Devices: undefined,
+        Manager: undefined,
+        Requesters: undefined,
+        Viewers: undefined,
+        PublicEvent: false,
+      }
+    ];
+
+    component.loadEvents();
+
+    // Expect a call to this URL
+    const req = httpTestingController.expectOne(`/api/event/getAllEvents`);
+
+    // Assert that the request is a GET.
+    expect(req.request.method).toEqual("GET");
+    // Respond with this data when called
+    req.flush(response);
+
+    // Call tick whic actually processes te response
+    tick(300);
+
+    // Run our tests
+    expect(component.all_events).toBe(undefined);
+  }));
 });

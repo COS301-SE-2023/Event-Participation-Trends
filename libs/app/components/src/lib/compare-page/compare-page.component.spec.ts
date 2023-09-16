@@ -46,6 +46,10 @@ describe('ComparePageComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  // =========================================
+  // =========== UNIT TESTS ==================
+  // =========================================
+
   it('should select an event when clicking on the event', () => {
     // create mock events
     const mockEvents: IEvent[] = [
