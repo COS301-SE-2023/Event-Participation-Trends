@@ -26,11 +26,12 @@ export class UsersPageComponent implements OnInit {
   public viewerText = 'V';
   public managerText = 'M';
   public largeScreen = false;
+  public role = '';
 
   async ngOnInit() {
-    const role = await this.appApiService.getRole();
+    this.role = await this.appApiService.getRole();
 
-    if (role != 'admin') {
+    if (this.role != 'admin') {
       this.router.navigate(['/home']);
     }
 
