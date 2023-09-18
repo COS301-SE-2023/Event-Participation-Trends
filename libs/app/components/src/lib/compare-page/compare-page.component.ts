@@ -398,8 +398,15 @@ export class ComparePageComponent implements OnInit {
 
       if (this.firstAttendanceOverTimeChart) {
         this.firstAttendanceOverTimeChart.destroy();
+      } 
+
+      if (this.secondAttendanceOverTimeChart) {
+        this.secondAttendanceOverTimeChart.destroy();
       }
 
+      if (this.eventStats.length === 0) {
+        return;
+      }
       const ctx: CanvasRenderingContext2D | null =
         this.firstAttendanceOverTime.nativeElement?.getContext('2d');
 
@@ -504,8 +511,8 @@ export class ComparePageComponent implements OnInit {
     {
       // Second Attendance Over Time
 
-      if (this.secondAttendanceOverTimeChart) {
-        this.secondAttendanceOverTimeChart.destroy();
+      if (this.eventStats.length <= 1) {
+        return;
       }
 
       const ctx: CanvasRenderingContext2D | null =

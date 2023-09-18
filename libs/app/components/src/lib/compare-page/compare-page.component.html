@@ -55,8 +55,8 @@
             <span *ngIf="show && eventsSelected > 0" class="mt-1 ml-2 flex justify-between">
                 <label class="text-4xl p-2">Heatmaps<br><p *ngIf="showSidePanel" class="text-sm opacity-50">Hold the Shift-Key down to zoom in/out with mousewheel</p></label>
             </span>
-            <div *ngIf="show" class="grid grid-rows-2 w-full h-full gap-2 p-3 z-40">
-                <event-participation-trends-heatmap-container [parentContainer]="parentContainer" *ngFor="let event of selectedEvents" [containerEvent]="event"></event-participation-trends-heatmap-container>
+            <div *ngIf="show" class="w-full min-h-[400px] gap-2 p-3 z-40">
+                <event-participation-trends-heatmap-container class="h-[400px]" [parentContainer]="parentContainer" *ngFor="let event of selectedEvents" [containerEvent]="event"></event-participation-trends-heatmap-container>
                 <div
                     class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 z-40"
                     *ngIf="eventsSelected < 1"
@@ -68,7 +68,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="show && eventStats.length >= 1" class="w-full p-3 z-40"> 
+            <div *ngIf="show && selectedEvents.length >= 1" class="w-full p-3 z-40"> 
                 <div class="mx-24 rounded-2xl bg-ept-navy-blue p-3 text-lg font-poppins font-semibold">
                     <div class="font-poppins font-semibold grid grid-cols-12">
                         <div class="col-span-3 text-lg text-left">{{getFirstEventStats().name}}</div>
