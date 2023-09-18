@@ -29,7 +29,7 @@ interface IHeatmapData {
   ],
 })
 export class HeatmapContainerComponent implements OnInit{
-  @Input() public containerEvent: any | null = null;
+  @Input() public containerEvent: any | {_id: ''} = {_id: ''};
   @Input() public parentContainer: HTMLDivElement | null = null;
   @ViewChild('heatmapContainer') heatmapContainer!: ElementRef<HTMLDivElement>;
 
