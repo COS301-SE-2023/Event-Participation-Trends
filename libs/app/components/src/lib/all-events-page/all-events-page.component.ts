@@ -43,6 +43,7 @@ export class AllEventsPageComponent implements OnInit {
   public disable_search = false;
   public show_all_events = true;
   public largeScreen = false;
+  public showTabsAndSearchBarInLine = false;
 
   public create = false;
 
@@ -61,6 +62,12 @@ export class AllEventsPageComponent implements OnInit {
       this.largeScreen = true;
     } else {
       this.largeScreen = false;
+
+      if (window.innerWidth > 1000) {
+        this.showTabsAndSearchBarInLine = true;
+      } else {
+        this.showTabsAndSearchBarInLine = false;
+      }
     }
   }
 
