@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
@@ -28,7 +28,8 @@ export class EventDetailsPageComponent implements OnInit {
   constructor(
     private appApiService: AppApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ngZone: NgZone
   ) {}
 
   public id = '';
@@ -60,7 +61,7 @@ export class EventDetailsPageComponent implements OnInit {
     this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
 
     if (!this.id) {
-      this.router.navigate(['/home']);
+      this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
 
     this.event = (
@@ -68,11 +69,11 @@ export class EventDetailsPageComponent implements OnInit {
     ).event;
 
     if (this.event === null) {
-      this.router.navigate(['/home']);
+      this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
 
     if (!(await this.hasAccess())) {
-      this.router.navigate(['/home']);
+      this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
 
     this.location = this.event.Location;
@@ -93,7 +94,7 @@ export class EventDetailsPageComponent implements OnInit {
     this.event.EndDate = localEndTime;
 
     if (this.event === null) {
-      this.router.navigate(['/home']);
+      this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
 
     this.requests = await this.appApiService.getAccessRequests({
