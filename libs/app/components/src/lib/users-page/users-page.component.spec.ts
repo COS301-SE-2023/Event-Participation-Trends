@@ -110,6 +110,17 @@ describe('UsersPageComponent', () => {
   }));
 
   it('should set users array', () => {
+    const response = {
+      users: [
+        {
+          FirstName: 'John',
+          LastName: 'Doe',
+          Role: 'viewer',
+          Email: 'something@gmail.com'
+        }
+      ]
+    };
+
     jest.spyOn(appApiService, 'getRole').mockResolvedValue('admin');
     
     component.ngOnInit();
@@ -121,6 +132,11 @@ describe('UsersPageComponent', () => {
 
       expect(component.users).toEqual(response.users);
     });
+
+    const req = httpTestingController.expectOne(endpoint);
+    expect(req.request.method).toEqual('GET');
+    
+    req.flush(response);
   });
 
   //tests for the resizing of the window
