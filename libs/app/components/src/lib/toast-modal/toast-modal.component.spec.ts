@@ -24,4 +24,12 @@ describe('ToastModalComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it(`should emit 'true' when 'closeModal()' is called`, () => {
+    const spy = jest.spyOn(component.closeModalEvent, 'emit');
+
+    component.closeModal();
+
+    expect(spy).toHaveBeenCalledWith(true);
+  });
 });
