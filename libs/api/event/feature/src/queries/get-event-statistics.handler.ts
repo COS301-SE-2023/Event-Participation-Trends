@@ -27,6 +27,8 @@ export class GetEventStatisticsHandler
     let turnover_rate = 0;
     let average_attendance_time = 0;
     let max_attendance_time = 0;
+    const attendance_over_time_data: number[] = [];
+    const attendance_over_time_labels: Date[] = [];
 
     if (events.length == 0) {
       return <IGetEventStatisticsResponse>{
@@ -36,6 +38,8 @@ export class GetEventStatisticsHandler
         turnover_rate: turnover_rate,
         average_attendance_time: average_attendance_time,
         max_attendance_time: max_attendance_time,
+        attendance_over_time_data: attendance_over_time_data,
+        attendance_over_time_labels: attendance_over_time_labels,
       };
     }
 
@@ -104,6 +108,13 @@ export class GetEventStatisticsHandler
     average_attendance = total_unique_devices / devicesOverTime.size ? total_unique_devices / devicesOverTime.size : 0;
     average_attendance_time = total_attendance_time / deviceTimeRange.size ? total_attendance_time / deviceTimeRange.size : 0;
 
+    // set attendance over time from devicesOverTime
+
+    for (const [key, value] of devicesOverTime.entries()) {
+      attendance_over_time_data.push(value.size);
+      attendance_over_time_labels.push(key);
+    }
+
     //compute statistics end
 
     return <IGetEventStatisticsResponse>{
@@ -113,6 +124,8 @@ export class GetEventStatisticsHandler
       turnover_rate: turnover_rate,
       average_attendance_time: average_attendance_time,
       max_attendance_time: max_attendance_time,
+      attendance_over_time_data: attendance_over_time_data,
+      attendance_over_time_labels: attendance_over_time_labels,
     };
   }
 }
