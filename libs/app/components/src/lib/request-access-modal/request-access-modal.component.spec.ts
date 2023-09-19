@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RequestAccessModalComponent } from './request-access-modal.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('RequestAccessModalComponent', () => {
   let component: RequestAccessModalComponent;
@@ -7,7 +8,7 @@ describe('RequestAccessModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RequestAccessModalComponent],
+      imports: [RequestAccessModalComponent, HttpClientTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RequestAccessModalComponent);
