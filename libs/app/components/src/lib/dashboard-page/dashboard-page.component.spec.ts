@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { DashboardPageComponent } from './dashboard-page.component';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 
@@ -9,16 +9,23 @@ import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown } from "@ng-icons/
 import { matFilterCenterFocus, matZoomIn, matZoomOut } from "@ng-icons/material-icons/baseline";
 import { heroUserGroupSolid } from "@ng-icons/heroicons/solid";
 import { heroBackward } from "@ng-icons/heroicons/outline";
+import { IGetEventFloorlayoutResponse, IGetFloorplanBoundariesResponse, IImage } from '@event-participation-trends/api/event/util';
+import { HttpClient } from '@angular/common/http';
+import { AppApiService } from '@event-participation-trends/app/api';
 
 describe('DashboardPageComponent', () => {
   let component: DashboardPageComponent;
   let fixture: ComponentFixture<DashboardPageComponent>;
   let router: Router;
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
+  let appApiService: AppApiService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DashboardPageComponent, NgIconsModule, HttpClientTestingModule, RouterTestingModule],
       providers: [
+        AppApiService,
         provideIcons({heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
       ],
     }).compileComponents();
@@ -28,6 +35,8 @@ describe('DashboardPageComponent', () => {
     fixture.detectChanges();
 
     router = TestBed.inject(Router);
+    httpClient = TestBed.inject(HttpClient);
+    appApiService = TestBed.inject(AppApiService);
   });
 
   it('should create', () => {
@@ -45,5 +54,87 @@ describe('DashboardPageComponent', () => {
     component.id = '';
     component.ngOnInit();
     expect(router.navigate).toHaveBeenCalledWith(['/home']);
+  });
+
+  it('should get event floorplan boundaries', () => {
+    httpTestingController = TestBed.inject(HttpTestingController);
+    httpTestingController.expectOne(`/api/user/getRole`);
+    // mock response
+    const response: IGetFloorplanBoundariesResponse = {
+      boundaries: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+      }
+    };
+    component.id = '1';
+
+    httpClient.get<IGetFloorplanBoundariesResponse>(`/api/event/getFloorplanBoundaries?eventId=${component.id}`).subscribe(res => {
+      component.floorlayoutBounds = res.boundaries;
+
+      expect(component.floorlayoutBounds).toEqual(response.boundaries);
+    });
+
+    const req = httpTestingController.expectOne(`/api/event/getFloorplanBoundaries?eventId=${component.id}`);
+    expect(req.request.method).toEqual('GET');
+
+    req.flush(response);
+
+    httpTestingController.verify();
+  });
+
+  it('should get floorlayout images', () => {
+    httpTestingController = TestBed.inject(HttpTestingController);
+    httpTestingController.expectOne(`/api/user/getRole`);
+    // mock response
+    const response: IImage[] =[
+      {
+        eventId: undefined,
+        imageBase64: 'image1',
+        imageObj: undefined,
+        imageScale: 1,
+        imageType: 'image/png',
+      }
+    ];
+
+    component.id = '1';
+
+    httpClient.get<IImage[]>(`/api/event/getFloorlayoutImages?eventId=${component.id}`).subscribe(res => {
+      component.floorlayoutImages = res;
+
+      expect(component.floorlayoutImages).toEqual(response);
+    });
+
+    const req = httpTestingController.expectOne(`/api/event/getFloorlayoutImages?eventId=${component.id}`);
+    expect(req.request.method).toEqual('GET');
+
+    req.flush(response);
+
+    httpTestingController.verify();
+  });
+
+  it('should get event floorlayout', () => {
+    httpTestingController = TestBed.inject(HttpTestingController);
+    httpTestingController.expectOne(`/api/user/getRole`);
+    // mock response
+    const response: IGetEventFloorlayoutResponse = {
+      floorlayout: ''
+    };
+
+    component.id = '1';
+
+    httpClient.get<IGetEventFloorlayoutResponse>(`/api/event/getFloorlayout?eventId=${component.id}`).subscribe(res => {
+      component.floorlayoutSnapshot = res.floorlayout!;
+
+      expect(component.floorlayoutSnapshot).toEqual(response);
+    });
+
+    const req = httpTestingController.expectOne(`/api/event/getFloorlayout?eventId=${component.id}`);
+    expect(req.request.method).toEqual('GET');
+
+    req.flush(response);
+
+    httpTestingController.verify();
   });
 });

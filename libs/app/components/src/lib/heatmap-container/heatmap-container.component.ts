@@ -78,7 +78,7 @@ export class HeatmapContainerComponent implements OnInit{
   async ngOnInit() {
     // check if the event has device positions
     const startDate = new Date(this.containerEvent.StartDate);
-    startDate.setDate(startDate.getDate() - 1); // for test Event: Demo 3
+    // startDate.setDate(startDate.getDate() - 1); // for test Event: Demo 3
     const endDate = new Date(this.containerEvent.EndDate);
 
     this.startDate = startDate;
@@ -122,6 +122,8 @@ export class HeatmapContainerComponent implements OnInit{
       this.heatmap = new HeatMap({
         container: document.getElementById('view-'+this.containerEvent._id+'')!,
         maxOpacity: .6,
+        width: 1000,
+        height: 1000,
         radius: 50,
         blur: 0.90,
         gradient: {

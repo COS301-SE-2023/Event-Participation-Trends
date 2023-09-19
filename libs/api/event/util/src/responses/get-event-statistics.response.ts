@@ -6,4 +6,6 @@ export interface IGetEventStatisticsResponse {
     turnover_rate: number | undefined |null,
     average_attendance_time: number | undefined |null,
     max_attendance_time: number | undefined |null,
+    attendance_over_time_data: number[] | undefined |null,
+    attendance_over_time_labels: Date[] | undefined |null,
 }

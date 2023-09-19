@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
@@ -28,7 +28,7 @@ import { RequestAccessModalComponent } from '../request-access-modal/request-acc
   ],
 })
 export class AllEventsPageComponent implements OnInit {
-  constructor(private appApiService: AppApiService, private router: Router) {}
+  constructor(private appApiService: AppApiService, private router: Router, private ngZone: NgZone) {}
 
   public all_events: any[] = [];
   public subscribed_events: any[] = [];
@@ -43,6 +43,7 @@ export class AllEventsPageComponent implements OnInit {
   public disable_search = false;
   public show_all_events = true;
   public largeScreen = false;
+  public showTabsAndSearchBarInLine = false;
 
   public create = false;
 
@@ -61,6 +62,12 @@ export class AllEventsPageComponent implements OnInit {
       this.largeScreen = true;
     } else {
       this.largeScreen = false;
+
+      if (window.innerWidth > 1000) {
+        this.showTabsAndSearchBarInLine = true;
+      } else {
+        this.showTabsAndSearchBarInLine = false;
+      }
     }
   }
 
@@ -115,12 +122,14 @@ export class AllEventsPageComponent implements OnInit {
   }
 
   getURL(event: any) {
-    if (this.role == 'admin') {
-      this.router.navigate(['/event/' + event._id + '/details']);
-    } else if (this.role == 'manager' && this.managesEvent(event)) {
-      this.router.navigate(['/event/' + event._id + '/details']);
+    if (this.role == 'admin' || (this.role == 'manager' && this.managesEvent(event))) {
+      this.ngZone.run(() => {
+        this.router.navigate([`/event/${event._id}/details`]);
+      });
     } else {
-      this.router.navigate(['/event/' + event._id + '/dashboard']);
+      this.ngZone.run(() => {
+        this.router.navigate([`/event/${event._id}/dashboard`]);
+      });
     }
   }
 

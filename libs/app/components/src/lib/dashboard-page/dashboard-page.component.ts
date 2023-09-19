@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { NgIconsModule, provideIcons } from "@ng-icons/core";
-import { Component, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit, NgZone } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
@@ -152,7 +152,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
   detectionRadius = 2;
   // ====================================
 
-  constructor(private appApiService: AppApiService, private router : Router, private route: ActivatedRoute) {}
+  constructor(private appApiService: AppApiService, private router : Router, private route: ActivatedRoute, private ngZone: NgZone) {}
 
   public id = '';
   public event : any | null = null;
@@ -164,11 +164,11 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
 
     if (!this.id) {
-      this.router.navigate(['/home']);
+      this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
     
     if (!(await this.hasAccess())) {
-      this.router.navigate(['/home']);
+      this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
 
     this.timeOffset = (new Date()).getTimezoneOffset() * 60 * 1000;
