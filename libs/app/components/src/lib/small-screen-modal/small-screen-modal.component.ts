@@ -16,20 +16,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class SmallScreenModalComponent {
   @Output() justCloseModal = new EventEmitter<boolean>();
+  public id: string | null = null;
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
   closeModal() {
     // extract event id from url
-    const id = this.router.url.split('/')[2];
+    this.id = this.router.url.split('/')[2];
 
-    if (!id) {
+    if (!this.id) {
       this.router.navigate(['/home']);
     }
 
     // Navigating from the current route's parent to the 'details' sibling route
     if (!this.router.url.includes('details')) {
-      this.router.navigateByUrl(`/event/${id}/details`);
+      this.router.navigateByUrl(`/event/${this.id}/details`);
       this.justCloseModal.emit(true);
     }
     else {
