@@ -283,7 +283,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
   async ngAfterViewInit() {
     setTimeout(() => {
       this.isLoading = false;
-    }, 1500);
+    }, 1600);
     // wait until the heatmap container is rendered
     setTimeout(() => {
       // set the number of hours of the event
@@ -700,10 +700,14 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
           imageResponse.forEach((image: any) => {
             const imageID = image._id;
             const imageSrc = image.imageBase64;
+            let imageAttrs = image.imageObj;
+            
+            imageAttrs = JSON.parse(imageAttrs);
+            const imageBackupID = imageAttrs.attrs.id;
       
             this.heatmapLayer?.find('Group').forEach((group) => {
-              if (group.name() === 'uploadedFloorplan') {
-                if (group.getAttr('databaseID') === imageID) {
+              if (group.name() === 'uploadedFloorplan' && group.hasChildren()) {
+                if ((group.getAttr('databaseID') === imageID) || group.getAttr('id') === imageBackupID) {
                     (group as Konva.Group).children?.forEach((child) => {
                       if (child instanceof Konva.Image) {
                         const image = new Image();
@@ -719,6 +723,13 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
                 }
               });
             });
+
+          this.heatmapLayer.children?.forEach((child) => {
+            if (child instanceof Konva.Group && (child.name() === 'uploadedFloorplan' && child.children?.length === 0)) {
+              child.destroy();
+              this.heatmapLayer?.draw();
+            }
+          });
   
           // // add the node to the layer
           this.floorlayoutStage.add(this.heatmapLayer);

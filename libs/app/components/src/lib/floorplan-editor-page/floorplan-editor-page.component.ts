@@ -18,6 +18,7 @@ import { SmallScreenModalComponent } from '../small-screen-modal/small-screen-mo
 import { LinkSensorModalComponent } from '../link-sensor-modal/link-sensor-modal.component';
 import { ToastModalComponent } from '../toast-modal/toast-modal.component';
 import { FloorplanUploadModalComponent } from '../floorplan-upload-modal/floorplan-upload-modal.component';
+import { matDeleteRound } from '@ng-icons/material-icons/round';
 
 export interface ISensorState {
   object: Konva.Circle,
@@ -53,7 +54,7 @@ interface UploadedImage {
   templateUrl: './floorplan-editor-page.component.html',
   styleUrls: ['./floorplan-editor-page.component.css'], 
   providers: [
-    provideIcons({matCheckCircleOutline, matRadioButtonUnchecked, heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
+    provideIcons({matDeleteRound, matCheckCircleOutline, matRadioButtonUnchecked, heroUserGroupSolid, heroBackward, matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown, matFilterCenterFocus, matZoomIn, matZoomOut})
   ],
 })
 
@@ -787,7 +788,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
                       cursor: 'move',
                       databaseID: imageID,
                     });
-                    console.log(uploadedImagesLayer)
                     
                     uploadedImagesLayer.children?.forEach(child => {
                       const image = new Konva.Image(child.getAttrs());
@@ -1396,15 +1396,28 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         });
       }
       else if (this.activeItem instanceof Konva.Group) {
-        this.transformer = new Konva.Transformer({
-          nodes: [this.activeItem],
-          rotateEnabled: true,
-          enabledAnchors: [],
-          keepRatio: false,
-          boundBoxFunc: (oldBox, newBox) => {
-            return newBox;
-          }
-        });
+        if (!this.activeItem.hasName('uploadedFloorplan')) {
+          this.transformer = new Konva.Transformer({
+            nodes: [this.activeItem],
+            rotateEnabled: true,
+            enabledAnchors: [],
+            keepRatio: false,
+            boundBoxFunc: (oldBox, newBox) => {
+              return newBox;
+            }
+          });
+        }
+        else {
+          this.transformer = new Konva.Transformer({
+            nodes: [this.activeItem],
+            rotateEnabled: true,
+            enabledAnchors: ['top-right', 'top-left', 'bottom-right', 'bottom-left'],
+            keepRatio: true,
+            boundBoxFunc: (oldBox, newBox) => {
+              return newBox;
+            }
+          });
+        }
         this.transformer.on('transform', () => {
           const newAngle = this.transformer.getAbsoluteRotation();
           this.activeItem?.setAttr('rotation', newAngle);
@@ -1974,6 +1987,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           this.uploadedImages.forEach((image) => {
             if (image.id === imageID) {
               this.uploadedImages.splice(this.uploadedImages.indexOf(image), 1);
+              this.existingFloorLayoutImages.splice(this.existingFloorLayoutImages.indexOf(image), 1);
 
               // remove image from database
               this.appApiService.getEmail().then((email) => {
@@ -2008,7 +2022,6 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             const wall = this.canvasItems.some((item) => item.konvaObject?.hasName('wall'));
             const textBox = this.canvasItems.some((item) => item.konvaObject?.hasName('textBox'));
             const uploadedFloorplan = this.canvasItems.some((item) => item.konvaObject?.hasName('uploadedFloorplan'));
-
             if (!stall && !sensor && !wall && !textBox && !uploadedFloorplan) {
               this.canvasItems = [];
             }
@@ -2217,11 +2230,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             name: 'wall',
             konvaObject: this.activePath,
           });
-          console.log(this.canvasItems);
           this.removeDuplicates();
-          console.log(this.canvasItems);
           this.removeFaultyPaths();
-          console.log(this.canvasItems);
+          this.resetCanvasItems();
 
           // set the height of the wall
           const height = Math.abs(snapPoint.y - this.activePath.y());
@@ -2250,7 +2261,11 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         //loop through canvasItems array and remove duplicates
         const unique: DroppedItem[] = [];
         this.canvasItems.forEach((item) => {
-          if (!unique.some((uniqueItem) => uniqueItem.konvaObject === item.konvaObject)) {
+          if (item.konvaObject instanceof Konva.Group && !item.konvaObject?.hasChildren()) {
+            item.konvaObject?.remove();
+            this.canvasItems = this.canvasItems.filter((element) => element !== item);
+          }         
+          else if (!unique.includes(item)) {
             unique.push(item);
           }
         });
@@ -2264,12 +2279,18 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         );
         faultyPaths.forEach((path) => {
           path.konvaObject?.remove();
+          this.canvasItems = this.canvasItems.filter((item) => item !== path);
         });
         // remove them from canvasItems
         this.canvasItems = this.canvasItems.filter((item) =>
-          item.konvaObject?.hasName('wall') &&
-          item.konvaObject?.getAttr('data') !== 'M0,0 L0,0'
+          !(item.konvaObject?.hasName('wall') &&
+          item.konvaObject?.getAttr('data') === 'M0,0 L0,0')
         );
+      }
+
+      resetCanvasItems(): void {
+        this.canvasItems = [];
+        this.reorderCanvasItems();
       }
       
       createGridLines() {
@@ -2511,8 +2532,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           x: 0,
           y: 0,
           image: floorplan.image(),
-          width: floorplan.width() / this.componentSize,
-          height: floorplan.height() / this.componentSize,
+          width: 100,
+          height: 100,
           draggable: false,
           id: floorplan.id(),
         });
@@ -2731,12 +2752,13 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
         //stringify the JSON data
         const jsonString = JSON.stringify(json);
+        const adjustedJsonString = JSON.stringify(adjustedJson);
 
         this.showToastUploading = true;
 
         // update the existing images in the database
-        uploadedFloorplans.forEach((floorplan: any) => {
-          this.existingFloorLayoutImages.forEach((image: UploadedImage) => {
+        uploadedFloorplans?.forEach((floorplan: any) => {
+          this.existingFloorLayoutImages?.forEach((image: UploadedImage) => {
             if (floorplan.attrs.databaseID === image.id) {
               const imageType = image.type;
               const imageScale = image.scale;
@@ -2778,7 +2800,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               if (res) this.router.navigate(['details'], { relativeTo: this.route.parent });
             }, 1000)
           }, 2000);
-        });
+        });        
       }
 
     async presentToastSuccess(position: 'top' | 'middle' | 'bottom', message: string) {
