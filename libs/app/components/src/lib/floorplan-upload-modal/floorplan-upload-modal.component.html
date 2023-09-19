@@ -36,7 +36,8 @@
                     name="fileTypes" 
                     id="fileTypes" 
                     class="bg-ept-off-white rounded-sm text-ept-deep-grey pl-3 pr-3 cursor-pointer self-center"
-                    [(ngModel)]="fileType.split('/')[1]"    
+                    [(ngModel)]="fileType.split('/')[1]"
+                    (change)="onFileTypeChange($event)"    
                 >
                     <option [value]="'png'">PNG</option>
                     <!-- <option [value]="'jpg'">JPG</option> -->
@@ -49,33 +50,6 @@
                 </select>
             </div>
             <hr class="opacity-80 bg-ept-off-white text-ept-deep-grey z-0 w-full">
-            <div class="flex flex-col justify-between mt-2">
-                <label class="text-sm text-left mb-2">True scale for the image:</label>
-                <div class="flex items-center justify-center mt-2">
-                    <input 
-                        id="trueScaleCentimeters"
-                        type="number" 
-                        title="Enter the true scale for the floor plan"
-                        [defaultValue]="0.5"
-                        min="0.5"
-                        max="10"
-                        step="0.5"
-                        class="p-1 text-md rounded shadow-md w-12 text-ept-deep-grey text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <label class="text-sm text-left max-w-sm ml-2">cm = </label>
-                    <input 
-                        id="trueScaleMeters"
-                        type="number" 
-                        title="Enter the true scale for the floor plan"
-                        [defaultValue]="2"
-                        min="2"
-                        max="10"
-                        step="0.5"
-                        class="p-1 ml-2 text-md rounded shadow-md w-12 text-ept-deep-grey text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <label class="text-sm text-left max-w-sm ml-2">m</label>
-                </div>
-            </div>
         </div>
         <!-- <div class="ml-0 mr-0 opacity-80 border-l-2 border-solid border-ept-deep-grey"></div> -->
         <div 
