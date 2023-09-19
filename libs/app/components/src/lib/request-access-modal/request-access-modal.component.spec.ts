@@ -1,19 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RequestAccessModalComponent } from './request-access-modal.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { AppApiService } from '@event-participation-trends/app/api';
+import { HttpClient } from '@angular/common/http';
 
 describe('RequestAccessModalComponent', () => {
   let component: RequestAccessModalComponent;
   let fixture: ComponentFixture<RequestAccessModalComponent>;
+  let appApiService: AppApiService;
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RequestAccessModalComponent, HttpClientTestingModule],
+      providers: [AppApiService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RequestAccessModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    appApiService = TestBed.inject(AppApiService);
+    httpClient = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   it('should create', () => {
@@ -71,5 +81,37 @@ describe('RequestAccessModalComponent', () => {
     expect(modal.classList.contains('hidden')).toBeTruthy();
   });
 
+  it('should close modal after sending request', () => {
+    const modal = document.createElement('div');
+    modal.id = 'request-modal-test';
+    modal.classList.add('opacity-0');
+    modal.classList.add('hidden');
+    document.body.appendChild(modal);
 
+    const pressButtonSpy = jest.spyOn(component, 'pressButton');
+    const closeModalSpy = jest.spyOn(component, 'closeModal');
+
+    component.sendRequest();
+
+    expect(pressButtonSpy).toHaveBeenCalled();
+
+    setTimeout(() => {
+      expect(closeModalSpy).toHaveBeenCalled();
+    }, 300);
+  });
+
+  it('should send request', () => {
+    const mockResponse = { message: 'success' };
+    component.setEventId('test');
+
+    component.sendRequest();
+
+    const req = httpTestingController.expectOne('/api/event/sendViewRequest');
+    expect(req.request.method).toEqual('POST');
+    expect(req.request.body).toEqual({ eventId: 'test' });
+
+    req.flush(mockResponse);
+
+    httpTestingController.verify();
+  });
 });
