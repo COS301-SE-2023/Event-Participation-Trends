@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppApiService } from '@event-participation-trends/app/api';
 
@@ -20,7 +20,8 @@ export class EventViewComponent implements OnInit {
   constructor(
     private appApiService: AppApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ngZone: NgZone
   ) {}
 
   public id: string | null = '';
@@ -107,7 +108,8 @@ export class EventViewComponent implements OnInit {
 
     
     if (!this.id) {
-      this.router.navigate(['/home']);
+      this.ngZone.run(() => { this.router.navigate(['/home']); });
+      return;
     }
 
     const role = await this.appApiService.getRole();
@@ -156,7 +158,7 @@ export class EventViewComponent implements OnInit {
 
   goBack() {
     this.pressButton('#back');
-    this.router.navigate(['/home']);
+    this.ngZone.run(() => { this.router.navigate(['/home']); });
   }
 
   goDetails() {
@@ -189,7 +191,7 @@ export class EventViewComponent implements OnInit {
       this.showSmallScreenModal();
       return;
     }
-    this.router.navigate(['floorplan'], { relativeTo: this.route }); 
+    this.ngZone.run(() => { this.router.navigate(['floorplan'], { relativeTo: this.route }); });
     this.tab = Tab.Floorplan;
 
     // close navbar

@@ -78,14 +78,17 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
         this.hideModal = false;
       }, 100);
       
+      this.imageBase64.emit(this.uploadedImage.src);
+      this.imageType.emit(this.fileType);
+
+      this.imageScale.emit(4); // Our scale uses 0.5cm to represent 2m in the real world (2 / 0.5)
+
       this.uploadedFloorplan.emit(new Konva.Image({
         id: 'uploadedFloorplan-' + this.generateUniqueId(),
         image: this.uploadedImage,
         draggable: true,
         x: 0,
         y: 0,
-        width: 1.5*this.canvasContainer.width(),
-        height: 1.5*this.canvasContainer.width(),
       }));
       this.closeModalEvent.emit(true);
     }
@@ -103,6 +106,10 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
     setTimeout(() => {
       this.showToast = true;
     }, 100);
+  }
+
+  onFileTypeChange(event: any) {
+    this.fileType = "image/" + event.target.value;
   }
 
   uploadFloorplanImage(): void {
@@ -166,14 +173,6 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
                 return;
               }
               this.uploadedImage.src = event.target.result.toString();
-              this.imageBase64.emit(this.uploadedImage.src);
-              this.imageType.emit(this.fileType);
-
-              const trueScaleCM = document.getElementById('trueScaleCentimeters') as HTMLInputElement;
-              const trueScaleM = document.getElementById('trueScaleMeters') as HTMLInputElement;
-
-              const scale = parseFloat(trueScaleM.value) / parseFloat(trueScaleCM.value);
-              this.imageScale.emit(scale);
 
                 const isWideImage = this.uploadedImage.width > this.canvasContainer.width();
                 const isTallImage = this.uploadedImage.height > this.canvasContainer.height();
@@ -184,8 +183,6 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
                     image: this.uploadedImage,
                     x: 0,
                     y: 0,
-                    width: 1.5*this.canvasContainer.width(),
-                    height: 1.5*this.canvasContainer.height(),
                     fill: 'red',
                     cornerRadius: 10,
                   });

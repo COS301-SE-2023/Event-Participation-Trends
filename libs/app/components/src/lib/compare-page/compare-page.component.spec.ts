@@ -102,11 +102,22 @@ describe('ComparePageComponent', () => {
         PublicEvent: false,
       }
     ];
+    // mock response
+    const mockStats: IGetEventStatisticsResponse = {
+      total_attendance: 1,
+      average_attendance: 1,
+      peak_attendance: 1,
+      turnover_rate: 1,
+      average_attendance_time: 1,
+      max_attendance_time: 1,
+      attendance_over_time_data: null,
+      attendance_over_time_labels: null,
+    };
 
     // mock the call to getAllEvents from the AppApiService
     jest.spyOn(appApiService, 'getAllEvents').mockResolvedValue(mockEvents);
     // mock the call to getEventStatistics from the AppApiService
-    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(new Stats());
+    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(mockStats);
 
     component.events = mockEvents;
     for (const event of component.events) {
@@ -172,11 +183,22 @@ describe('ComparePageComponent', () => {
         PublicEvent: false,
       }
     ];
+    // mock response
+    const mockStats: IGetEventStatisticsResponse = {
+      total_attendance: 1,
+      average_attendance: 1,
+      peak_attendance: 1,
+      turnover_rate: 1,
+      average_attendance_time: 1,
+      max_attendance_time: 1,
+      attendance_over_time_data: null,
+      attendance_over_time_labels: null,
+    };
 
     // mock the call to getAllEvents from the AppApiService
     jest.spyOn(appApiService, 'getAllEvents').mockResolvedValue(mockEvents);
     // mock the call to getEventStatistics from the AppApiService
-    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(new Stats());
+    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(mockStats);
     component.events = mockEvents;
     for (const event of component.events) {
       component.eventList.push({event, selected: false});
@@ -248,11 +270,22 @@ describe('ComparePageComponent', () => {
         PublicEvent: false,
       }
     ];
+    // mock response
+    const mockStats: IGetEventStatisticsResponse = {
+      total_attendance: 1,
+      average_attendance: 1,
+      peak_attendance: 1,
+      turnover_rate: 1,
+      average_attendance_time: 1,
+      max_attendance_time: 1,
+      attendance_over_time_data: null,
+      attendance_over_time_labels: null,
+    };
 
     // mock the call to getAllEvents from the AppApiService
     jest.spyOn(appApiService, 'getAllEvents').mockResolvedValue(mockEvents);
     // mock the call to getEventStatistics from the AppApiService
-    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(new Stats());
+    jest.spyOn(appApiService, 'getEventStatistics').mockResolvedValue(mockStats);
 
     component.events = mockEvents;
     for (const event of component.events) {
