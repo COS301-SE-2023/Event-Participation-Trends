@@ -26,6 +26,18 @@ let TEST_EVENT: IEvent ={
    // Devices: Array<Position>(),
 }
 
+// eslint-disable-next-line prefer-const
+let TEST_EVENT2: IEvent ={
+    StartDate: new Date("2023-06-10T12:34:56.789Z"),
+    EndDate: new Date("2023-06-13T12:34:56.789Z"),
+    Name: "Testing Event 2",
+    Category: "Testing Category 2",
+    Location: "Event Location 2",
+    Manager: new Types.ObjectId(),
+    FloorLayout: null,
+   // Devices: Array<Position>(),
+}
+
 const UPDATED_TEST_EVENT: IEvent ={
     StartDate: new Date("2023-06-10T12:34:56.789Z"),
     EndDate: new Date("2023-06-13T12:34:56.789Z"),
@@ -713,6 +725,8 @@ describe('EventController', ()=>{
         
         })  
     })
+
+
 
 })
 
