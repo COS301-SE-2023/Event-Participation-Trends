@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IEvent, IPosition } from '@event-participation-trends/api/event/util';
+import { IEvent, IImage, IPosition } from '@event-participation-trends/api/event/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 
@@ -71,7 +71,10 @@ export class HeatmapContainerComponent implements OnInit{
     "ept-light-blue": "#57D3DD",
     "ept-light-green": "#4ade80",
     "ept-light-red": "#ef4444"
-  };
+  };  
+  
+  floorlayoutImages: IImage[] = [];
+  STALL_IMAGE_URL = 'assets/stall-icon.png';
 
   constructor(private readonly appApiService: AppApiService) {}
 
@@ -94,6 +97,8 @@ export class HeatmapContainerComponent implements OnInit{
     if (this.containerEvent.FloorLayout) {
       const response = await this.appApiService.getFloorplanBoundaries(this.containerEvent._id);
       this.floorlayoutBounds = response.boundaries;
+      const images = await this.appApiService.getFloorLayoutImages(this.containerEvent._id);
+      this.floorlayoutImages = images;
     }
 
     if (!this.floorlayoutBounds) {
@@ -372,7 +377,9 @@ export class HeatmapContainerComponent implements OnInit{
   }
 
   async getImageFromJSONData(eventId: string) {
-    const response = this.containerEvent.FloorLayout;
+    const response = this.containerEvent.FloorLayout;    
+    const imageResponse = this.floorlayoutImages;
+
     if (response && this.parentContainer) {
       // use the response to create an image
       this.floorlayoutStage = new Konva.Stage({
@@ -403,6 +410,56 @@ export class HeatmapContainerComponent implements OnInit{
         this.heatmapLayer?.find('Circle').forEach((circle) => {
           if (circle.name() == 'sensor') {
             circle.attrs.stroke = this.chartColors['ept-blue-grey'];
+          }
+        });
+        // run through the layer and change the image attribute for the stalls
+        this.heatmapLayer?.find('Group').forEach((group) => {
+          if (group.name() == 'stall') {
+            (group as Konva.Group).children?.forEach((child) => {
+              if (child instanceof Konva.Image) {
+                const image = new Image();
+                image.onload = () => {
+                  // This code will execute once the image has finished loading.
+                  child.attrs.image = image;
+                  this.heatmapLayer?.draw();
+                };
+                image.src = this.STALL_IMAGE_URL;
+              }
+            });
+          }
+        });
+
+        imageResponse.forEach((image: any) => {
+          const imageID = image._id;
+          const imageSrc = image.imageBase64;
+          let imageAttrs = image.imageObj;
+          
+          imageAttrs = JSON.parse(imageAttrs);
+          const imageBackupID = imageAttrs.attrs.id;
+    
+          this.heatmapLayer?.find('Group').forEach((group) => {
+            if (group.name() === 'uploadedFloorplan' && group.hasChildren()) {
+              if ((group.getAttr('databaseID') === imageID) || group.getAttr('id') === imageBackupID) {
+                  (group as Konva.Group).children?.forEach((child) => {
+                    if (child instanceof Konva.Image) {
+                      const image = new Image();
+                      image.onload = () => {
+                        // This code will execute once the image has finished loading.
+                        child.attrs.image = image;
+                        this.heatmapLayer?.draw();
+                      };
+                      image.src = imageSrc;
+                    }
+                  });
+                }
+              }
+            });
+          });
+
+        this.heatmapLayer.children?.forEach((child) => {
+          if (child instanceof Konva.Group && (child.name() === 'uploadedFloorplan' && child.children?.length === 0)) {
+            child.destroy();
+            this.heatmapLayer?.draw();
           }
         });
 
