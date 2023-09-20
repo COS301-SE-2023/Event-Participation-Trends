@@ -729,7 +729,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
       const newTooltip = 
         text ? 
-        this.addTooltip(text, text.getParent().getAttr('x'), text.getParent().getAttr('y')) :
+        this.addTooltip(text, text.getParent()?.getAttr('x'), text.getParent()?.getAttr('y')) :
         this.addTooltip(element, element.getAttr('x'), element.getAttr('y'));
       this.tooltips[index] = newTooltip;
     }
@@ -1059,6 +1059,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
       this.canvasContainer.on('click', (e) => {
         const position = this.canvasContainer.getRelativePointerPosition();
+
+        if (!position) return;
         
         const component = this.canvas.getIntersection(position);
         
@@ -1075,7 +1077,10 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           }
         }
         if (e.target.hasName('stallName')) {
-          const parent = e.target.getParent();
+          const parent = e.target.getParent() as KonvaTypes;
+
+          if (!parent) return;
+
           this.activeItem = parent;
           this.setTransformer(parent, undefined);
         }
@@ -1349,7 +1354,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       event.preventDefault();
     }
 
-    setTransformer(mouseEvent?: Konva.Image | Konva.Group | Konva.Text | Konva.Circle, line?: Konva.Line | Konva.Path): void {
+    setTransformer(mouseEvent?: KonvaTypes | undefined, line?: Konva.Line | Konva.Path): void {
       if(!this.preventCreatingWalls) return;
 
       this.transformer.detach();
@@ -1642,6 +1647,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
           if (e.target.hasName('stallName')) {
             // find parent
             const parent = e.target.getParent();
+
+            if (!parent) return;
+
             this.activeItem = parent;
             this.transformer.nodes([parent]);
             this.transformer.nodes([parent]);
