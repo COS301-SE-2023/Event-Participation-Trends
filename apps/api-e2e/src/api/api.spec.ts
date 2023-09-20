@@ -20,15 +20,7 @@ let TEST_EVENT: IEvent ={
     EndDate: new Date("2023-06-13T12:34:56.789Z"),
     Name: "Testing Event",
     Category: "Testing Category",
-    Location: {
-        Latitude: 0,
-        Longitude: 0,
-        StreetName: "None",
-        CityName: "None",
-        ProvinceName: "None",
-        CountryName: "None",
-        ZIPCode: "None"
-    },
+    Location: "Event Location",
     Manager: new Types.ObjectId(),
     FloorLayout: null,
    // Devices: Array<Position>(),
@@ -39,15 +31,7 @@ const UPDATED_TEST_EVENT: IEvent ={
     EndDate: new Date("2023-06-13T12:34:56.789Z"),
     Name: "New Testing Event",
     Category: "New Testing Category",
-    Location: {
-        Latitude: 1,
-        Longitude: 1,
-        StreetName: "New StreetName",
-        CityName: "New CityName",
-        ProvinceName: "New ProvinceName",
-        CountryName: "New CountryName",
-        ZIPCode: "New ZIPCode"
-    },
+    Location: "Updated Event location"
    // Devices: Array<Position>(),
 }
 
