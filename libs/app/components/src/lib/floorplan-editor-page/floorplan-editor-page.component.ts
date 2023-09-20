@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild, HostListener, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import Konva from 'konva';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -81,9 +81,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     // activeLine: Konva.Line | null = null;
     activeItem: any = null;
     // lines: Konva.Line[] = [];
-    transformer = new Konva.Transformer({name: 'transformer'});
+    transformer!: Konva.Transformer;
     preventCreatingWalls = true; // to prevent creating walls
-    transformers: Konva.Transformer[] = [this.transformer];
+    transformers: Konva.Transformer[] = [];
     sensors: ISensorState[] | undefined = [];
     gridSize = 10;
     paths: Konva.Path[] = [];
@@ -196,6 +196,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
       // private loadingController: LoadingController,
       // private toastController: ToastController,
       private router: Router, 
+      private ngZone: NgZone,
     ) {
       for (let i = 1; i < 5; i++) {
         const snap = this.initialGridSize / i;
@@ -753,6 +754,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
               this.canvasContainer = this.canvasObject['canvasContainer'] as Konva.Stage;
               this.canvas = this.canvasObject['canvas'] as Konva.Layer;
             }
+
+            this.transformer = new Konva.Transformer({name: 'transformer'});
+            this.transformers = [this.transformer];
 
             this.canvasContainer = new Konva.Stage({
               container: '#canvasElement',
@@ -2429,7 +2433,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         this.id = this.route.parent?.snapshot.paramMap.get('id') || '';
 
         if (!this.id) {
-          this.router.navigate(['/home']);
+          this.ngZone.run(() => { this.router.navigate(['/home']); });
         }
 
         this.event = (
@@ -2437,15 +2441,15 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         ).event;
 
         if (this.event === null) {
-          this.router.navigate(['/home']);
+          this.ngZone.run(() => { this.router.navigate(['/home']); });
         }
 
         if (!(await this.hasAccess())) {
-          this.router.navigate(['/home']);
+          this.ngZone.run(() => { this.router.navigate(['/home']); });
         }
 
         if (!(await this.hasAccess())) {
-          this.router.navigate(['/home']);
+          this.ngZone.run(() => { this.router.navigate(['/home']); });
         }
 
         this.alertPresented = false;
@@ -2738,9 +2742,9 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
 
       async saveFloorLayout() {
         // remove grid lines from the JSON data
-        const json = this.canvas.toObject();
+        const json = this.canvas?.toObject();
 
-        const uploadedFloorplans = json.children.filter((child: any) => {
+        const uploadedFloorplans = json?.children.filter((child: any) => {
           return child.attrs.name === 'uploadedFloorplan';
         });
 
@@ -2805,7 +2809,7 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
             setTimeout(() => {
               this.showToastSuccess = false;
               this.showToastError = false;
-              if (res) this.router.navigate(['details'], { relativeTo: this.route.parent });
+              if (res) this.ngZone.run(() => { this.router.navigate(['details'], { relativeTo: this.route.parent }); });
             }, 1000)
           }, 2000);
         });        
@@ -3046,18 +3050,22 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
     }
 
     showTextInput() : boolean {
+      if (!Konva) return false;
       return (this.activeItem instanceof Konva.Group && !this.activeItem.getAttr('id').includes('uploaded') || this.activeItem instanceof Konva.Text) && this.activeItem != this.selectionGroup;
     }
 
     showLengthInput() : boolean {
+      if (!Konva) return false;
       return this.activeItem instanceof Konva.Path;
     }
 
     showAngleInput() : boolean {
+      if (!Konva) return false;
       return this.activeItem instanceof Konva.Path || this.activeItem instanceof Konva.Group || this.activeItem instanceof Konva.Text;
     }
 
     showSensorLinking() : boolean {
+      if (!Konva) return false;
       return this.activeItem instanceof Konva.Circle;
     }
 
