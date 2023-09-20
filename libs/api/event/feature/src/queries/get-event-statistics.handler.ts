@@ -51,7 +51,7 @@ export class GetEventStatisticsHandler
 
     const uniqueDevices = new Set();
 
-    const devicesOverTime = new Map<Date, Set<number>>();
+    const devicesOverTime = new Map<number, Set<number>>();
     const deviceTimeRange = new Map<number, { start: Date; end: Date }>();
 
     // iterate over all devices
@@ -75,11 +75,11 @@ export class GetEventStatisticsHandler
         }
       }
 
-      const deviceSet = devicesOverTime.get(device.timestamp);
+      const deviceSet = devicesOverTime.get(device.timestamp.getTime());
       if (deviceSet) {
         deviceSet.add(device.id);
       } else {
-        devicesOverTime.set(device.timestamp, new Set([device.id]));
+        devicesOverTime.set(device.timestamp.getTime(), new Set([device.id]));
       }
     }
 
@@ -88,6 +88,7 @@ export class GetEventStatisticsHandler
     let total_unique_devices = 0;
 
     for (const [key, value] of devicesOverTime.entries()) {
+      console.log(key, " => " ,value);
       if (value.size > peak_attendance) {
         peak_attendance = value.size;
       }
@@ -110,9 +111,36 @@ export class GetEventStatisticsHandler
 
     // set attendance over time from devicesOverTime
 
-    for (const [key, value] of devicesOverTime.entries()) {
+    const result = new Map<number, Set<number>>();
+
+    for (const [datey, numberSet] of devicesOverTime) {
+
+      const date = new Date(datey);
+      // Calculate the interval key (e.g., "10:00-10:20")
+      const intervalStart = new Date(date);
+      intervalStart.setMinutes(Math.floor(date.getMinutes() / 20) * 20);
+      intervalStart.setSeconds(0);
+      intervalStart.setMilliseconds(0);
+
+      const intervalEnd = new Date(intervalStart);
+      intervalEnd.setMinutes(intervalEnd.getMinutes() + 20);
+
+      const intervalKey = intervalStart.getTime();
+
+      // Merge the numbers into the result map
+      if (!result.has(intervalKey)) {
+        result.set(intervalKey, new Set<number>());
+      }
+
+      const mergedSet = result.get(intervalKey)!;
+      for (const number of numberSet) {
+        mergedSet.add(number);
+      }
+    }
+
+    for (const [key, value] of result.entries()) {
       attendance_over_time_data.push(value.size);
-      attendance_over_time_labels.push(key);
+      attendance_over_time_labels.push(new Date(key));
     }
 
     //compute statistics end

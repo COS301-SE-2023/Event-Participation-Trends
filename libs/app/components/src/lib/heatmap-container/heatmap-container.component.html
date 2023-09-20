@@ -1,4 +1,7 @@
 <div id="heatmapContainer-{{containerEvent._id}}" class="row-span-1 w-full h-[400px] z-0 relative border-ept-blue-grey border-2 border-solid rounded-2xl">
+    <div class="font-poppins font-semibold ml-2 mt-1 text-xl">
+        {{containerEvent.Name}}
+    </div>
     <div
         class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
         [ngClass]="{ 'opacity-0': !loadingContent }"
