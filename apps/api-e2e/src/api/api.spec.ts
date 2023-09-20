@@ -27,7 +27,7 @@ let TEST_EVENT: IEvent ={
 }
 
 // eslint-disable-next-line prefer-const
-let TEST_EVENT2: IEvent ={
+let TEST_EVENT_2: IEvent ={
     StartDate: new Date("2023-06-10T12:34:56.789Z"),
     EndDate: new Date("2023-06-13T12:34:56.789Z"),
     Name: "Testing Event 2",
@@ -89,10 +89,12 @@ function objectSubset(target: any, obj: any ): boolean{
                 // eslint-disable-next-line no-prototype-builtins
 				if(target.hasOwnProperty(key) && element.hasOwnProperty(key)){
 					if( element.key != target.key){
+                        console.log(key);
 						return false;
                     }
                 }else{
-					return false;
+                    console.log(key);
+                    return false;
                 }
 			}
 				
@@ -572,6 +574,7 @@ describe('EventController', ()=>{
             expect(requesters[0].Requesters[0]).toEqual(viewer[0]._id);
 
             //cleanup
+            delete TEST_EVENT.Requesters;
             await userRepository.deleteUserById(manager[0]._id);
             await userRepository.deleteUserById(viewer[0]._id);
             await eventRepository.deleteEventbyId(event[0]._id);
@@ -613,6 +616,7 @@ describe('EventController', ()=>{
             expect(event[0].Requesters.length).toEqual(0);
 
             //cleanup
+            delete TEST_EVENT.Requesters;
             await eventRepository.deleteEventbyId(event[0]._id);
             await userRepository.deleteUserById(viewer[0]._id);
             await userRepository.deleteUserById(manager[0]._id);
@@ -668,6 +672,8 @@ describe('EventController', ()=>{
             expect(viewer[0].Viewing[0]).toEqual(event[0]._id);
             
             //cleanup
+            delete TEST_EVENT.Requesters;
+            delete TEST_EVENT.Viewers;
             await eventRepository.deleteEventbyId(event[0]._id);
             await userRepository.deleteUserById(viewer[0]._id);
             await userRepository.deleteUserById(manager[0]._id);
@@ -719,14 +725,15 @@ describe('EventController', ()=>{
             expect(viewer[0].Viewing.length).toEqual(0);
             
             //cleanup
+            delete TEST_EVENT.Requesters;
+            delete TEST_EVENT.Manager;
+            delete TEST_EVENT.Viewers;
             await eventRepository.deleteEventbyId(event[0]._id);
             await userRepository.deleteUserById(viewer[0]._id);
             await userRepository.deleteUserById(manager[0]._id);
         
         })  
     })
-
-
 
 })
 
