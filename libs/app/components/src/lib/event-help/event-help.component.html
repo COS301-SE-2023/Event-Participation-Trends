@@ -16,29 +16,46 @@
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">
           <span class="text-ept-off-white font-poppins"
-            >How do I create a new event?</span
+            >Tour the "Dashboard" page</span
           >
         </div>
         <div class="collapse-content">
           <div class="text-ept-off-white font-montserrat">
-            Ask Lukas
+            Big Diagram
           </div>
         </div>
       </div>
     </div>
-    <div class="mt-2 mx-10">
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
       <div
         class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
       >
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">
           <span class="text-ept-off-white font-poppins"
-            >The event I want to view is greyed out</span
+            >Tour the "Event Details" page</span
           >
         </div>
         <div class="collapse-content">
           <div class="text-ept-off-white font-montserrat">
-            Ask Lukas
+            Big Diagram
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "Floorplan Editor" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            Big Diagram
           </div>
         </div>
       </div>

@@ -16,12 +16,80 @@
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">
           <span class="text-ept-off-white font-poppins"
+            >Tour the "Events" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            Big graphic
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "Compare" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            Big graphic
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "User Management" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            Big graphic
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
             >How do I create a new event?</span
           >
         </div>
         <div class="collapse-content">
           <div class="text-ept-off-white font-montserrat">
-            Ask Lukas
+            Steps
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >How do I compare events?</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            Steps
           </div>
         </div>
       </div>
@@ -38,10 +106,31 @@
         </div>
         <div class="collapse-content">
           <div class="text-ept-off-white font-montserrat">
-            Ask Lukas
+            This means that the event is not available for viewing yet.
+            <br /> <br />
+            To gain access to the event, you will need to click on the event card and request access to the event. The event manager will then decide whether to grant you access to the event.
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+
+<!-- <div class="mt-2 mx-10">
+  <div
+    class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+  >
+    <input type="checkbox" />
+    <div class="collapse-title text-xl font-medium">
+      <span class="text-ept-off-white font-poppins"
+        >Question/Prompt</span
+      >
+    </div>
+    <div class="collapse-content">
+      <div class="text-ept-off-white font-montserrat">
+        Ask Lukas
+      </div>
+    </div>
+  </div>
+</div> -->
