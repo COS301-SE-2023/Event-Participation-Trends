@@ -450,6 +450,58 @@ describe('EventController', ()=>{
         })  
     })
 
+    describe('deleteEvent', ()=>{
+        it('Should delete an event object', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+            TEST_EVENT_2.Manager = manager[0]._id;
+
+            //create events
+            await eventRepository.createEvent(TEST_EVENT); 
+            await eventRepository.createEvent(TEST_EVENT_2); 
+            const event1 = await eventRepository.getEventByName(TEST_EVENT.Name);
+            const event2 = await eventRepository.getEventByName(TEST_EVENT_2.Name);
+
+            const response = await request(httpServer).post('/event/deleteEvent').send({
+                eventId: event2[0]._id
+            });
+
+            //event1 should still be present and only event in db
+            expect(response.status).toBe(201);
+            let events = await eventRepository.getAllEvents();
+
+            while(events.length != 1){
+                SLEEP(500);
+                events = await eventRepository.getAllEvents();
+            }
+
+            if(events && events.length ==1){
+
+                const temp: IEvent = {
+                    StartDate: events[0].StartDate,
+                    EndDate: events[0].EndDate,
+                    Name: events[0].Name,
+                    Category: events[0].Category,
+                    Location: events[0].Location,
+                    Manager: events[0].Manager,
+                    FloorLayout: null,
+                }
+                // eslint-disable-next-line no-prototype-builtins
+                const res = objectSubset(TEST_EVENT,[temp]);
+                expect(res).toBe(true);
+            }else{  //intentionally fail 
+                expect(true).toBe(false);
+            }
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event1[0]._id);
+            await eventRepository.deleteEventbyId(event2[0]._id);
+            await userRepository.deleteUserById(manager[0]._id);
+        })  
+    })
+
     describe('updateEventDetails', ()=>{
         it('Should update an events details', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
