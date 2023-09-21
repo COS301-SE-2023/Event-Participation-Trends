@@ -7,7 +7,7 @@ import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
 import { GlobalRepository } from '@event-participation-trends/api/global/data-access';
-import { ICreateEventRequest, IEvent, IFloorLayout, IImageUploadRequest, IPosition, IViewEvent, Position } from '@event-participation-trends/api/event/util';
+import { ICreateEventRequest, IEvent, IFloorLayout, IImageUploadRequest, IPosition, IUpdateEventFloorLayoutImgRequest, IViewEvent, Position } from '@event-participation-trends/api/event/util';
 import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { ICreateGlobalRequest, IGlobal } from '@event-participation-trends/api/global/util';
 import { promisify } from 'util';
@@ -87,8 +87,10 @@ const EVENT_IMAGE: IImageUploadRequest ={
     imageType: "jpeg"
 }
 
-const UPDATED_EVENT_IMAGE: IImageUploadRequest ={
+const UPDATED_EVENT_IMAGE: IUpdateEventFloorLayoutImgRequest ={
     eventId: "",
+    imageId: "",
+    managerEmail: "",
     imgBase64: "data:image/png;base64,UPDATED_BASE64_STRING",
     imageObj: "{x_cord:15,y_cord:25}",
     imageScale: 10,
@@ -946,6 +948,79 @@ describe('EventController', ()=>{
 
             expect(response.status).toBe(200);
             const res = objectSubset(EVENT_IMAGE,[temp]);
+            expect(res).toBe(true);
+
+            //cleanup
+            await userRepository.deleteUserById(manager[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
+            await eventRepository.removeImage(eventImg[0]._id);
+        })  
+    })
+
+    describe('updateEventFloorlayoutImage',  ()=>{
+        it('Should update the given image', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+
+            //create event
+            await eventRepository.createEvent(TEST_EVENT); 
+            
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            while(event.length != 1){
+                SLEEP(500);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
+
+            EVENT_IMAGE.eventId = <string> <unknown> event[0]._id;
+
+            await eventRepository.uploadImage(new Image(
+                <Types.ObjectId> <unknown> EVENT_IMAGE.eventId,
+                EVENT_IMAGE.imgBase64,
+                EVENT_IMAGE.imageScale,
+                EVENT_IMAGE.imageType,
+                EVENT_IMAGE.imageObj
+            ));
+
+            let eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            while(eventImg.length != 1){
+                SLEEP(500);
+                eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            }
+            
+            UPDATED_EVENT_IMAGE.eventId = <string> <unknown> event[0]._id;
+            UPDATED_EVENT_IMAGE.imageId = <string> <unknown> eventImg[0]._id;
+            UPDATED_EVENT_IMAGE.managerEmail = process.env['TEST_USER_EMAIL_1'];
+
+            await eventRepository.addImageToEvent(event[0]._id,eventImg[0]._id);
+
+            const response = await request(httpServer).post('/event/updateEventFloorlayoutImage').send(
+                UPDATED_EVENT_IMAGE
+            );
+
+            eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            //imageType is last to update ref: event handler
+            console.log(eventImg[0].imageType);
+            console.log(UPDATED_EVENT_IMAGE.imageType);
+            while(eventImg[0].imageType != UPDATED_EVENT_IMAGE.imageType ){  
+                SLEEP(500);
+                eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            }
+            
+            expect(response.body.status).toBe("success");
+
+            const temp: IUpdateEventFloorLayoutImgRequest = {
+                eventId: <string> <unknown> event[0]._id,
+                imageId: <string> <unknown> eventImg[0]._id,
+                managerEmail: process.env['TEST_USER_EMAIL_1'],
+                imgBase64: eventImg[0].imageBase64,
+                imageObj: eventImg[0].imageObj,
+                imageScale: eventImg[0].imageScale,
+                imageType: eventImg[0].imageType,
+            }
+
+            const res = objectSubset(UPDATED_EVENT_IMAGE,[temp]);
             expect(res).toBe(true);
 
             //cleanup
