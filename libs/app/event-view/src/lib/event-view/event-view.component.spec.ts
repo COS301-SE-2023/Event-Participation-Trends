@@ -10,6 +10,7 @@ import { matMenu, matClose } from '@ng-icons/material-icons/baseline';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { HttpClient } from '@angular/common/http';
 import { IGetUserRoleResponse } from '@event-participation-trends/api/user/util';
+import { DashboardPageComponent, EventDetailsPageComponent, EventHelpComponent, SmallScreenModalComponent } from '@event-participation-trends/app/components';
 
 describe('EventViewComponent', () => {
   let component: EventViewComponent;
@@ -23,7 +24,7 @@ describe('EventViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [EventViewComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule, NgIconsModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, NgIconsModule, DashboardPageComponent, EventHelpComponent, EventDetailsPageComponent, SmallScreenModalComponent],
       providers: [
         AppApiService,
         provideIcons({heroArrowLeft, heroChartBar, heroPencil, matFormatListBulletedRound, matBarChartRound, matDrawRound, matQuestionMarkRound, matMenu, matClose})
