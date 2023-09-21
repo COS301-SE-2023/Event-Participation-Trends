@@ -56,7 +56,7 @@
                 <label class="text-4xl p-2">Heatmaps<br><p *ngIf="showSidePanel" class="text-sm opacity-50">Hold the Shift-Key down to zoom in/out with mousewheel</p></label>
             </span>
             <div *ngIf="show" class="w-full min-h-[400px] gap-2 p-3 z-40">
-                <event-participation-trends-heatmap-container class="h-[400px]" [parentContainer]="parentContainer" *ngFor="let event of selectedEvents" [containerEvent]="event"></event-participation-trends-heatmap-container>
+                <event-participation-trends-heatmap-container [parentContainer]="parentContainer" *ngFor="let event of selectedEvents" [containerEvent]="event"></event-participation-trends-heatmap-container>
                 <div
                     class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 z-40"
                     *ngIf="eventsSelected < 1"
