@@ -7,7 +7,7 @@ import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
 import { GlobalRepository } from '@event-participation-trends/api/global/data-access';
-import { ICreateEventRequest, IEvent, IFloorLayout, IPosition, IViewEvent, Position } from '@event-participation-trends/api/event/util';
+import { ICreateEventRequest, IEvent, IFloorLayout, IImageUploadRequest, IPosition, IViewEvent, Position } from '@event-participation-trends/api/event/util';
 import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { ICreateGlobalRequest, IGlobal } from '@event-participation-trends/api/global/util';
 import { promisify } from 'util';
@@ -75,6 +75,14 @@ const TEST_GLOBAL: IGlobal ={
         eventSensorId: "test01",
         mac: "00:00:00:00:00:00"
     }]
+}
+
+const EVENT_IMAGE: IImageUploadRequest ={
+    eventId: "",
+    imgBase64: "data:image/jpeg;base64,BASE64_STRING",
+    imageObj: "{x_cord:10,y_cord:20}",
+    imageScale: 5,
+    imageType: "jpeg"
 }
 
 const SLEEP = promisify(setTimeout);
