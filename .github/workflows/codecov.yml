@@ -26,6 +26,7 @@ jobs:
 
     - name: Fix node_modules
       run: 'chmod +x ./fix_node_modules.sh'
+      run: './fix_node_modules.sh'
 
     - name: Run tests and generate coverage reports
       run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache --coverage --testTimeout=10000'
