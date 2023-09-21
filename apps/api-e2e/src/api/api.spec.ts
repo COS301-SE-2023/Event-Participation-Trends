@@ -87,6 +87,14 @@ const EVENT_IMAGE: IImageUploadRequest ={
     imageType: "jpeg"
 }
 
+const UPDATED_EVENT_IMAGE: IImageUploadRequest ={
+    eventId: "",
+    imgBase64: "data:image/png;base64,UPDATED_BASE64_STRING",
+    imageObj: "{x_cord:15,y_cord:25}",
+    imageScale: 10,
+    imageType: "png"
+}
+
 const SLEEP = promisify(setTimeout);
 
 //helper functions
