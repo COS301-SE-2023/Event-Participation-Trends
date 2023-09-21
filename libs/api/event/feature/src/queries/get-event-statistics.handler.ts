@@ -147,11 +147,11 @@ export class GetEventStatisticsHandler
 
     return <IGetEventStatisticsResponse>{
       total_attendance: total_attendance,
-      average_attendance: average_attendance,
-      peak_attendance: peak_attendance,
-      turnover_rate: turnover_rate,
-      average_attendance_time: average_attendance_time,
-      max_attendance_time: max_attendance_time,
+      average_attendance: average_attendance.toFixed(2) ? average_attendance.toFixed(2) : 0,
+      peak_attendance: peak_attendance.toFixed(2) ? peak_attendance.toFixed(2) : 0,
+      turnover_rate: turnover_rate.toFixed(2) ? turnover_rate.toFixed(2) : 0,
+      average_attendance_time: average_attendance_time.toFixed(2) ? average_attendance_time.toFixed(2) : 0,
+      max_attendance_time: max_attendance_time.toFixed(2) ? max_attendance_time.toFixed(2) : 0,
       attendance_over_time_data: attendance_over_time_data,
       attendance_over_time_labels: attendance_over_time_labels,
     };
