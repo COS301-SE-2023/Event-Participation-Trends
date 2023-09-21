@@ -97,6 +97,27 @@ const UPDATED_EVENT_IMAGE: IUpdateEventFloorLayoutImgRequest ={
     imageType: "png"
 }
 
+const ITETATION_LIMIT = 21;
+
+/* 20 iterations of the loop will take 10 seconds
+ * since SLEEP(500) used in surounding context 
+ */
+function SRATIC_CATCH_ITERATION_EXCEEDED(reset: boolean): any{
+    let count =0;
+
+    if(reset)
+        count = 0;
+
+    return ()=>{
+        ++count;
+        if(count > ITETATION_LIMIT)
+            throw new Error(`Loop iteration limit of ${ITETATION_LIMIT} iterations exceeded`);
+    }
+
+}
+
+const CATCH_ITERATION_EXCEEDED = SRATIC_CATCH_ITERATION_EXCEEDED(true);
+
 const SLEEP = promisify(setTimeout);
 
 //helper functions
@@ -1001,8 +1022,6 @@ describe('EventController', ()=>{
 
             eventImg = await eventRepository.findImageByEventId(event[0]._id);
             //imageType is last to update ref: event handler
-            console.log(eventImg[0].imageType);
-            console.log(UPDATED_EVENT_IMAGE.imageType);
             while(eventImg[0].imageType != UPDATED_EVENT_IMAGE.imageType ){  
                 SLEEP(500);
                 eventImg = await eventRepository.findImageByEventId(event[0]._id);
@@ -1027,6 +1046,76 @@ describe('EventController', ()=>{
             await userRepository.deleteUserById(manager[0]._id);
             await eventRepository.deleteEventbyId(event[0]._id);
             await eventRepository.removeImage(eventImg[0]._id);
+        })  
+    })
+
+    describe('removeFloorlayoutImage',  ()=>{
+        it('Should remove the given image', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+
+            //create event
+            await eventRepository.createEvent(TEST_EVENT); 
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            
+            CATCH_ITERATION_EXCEEDED(true);
+            while(event.length != 1){
+                SLEEP(500);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+                CATCH_ITERATION_EXCEEDED(false);
+            }
+
+            EVENT_IMAGE.eventId = <string> <unknown> event[0]._id;
+
+            await eventRepository.uploadImage(new Image(
+                <Types.ObjectId> <unknown> EVENT_IMAGE.eventId,
+                EVENT_IMAGE.imgBase64,
+                EVENT_IMAGE.imageScale,
+                EVENT_IMAGE.imageType,
+                EVENT_IMAGE.imageObj
+            ));
+
+            let eventImg =  await eventRepository.findImagesIdByEventId(event[0]._id);
+            CATCH_ITERATION_EXCEEDED(true);
+            while(eventImg.length != 1){ //
+                SLEEP(500);
+                eventImg =  await eventRepository.findImagesIdByEventId(event[0]._id);
+                CATCH_ITERATION_EXCEEDED(false);
+            }
+
+            //delete the image
+            const response = await request(httpServer).post('/event/removeFloorlayoutImage').send({
+                eventId: <string> <unknown> event[0]._id,
+                imageId: <string> <unknown> eventImg[0]._id
+            });
+            expect(response.body.status).toBe("success");
+
+            //endure that it is deleted
+            eventImg =  await eventRepository.findImagesIdByEventId(event[0]._id);
+            CATCH_ITERATION_EXCEEDED(true);
+            while(eventImg.length != 0){
+                SLEEP(500);
+                eventImg =  await eventRepository.findImagesIdByEventId(event[0]._id);
+                CATCH_ITERATION_EXCEEDED(false);
+            }
+
+            //ensure it is removed from the FloorLayoutImgs array
+            CATCH_ITERATION_EXCEEDED(true);
+            event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            while(event[0].FloorLayoutImgs.length != 0){
+                SLEEP(500);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+                CATCH_ITERATION_EXCEEDED(false);
+            }
+
+            //if it reaches this point it will have passed
+            expect(true).toBe(true);
+
+            //cleanups
+            await userRepository.deleteUserById(manager[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
         })  
     })
 
