@@ -46,6 +46,8 @@ export class FloorplanUploadModalComponent implements AfterViewInit {
   private offsetY = 0;
 
   ngAfterViewInit(): void {
+    if (!Konva) return;
+    
     this.canvasContainer = new Konva.Stage({
       container: 'canvasImage',
       width: 556.69,

@@ -258,7 +258,7 @@ export class EventRepository {
     async getDevicePosotions(eventID: Types.ObjectId){
         return await this.eventModel.find(
             {_id :{$eq: eventID}},
-            { Devices: 1 })
+            { Devices: 1, StartDate: 1 })
     }
 
     async getAllEventCategories(){

@@ -29,18 +29,20 @@ import { heroAdjustmentsHorizontal } from '@ng-icons/heroicons/outline';
 import { heroInboxSolid } from '@ng-icons/heroicons/solid';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
 import 'chartjs-plugin-datalabels';
+import { layerGroup } from 'leaflet';
 
 class Stats {
   id = 0;
   name = '';
+  start_time = new Date();
+  end_time = new Date();
   total_attendance = 0;
   average_attendance = 0;
   peak_attendance = 0;
   turnover_rate = 0;
   average_attendance_time = 0;
   max_attendance_time = 0;
-  attendance_over_time_data: number[] = [];
-  attendance_over_time_labels: Date[] = [];
+  attendance_over_time_data: {time: number, devices: number}[] = [];
 }
 
 @Component({
@@ -68,8 +70,8 @@ class Stats {
   ],
 })
 export class ComparePageComponent implements OnInit {
-  @ViewChild('firstAttendanceOverTime')
-  firstAttendanceOverTime!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('attendanceOverTime')
+  attendanceOverTime!: ElementRef<HTMLCanvasElement>;
   @ViewChild('secondAttendanceOverTime')
   secondAttendanceOverTime!: ElementRef<HTMLCanvasElement>;
 
@@ -88,7 +90,7 @@ export class ComparePageComponent implements OnInit {
   public largeScreen = false;
   public hintText = 'Use the tab on the right to select events.';
 
-  firstAttendanceOverTimeChart: Chart | null = null;
+  attendanceOverTimeChart: Chart | null = null;
   secondAttendanceOverTimeChart: Chart | null = null;
 
   selectedCategory = 'Show All';
@@ -235,6 +237,8 @@ export class ComparePageComponent implements OnInit {
       const stats = {
         id: (event as any)._id,
         name: event.Name!,
+        start_time: new Date(event.StartDate!),
+        end_time: new Date(event.EndDate!),
         total_attendance: response.total_attendance!,
         average_attendance: response.average_attendance!,
         peak_attendance: response.peak_attendance!,
@@ -242,7 +246,6 @@ export class ComparePageComponent implements OnInit {
         average_attendance_time: response.average_attendance!,
         max_attendance_time: response.max_attendance_time!,
         attendance_over_time_data: response.attendance_over_time_data!,
-        attendance_over_time_labels: response.attendance_over_time_labels!,
       };
 
       this.eventStats.push(stats);
@@ -359,6 +362,8 @@ export class ComparePageComponent implements OnInit {
       return {
         id: 0,
         name: '',
+        start_time: new Date(),
+        end_time: new Date(),
         total_attendance: 0,
         average_attendance: 0,
         peak_attendance: 0,
@@ -366,7 +371,6 @@ export class ComparePageComponent implements OnInit {
         average_attendance_time: 0,
         max_attendance_time: 0,
         attendance_over_time_data: [],
-        attendance_over_time_labels: [],
       };
     }
 
@@ -378,6 +382,8 @@ export class ComparePageComponent implements OnInit {
       return {
         id: 0,
         name: '',
+        start_time: new Date(),
+        end_time: new Date(),
         total_attendance: 0,
         average_attendance: 0,
         peak_attendance: 0,
@@ -385,7 +391,6 @@ export class ComparePageComponent implements OnInit {
         average_attendance_time: 0,
         max_attendance_time: 0,
         attendance_over_time_data: [],
-        attendance_over_time_labels: [],
       };
     }
 
@@ -396,19 +401,15 @@ export class ComparePageComponent implements OnInit {
     {
       // First Attendance Over Time
 
-      if (this.firstAttendanceOverTimeChart) {
-        this.firstAttendanceOverTimeChart.destroy();
-      } 
-
-      if (this.secondAttendanceOverTimeChart) {
-        this.secondAttendanceOverTimeChart.destroy();
+      if (this.attendanceOverTimeChart) {
+        this.attendanceOverTimeChart.destroy();
       }
 
       if (this.eventStats.length === 0) {
         return;
       }
       const ctx: CanvasRenderingContext2D | null =
-        this.firstAttendanceOverTime.nativeElement?.getContext('2d');
+        this.attendanceOverTime.nativeElement?.getContext('2d');
 
       let gradientStroke = null;
       if (ctx) {
@@ -419,36 +420,108 @@ export class ComparePageComponent implements OnInit {
         gradientStroke.addColorStop(0, 'rgba(119,52,169,0)'); //purple colors
       }
 
-      const labels = this.getFirstEventStats().attendance_over_time_labels.map(
-        (date) => {
-          return date.toLocaleString();
-        }
-      );
+      // find the longest runtime of the events
+      const longestRuntime = Math.max(
+        ...this.eventStats.map((event) => {
+          return event.end_time.getTime() - event.start_time.getTime();
+        })
+      ) / 1000;
 
-      const data = this.getFirstEventStats().attendance_over_time_data;
+      // set labels as every 20 minute interval of the longest runtime
+
+      const labels = [];
+
+      const interval = 20;
+
+      for (let i = 0; i < longestRuntime; i += 60 * interval) {
+        labels.push(i / 60);
+      }
+
+      console.log("labels => ", labels);
+
+      const datasets = [];
+
+      const data = labels.map((label) => {
+        // if the label exists as a "time" in the attendance_over_time_data, return the devices
+        // else return 0
+
+        const event = this.getFirstEventStats();
+
+        const index = event.attendance_over_time_data.findIndex(
+          (data) => {
+            return data.time === label;
+          }
+        );
+
+        if (index !== -1) {
+          console.log(label, " => ", event.attendance_over_time_data[index].devices);
+          return event.attendance_over_time_data[index].devices;
+        }
+
+        console.log(label, " => ", 0);
+        return 0;
+      });
+
+      datasets.push({
+        label: this.getFirstEventStats().name,
+        data: data,
+        fill: true,
+        backgroundColor: gradientStroke ? gradientStroke : 'white',
+        borderColor: this.chartColors['ept-bumble-yellow'],
+        borderWidth: 1,
+        borderDash: [],
+        borderDashOffset: 0.0,
+        pointBackgroundColor: this.chartColors['ept-bumble-yellow'],
+        pointBorderColor: 'rgba(255,255,255,0)',
+        pointHoverBackgroundColor: this.chartColors['ept-bumble-yellow'],
+        pointBorderWidth: 1,
+        pointHoverRadius: 1,
+        pointHoverBorderWidth: 1,
+        pointRadius: 1,
+      });
+
+      if (this.eventStats.length > 1) {
+        const secondData = this.getSecondEventStats();
+        datasets.push({
+          label: this.getSecondEventStats().name,
+          data: labels.map((label) => {
+            // if the label exists as a "time" in the attendance_over_time_data, return the devices
+            // else return 0
+    
+            const event = this.getSecondEventStats();
+    
+            const index = event.attendance_over_time_data.findIndex(
+              (data) => {
+                return data.time === label;
+              }
+            );
+    
+            if (index !== -1) {
+              return event.attendance_over_time_data[index].devices;
+            }
+    
+            return 0;
+          }),
+          fill: true,
+          backgroundColor: gradientStroke ? gradientStroke : 'white',
+          borderColor: this.chartColors['ept-light-blue'],
+          borderWidth: 1,
+          borderDash: [],
+          pointBackgroundColor: this.chartColors['ept-light-blue'],
+          pointBorderColor: 'rgba(255,255,255,0)',
+          pointHoverBackgroundColor: this.chartColors['ept-light-blue'],
+          pointBorderWidth: 1,
+          pointHoverRadius: 1,
+          pointHoverBorderWidth: 1,
+          pointRadius: 1,
+        });
+      }
 
       const config: ChartConfiguration = {
         type: 'line',
         data: {
           labels: labels,
-          datasets: [
-            {
-              data: data,
-              fill: true,
-              backgroundColor: gradientStroke ? gradientStroke : 'white',
-              borderColor: this.chartColors['ept-bumble-yellow'],
-              borderWidth: 1,
-              borderDash: [],
-              borderDashOffset: 0.0,
-              pointBackgroundColor: this.chartColors['ept-bumble-yellow'],
-              pointBorderColor: 'rgba(255,255,255,0)',
-              pointHoverBackgroundColor: this.chartColors['ept-bumble-yellow'],
-              pointBorderWidth: 1,
-              pointHoverRadius: 1,
-              pointHoverBorderWidth: 1,
-              pointRadius: 1,
-            },
-          ],
+          datasets: datasets,
         },
         options: {
           responsive: true,
@@ -458,7 +531,7 @@ export class ComparePageComponent implements OnInit {
               enabled: false,
             },
             legend: {
-              display: false,
+              display: true,
             },
             title: {
               display: true,
@@ -495,125 +568,12 @@ export class ComparePageComponent implements OnInit {
           },
         },
       };
-      const firstAttendanceOverTimeCanvas =
-        this.firstAttendanceOverTime.nativeElement;
+      const attendanceOverTimeCanvas = this.attendanceOverTime.nativeElement;
 
-      const firstAttendanceOverTimeCtx =
-        firstAttendanceOverTimeCanvas.getContext('2d', {
-          willReadFrequently: true,
-        });
-      this.firstAttendanceOverTimeChart = new Chart(
-        firstAttendanceOverTimeCtx!,
-        config
-      );
-    }
-
-    {
-      // Second Attendance Over Time
-
-      if (this.eventStats.length <= 1) {
-        return;
-      }
-
-      const ctx: CanvasRenderingContext2D | null =
-        this.secondAttendanceOverTime.nativeElement?.getContext('2d');
-
-      let gradientStroke = null;
-      if (ctx) {
-        gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
-
-        gradientStroke.addColorStop(1, 'rgba(72,72,176,0.2)');
-        gradientStroke.addColorStop(0.2, 'rgba(72,72,176,0.0)');
-        gradientStroke.addColorStop(0, 'rgba(119,52,169,0)'); //purple colors
-      }
-
-      const labels = this.getSecondEventStats().attendance_over_time_labels.map(
-        (date) => {
-          return date.toLocaleString();
-        }
-      );
-
-      const data = this.getSecondEventStats().attendance_over_time_data;
-
-      const config: ChartConfiguration = {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              data: data,
-              fill: true,
-              backgroundColor: gradientStroke ? gradientStroke : 'white',
-              borderColor: this.chartColors['ept-bumble-yellow'],
-              borderWidth: 1,
-              borderDash: [],
-              borderDashOffset: 0.0,
-              pointBackgroundColor: this.chartColors['ept-bumble-yellow'],
-              pointBorderColor: 'rgba(255,255,255,0)',
-              pointHoverBackgroundColor: this.chartColors['ept-bumble-yellow'],
-              pointBorderWidth: 1,
-              pointHoverRadius: 1,
-              pointHoverBorderWidth: 1,
-              pointRadius: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            tooltip: {
-              enabled: false,
-            },
-            legend: {
-              display: false,
-            },
-            title: {
-              display: true,
-              text: this.getSecondEventStats().name,
-              color: this.chartColors['ept-off-white'], // Set the title text color to white
-            },
-          },
-          scales: {
-            x: {
-              display: true,
-              grid: {
-                color: 'rgba(255, 255, 255, 0.1)', // Adjust the color of the x-axis grid lines
-              },
-              ticks: {
-                color: this.chartColors['ept-blue-grey'], // Adjust the color of the x-axis labels
-              },
-            },
-            y: {
-              display: true,
-              beginAtZero: true,
-              grid: {
-                color: 'rgba(255, 255, 255, 0.1)', // Adjust the color of the y-axis grid lines
-              },
-              ticks: {
-                color: this.chartColors['ept-blue-grey'], // Adjust the color of the y-axis labels
-              },
-            },
-          },
-          elements: {
-            line: {
-              tension: 0.3, // Adjust the tension of the line for a smoother curve
-              borderWidth: 1,
-            },
-          },
-        },
-      };
-      const secondAttendanceOverTimeCanvas =
-        this.secondAttendanceOverTime.nativeElement;
-
-      const secondAttendanceOverTimeCtx =
-        secondAttendanceOverTimeCanvas.getContext('2d', {
-          willReadFrequently: true,
-        });
-      this.secondAttendanceOverTimeChart = new Chart(
-        secondAttendanceOverTimeCtx!,
-        config
-      );
+      const attendanceOverTimeCtx = attendanceOverTimeCanvas.getContext('2d', {
+        willReadFrequently: true,
+      });
+      this.attendanceOverTimeChart = new Chart(attendanceOverTimeCtx!, config);
     }
   }
 }
