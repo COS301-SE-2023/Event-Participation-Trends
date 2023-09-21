@@ -1,5 +1,7 @@
 # EventParticipationTrends
 
+[![codecov](https://codecov.io/gh/JsteReubsSoftware/Event-Participation-Trends-forked/graph/badge.svg?token=AA00EF5IVF)](https://codecov.io/gh/JsteReubsSoftware/Event-Participation-Trends-forked)
+
 ## Indlovu - Gendac - Event Participation Trends
 
 Event Participation Trends is a system that leverages the always-online nature of devices to track the number of people attending an event, generate heatmaps and flowmaps of the event, and provide a live feed of the event to the public.
