@@ -18,10 +18,14 @@ jobs:
       with:
         node-version: ^16.14.0
 
-    - run: echo "${{ secrets.DOTENVFILE }}" > .env
+    - name: Set up environment variables
+      run: echo "${{ secrets.DOTENVFILE }}" > .env
 
     - name: Install dependencies
       run: 'yarn install'
+
+    - name: Fix node_modules
+      run: 'chmod +x ./fix_node_modules.sh'
 
     - name: Run tests and generate coverage reports
       run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache --coverage --testTimeout=10000'
