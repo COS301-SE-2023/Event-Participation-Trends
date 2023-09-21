@@ -14,11 +14,22 @@ export class GetEventHandler implements IQueryHandler<GetEventQuery, IGetEventRe
         console.log(`${GetEventHandler.name}`);
         const request = query.request;
 
-        const objEventId = <Types.ObjectId> <unknown> request.eventId;
+        if(request.eventId || request.eventName){
+            if(request.eventName != null && request.eventName != undefined){
+                const eventDocs = await this.eventRepository.getEventByName(request.eventName);
 
-        const eventDocs = await this.eventRepository.getPopulatedEvent(objEventId);
-        
-        return <any>  {event: eventDocs[0]};
+                return <any>  {event: eventDocs[0]};
+            }else{
+                const objEventId = <Types.ObjectId> <unknown> request.eventId;
+
+                const eventDocs = await this.eventRepository.getPopulatedEventById(objEventId);
+                
+                return <any>  {event: eventDocs[0]};
+            }
+        }else{
+            return null;
+        }
+    
     }
 
 }

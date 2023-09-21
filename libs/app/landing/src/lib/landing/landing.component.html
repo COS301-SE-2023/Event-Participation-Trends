@@ -1,0 +1,370 @@
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<div
+  #gradient
+  class="fixed top-0 left-0 h-screen w-screen -z-50"
+></div>
+<div class="flex w-full justify-center z-50 fixed top-0">
+  <div
+    id="landing-nav"
+    class="flex w-full justify-between text-white text-xl my-3 font-semibold"
+  >
+    <div
+      class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex items-center z-50"
+    >
+      <div class="hidden md:block mr-3">Event Participation Trends</div>
+      <a routerLink="/home">
+        <div
+          class="btn hover:bg-ept-navy-blue rounded-full w-12 h-10 flex justify-center items-center border-none mb-1"
+          *ngIf="loggedIn"
+        >
+          <ng-icon
+            name="heroHome"
+            class="text-ept-blue-grey text-3xl"
+          ></ng-icon>
+        </div>
+      </a>
+    </div>
+    <div
+      class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center cursor-pointer"
+      *ngIf="loggedIn"
+      (click)="profile_press()"
+    >
+      <div>{{ username }}</div>
+      <div class="avatar">
+        <div class="w-14 ml-3 mask mask-hexagon">
+          <img src="{{ img_url }}" />
+        </div>
+      </div>
+    </div>
+    <div
+      class="mx-6 text-inherit rounded-3xl backdrop-blur-lg p-3 flex justify-end items-center"
+      *ngIf="!loggedIn"
+    >
+      <a href="#login">
+        <div class="btn rounded-xl py-2 border-none text-lg text-ept-blue-grey">
+          Log In
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+<div
+  class="snap snap-y snap-mandatory scroll-smooth w-full h-screen overflow-y-scroll text-white overflow-x-hidden"
+>
+  <div
+    id="welcome"
+    class="hidden md:flex snap-start min-h-screen w-full mt-[15vh] mb-[50vh] px-6 pt-16 justify-normal items-center"
+  >
+    <div class="w-full grid grid-cols-12 h-full">
+      <div
+        class="col-span-7 lg:ml-36 mr-10 font-montserrat h-full flex justify-center items-center"
+      >
+        <div>
+          <div class="text-6xl font-semibold my-6">
+            Welcome to <br />
+            <span class="text-ept-bumble-yellow">Event </span>
+            <span
+              class="bg-gradient-to-r from-ept-bumble-yellow to-ept-blue-grey text-transparent bg-clip-text"
+              >Participation</span
+            ><br />
+            <span class="text-ept-bumble-yellow"> Trends</span>
+          </div>
+          <div>
+            Our system leverages Wi-Fi sensors to provide accurate and real-time
+            tracking of participants within event spaces. With our solution,
+            event managers can effortlessly create and configure events, while
+            viewers gain access to valuable insights through visualizations like
+            heatmaps and flowmaps.
+          </div>
+        </div>
+      </div>
+      <div class="w-full h-full col-span-5">
+        <div
+          class="w-[50vw] h-[40vw] rounded-[100%] rotate-[-14deg] bg-ept-blue-grey flex justify-center items-center"
+        >
+          <div class="rotate-[14deg] md:mr-24 lg:mr-48 mb-16">
+            <!-- <span
+              class="loading loading-dots loading-lg text-ept-navy-blue"
+            ></span> -->
+            <img src="assets/ept_logo.png" alt="Image not found" width="100px" height="100px" class="animate-[bounce_5s_ease-in-out_infinite] z-50 w-[200px] lg:w-[300px]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    id="welcome-mobile"
+    class="snap-start min-h-screen w-full mt-[15vh] mb-[50vh] px-6 pt-16 flex md:hidden justify-normal items-center"
+  >
+    <div class="w-full h-full">
+      <div
+        class="col-span-7 font-montserrat h-full flex justify-center items-center"
+      >
+        <div>
+          <div class="text-5xl font-semibold my-6 flex flex-col justify-center">
+            Welcome to <br />
+            <span class="text-ept-bumble-yellow">Event </span>
+            <span
+              class="bg-gradient-to-r from-ept-bumble-yellow to-ept-blue-grey text-transparent bg-clip-text"
+              >Participation</span
+            >
+            <span class="text-ept-bumble-yellow"> Trends</span>
+          </div>
+          <div class="text-left">
+            Our system leverages Wi-Fi sensors to provide accurate and real-time
+            tracking of participants within event spaces. With our solution,
+            event managers can effortlessly create and configure events, while
+            viewers gain access to valuable insights through visualizations like
+            heatmaps and flowmaps.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    id="how-to"
+    class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-start items-center"
+  >
+    <div class="h-fit md:ml-20 lg:ml-36  pb-20">
+      <div class="text-4xl md:text-6xl font-semibold">Using the app</div>
+      <div class="ml-5">
+        <div class="flex items-start justify-start mt-10">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold w-8">
+            <div class="w-8">1.</div>
+          </div>
+          <div class="text-lg md:text-2xl font-montserrat">Create an event</div>
+        </div>
+        <div class="flex items-start justify-start mt-8">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold">
+            <div class="w-8">2.</div>
+          </div>
+          <div class="text-lg md:text-2xl font-montserrat">
+            Create a floorplan for the event by setting a start- & end time
+          </div>
+        </div>
+        <div class="flex items-start justify-start mt-8">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold w-8">
+            <div class="w-8">3.</div>
+          </div>
+          <div class="text-lg md:text-2xl font-montserrat">
+            Link the physical sensors to the event
+          </div>
+        </div>
+        <div class="flex items-start justify-start mt-8">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold w-8">
+            <div class="w-8">4.</div>
+          </div>
+          <div class="text-lg md:text-2xl font-montserrat">
+            Wait for the event to start
+          </div>
+        </div>
+        <div class="flex items-start justify-start mt-8">
+          <div class=" text-ept-bumble-yellow text-2xl md:text-4xl font-bold w-8">
+            <div class="w-8">5.</div>
+          </div>
+          <div class="text-lg md:text-2xl font-montserrat">
+            View the generated maps on the dashboard
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    id="questions"
+    class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-center items-center"
+  >
+    <div>
+      <div class="flex justify-center items-center">
+        <div class="text-3xl md:text-6xl font-semibold mb-10 text-center">
+          Frequently Asked Questions
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:mx-[15vw]">
+        <div class="col-span-2 md:col-span-1">
+          <div class="mt-2 mx-1">
+            <div
+              class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
+            >
+              <input type="checkbox" />
+              <div class="collapse-title text-xl font-medium">
+                <span class="text-ept-off-white font-poppins"
+                  >Where do I get the physical sensors?</span
+                >
+              </div>
+              <div class="collapse-content">
+                <div class="text-ept-off-white font-montserrat">
+                  You can contact the team via the emails specified at the end
+                  of the page. The sensors are ESP32-C3 boards with a custom
+                  case, battery and firmware.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-2 mx-1">
+            <div
+              class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
+            >
+              <input type="checkbox" />
+              <div class="collapse-title text-xl font-medium">
+                <span class="text-ept-off-white font-poppins"
+                  >How do I get the permissions to create event?</span
+                >
+              </div>
+              <div class="collapse-content">
+                <div class="text-ept-off-white font-montserrat">
+                  Accounts can only be promoted to a Manager account by the
+                  admins of the system. Contact the team via the emails
+                  specified at the end of the page to request a promotion.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-span-2 md:col-span-1">
+          <div class="mt-2 mx-1">
+            <div
+              class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
+            >
+              <input type="checkbox" />
+              <div class="collapse-title text-xl font-medium">
+                <span class="text-ept-off-white font-poppins"
+                  >Where do I get the physical sensors?</span
+                >
+              </div>
+              <div class="collapse-content">
+                <div class="text-ept-off-white font-montserrat">
+                  You can contact the team via the emails specified at the end
+                  of the page. The sensors are ESP32-C3 boards with a custom
+                  case, battery and firmware
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-2 mx-1">
+            <div
+              class="collapse collapse-arrow bg-ept-navy-blue text-ept-bumble-yellow"
+            >
+              <input type="checkbox" />
+              <div class="collapse-title text-xl font-medium">
+                <span class="text-ept-off-white font-poppins"
+                  >Where do I get the physical sensors?</span
+                >
+              </div>
+              <div class="collapse-content">
+                <div class="text-ept-off-white font-montserrat">
+                  You can contact the team via the emails specified at the end
+                  of the page. The sensors are ESP32-C3 boards with a custom
+                  case, battery and firmware
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    id="login"
+    class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-center items-center"
+    *ngIf="!loggedIn"
+  >
+    <div class="mb-16">
+      <div class="text-center text-4xl md:text-6xl font-semibold font-poppins mb-8">
+        Login with Google
+      </div>
+      <div class="flex justify-center">
+        <!-- button -->
+        <div
+          id="g_id_onload"
+          data-client_id="830414824400-jc7meusocfclk7rf6t6a5jjeq5mquo7o.apps.googleusercontent.com"
+          data-context="signin"
+          data-ux_mode="popup"
+          data-login_uri="/api/auth/google"
+          data-auto_select="true"
+          data-itp_support="true"
+        ></div>
+
+        <div
+          class="g_id_signin"
+          data-type="standard"
+          data-shape="pill"
+          data-theme="filled_black"
+          data-text="signin_with"
+          data-size="large"
+          data-logo_alignment="left"
+        ></div>
+      </div>
+    </div>
+  </div>
+  <div
+    id="continue"
+    class="snap-start min-h-screen w-full mb-[50vh] px-6 pt-16 flex justify-center items-center"
+    *ngIf="loggedIn"
+  >
+    <div>
+      <div class="text-center text-4xl md:text-6xl font-semibold font-poppins mb-8">
+        Continue To Home
+      </div>
+      <div class="flex justify-center">
+        <a routerLink="/home">
+          <div
+            class="btn border-none bg-ept-navy-blue font-poppins font-semibold text-ept-blue-grey rounded-2xl text-2xl"
+          >
+            <ng-icon name="heroHome" class="text-ept-bumble-yellow"></ng-icon>
+            Home
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div
+    id="contact"
+    class="snap-start min-h-screen w-full mb-[20vh] px-6 pt-16 flex justify-center items-center"
+  >
+    <div>
+      <div class="flex justify-center">
+        <div class="text-4xl md:text-6xl font-semibold font-poppins mb-8">Contact Us</div>
+      </div>
+      <div class="flex justify-center text-base sm:text-xl md:text-2xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+          <div class="font-montserrat my-3">
+            <span class="text-ept-bumble-yellow">lukas</span
+            ><span class="font-semibold">@</span
+            ><span class="text-ept-blue-grey">eventparticipationtrends</span
+            >.co.za
+          </div>
+          <div class="font-montserrat my-3">
+            <span class="text-ept-bumble-yellow">stefan</span
+            ><span class="font-semibold">@</span
+            ><span class="text-ept-blue-grey">eventparticipationtrends</span
+            >.co.za
+          </div>
+          <div class="font-montserrat my-3">
+            <span class="text-ept-bumble-yellow">arno</span
+            ><span class="font-semibold">@</span
+            ><span class="text-ept-blue-grey">eventparticipationtrends</span
+            >.co.za
+          </div>
+          <div class="font-montserrat my-3">
+            <span class="text-ept-bumble-yellow">reuben</span
+            ><span class="font-semibold">@</span
+            ><span class="text-ept-blue-grey">eventparticipationtrends</span
+            >.co.za
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <div class="font-montserrat text-base sm:text-xl md:text-2xl my-3">
+          <span class="text-ept-bumble-yellow">luca</span
+          ><span class="font-semibold">@</span
+          ><span class="text-ept-blue-grey">eventparticipationtrends</span
+          >.co.za
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<event-participation-trends-profile
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="profile-modal"
+></event-participation-trends-profile>

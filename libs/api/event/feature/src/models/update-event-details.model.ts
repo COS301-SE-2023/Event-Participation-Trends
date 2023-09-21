@@ -3,9 +3,6 @@ import {
     UpdateEventDetialsEvent,
     UpdateFloorlayoutEvent
     } from '@event-participation-trends/api/event/util';
-import {
-    IEventLocation,
-} from '@event-participation-trends/api/event/util';
 import { Types } from 'mongoose';
 import { AggregateRoot } from '@nestjs/cqrs';
 
@@ -16,9 +13,10 @@ export class UpdateEventDetails extends AggregateRoot implements IUpdateEventDet
         public EndDate?: Date | undefined | null,
         public Name?: string | undefined | null,
         public Category?: string | undefined | null,
-        public Location?: IEventLocation | undefined | null,
+        public Location?: string | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
         public Floorlayout?: string | undefined | null,
+        public PublicEvent?: boolean | undefined | null,
     ){
         super();
     }
@@ -41,6 +39,7 @@ export class UpdateEventDetails extends AggregateRoot implements IUpdateEventDet
             event.Location,
             event.Manager,
             event.Floorlayout,
+            event.PublicEvent,
         );
         return instance;
     }
@@ -55,6 +54,7 @@ export class UpdateEventDetails extends AggregateRoot implements IUpdateEventDet
             Location: this.Location,
             Manager: this.Manager,
             Floorlayout: this.Floorlayout,
+            PublicEvent: this.PublicEvent,
         };
     }
 }

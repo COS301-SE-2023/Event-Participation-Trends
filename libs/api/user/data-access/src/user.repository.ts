@@ -41,13 +41,13 @@ export class UserRepository {
     async addViewingEvent(userID: Types.ObjectId, eventID: Types.ObjectId){
         return await this.userModel.updateOne(
             { _id: {$eq: userID}},
-            { $push: { Viewing: eventID } });
+            { $addToSet: { Viewing: eventID } });
     }
 
     async addEventToAdmin(eventID: Types.ObjectId){
         return await this.userModel.updateMany(
             { Role: {$eq: "admin"}},
-            { $push: { Viewing: eventID } });
+            { $addToSet: { Viewing: eventID } });
     }
 
     async getPopulatedViewingEvents(userId: Types.ObjectId){
