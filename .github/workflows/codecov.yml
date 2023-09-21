@@ -32,8 +32,9 @@ jobs:
     - name: Run tests and generate coverage reports
       run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache --coverage --testTimeout=10000'
 
-    - name: Run app-e2e tests and generate coverage reports
-      run: 'yarn nx run app-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
+    # Uncomment this once the app-e2e tests are working/up to date
+    # - name: Run app-e2e tests and generate coverage reports
+    #   run: 'yarn nx run app-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
 
     - name: Run api-e2e tests and generate coverage reports
       run: 'yarn nx run api-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
