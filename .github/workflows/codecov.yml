@@ -19,10 +19,10 @@ jobs:
         node-version: ^16.14.0
 
     - name: Install dependencies
-      run: yarn install
+      run: 'yarn install'
 
     - name: Run tests and generate coverage reports
-      run: yarn test -- --coverage
+      run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache --coverage --testTimeout=10000'
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
