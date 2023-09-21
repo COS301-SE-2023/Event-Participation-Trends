@@ -6,6 +6,7 @@ enum Tab {
   Dashboard = 'dashboard',
   Details = 'details',
   Floorplan = 'floorplan',
+  Streaming = 'streaming',
   None = '',
 }
 
@@ -102,6 +103,20 @@ export class EventViewComponent implements OnInit {
     }, 300);
   }
 
+  // Stream
+  public expandStreaming = false;
+  public overflowStreaming = false;
+  showStreaming() {
+    this.expandStreaming = true;
+    this.overflowStreaming = true;
+  }
+  hideStreaming() {
+    this.expandStreaming = false;
+    setTimeout(() => {
+      this.overflowStreaming = false;
+    }, 300);
+  }
+
   async ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
     this.screenTooSmall = window.innerWidth < 1152;
@@ -136,6 +151,9 @@ export class EventViewComponent implements OnInit {
     }
     else if (t === 'floorplan') {
       this.tab = Tab.Floorplan;
+    }
+    else if (t === 'streaming') {
+      this.tab = Tab.Streaming;
     }
 
     // test if window size is less than 1024px
@@ -200,6 +218,19 @@ export class EventViewComponent implements OnInit {
     }
   }
 
+  goStreaming() {
+    this.screenTooSmall = window.innerWidth < 1152;
+    this.pressButton('#streaming-link');
+
+    this.ngZone.run(() => { this.router.navigate(['streaming'], { relativeTo: this.route }); });
+    this.tab = Tab.Streaming;
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
+  }
+
   showSmallScreenModal() {
     const modal = document.querySelector('#small-screen-modal');
     modal?.classList.remove('hidden');
@@ -226,6 +257,10 @@ export class EventViewComponent implements OnInit {
 
   onDashboard() : boolean {
     return this.tab === Tab.Dashboard;
+  }
+
+  onStreaming() : boolean {
+    return this.tab === Tab.Streaming;
   }
 
   showHelpModal() {

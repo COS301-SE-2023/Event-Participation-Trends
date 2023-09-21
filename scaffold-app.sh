@@ -109,6 +109,9 @@ yarn nx g @nrwl/angular:component toast-modal --project=app-components --standal
 #Image upload of floor plan modal
 yarn nx g @nrwl/angular:component floorplan-upload-modal --project=app-components --standalone
 
+#Video streaming and chat page
+yarn nx g @nrwl/angular:component streaming --project=app-components --standalone
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries

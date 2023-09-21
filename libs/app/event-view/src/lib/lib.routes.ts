@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { DashboardPageComponent, EventDetailsPageComponent, FloorplanEditorPageComponent } from '@event-participation-trends/app/components';
+import { DashboardPageComponent, EventDetailsPageComponent, FloorplanEditorPageComponent, StreamingComponent } from '@event-participation-trends/app/components';
 import { EventViewComponent } from './event-view/event-view.component';
 
 export const appEventViewRoutes: Route[] = [
@@ -22,6 +22,10 @@ export const appEventViewRoutes: Route[] = [
             {
                 path: 'floorplan',
                 component: FloorplanEditorPageComponent
+            },
+            {
+                path: 'streaming',
+                component: StreamingComponent
             },
             {
                 path: '',

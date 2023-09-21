@@ -16,7 +16,7 @@ import {
   matDrawRound,
   matQuestionMarkRound,
 } from '@ng-icons/material-icons/round';
-import { matMenu, matClose } from '@ng-icons/material-icons/baseline';
+import { matMenu, matClose, matVideoChat } from '@ng-icons/material-icons/baseline';
 
 @NgModule({
   bootstrap: [EventViewComponent],
@@ -37,7 +37,8 @@ import { matMenu, matClose } from '@ng-icons/material-icons/baseline';
       matDrawRound,
       matQuestionMarkRound,
       matMenu,
-      matClose
+      matClose,
+      matVideoChat
     }),
   ],
   declarations: [EventViewComponent],

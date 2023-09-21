@@ -81,6 +81,23 @@
               <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('floorplan')}">Floorplan Editor</label>
             </a>
           </div>
+
+          <div
+            class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+            [ngClass]="{ 'overflow-visible': overflowStreaming }"
+          >
+            <a
+              id="streaming-link"
+              class="overflow-hidden cursor-pointer px-4 w-full h-full hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="goStreaming()"
+              [ngClass]="{
+              'overflow-visible': expandStreaming,
+            }"
+            >
+              <ng-icon name="matVideoChat" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('streaming')}"></ng-icon>
+              <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('streaming')}">Streams</label>
+            </a>
+          </div>
         </div>
         <div class="w-full flex flex-col absolute bottom-3">
           <div
@@ -223,6 +240,36 @@
           }"
         >
           <div>Floorplan</div>
+        </div>
+      </div>
+
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowStreaming }"
+        *ngIf="manager_access"
+      >
+        <a
+          id="streaming-link"
+          class="overflow-hidden cursor-pointer absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goStreaming()"
+          [ngClass]="{
+          'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('streaming'),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !isActiveRoute('streaming'),
+          'overflow-visible': expandStreaming,
+        }"
+          (mouseover)="showStreaming()"
+          (mouseleave)="hideStreaming()"
+        >
+          <ng-icon name="matVideoChat" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
+              expandStreaming
+          }"
+        >
+          <div>Streams</div>
         </div>
       </div>
     </div>
