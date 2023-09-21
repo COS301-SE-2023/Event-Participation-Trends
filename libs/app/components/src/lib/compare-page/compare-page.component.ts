@@ -29,18 +29,20 @@ import { heroAdjustmentsHorizontal } from '@ng-icons/heroicons/outline';
 import { heroInboxSolid } from '@ng-icons/heroicons/solid';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
 import 'chartjs-plugin-datalabels';
+import { layerGroup } from 'leaflet';
 
 class Stats {
   id = 0;
   name = '';
+  start_time = new Date();
+  end_time = new Date();
   total_attendance = 0;
   average_attendance = 0;
   peak_attendance = 0;
   turnover_rate = 0;
   average_attendance_time = 0;
   max_attendance_time = 0;
-  attendance_over_time_data: number[] = [];
-  attendance_over_time_labels: Date[] = [];
+  attendance_over_time_data: {time: number, devices: number}[] = [];
 }
 
 @Component({
@@ -235,6 +237,8 @@ export class ComparePageComponent implements OnInit {
       const stats = {
         id: (event as any)._id,
         name: event.Name!,
+        start_time: new Date(event.StartDate!),
+        end_time: new Date(event.EndDate!),
         total_attendance: response.total_attendance!,
         average_attendance: response.average_attendance!,
         peak_attendance: response.peak_attendance!,
@@ -242,11 +246,6 @@ export class ComparePageComponent implements OnInit {
         average_attendance_time: response.average_attendance!,
         max_attendance_time: response.max_attendance_time!,
         attendance_over_time_data: response.attendance_over_time_data!,
-        attendance_over_time_labels: response.attendance_over_time_labels!.map(
-          (date) => {
-            return new Date(date);
-            }
-            ),
       };
 
       this.eventStats.push(stats);
@@ -363,6 +362,8 @@ export class ComparePageComponent implements OnInit {
       return {
         id: 0,
         name: '',
+        start_time: new Date(),
+        end_time: new Date(),
         total_attendance: 0,
         average_attendance: 0,
         peak_attendance: 0,
@@ -370,7 +371,6 @@ export class ComparePageComponent implements OnInit {
         average_attendance_time: 0,
         max_attendance_time: 0,
         attendance_over_time_data: [],
-        attendance_over_time_labels: [],
       };
     }
 
@@ -382,6 +382,8 @@ export class ComparePageComponent implements OnInit {
       return {
         id: 0,
         name: '',
+        start_time: new Date(),
+        end_time: new Date(),
         total_attendance: 0,
         average_attendance: 0,
         peak_attendance: 0,
@@ -389,7 +391,6 @@ export class ComparePageComponent implements OnInit {
         average_attendance_time: 0,
         max_attendance_time: 0,
         attendance_over_time_data: [],
-        attendance_over_time_labels: [],
       };
     }
 
@@ -419,69 +420,51 @@ export class ComparePageComponent implements OnInit {
         gradientStroke.addColorStop(0, 'rgba(119,52,169,0)'); //purple colors
       }
 
+      // find the longest runtime of the events
+      const longestRuntime = Math.max(
+        ...this.eventStats.map((event) => {
+          return event.end_time.getTime() - event.start_time.getTime();
+        })
+      ) / 1000;
 
+      // set labels as every 20 minute interval of the longest runtime
 
-      // get the earliest date of all events
-      const earliestDate = new Date(
-        Math.min(
-          ...this.eventStats.map((event) => {
-            return Math.min(
-              ...event.attendance_over_time_labels.map((date) => {
-                return date.getTime();
-              })
-            );
-          })
-        )
-      );
-      
-      console.log("Earliest Date", earliestDate);
+      const labels = [];
 
-      // get the latest date of all events
-      const latestDate = new Date(
-        Math.max(
-          ...this.eventStats.map((event) => {
-            return Math.max(
-              ...event.attendance_over_time_labels.map((date) => {
-                return date.getTime();
-              })
-            );
-          })
-        )
-      );
+      const interval = 20;
 
-      console.log("Latest Date", latestDate);
+      for (let i = 0; i < longestRuntime; i += 60 * interval) {
+        labels.push(i / 60);
+      }
 
-      // find the event with the longest running time
-      const longestRunningEvent = this.eventStats.reduce((a, b) => {
-        return a.attendance_over_time_labels.length >
-          b.attendance_over_time_labels.length
-          ? a
-          : b;
-      });
-
-      const start_label = longestRunningEvent.attendance_over_time_labels[0];
-
-      const labels: number[] = longestRunningEvent.attendance_over_time_labels.map(
-        (date) => {
-
-          date = new Date(date);
-
-          // calculate the time in minutes since the start of the event
-          const time = Math.floor(
-            (date.getTime() - start_label.getTime()) / 1000 / 60
-          );
-
-          return time;
-        }
-      );
-
-      console.log("Labels", labels);
+      console.log("labels => ", labels);
 
       const datasets = [];
 
+      const data = labels.map((label) => {
+        // if the label exists as a "time" in the attendance_over_time_data, return the devices
+        // else return 0
+
+        const event = this.getFirstEventStats();
+
+        const index = event.attendance_over_time_data.findIndex(
+          (data) => {
+            return data.time === label;
+          }
+        );
+
+        if (index !== -1) {
+          console.log(label, " => ", event.attendance_over_time_data[index].devices);
+          return event.attendance_over_time_data[index].devices;
+        }
+
+        console.log(label, " => ", 0);
+        return 0;
+      });
+
       datasets.push({
         label: this.getFirstEventStats().name,
-        data: this.getFirstEventStats().attendance_over_time_data,
+        data: data,
         fill: true,
         backgroundColor: gradientStroke ? gradientStroke : 'white',
         borderColor: this.chartColors['ept-bumble-yellow'],
@@ -501,7 +484,24 @@ export class ComparePageComponent implements OnInit {
         const secondData = this.getSecondEventStats();
         datasets.push({
           label: this.getSecondEventStats().name,
-          data: secondData.attendance_over_time_data,
+          data: labels.map((label) => {
+            // if the label exists as a "time" in the attendance_over_time_data, return the devices
+            // else return 0
+    
+            const event = this.getSecondEventStats();
+    
+            const index = event.attendance_over_time_data.findIndex(
+              (data) => {
+                return data.time === label;
+              }
+            );
+    
+            if (index !== -1) {
+              return event.attendance_over_time_data[index].devices;
+            }
+    
+            return 0;
+          }),
           fill: true,
           backgroundColor: gradientStroke ? gradientStroke : 'white',
           borderColor: this.chartColors['ept-light-blue'],
