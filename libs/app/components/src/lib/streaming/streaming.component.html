@@ -1,1 +1,211 @@
-<p>streaming works!</p>
+<div class="top-0 left-0 w-full h-screen relative">
+  <div *ngIf="isLargeScreen" class="grid grid-cols-36 gap-3 p-3 h-full">
+    <div
+      class="p-5 pt-4 flex flex-col justify-center items-center col-span-24 max-h-full overflow-y-scroll rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey"
+    >
+      <div class="flex flex-col justify-center items-center mb-5">
+        <div class="font-semibold text-2xl text-ept-off-white text-center">
+          Stream
+        </div>
+        <hr class="border-ept-dark-grey border-opacity-50 w-[100px]" />
+      </div>
+      <div
+        class="w-full h-full border-2 border-ept-blue-grey rounded-lg"
+        [ngClass]="{
+          'flex flex-col justify-center items-center': !videoStreams
+        }"
+      >
+        <video
+          *ngIf="videoStreams"
+          class="w-full"
+          id="video"
+          autoplay
+          playsinline
+        ></video>
+        <div
+          *ngIf="!videoStreams"
+          class="flex flex-col justify-evenly items-center"
+        >
+          <ng-icon
+            name="heroVideoCameraSlashSolid"
+            class="text-4xl text-ept-off-white"
+          ></ng-icon>
+          <h1 class="text-ept-off-white text-xl font-semibold">
+            No streams available
+          </h1>
+        </div>
+      </div>
+    </div>
+    <div
+      class="p-5 pt-4 col-span-12 bg-ept-navy-blue max-h-full overflow-y-scroll rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative flex flex-col justify-between"
+    >
+      <div class="flex flex-col justify-center items-center mb-5">
+        <div class="font-semibold text-2xl text-ept-off-white text-center">
+          Event Chat
+        </div>
+        <hr class="border-ept-dark-grey border-opacity-50 w-[150px]" />
+      </div>
+      <div
+        class="w-full h-full bg-ept-blue-grey bg-opacity-15 rounded-lg"
+        [ngClass]="{
+          'flex flex-col justify-center items-center': !eventMessages
+        }"
+      >
+        <div
+          *ngIf="!eventMessages"
+          class="flex flex-col justify-evenly items-center"
+        >
+          <img
+            src="assets/sleep-svgrepo-com-light.svg"
+            alt="sleeping chat"
+            class="w-52 h-1/2"
+          />
+          <h1 class="text-[#D9D9D9] text-2xl font-semibold text-center">
+            No one is chatting yet
+          </h1>
+        </div>
+        <!-- add custom message component which would take in the message, time and profile pic -->
+      </div>
+      <div class="flex flex-row justify-between items-center mt-5">
+        <ng-icon
+          name="heroFaceSmileSolid"
+          class="text-ept-blue-grey text-2xl mr-2 cursor-pointer"
+          (click)="showEmojiPicker = !showEmojiPicker"
+        ></ng-icon>
+        <input
+          class="w-full h-10 bg-[#D9D9D9] rounded-lg text-ept-off-white text-sm px-3"
+          type="text"
+          [ngClass]="{ 'text-black text-opacity-30': message.length === 0 }"
+          [placeholder]="
+            message.length === 0 ? 'Add your message here...' : message
+          "
+        />
+        <div
+          class="cursor-pointer flex items-center rounded-full bg-ept-blue-grey bg-opacity-15 p-2 ml-2"
+          (click)="sendMessage()"
+        >
+          <ng-icon name="matSend" class="text-ept-blue-grey text-2xl"></ng-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="chatToggled"
+    class="absolute w-full h-full bg-ept-deep-grey bg-opacity-40 z-30"
+    (click)="hideChat()"
+  ></div>
+  <div
+    *ngIf="!isLargeScreen"
+    class="relative h-[90%] mr-6 ml-6 pl-3 pr-3 pb-3 mt-16 flex flex-col justify-evenly items-center rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey"
+  >
+    <div class="sflex flex-col justify-center items-center mb-5">
+      <div class="font-semibold text-2xl text-ept-off-white text-center mt-2">
+        Stream
+      </div>
+      <hr class="border-ept-dark-grey border-opacity-50 w-[100px]" />
+    </div>
+    <div
+      *ngIf="!showChat"
+      class="overflow-y-hidden h-full rounded-md absolute right-3 top-3 z-50"
+    >
+      <ng-icon
+        *ngIf="!chatToggled"
+        name="matChat"
+        (click)="openChat()"
+        class="text-4xl text-ept-bumble-yellow"
+      ></ng-icon>
+      <div
+        id="chatMenu"
+        class="h-[97%] pb-10 sm:pb-3 bg-ept-blue-grey pl-0 transition-all duration-300 rounded-md"
+        [ngClass]="{ 'w-0': !chatToggled, 'w-[315px]': chatToggled }"
+      >
+        <div [ngClass]="{ hidden: !chatToggled }" class="h-full p-3">
+          <ng-icon
+            name="matClose"
+            class="z-50 absolute right-3 top-3 text-2xl text-ept-deep-grey cursor-pointer"
+            (click)="hideChat()"
+          ></ng-icon>
+          <div class="flex flex-col justify-center items-center mb-5 relative">
+            <div class="font-semibold text-2xl text-ept-deep-grey text-center">
+              Event Chat
+            </div>
+            <hr class="border-ept-dark-grey border-opacity-50 w-[150px]" />
+          </div>
+          <div
+            class="w-full h-[85%] bg-ept-navy-blue bg-opacity-30 rounded-lg"
+            [ngClass]="{
+              'flex flex-col justify-center items-center': !eventMessages
+            }"
+          >
+            <div
+              *ngIf="!eventMessages"
+              class="flex flex-col justify-evenly items-center"
+            >
+              <img
+                src="assets/sleep-svgrepo-com-black.svg"
+                alt="sleeping chat"
+                class="w-52 h-1/2"
+              />
+              <h1 class="text-ept-deep-grey text-2xl font-semibold text-center">
+                No one is chatting yet
+              </h1>
+            </div>
+            <!-- add custom message component which would take in the message, time and profile pic -->
+          </div>
+          <div class="flex flex-row justify-between items-center mt-5">
+            <div
+              class="cursor-pointer flex items-center rounded-full bg-ept-deep-grey bg-opacity-50 mr-2 p-1"
+              (click)="showEmojiMenu()"
+            >
+              <ng-icon
+                name="heroFaceSmileSolid"
+                class="text-ept-off-white text-3xl cursor-pointer"
+              ></ng-icon>
+            </div>
+            <input
+              class="w-full h-10 bg-[#D9D9D9] rounded-lg text-ept-deep-grey text-sm px-3"
+              type="text"
+              [ngClass]="{ 'text-black text-opacity-30': message.length === 0 }"
+              [placeholder]="
+                message.length === 0 ? 'Add your message here...' : message
+              "
+            />
+            <div
+              class="cursor-pointer flex items-center rounded-full bg-ept-deep-grey bg-opacity-50 p-2 ml-2"
+              (click)="sendMessage()"
+            >
+              <ng-icon
+                name="matSend"
+                class="text-ept-off-white text-2xl"
+              ></ng-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="video-stream w-full h-full border-2 border-solid border-ept-blue-grey rounded-lg"
+      [ngClass]="{ 'flex flex-col justify-center items-center': !videoStreams }"
+    >
+      <video
+        *ngIf="videoStreams"
+        class="w-full h-full"
+        id="video"
+        autoplay
+        playsinline
+      ></video>
+      <div
+        *ngIf="!videoStreams"
+        class="flex flex-col justify-evenly items-center"
+      >
+        <ng-icon
+          name="heroVideoCameraSlashSolid"
+          class="text-4xl text-ept-off-white"
+        ></ng-icon>
+        <h1 class="text-ept-off-white text-xl font-semibold">
+          No streams available
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
