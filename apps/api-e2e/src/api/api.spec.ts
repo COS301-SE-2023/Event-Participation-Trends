@@ -89,11 +89,9 @@ function objectSubset(target: any, obj: any ): boolean{
                 // eslint-disable-next-line no-prototype-builtins
 				if(target.hasOwnProperty(key) && element.hasOwnProperty(key)){
 					if( element.key != target.key){
-                        console.log(key);
 						return false;
                     }
                 }else{
-                    console.log(key);
                     return false;
                 }
 			}
