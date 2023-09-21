@@ -111,7 +111,6 @@ describe('ComparePageComponent', () => {
       average_attendance_time: 1,
       max_attendance_time: 1,
       attendance_over_time_data: null,
-      attendance_over_time_labels: null,
     };
 
     // mock the call to getAllEvents from the AppApiService
@@ -192,7 +191,6 @@ describe('ComparePageComponent', () => {
       average_attendance_time: 1,
       max_attendance_time: 1,
       attendance_over_time_data: null,
-      attendance_over_time_labels: null,
     };
 
     // mock the call to getAllEvents from the AppApiService
@@ -279,7 +277,6 @@ describe('ComparePageComponent', () => {
       average_attendance_time: 1,
       max_attendance_time: 1,
       attendance_over_time_data: null,
-      attendance_over_time_labels: null,
     };
 
     // mock the call to getAllEvents from the AppApiService

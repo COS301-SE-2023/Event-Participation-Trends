@@ -30,7 +30,7 @@ describe('EventController', () => {
     });
 
     describe('getEvent', () => {
-        it('should throw a 400 Error: Bad Request: eventId not provided', async () => {
+        it('should throw a 400 Error: Bad Request: eventId or eventName must be provided', async () => {
 
             const query = {};
             
@@ -41,13 +41,13 @@ describe('EventController', () => {
             try{
                 const result = await eventController.getEvent(<any> <unknown> req);
                 expect(() => eventController.getEvent(req)).toThrowError(
-                    new HttpException('Bad Request: eventId not provided', 400),
+                    new HttpException('Bad Request: eventId or eventName must be provided', 400),
                 );
                 fail('Expected HttpException to be thrown');
             }catch(error){
                 if(error instanceof HttpException){
                     expect(error).toBeInstanceOf(HttpException);
-                    expect(error.message).toBe('Bad Request: eventId not provided');
+                    expect(error.message).toBe('Bad Request: eventId or eventName must be provided');
                     expect(error.getStatus()).toBe(400);
                 }
             }
@@ -70,7 +70,7 @@ describe('EventController', () => {
             }catch(error){
                 if(error instanceof HttpException){
                     expect(error).toBeInstanceOf(HttpException);
-                    expect(error.message).toBe('Bad Request: eventId not provided');
+                    expect(error.message).toBe('Bad Request: eventId or eventName must be provided');
                     expect(error.getStatus()).toBe(400);
                 }
             }
