@@ -16,4 +16,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/api-e2e',
+  coverageReporters: ['json', 'html'], // Include 'json' for JSON coverage report
 };

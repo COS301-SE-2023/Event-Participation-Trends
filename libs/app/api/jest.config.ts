@@ -7,4 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../coverage/libs/app/api',
+  coverageReporters: ['json', 'html'], // Include 'json' for JSON coverage report
 };

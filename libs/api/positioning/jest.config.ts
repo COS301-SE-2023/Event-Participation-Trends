@@ -8,4 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../coverage/libs/api/positioning',
+  coverageReporters: ['json', 'html'], // Include 'json' for JSON coverage report
 };

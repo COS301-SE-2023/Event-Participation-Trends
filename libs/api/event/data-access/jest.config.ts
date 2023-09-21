@@ -7,4 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../../coverage/libs/api/event/data-access',
+  coverageReporters: ['json', 'html'], // Include 'json' for JSON coverage report
 };
