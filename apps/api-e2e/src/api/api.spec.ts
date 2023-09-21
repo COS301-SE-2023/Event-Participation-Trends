@@ -787,6 +787,45 @@ describe('EventController', ()=>{
         })  
     })
 
+    describe('getActiveEvents',  ()=>{
+        it('Should return an array of events', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+            TEST_EVENT_2.Manager = manager[0]._id;
+            
+            //set details to current time
+            TEST_EVENT.StartDate = new Date();
+            TEST_EVENT.EndDate = new Date();
+            TEST_EVENT.EndDate.setHours(TEST_EVENT.EndDate.getHours() + 2);
+
+            //create events 
+            await eventRepository.createEvent(TEST_EVENT); 
+            await eventRepository.createEvent(TEST_EVENT_2); 
+            const event1 = await eventRepository.getEventByName(TEST_EVENT.Name);
+            const event2= await eventRepository.getEventByName(TEST_EVENT_2.Name);
+
+            let events = await eventRepository.getAllEvents();
+            while(events.length != 2){
+                SLEEP(500);
+                events = await eventRepository.getAllEvents();
+            }
+            
+            const response = await request(httpServer).get('/event/getAllActiveEvents');
+
+            //should only contain event1
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_EVENT,response.body.events);
+            expect(res).toBe(true);
+
+            //cleanup
+            await userRepository.deleteUserById(manager[0]._id);
+            await eventRepository.deleteEventbyId(event1[0]._id);
+            await eventRepository.deleteEventbyId(event2[0]._id);
+        })  
+    })
+
 })
 
 describe('UserController', ()=>{
