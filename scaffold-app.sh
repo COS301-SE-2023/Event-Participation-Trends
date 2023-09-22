@@ -112,6 +112,9 @@ yarn nx g @nrwl/angular:component floorplan-upload-modal --project=app-component
 #Video streaming and chat page
 yarn nx g @nrwl/angular:component streaming --project=app-components --standalone
 
+#Chat message component
+yarn nx g @nrwl/angular:component chat-message --project=app-components --standalone
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries

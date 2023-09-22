@@ -5,6 +5,8 @@ import { matSend, matChat, matClose, matArrowLeft, matArrowRight } from '@ng-ico
 import { heroFaceSmileSolid, heroVideoCameraSlashSolid } from '@ng-icons/heroicons/solid';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { FormsModule } from '@angular/forms';
+import { ChatMessageComponent } from '../chat-message/chat-message.component';
+import { Router } from '@angular/router';
 
 interface VideoStream {
   id: number;
@@ -14,7 +16,7 @@ interface VideoStream {
 @Component({
   selector: 'event-participation-trends-streaming',
   standalone: true,
-  imports: [CommonModule, NgIconsModule, FormsModule],
+  imports: [CommonModule, NgIconsModule, FormsModule, ChatMessageComponent],
   templateUrl: './streaming.component.html',
   styleUrls: ['./streaming.component.css'],
   providers: [
@@ -22,7 +24,7 @@ interface VideoStream {
   ]
 })
 export class StreamingComponent implements OnInit {
-  message = '';
+  newMessage = '';
   eventMessages: any = null; // this will change to an array of eventMessage objects
   videoStreams!:VideoStream[]; // this will change to an array of videoStream objects
   activeVideoStream:any = null; // this will change to a videoStream object
@@ -33,8 +35,13 @@ export class StreamingComponent implements OnInit {
   isDropdownOpen = false;
   showArrows = false;
   timer: any;
+  prevMessageSameUser = false;
+  isUserEventManager = false;
+  eventID = '';
+  event: any = null;
+  isExistingStream = false;
 
-  constructor(private appApiService: AppApiService) { }
+  constructor(private appApiService: AppApiService, private router: Router) { }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -50,19 +57,54 @@ export class StreamingComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.eventID = this.router.url.split('/')[2];
     this.isLargeScreen = window.innerWidth > 1152;
 
     // for now this is just mock data until we have the API
     this.eventMessages = [
       {
         id: 1,
-        message: 'Hello world!',
-        timestamp: '2021-07-01T12:00:00.000Z',
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
         user: {
-          id: 1,
+          id: '64c7cd4362769c8a0330ce0e',
           name: 'John Doe',
+          email: 'u21457451@tuks.co.za',
+          profilePic: 'assets/trash-delete.svg',
         },
-        profilePic: 'url',
+      },
+      {
+        id: 2,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '64c7cd4362769c8a0330ce0e',
+          name: 'John Doe',
+          email: 'u21457451@tuks.co.za',
+          profilePic: 'assets/trash-delete.svg',
+        },
+      },
+      {
+        id: 3,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '3',
+          name: 'Jane Doe',
+          email: 'arnojooste@gmail.com',
+          profilePic: 'assets/trash-open.svg',
+        },
+      },
+      {
+        id: 4,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '64c7c9b862769c8a0330cca0',
+          name: 'Arno Jooste',
+          email: 'arnojooste3008@gmail.com',
+          profilePic: 'assets/stall-icon.png',
+        },
       },
     ];
 
@@ -101,6 +143,24 @@ export class StreamingComponent implements OnInit {
     ];
 
     this.activeVideoStream = this.videoStreams[0];
+
+    const role = (await this.appApiService.getRole());
+
+    if (role === 'admin') {
+      this.event = (
+        (await this.appApiService.getEvent({ eventId: this.eventID })) as any
+      ).event;
+    } else {
+      this.event = (
+        (await this.appApiService.getSubscribedEvents()) as any
+      )
+      .filter((event: any) => event._id === this.eventID)[0]
+    }
+
+    if (this.videoStreams.length > 0) {
+      this.isExistingStream = true;
+    }
+
   }
 
   get filteredStreams(): VideoStream[] {
@@ -111,8 +171,33 @@ export class StreamingComponent implements OnInit {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
+  isMessageFromManager(message: any): boolean {
+    if (message.user.id === this.event?.Manager) {
+      return true;
+    }
+    return false;
+  }
+
+  isPrevMessageSameUser(message: any, prevMessage: any): boolean {
+    if (!prevMessage) return false;
+
+    if (message.user.email === prevMessage.user.email) {
+      return true;
+    }
+    return false;
+  }
+
+  isNextMessageSameUser(message: any, nextMessage: any): boolean {
+    if (!nextMessage) return false;
+
+    if (message.user.email === nextMessage.user.email) {
+      return true;
+    }
+    return false;
+  }
+
   sendMessage() {
-    console.log('Sending message: ', this.message);
+    console.log('Sending message: ', this.newMessage);
   }
 
   hideChat(): void {
@@ -136,17 +221,9 @@ export class StreamingComponent implements OnInit {
     this.showEmojiPicker = !this.showEmojiPicker;
   }
 
-  onStreamChange(event: any): void {
-    this.filteredStreams.forEach((stream) => {
-      if (stream.id === event.target.id) {
-        this.activeVideoStream = stream;
-        const videoElement = document.getElementById('video') as HTMLVideoElement;
-        if (videoElement) {
-          videoElement.src = stream.url;
-          videoElement.load();
-        }
-      }
-    });
+  setActiveVideoStream(event: any): void {
+    this.activeVideoStream = this.videoStreams.find((stream) => stream.name === event.target.value);
+    this.switchToStream();
   }
 
   onMouseOver(): void {
@@ -178,7 +255,7 @@ export class StreamingComponent implements OnInit {
     }
   }
 
-  switchToPreviousStream(): void {
+  switchToPreviousStream(idx?: number): void {
     const index = this.videoStreams.findIndex((stream) => stream.id === this.activeVideoStream.id);
     if (index > 0) {
       this.activeVideoStream = this.videoStreams[index - 1];
@@ -211,6 +288,19 @@ export class StreamingComponent implements OnInit {
       if (videoElement) {
         videoElement.load();
       }
+    }
+  }
+
+  switchToStream(): void {
+    const index = this.videoStreams.findIndex((stream) => stream.id === this.activeVideoStream.id);
+
+    if (index === -1) {
+      return;
+    }
+    this.activeVideoStream = this.videoStreams[index];
+    const videoElement = document.getElementById('video') as HTMLVideoElement;
+    if (videoElement) {
+      videoElement.load();
     }
   }
 }
