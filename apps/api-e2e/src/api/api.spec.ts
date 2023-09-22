@@ -7,11 +7,13 @@ import { CsrfGuard, JwtGuard, RbacGuard } from '@event-participation-trends/api/
 import { EventRepository } from '@event-participation-trends/api/event/data-access';
 import { UserRepository } from '@event-participation-trends/api/user/data-access';
 import { GlobalRepository } from '@event-participation-trends/api/global/data-access';
-import { ICreateEventRequest, IEvent, IFloorLayout, IPosition, IViewEvent, Position } from '@event-participation-trends/api/event/util';
+import { ICreateEventRequest, IEvent, IFloorLayout, IImageUploadRequest, IPosition, IUpdateEventFloorLayoutImgRequest, IViewEvent, Position } from '@event-participation-trends/api/event/util';
 import { IUser, Role } from '@event-participation-trends/api/user/util';
 import { ICreateGlobalRequest, IGlobal } from '@event-participation-trends/api/global/util';
 import { promisify } from 'util';
 import { UpdateEventDetails } from '@event-participation-trends/api/event/feature';
+import { Image } from "@event-participation-trends/api/event/feature";
+
 
 //constants 
 // eslint-disable-next-line prefer-const
@@ -20,15 +22,19 @@ let TEST_EVENT: IEvent ={
     EndDate: new Date("2023-06-13T12:34:56.789Z"),
     Name: "Testing Event",
     Category: "Testing Category",
-    Location: {
-        Latitude: 0,
-        Longitude: 0,
-        StreetName: "None",
-        CityName: "None",
-        ProvinceName: "None",
-        CountryName: "None",
-        ZIPCode: "None"
-    },
+    Location: "Event Location",
+    Manager: new Types.ObjectId(),
+    FloorLayout: null,
+   // Devices: Array<Position>(),
+}
+
+// eslint-disable-next-line prefer-const
+let TEST_EVENT_2: IEvent ={
+    StartDate: new Date("2023-06-10T12:34:56.789Z"),
+    EndDate: new Date("2023-06-13T12:34:56.789Z"),
+    Name: "Testing Event 2",
+    Category: "Testing Category 2",
+    Location: "Event Location 2",
     Manager: new Types.ObjectId(),
     FloorLayout: null,
    // Devices: Array<Position>(),
@@ -39,15 +45,7 @@ const UPDATED_TEST_EVENT: IEvent ={
     EndDate: new Date("2023-06-13T12:34:56.789Z"),
     Name: "New Testing Event",
     Category: "New Testing Category",
-    Location: {
-        Latitude: 1,
-        Longitude: 1,
-        StreetName: "New StreetName",
-        CityName: "New CityName",
-        ProvinceName: "New ProvinceName",
-        CountryName: "New CountryName",
-        ZIPCode: "New ZIPCode"
-    },
+    Location: "Updated Event location"
    // Devices: Array<Position>(),
 }
 
@@ -81,6 +79,24 @@ const TEST_GLOBAL: IGlobal ={
     }]
 }
 
+const EVENT_IMAGE: IImageUploadRequest ={
+    eventId: "",
+    imgBase64: "data:image/jpeg;base64,BASE64_STRING",
+    imageObj: "{x_cord:10,y_cord:20}",
+    imageScale: 5,
+    imageType: "jpeg"
+}
+
+const UPDATED_EVENT_IMAGE: IUpdateEventFloorLayoutImgRequest ={
+    eventId: "",
+    imageId: "",
+    managerEmail: "",
+    imgBase64: "data:image/png;base64,UPDATED_BASE64_STRING",
+    imageObj: "{x_cord:15,y_cord:25}",
+    imageScale: 10,
+    imageType: "png"
+}
+
 const SLEEP = promisify(setTimeout);
 
 //helper functions
@@ -91,12 +107,12 @@ function objectSubset(target: any, obj: any ): boolean{
 			// eslint-disable-next-line no-prototype-builtins
 			if (target.hasOwnProperty(key)){
                 // eslint-disable-next-line no-prototype-builtins
-				if(target.hasOwnProperty(key) && element.hasOwnProperty(key)){
+				if(key in target && key in element){
 					if( element.key != target.key){
 						return false;
                     }
                 }else{
-					return false;
+                    return false;
                 }
 			}
 				
@@ -452,6 +468,58 @@ describe('EventController', ()=>{
         })  
     })
 
+    describe('deleteEvent', ()=>{
+        it('Should delete an event object', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+            TEST_EVENT_2.Manager = manager[0]._id;
+
+            //create events
+            await eventRepository.createEvent(TEST_EVENT); 
+            await eventRepository.createEvent(TEST_EVENT_2); 
+            const event1 = await eventRepository.getEventByName(TEST_EVENT.Name);
+            const event2 = await eventRepository.getEventByName(TEST_EVENT_2.Name);
+
+            const response = await request(httpServer).post('/event/deleteEvent').send({
+                eventId: event2[0]._id
+            });
+
+            //event1 should still be present and only event in db
+            expect(response.status).toBe(201);
+            let events = await eventRepository.getAllEvents();
+
+            while(events.length != 1){
+                SLEEP(500);
+                events = await eventRepository.getAllEvents();
+            }
+
+            if(events && events.length ==1){
+
+                const temp: IEvent = {
+                    StartDate: events[0].StartDate,
+                    EndDate: events[0].EndDate,
+                    Name: events[0].Name,
+                    Category: events[0].Category,
+                    Location: events[0].Location,
+                    Manager: events[0].Manager,
+                    FloorLayout: null,
+                }
+                // eslint-disable-next-line no-prototype-builtins
+                const res = objectSubset(TEST_EVENT,[temp]);
+                expect(res).toBe(true);
+            }else{  //intentionally fail 
+                expect(true).toBe(false);
+            }
+
+            //cleanup
+            await eventRepository.deleteEventbyId(event1[0]._id);
+            await eventRepository.deleteEventbyId(event2[0]._id);
+            await userRepository.deleteUserById(manager[0]._id);
+        })  
+    })
+
     describe('updateEventDetails', ()=>{
         it('Should update an events details', async ()=>{
             await eventRepository.createEvent(TEST_EVENT); 
@@ -576,6 +644,7 @@ describe('EventController', ()=>{
             expect(requesters[0].Requesters[0]).toEqual(viewer[0]._id);
 
             //cleanup
+            delete TEST_EVENT.Requesters;
             await userRepository.deleteUserById(manager[0]._id);
             await userRepository.deleteUserById(viewer[0]._id);
             await eventRepository.deleteEventbyId(event[0]._id);
@@ -617,6 +686,7 @@ describe('EventController', ()=>{
             expect(event[0].Requesters.length).toEqual(0);
 
             //cleanup
+            delete TEST_EVENT.Requesters;
             await eventRepository.deleteEventbyId(event[0]._id);
             await userRepository.deleteUserById(viewer[0]._id);
             await userRepository.deleteUserById(manager[0]._id);
@@ -672,6 +742,8 @@ describe('EventController', ()=>{
             expect(viewer[0].Viewing[0]).toEqual(event[0]._id);
             
             //cleanup
+            delete TEST_EVENT.Requesters;
+            delete TEST_EVENT.Viewers;
             await eventRepository.deleteEventbyId(event[0]._id);
             await userRepository.deleteUserById(viewer[0]._id);
             await userRepository.deleteUserById(manager[0]._id);
@@ -723,10 +795,238 @@ describe('EventController', ()=>{
             expect(viewer[0].Viewing.length).toEqual(0);
             
             //cleanup
+            delete TEST_EVENT.Requesters;
+            delete TEST_EVENT.Manager;
+            delete TEST_EVENT.Viewers;
             await eventRepository.deleteEventbyId(event[0]._id);
             await userRepository.deleteUserById(viewer[0]._id);
             await userRepository.deleteUserById(manager[0]._id);
         
+        })  
+    })
+
+    describe('getActiveEvents',  ()=>{
+        it('Should return an array of events', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+            TEST_EVENT_2.Manager = manager[0]._id;
+            
+            //set details to current time
+            TEST_EVENT.StartDate = new Date();
+            TEST_EVENT.EndDate = new Date();
+            TEST_EVENT.EndDate.setHours(TEST_EVENT.EndDate.getHours() + 2);
+
+            //create events 
+            await eventRepository.createEvent(TEST_EVENT); 
+            await eventRepository.createEvent(TEST_EVENT_2); 
+            const event1 = await eventRepository.getEventByName(TEST_EVENT.Name);
+            const event2= await eventRepository.getEventByName(TEST_EVENT_2.Name);
+
+            let events = await eventRepository.getAllEvents();
+            while(events.length != 2){
+                SLEEP(500);
+                events = await eventRepository.getAllEvents();
+            }
+            
+            const response = await request(httpServer).get('/event/getAllActiveEvents');
+
+            expect(response.status).toBe(200);
+            const res = objectSubset(TEST_EVENT,response.body.events);
+            expect(res).toBe(true);
+
+            //cleanup
+            await userRepository.deleteUserById(manager[0]._id);
+            await eventRepository.deleteEventbyId(event1[0]._id);
+            await eventRepository.deleteEventbyId(event2[0]._id);
+        })  
+    })
+
+    describe('uploadFloorlayoutImage',  ()=>{
+        it('Should upload the given image', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+
+            //create event
+            await eventRepository.createEvent(TEST_EVENT); 
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            
+            while(event.length != 1){
+                SLEEP(500);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
+
+            EVENT_IMAGE.eventId = <string> <unknown> event[0]._id;
+
+            const response = await request(httpServer).post('/event/uploadFloorlayoutImage').send(
+                EVENT_IMAGE
+            );
+            expect(response.body.status).toBe("success");
+
+            //should create an image 
+            let eventImg = await eventRepository.findImageByEventId(event[0]._id);
+
+            while(event.length != 1){
+                SLEEP(500);
+                eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            }
+
+            const temp: IImageUploadRequest = {
+                eventId: <string> <unknown> event[0]._id,
+                imgBase64: eventImg[0].imageBase64,
+                imageObj: eventImg[0].imageObj,
+                imageScale: eventImg[0].imageScale,
+                imageType: eventImg[0].imageType,
+            }
+
+            const res = objectSubset(EVENT_IMAGE,[temp]);
+            expect(res).toBe(true);
+
+            //should add imageid to the event's FloorLayoutImgs array
+            while(event[0].FloorLayoutImgs.length != 1){
+                SLEEP(500);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
+
+            if(event[0].FloorLayoutImgs[0].equals(eventImg[0]._id)){
+                expect(true).toBe(true);
+            }else{
+                expect(false).toBe(true);
+            }
+
+            //cleanup
+            await userRepository.deleteUserById(manager[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
+            await eventRepository.removeImage(eventImg[0]._id);
+        })  
+    })
+
+    describe('getFloorLayoutImage',  ()=>{
+        it('Should return the given image', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+
+            //create event
+            await eventRepository.createEvent(TEST_EVENT); 
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            
+            while(event.length != 1){
+                SLEEP(500);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
+
+            EVENT_IMAGE.eventId = <string> <unknown> event[0]._id;
+
+            await eventRepository.uploadImage(new Image(
+                <Types.ObjectId> <unknown> EVENT_IMAGE.eventId,
+                EVENT_IMAGE.imgBase64,
+                EVENT_IMAGE.imageScale,
+                EVENT_IMAGE.imageType,
+                EVENT_IMAGE.imageObj
+            ));
+
+            let eventImg =  await eventRepository.findImagesIdByEventId(event[0]._id);
+            while(eventImg.length != 1){
+                SLEEP(500);
+                eventImg =  await eventRepository.findImagesIdByEventId(event[0]._id);
+            }
+            
+            const response = await request(httpServer).get(`/event/getFloorLayoutImage?eventId=${event[0]._id}`);
+
+            const temp: IImageUploadRequest = {
+                eventId: <string> <unknown> response.body.images[0]._id,
+                imgBase64: response.body.images[0].imageBase64,
+                imageObj: response.body.images[0].imageObj,
+                imageScale: response.body.images[0].imageScale,
+                imageType: response.body.images[0].imageType,
+            }
+
+            expect(response.status).toBe(200);
+            const res = objectSubset(EVENT_IMAGE,[temp]);
+            expect(res).toBe(true);
+
+            //cleanup
+            await userRepository.deleteUserById(manager[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
+            await eventRepository.removeImage(eventImg[0]._id);
+        })  
+    })
+
+    describe('updateEventFloorlayoutImage',  ()=>{
+        it('Should update the given image', async ()=>{
+            //create event manager and event
+            await userRepository.createUser(TEST_USER_1);
+            const manager = await userRepository.getUser(process.env['TEST_USER_EMAIL_1']);
+            TEST_EVENT.Manager = manager[0]._id;
+
+            //create event
+            await eventRepository.createEvent(TEST_EVENT); 
+            
+            let event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            while(event.length != 1){
+                SLEEP(500);
+                event = await eventRepository.getEventByName(TEST_EVENT.Name);
+            }
+
+            EVENT_IMAGE.eventId = <string> <unknown> event[0]._id;
+
+            await eventRepository.uploadImage(new Image(
+                <Types.ObjectId> <unknown> EVENT_IMAGE.eventId,
+                EVENT_IMAGE.imgBase64,
+                EVENT_IMAGE.imageScale,
+                EVENT_IMAGE.imageType,
+                EVENT_IMAGE.imageObj
+            ));
+
+            let eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            while(eventImg.length != 1){
+                SLEEP(500);
+                eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            }
+            
+            UPDATED_EVENT_IMAGE.eventId = <string> <unknown> event[0]._id;
+            UPDATED_EVENT_IMAGE.imageId = <string> <unknown> eventImg[0]._id;
+            UPDATED_EVENT_IMAGE.managerEmail = process.env['TEST_USER_EMAIL_1'];
+
+            await eventRepository.addImageToEvent(event[0]._id,eventImg[0]._id);
+
+            const response = await request(httpServer).post('/event/updateEventFloorlayoutImage').send(
+                UPDATED_EVENT_IMAGE
+            );
+
+            eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            //imageType is last to update ref: event handler
+            console.log(eventImg[0].imageType);
+            console.log(UPDATED_EVENT_IMAGE.imageType);
+            while(eventImg[0].imageType != UPDATED_EVENT_IMAGE.imageType ){  
+                SLEEP(500);
+                eventImg = await eventRepository.findImageByEventId(event[0]._id);
+            }
+            
+            expect(response.body.status).toBe("success");
+
+            const temp: IUpdateEventFloorLayoutImgRequest = {
+                eventId: <string> <unknown> event[0]._id,
+                imageId: <string> <unknown> eventImg[0]._id,
+                managerEmail: process.env['TEST_USER_EMAIL_1'],
+                imgBase64: eventImg[0].imageBase64,
+                imageObj: eventImg[0].imageObj,
+                imageScale: eventImg[0].imageScale,
+                imageType: eventImg[0].imageType,
+            }
+
+            const res = objectSubset(UPDATED_EVENT_IMAGE,[temp]);
+            expect(res).toBe(true);
+
+            //cleanup
+            await userRepository.deleteUserById(manager[0]._id);
+            await eventRepository.deleteEventbyId(event[0]._id);
+            await eventRepository.removeImage(eventImg[0]._id);
         })  
     })
 

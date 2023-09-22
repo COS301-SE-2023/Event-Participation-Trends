@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { KalmanFilterService } from './kalman-filter.service';
+import { KalmanFilter as KalmanFilterService } from './kalman-filter.service';
 
 describe('KalmanFilterService', () => {
   let service: KalmanFilterService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [KalmanFilterService],
+      providers: [KalmanFilterService, Number],
     }).compile();
 
     service = module.get<KalmanFilterService>(KalmanFilterService);
