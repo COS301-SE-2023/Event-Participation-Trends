@@ -80,6 +80,7 @@ describe('app', () => {
     ).as('getAllEvents');
   });
   it('should contain an event', () => {
+    // Uncomment this once the test is updated
     // cy.get('div').contains('LOG IN WITH GOOGLE').click();
     // cy.visit('/');
     // cy.window().then((win) => {
