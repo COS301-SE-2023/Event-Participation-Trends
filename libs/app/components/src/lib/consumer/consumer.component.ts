@@ -71,7 +71,7 @@ export class ConsumerComponent implements AfterViewInit {
     this.socket = new Socket({
       url: '/',
       options: {
-        path: 'api',
+        path: '/api',
         transports: ['websocket'],
       },
     });
