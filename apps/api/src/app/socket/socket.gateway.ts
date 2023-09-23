@@ -4,7 +4,7 @@ import { SocketServiceService as SocketService } from './socket-service.service'
 import { Logger } from '@nestjs/common';
 import { types as MediasoupTypes } from 'mediasoup';
 
-@WebSocketGateway()
+@WebSocketGateway({path: '/api/', cors: true})
 export class SocketGateway implements OnGatewayDisconnect{
   @WebSocketServer()
   server: Server;
