@@ -1,0 +1,17 @@
+<div class="w-full h-full bg-transparent overflow-hidden flex flex-col">
+    <video
+      #remote_video
+      controls
+      muted
+      autoplay
+      playsinline
+      hidden
+      class="content overflow-hidden aspect-video m-auto"
+    ></video>
+  <fieldset #fs_subscribe disabled class="mx-auto flex flex-row gap-10 p-4">
+    <select #select_producer>
+      <option *ngFor="let producer of producers">{{ producer }}</option>
+    </select>
+    <button #btn_subscribe>Subscribe</button> <span #sub_status></span>
+  </fieldset>
+</div>

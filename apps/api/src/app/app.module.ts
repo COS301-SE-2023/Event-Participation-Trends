@@ -30,6 +30,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import {DatabaseModule} from '@event-participation-trends/api/database/feature';
 import { DatabaseConfigService } from '@event-participation-trends/api/database/feature';
 import { NgIconsModule } from '@ng-icons/core';
+import { SocketGateway } from './socket/socket.gateway';
+import { SocketServiceService } from './socket/socket-service.service';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { NgIconsModule } from '@ng-icons/core';
     UserService,
     EventService,
     SensorlinkingService,
+    SocketGateway,
+    SocketServiceService
   ],
 })
 export class AppModule {}
