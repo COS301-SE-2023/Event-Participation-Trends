@@ -74,10 +74,10 @@ export class ProducerComponent implements AfterViewInit {
   }
 
   async connect() {
-    const serverUrl = `localhost:3000`;
     this.socket = new Socket({
-      url: serverUrl,
+      url: '/',
       options: {
+        path: 'api',
         transports: ['websocket'],
       },
     });
