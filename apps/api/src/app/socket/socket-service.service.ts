@@ -77,7 +77,7 @@ export class SocketServiceService {
     const transport = await this.router.createWebRtcTransport({
       listenIps: [{
         ip: '0.0.0.0',
-        announcedIp: '192.168.0.194'
+        announcedIp: '192.168.0.194' // to be replaced with public ip of server.
       }],
       enableUdp: true,
       enableTcp: true,
