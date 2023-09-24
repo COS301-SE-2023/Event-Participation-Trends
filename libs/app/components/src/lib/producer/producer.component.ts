@@ -77,7 +77,7 @@ export class ProducerComponent implements AfterViewInit {
     this.socket = new Socket({
       url: '/',
       options: {
-        path: '/api',
+        path: '/api/ws',
         transports: ['websocket'],
       },
     });
