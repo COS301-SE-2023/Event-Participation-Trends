@@ -1,4 +1,4 @@
-<div class="w-full h-full bg-transparent overflow-hidden flex flex-col">
+<div class="w-full h-full bg-transparent overflow-hidden flex flex-col flex-grow">
     <video
       #local_video
       controls
@@ -6,7 +6,7 @@
       autoplay
       playsinline
       hidden
-      class="content overflow-hidden aspect-video m-auto"
+      class="content overflow-hidden aspect-video m-auto flex-grow max-h-[400px]"
     ></video>
     <fieldset #fs_publish disabled class="mx-auto flex flex-row gap-10 p-4">
       <div>
