@@ -5,6 +5,10 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: '../../coverage/apps/app',
   coverageReporters: ['clover', 'json', 'lcov', 'text'], // Include 'json' for JSON coverage report
+  collectCoverageFrom: [
+    '**/src/**/*.{ts,js}',
+    '!**/node_modules/**'
+  ],
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
