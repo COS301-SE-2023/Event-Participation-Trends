@@ -12,7 +12,7 @@ import { Socket } from 'ngx-socket-io'
 })
 export class ConsumerComponent {
   private device!: Device;
-  private socket!: Socket;
+  public socket!: Socket;
   private producer!: MediasoupTypes.Producer;
   private transport!: MediasoupTypes.Transport;
   public producers: string[] = [];
@@ -49,6 +49,9 @@ export class ConsumerComponent {
     const index = this.producers.indexOf(this.currentStream);
     this.currentStream = this.producers[(index+1)%this.producers.length];
     this.remoteVideo.nativeElement.srcObject = null;
+    if(!this.currentStream){
+      return;
+    }
     if(this.transport){
       this.consume(this.transport);
     }
@@ -61,6 +64,9 @@ export class ConsumerComponent {
     const index = this.producers.indexOf(this.currentStream);
     this.currentStream = this.producers[(index-1+this.producers.length)%this.producers.length];
     this.remoteVideo.nativeElement.srcObject = null;
+    if(!this.currentStream){
+      return;
+    }
     if(this.transport){
       this.consume(this.transport);
     }
@@ -96,10 +102,9 @@ export class ConsumerComponent {
     });
     this.socket.connect();
 
-    this.emitEvent('connection', { eventID: this.eventID});
-  
+    
     this.socket.on('connect', async () => {
-
+      this.emitEvent('connection', { eventID: this.eventID});
       await this.emitEvent('getRouterRtpCapabilities', null).then(async (data: any) => {
         await this.loadDevice(data!);
         // .then(() => console.log("Device loaded"))
@@ -122,6 +127,9 @@ export class ConsumerComponent {
       return;
     }
     this.producers = data;
+    if(this.producers.length <= 0){
+      return;
+    }
     if(this.producers.filter((p:string)=>p===this.currentStream).length === 0){
       this.currentStream = '';
       this.remoteVideo.nativeElement.srcObject = null;
