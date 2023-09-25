@@ -14,11 +14,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: ^16.14.0
-
     - name: Set up environment variables
       run: echo "${{ secrets.DOTENVFILE }}" > .env
 
@@ -30,6 +25,9 @@ jobs:
     - name: Run the fix_node_modules script
       run: ./fix_node_modules.sh
 
+    - run: 'yarn nx run-many --target=lint --all --parallel --skip-nx-cache'
+    - run: 'yarn nx run-many --target=build --all --parallel --skip-nx-cache'
+
     - name: Run tests and generate coverage reports
       run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache --coverage --testTimeout=10000'
 
@@ -39,6 +37,8 @@ jobs:
     # Uncomment this once the app-e2e tests are working/up to date
     # - name: Run app-e2e tests and generate coverage reports
     #   run: 'yarn nx run app-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
+
+    - run: 'yarn test:integration'
 
     - name: Upload coverage reports to Codecov 
       # uses: codecov/codecov-action@v3 
