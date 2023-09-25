@@ -8,6 +8,7 @@ import { Event,
          Image,
 } from '../schemas';
 import { Types } from 'mongoose';
+import { ChatMessage } from './interfaces';
 
 @Injectable()
 export class EventRepository {
@@ -21,6 +22,18 @@ export class EventRepository {
     async createEvent(event: IEventDetails){
         await this.eventModel.create(event);
     }   
+
+    async createChatMessage(eventId: Types.ObjectId, message: ChatMessage){
+        await this.eventModel.updateOne(
+            { _id: {$eq: eventId}},
+            { $addToSet: {eventChats :message}});
+    }
+
+    async getEventChatMessages(eventId: Types.ObjectId, stallName: string){
+        return await this.imageModel.find(
+            {eventId: {$eq: eventId}, 
+            'eventChats': {'stallName': stallName}})
+    }
 
     async uploadImage(image: Image){
         await this.imageModel.create(image);   
