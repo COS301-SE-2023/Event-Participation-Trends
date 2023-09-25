@@ -14,6 +14,7 @@ export class ProducerComponent implements AfterViewInit {
   private device!: Device;
   private socket!: Socket;
   private producer!: MediasoupTypes.Producer;
+  public eventID = '';
   @ViewChild('fs_publish') fsPublish!: ElementRef<HTMLFieldSetElement>;
   @ViewChild('btn_webcam') btnWebcam!: ElementRef<HTMLButtonElement>;
   @ViewChild('btn_screen') btnScreen!: ElementRef<HTMLButtonElement>;
@@ -26,7 +27,7 @@ export class ProducerComponent implements AfterViewInit {
       this.txtScreen.nativeElement.innerHTML = 'Not supported';
       this.btnScreen.nativeElement.disabled = true;
     }
-    this.connect();
+    // this.connect();
     this.btnWebcam.nativeElement.addEventListener('click', this.publish.bind(this));
     this.btnScreen.nativeElement.addEventListener('click', this.publish.bind(this));
     // window.localStorage.setItem('debug', 'mediasoup-client:*');
@@ -83,11 +84,11 @@ export class ProducerComponent implements AfterViewInit {
     });
     this.socket.connect();
 
-    this.emitEvent('connection', {
-      eventID: "64c0ee83a5ec624fb1fec138"
-    });
-  
+    
     this.socket.on('connect', async () => {
+      this.emitEvent('connection', {
+        eventID: this.eventID
+      });
       this.fsPublish.nativeElement.disabled = false;
 
       await this.emitEvent('getRouterRtpCapabilities', null).then(async (data: any) => {

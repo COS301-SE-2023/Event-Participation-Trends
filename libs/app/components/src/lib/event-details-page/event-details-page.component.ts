@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, NgZone, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute } from '@angular/router';
@@ -10,7 +10,7 @@ import { heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { matDeleteRound } from '@ng-icons/material-icons/round';
 import { matCheckBox, matCancelPresentation } from '@ng-icons/material-icons/baseline';
 import { DeleteConfirmModalComponent } from '../delete-confirm-modal/delete-confirm-modal.component';
-import { ConsumerComponent } from '../consumer/consumer.component';
+import { ProducerComponent } from '../producer/producer.component';
 
 @Component({
   selector: 'event-participation-trends-event-details-page',
@@ -20,19 +20,25 @@ import { ConsumerComponent } from '../consumer/consumer.component';
     FormsModule,
     NgIconsModule,
     DeleteConfirmModalComponent,
-    ConsumerComponent,
+    ProducerComponent,
   ],
   templateUrl: './event-details-page.component.html',
   styleUrls: ['./event-details-page.component.css'],
   providers: [provideIcons({ heroInboxSolid, matDeleteRound, matCheckBox, matCancelPresentation })],
 })
-export class EventDetailsPageComponent implements OnInit {
+export class EventDetailsPageComponent implements OnInit, AfterViewInit {
+  @ViewChild('producer_component') producer_component!: ProducerComponent;
   constructor(
     private appApiService: AppApiService,
     private router: Router,
     private route: ActivatedRoute,
     private ngZone: NgZone
   ) {}
+  
+  async ngAfterViewInit(): Promise<void> {
+    this.producer_component.eventID = this.id;
+    await this.producer_component.connect();
+  }
 
   public id = '';
   public event: any | null = null;
