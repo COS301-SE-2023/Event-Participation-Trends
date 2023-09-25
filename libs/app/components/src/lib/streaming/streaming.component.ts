@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { matSend, matChat, matClose, matArrowLeft, matArrowRight } from '@ng-icons/material-icons/baseline';
@@ -24,7 +24,7 @@ interface VideoStream {
     provideIcons({matSend, heroFaceSmileSolid, matChat, matClose, heroVideoCameraSlashSolid, matArrowLeft, matArrowRight})
   ]
 })
-export class StreamingComponent implements OnInit, AfterViewChecked {
+export class StreamingComponent implements OnInit {
   @ViewChild('scrollContainer', {static: false}) scrollContainer!: ElementRef;
 
   newMessage = '';
@@ -257,19 +257,22 @@ export class StreamingComponent implements OnInit, AfterViewChecked {
       this.isExistingStream = true;
     }
 
-  }
-
-  ngAfterViewChecked() {
     this.scrollToBottom();
   }
 
+  // ngAfterViewChecked() {
+  //   this.scrollToBottom();
+  // }
+
   scrollToBottom(): void {
-    try {
-      const container = this.scrollContainer.nativeElement;
-      container.scrollTop = container.scrollHeight;
-    } catch (err) {
-      console.error('Error scrolling to bottom:', err);
-    }
+    setTimeout(() => {
+      try {
+        const container = this.scrollContainer.nativeElement;
+        container.scrollTop = container.scrollHeight;
+      } catch (err) {
+        console.error('Error scrolling to bottom:', err);
+      }
+    },50);
   }
 
   get filteredStreams(): VideoStream[] {
@@ -372,6 +375,7 @@ export class StreamingComponent implements OnInit, AfterViewChecked {
       this.newMessage = '';
       (document.getElementById('messageInput') as HTMLInputElement).setAttribute('value', '');
       this.eventMessages.push(newMessage);
+      this.scrollToBottom();
     }
   }
 
@@ -386,9 +390,11 @@ export class StreamingComponent implements OnInit, AfterViewChecked {
 
   openChat() {
     this.chatToggled = true;
+    this.showArrows = false;
     const element = document.getElementById('chatMenu');
     if (element) {
       element.style.width = '400px';
+      this.scrollToBottom();
     }
   }
 

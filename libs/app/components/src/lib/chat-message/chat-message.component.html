@@ -1,6 +1,6 @@
 <div
   *ngIf="isFirstMessageOfTheDay"
-  class="date-section flex items-center justify-center m-1"
+  class="date-section flex items-center justify-center m-1 z-50"
   [ngClass]="{'mt-2': isFirstMessageOfEvent, 'mt-4': !isFirstMessageOfEvent}"
 >
   <label class="p-1 pr-2 pl-2 rounded-full text-xs" [ngClass]="{'bg-ept-blue-grey': isLargeScreen, 'bg-ept-off-white': !isLargeScreen}">{{ messageDate }}</label>
