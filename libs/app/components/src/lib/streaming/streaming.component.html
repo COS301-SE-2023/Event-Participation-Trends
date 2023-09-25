@@ -89,9 +89,11 @@
         <hr class="border-ept-dark-grey border-opacity-50 w-[150px]" />
       </div>
       <div
-        class="large-screen-scrollbar pb-2 w-full h-full bg-ept-blue-grey bg-opacity-15 rounded-lg overflow-y-scroll"
+        #scrollContainer
+        class="large-screen-scrollbar pb-2 w-full h-full bg-ept-blue-grey bg-opacity-15 rounded-lg overflow-y-scroll scroll-smooth"
         [ngClass]="{
-          'flex flex-col justify-center items-center': !eventMessages || eventMessages.length === 0
+          'flex flex-col justify-center items-center':
+            !eventMessages || eventMessages.length === 0
         }"
       >
         <div
@@ -109,7 +111,7 @@
         </div>
         <!-- add custom message component which would take in the message, time and profile pic -->
         <event-participation-trends-chat-message
-            class="opacity-100 z-50"
+          class="opacity-100 z-50"
           *ngFor="let message of eventMessages"
           [message]="message"
           [prevMessageSameUser]="
@@ -126,6 +128,14 @@
           "
           [isUserEventManager]="isMessageFromManager(message)"
           [activeUserID]="activeUserID"
+          [messageDate]="getDateForMessage(message)"
+          [isFirstMessageOfTheDay]="
+            checkIfFirstMessageOfTheDay(
+              message,
+              eventMessages[eventMessages.indexOf(message) - 1]
+            )
+          "
+          [isFirstMessageOfEvent]="checkIfFirstMessageOfEvent(message)"
         ></event-participation-trends-chat-message>
       </div>
       <div class="flex flex-row justify-between items-center mt-5">
@@ -213,9 +223,11 @@
             <hr class="border-ept-dark-grey border-opacity-50 w-[150px]" />
           </div>
           <div
-            class="small-screen-scrollbar w-full h-[85%] bg-ept-navy-blue bg-opacity-30 rounded-lg overflow-y-scroll pb-2"
+            #scrollContainer
+            class="small-screen-scrollbar w-full h-[85%] bg-ept-navy-blue bg-opacity-30 rounded-lg overflow-y-scroll overflow-y-scroll scroll-smooth pb-2"
             [ngClass]="{
-              'flex flex-col justify-center items-center': !eventMessages || eventMessages.length === 0
+              'flex flex-col justify-center items-center':
+                !eventMessages || eventMessages.length === 0
             }"
           >
             <div
@@ -249,6 +261,14 @@
               "
               [isUserEventManager]="isMessageFromManager(message)"
               [activeUserID]="activeUserID"
+              [messageDate]="getDateForMessage(message)"
+              [isFirstMessageOfTheDay]="
+                checkIfFirstMessageOfTheDay(
+                  message,
+                  eventMessages[eventMessages.indexOf(message) - 1]
+                )
+              "
+              [isFirstMessageOfEvent]="checkIfFirstMessageOfEvent(message)"
             ></event-participation-trends-chat-message>
           </div>
           <div class="flex flex-row justify-between items-center mt-5">

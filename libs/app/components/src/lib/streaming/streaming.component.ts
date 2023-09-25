@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { matSend, matChat, matClose, matArrowLeft, matArrowRight } from '@ng-icons/material-icons/baseline';
@@ -24,7 +24,9 @@ interface VideoStream {
     provideIcons({matSend, heroFaceSmileSolid, matChat, matClose, heroVideoCameraSlashSolid, matArrowLeft, matArrowRight})
   ]
 })
-export class StreamingComponent implements OnInit {
+export class StreamingComponent implements OnInit, AfterViewChecked {
+  @ViewChild('scrollContainer', {static: false}) scrollContainer!: ElementRef;
+
   newMessage = '';
   eventMessages: any = null; // this will change to an array of eventMessage objects
   videoStreams!:VideoStream[]; // this will change to an array of videoStream objects
@@ -45,6 +47,7 @@ export class StreamingComponent implements OnInit {
   activeUserEmail = '';
   activeUserFullName = '';
   activeUserProfilePic = '';
+  isFirstMessageOfTheDay = false;
 
   constructor(private appApiService: AppApiService, private router: Router) { }
 
@@ -256,6 +259,19 @@ export class StreamingComponent implements OnInit {
 
   }
 
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
+    try {
+      const container = this.scrollContainer.nativeElement;
+      container.scrollTop = container.scrollHeight;
+    } catch (err) {
+      console.error('Error scrolling to bottom:', err);
+    }
+  }
+
   get filteredStreams(): VideoStream[] {
     return this.videoStreams.filter((stream) => stream.id !== this.activeVideoStream.id);
   }
@@ -287,6 +303,40 @@ export class StreamingComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  checkIfFirstMessageOfTheDay(message: any, prevMessage: any): boolean {
+    if (!prevMessage) return true;
+
+    const messageDate = new Date(message.timestamp);
+    const prevMessageDate = new Date(prevMessage.timestamp);
+
+    if (messageDate.getDate() !== prevMessageDate.getDate()) {
+      return true;
+    }
+    return false;
+  }
+
+  checkIfFirstMessageOfEvent(message: any): boolean {
+    if (message === this.eventMessages[0]) {
+      return true;
+    }
+    return false;
+  }
+
+  getDateForMessage(message: any): string {
+    const messageDate = new Date(message.timestamp);
+    const today = new Date();
+
+    if (messageDate.getDate() === today.getDate()) {
+      return 'Today';
+    }
+    else if (messageDate.getDate() === today.getDate() - 1) {
+      return 'Yesterday';
+    }
+    else {
+      return messageDate.toLocaleDateString();
+    }
   }
 
   async sendMessage() {

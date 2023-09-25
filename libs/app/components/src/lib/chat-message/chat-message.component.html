@@ -1,8 +1,25 @@
-<div [ngClass]="{'mt-0' : prevMessageSameUser, 'mt-2': !prevMessageSameUser}" class="relative">
+<div
+  *ngIf="isFirstMessageOfTheDay"
+  class="date-section flex items-center justify-center m-1"
+  [ngClass]="{'mt-2': isFirstMessageOfEvent, 'mt-4': !isFirstMessageOfEvent}"
+>
+  <label class="p-1 pr-2 pl-2 rounded-full text-xs" [ngClass]="{'bg-ept-blue-grey': isLargeScreen, 'bg-ept-off-white': !isLargeScreen}">{{ messageDate }}</label>
+</div>
+<div
+  [ngClass]="{ 'mt-0': prevMessageSameUser, 'mt-2': !prevMessageSameUser }"
+  class="relative"
+>
   <label
     *ngIf="message.user.id === activeUserID && !prevMessageSameUser"
     class="absolute font-light text-sm"
-    [ngClass]="{'right-[12px]': isUserEventManager && !isLargeScreen, 'left-[12px]': !isUserEventManager && !isLargeScreen, 'right-3': isUserEventManager && isLargeScreen, 'left-3': !isUserEventManager && isLargeScreen, 'text-ept-off-white': !isLargeScreen, 'text-gray-500': isLargeScreen}"
+    [ngClass]="{
+      'right-[12px]': isUserEventManager && !isLargeScreen,
+      'left-[12px]': !isUserEventManager && !isLargeScreen,
+      'right-3': isUserEventManager && isLargeScreen,
+      'left-3': !isUserEventManager && isLargeScreen,
+      'text-ept-off-white': !isLargeScreen,
+      'text-gray-500': isLargeScreen
+    }"
     >You</label
   >
   <label
@@ -12,7 +29,10 @@
       isUserEventManager
     "
     class="absolute font-light text-gray-500 mt-2 text-sm"
-    [ngClass]="{'text-ept-off-white right-4': !isLargeScreen, 'text-gray-500 right-3': isLargeScreen}"
+    [ngClass]="{
+      'text-ept-off-white right-4': !isLargeScreen,
+      'text-gray-500 right-3': isLargeScreen
+    }"
     >Manager</label
   >
   <div
