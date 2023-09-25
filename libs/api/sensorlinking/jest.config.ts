@@ -8,5 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../coverage/libs/api/sensorlinking',
-  coverageReporters: ['json', 'html'], // Include 'json' for JSON coverage report
+  coverageReporters: ['clover', 'json', 'lcov', 'text'], // Include 'json' for JSON coverage report
 };
