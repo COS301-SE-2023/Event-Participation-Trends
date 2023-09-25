@@ -10,6 +10,7 @@ import { heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { matDeleteRound } from '@ng-icons/material-icons/round';
 import { matCheckBox, matCancelPresentation } from '@ng-icons/material-icons/baseline';
 import { DeleteConfirmModalComponent } from '../delete-confirm-modal/delete-confirm-modal.component';
+import { ConsumerComponent } from '../consumer/consumer.component';
 
 @Component({
   selector: 'event-participation-trends-event-details-page',
@@ -19,6 +20,7 @@ import { DeleteConfirmModalComponent } from '../delete-confirm-modal/delete-conf
     FormsModule,
     NgIconsModule,
     DeleteConfirmModalComponent,
+    ConsumerComponent,
   ],
   templateUrl: './event-details-page.component.html',
   styleUrls: ['./event-details-page.component.css'],
