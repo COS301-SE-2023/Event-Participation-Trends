@@ -140,42 +140,10 @@ export class GetEventStatisticsHandler
       devicesOverInterval.set(intervalKey, intervalSet);
     }
 
-
-    // // set attendance over time from devicesOverTime
-
-    // const result = new Map<number, Set<number>>();
-
-    // for (const [datey, numberSet] of devicesOverTime) {
-
-    //   const date = new Date(datey);
-    //   // Calculate the interval key (e.g., "10:00-10:20")
-    //   const intervalStart = new Date(date);
-    //   intervalStart.setMinutes(Math.floor(date.getMinutes() / 20) * 20);
-    //   intervalStart.setSeconds(0);
-    //   intervalStart.setMilliseconds(0);
-
-    //   const intervalEnd = new Date(intervalStart);
-    //   intervalEnd.setMinutes(intervalEnd.getMinutes() + 20);
-
-    //   const intervalKey = intervalStart.getTime();
-
-    //   // Merge the numbers into the result map
-    //   if (!result.has(intervalKey)) {
-    //     result.set(intervalKey, new Set<number>());
-    //   }
-
-    //   const mergedSet = result.get(intervalKey)!;
-    //   for (const number of numberSet) {
-    //     mergedSet.add(number);
-    //   }
-    // }
-
     for (const [key, value] of devicesOverInterval.entries()) {
       console.log(key, " => " ,value.size);
       attendance_over_time_data.push({time: key, devices: value.size});
     }
-
-
 
     //compute statistics end
 
