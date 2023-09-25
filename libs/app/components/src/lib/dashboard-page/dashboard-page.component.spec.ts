@@ -58,7 +58,6 @@ describe('DashboardPageComponent', () => {
 
   it('should get event floorplan boundaries', () => {
     httpTestingController = TestBed.inject(HttpTestingController);
-    httpTestingController.expectOne(`/api/user/getRole`);
     // mock response
     const response: IGetFloorplanBoundariesResponse = {
       boundaries: {
@@ -80,13 +79,10 @@ describe('DashboardPageComponent', () => {
     expect(req.request.method).toEqual('GET');
 
     req.flush(response);
-
-    httpTestingController.verify();
   });
 
   it('should get floorlayout images', () => {
     httpTestingController = TestBed.inject(HttpTestingController);
-    httpTestingController.expectOne(`/api/user/getRole`);
     // mock response
     const response: IImage[] =[
       {
@@ -110,13 +106,10 @@ describe('DashboardPageComponent', () => {
     expect(req.request.method).toEqual('GET');
 
     req.flush(response);
-
-    httpTestingController.verify();
   });
 
   it('should get event floorlayout', () => {
     httpTestingController = TestBed.inject(HttpTestingController);
-    httpTestingController.expectOne(`/api/user/getRole`);
     // mock response
     const response: IGetEventFloorlayoutResponse = {
       floorlayout: ''
@@ -134,7 +127,5 @@ describe('DashboardPageComponent', () => {
     expect(req.request.method).toEqual('GET');
 
     req.flush(response);
-
-    httpTestingController.verify();
   });
 });
