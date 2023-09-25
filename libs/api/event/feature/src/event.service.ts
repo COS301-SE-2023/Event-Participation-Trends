@@ -77,6 +77,9 @@ import {
     IGetEventFloorlayoutImageResponse,
     IAddChatMessageRequest,
     AddChatMessageCommand,
+    IGetEventChatMessagesRequest,
+    IGetEventChatMessagesResponse,
+    GetEventChatMessagesQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -211,4 +214,8 @@ export class EventService {
     async addEventChatMessage(request: IAddChatMessageRequest){
         return await this.commandBus.execute<AddChatMessageCommand, void>(new AddChatMessageCommand(request)); 
     }
+
+    async getEventStallChats(request: IGetEventChatMessagesRequest) {
+        return await this.queryBus.execute<GetEventChatMessagesQuery, IGetEventChatMessagesResponse>(new GetEventChatMessagesQuery(request));
+    } 
 }
