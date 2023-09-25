@@ -1,8 +1,8 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { matSend, matChat, matClose, matArrowLeft, matArrowRight } from '@ng-icons/material-icons/baseline';
-import { heroFaceSmileSolid, heroVideoCameraSlashSolid } from '@ng-icons/heroicons/solid';
+import { heroVideoCameraSlashSolid } from '@ng-icons/heroicons/solid';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { FormsModule } from '@angular/forms';
 import { ChatMessageComponent } from '../chat-message/chat-message.component';
@@ -21,7 +21,7 @@ interface VideoStream {
   templateUrl: './streaming.component.html',
   styleUrls: ['./streaming.component.css'],
   providers: [
-    provideIcons({matSend, heroFaceSmileSolid, matChat, matClose, heroVideoCameraSlashSolid, matArrowLeft, matArrowRight})
+    provideIcons({matSend, matChat, matClose, heroVideoCameraSlashSolid, matArrowLeft, matArrowRight})
   ]
 })
 export class StreamingComponent implements OnInit {
@@ -31,7 +31,6 @@ export class StreamingComponent implements OnInit {
   eventMessages: any = null; // this will change to an array of eventMessage objects
   videoStreams!:VideoStream[]; // this will change to an array of videoStream objects
   activeVideoStream:any = null; // this will change to a videoStream object
-  showEmojiPicker = false;
   isLargeScreen = false;
   chatToggled = false;
   showChat = false;
@@ -395,19 +394,6 @@ export class StreamingComponent implements OnInit {
     if (element) {
       element.style.width = '400px';
       this.scrollToBottom();
-    }
-  }
-
-  showEmojiMenu() {
-    this.showEmojiPicker = !this.showEmojiPicker;
-    // set height of scrollContainer to 40% with a smooth transition
-    if (this.scrollContainer && this.showEmojiPicker) {
-      this.scrollContainer.nativeElement.style.height = '40%';
-      this.scrollContainer.nativeElement.style.transition = 'height 0.5s ease-in-out';
-    }
-    else if (this.scrollContainer && !this.showEmojiPicker) {
-      this.scrollContainer.nativeElement.style.height = '85%';
-      this.scrollContainer.nativeElement.style.transition = 'height 0.5s ease-in-out';
     }
   }
 
