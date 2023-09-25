@@ -31,6 +31,12 @@ export class SocketGateway implements OnGatewayDisconnect{
     return producers;
   }
 
+  @SubscribeMessage('message')
+  message(client: Socket, payload: any){
+    Logger.debug(this.appService.users.get(client.id).eventID);
+    this.server.to(this.appService.users.get(client.id).eventID).emit('message', payload);
+  }
+
   @SubscribeMessage('connection')
   connection(client: Socket, payload: any) {
     Logger.debug(`Client connected: ${client.id}`);
