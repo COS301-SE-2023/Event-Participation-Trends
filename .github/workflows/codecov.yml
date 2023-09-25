@@ -38,7 +38,7 @@ jobs:
     # - name: Run app-e2e tests and generate coverage reports
     #   run: 'yarn nx run app-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
 
-    - run: 'yarn test:integration --coverage --testTimeout=10000'
+    - run: 'yarn test:integration --coverage'
 
     - name: Upload coverage reports to Codecov 
       # uses: codecov/codecov-action@v3 
