@@ -275,4 +275,29 @@ export class EventDetailsPageComponent implements OnInit {
       this.showRequestBtnText = true;
     } 
   }
+
+  splitTitle(title: string): string[] {
+    const maxLength = window.innerWidth < 768 ? 15 : 20;
+    const parts = [];
+  
+    while (title.length > maxLength) {
+      const spaceIndex = title.lastIndexOf(' ', maxLength);
+      if (spaceIndex === -1) {
+        // If there are no spaces, split at the maximum length
+        parts.push(title.substring(0, maxLength));
+        title = title.substring(maxLength);
+      } else {
+        // Otherwise, split at the last space before the maximum length
+        parts.push(title.substring(0, spaceIndex));
+        title = title.substring(spaceIndex + 1);
+      }
+    }
+  
+    if (title.length > 0) {
+      parts.push(title);
+    }
+  
+    return parts;
+  }
+  
 }
