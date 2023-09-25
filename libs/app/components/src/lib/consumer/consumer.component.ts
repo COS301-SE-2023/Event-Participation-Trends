@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, ViewChild } from '@angular/core';
 import { types as MediasoupTypes, Device } from 'mediasoup-client';
 import { Socket } from 'ngx-socket-io'
 
@@ -10,21 +10,16 @@ import { Socket } from 'ngx-socket-io'
   templateUrl: './consumer.component.html',
   styleUrls: ['./consumer.component.css'],
 })
-export class ConsumerComponent implements AfterViewInit {
+export class ConsumerComponent {
   private device!: Device;
-  private socket!: Socket;
+  public socket!: Socket;
   private producer!: MediasoupTypes.Producer;
+  private transport!: MediasoupTypes.Transport;
   public producers: string[] = [];
-  @ViewChild('btn_subscribe') btnSubscribe!: ElementRef<HTMLButtonElement>;
-  @ViewChild('fs_subscribe') fsSubscribe!: ElementRef<HTMLFieldSetElement>;
+  public eventID = '';
+  private currentStream = '';
+  private connected = false;
   @ViewChild('remote_video') remoteVideo!: ElementRef<HTMLVideoElement>;
-  @ViewChild('select_producer') selectProducer!: ElementRef<HTMLSelectElement>;
-
-  ngAfterViewInit(): void {
-    this.connect();
-    this.btnSubscribe.nativeElement.addEventListener('click', this.subscribe.bind(this));
-    // window.localStorage.setItem('debug', 'mediasoup-client:*');
-  }
 
   async emitEvent(event: string, data: any): Promise<any> {
     // console.log("emitEvent: ", event, data);
@@ -48,6 +43,36 @@ export class ConsumerComponent implements AfterViewInit {
         }
       }, 500);
     });
+  }
+
+  async nextStream(){
+    const index = this.producers.indexOf(this.currentStream);
+    this.currentStream = this.producers[(index+1)%this.producers.length];
+    this.remoteVideo.nativeElement.srcObject = null;
+    if(!this.currentStream){
+      return;
+    }
+    if(this.transport){
+      this.consume(this.transport);
+    }
+    else{
+      this.subscribe();
+    }
+  }
+
+  async prevStream(){
+    const index = this.producers.indexOf(this.currentStream);
+    this.currentStream = this.producers[(index-1+this.producers.length)%this.producers.length];
+    this.remoteVideo.nativeElement.srcObject = null;
+    if(!this.currentStream){
+      return;
+    }
+    if(this.transport){
+      this.consume(this.transport);
+    }
+    else{
+      this.subscribe();
+    }
   }
 
   async getUserMedia(transport: MediasoupTypes.Transport, isWebcam: boolean) {
@@ -77,32 +102,51 @@ export class ConsumerComponent implements AfterViewInit {
     });
     this.socket.connect();
 
-    this.emitEvent('connection', null);
-  
+    
     this.socket.on('connect', async () => {
-      this.fsSubscribe.nativeElement.disabled = false;
-
+      this.emitEvent('connection', { eventID: this.eventID});
       await this.emitEvent('getRouterRtpCapabilities', null).then(async (data: any) => {
         await this.loadDevice(data!);
         // .then(() => console.log("Device loaded"))
       });
     });
-  
-    this.socket.on('disconnect', () => {
-      this.fsSubscribe.nativeElement.disabled = true;
-    });
-  
+
     this.socket.on('connect_error', (error: any) => {
       console.error('Connection failed:', error);
     });
   
-    this.socket.on('newProducer', (data: any) => {
-      this.fsSubscribe.nativeElement.disabled = false;
-    });
-
     this.socket.fromEvent('producers').subscribe((data:any)=>{
       this.producers = data;
-    })
+      this.updateCurrentStream();
+    });
+  }
+
+  updateCurrentStream(){
+    const data = this.producers;
+    if(!this.connected){
+      return;
+    }
+    this.producers = data;
+    if(this.producers.length <= 0){
+      return;
+    }
+    if(this.producers.filter((p:string)=>p===this.currentStream).length === 0){
+      this.currentStream = '';
+      this.remoteVideo.nativeElement.srcObject = null;
+      this.remoteVideo.nativeElement.hidden = true;
+    }
+    if(this.currentStream === '' && this.producers.length > 0){
+      this.currentStream = this.producers[0];
+      // this.subscribe();
+      if(this.transport){
+        this.remoteVideo.nativeElement.hidden = false;
+        this.consume(this.transport);
+      }
+      else{
+        this.remoteVideo.nativeElement.hidden = false;
+        this.subscribe();
+      }
+    }
   }
 
   async loadDevice(routerRtpCapabilities: MediasoupTypes.RtpCapabilities) {
@@ -117,6 +161,8 @@ export class ConsumerComponent implements AfterViewInit {
       }
     }
     await this.device.load({ routerRtpCapabilities });
+    this.connected = true;
+    this.updateCurrentStream();
   }
 
   async publish(e: any) {
@@ -132,6 +178,7 @@ export class ConsumerComponent implements AfterViewInit {
     }
   
     const transport = this.device.createSendTransport(data);
+    this.transport = transport;
 
     transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
       // console.log("TRANSPORT CONNECT EVENT");
@@ -161,16 +208,16 @@ export class ConsumerComponent implements AfterViewInit {
     transport.on('connectionstatechange', (state) => {
       switch (state) {
         case 'connecting':
-          this.fsSubscribe.nativeElement.disabled = true;
+          // this.fsSubscribe.nativeElement.disabled = true;
         break;
   
         case 'connected':
-          this.fsSubscribe.nativeElement.disabled = false;
+          // this.fsSubscribe.nativeElement.disabled = false;
         break;
   
         case 'failed':
-          transport.close();
-          this.fsSubscribe.nativeElement.disabled = true;
+          // transport.close();
+          // this.fsSubscribe.nativeElement.disabled = true;
         break;
   
         default: break;
@@ -216,19 +263,20 @@ export class ConsumerComponent implements AfterViewInit {
     transport.on('connectionstatechange', async (state) => {
       switch (state) {
         case 'connecting':
-          this.fsSubscribe.nativeElement.disabled = true;
+          // this.fsSubscribe.nativeElement.disabled = true;
           break;
   
         case 'connected':
           this.remoteVideo.nativeElement.srcObject = await stream;
           this.remoteVideo.nativeElement.hidden = false;
           await this.emitEvent('resume', null);
-          this.fsSubscribe.nativeElement.disabled = true;
+          this.remoteVideo.nativeElement.play();
+          // this.fsSubscribe.nativeElement.disabled = true;
           break;
   
         case 'failed':
           transport.close();
-          this.fsSubscribe.nativeElement.disabled = false;
+          // this.fsSubscribe.nativeElement.disabled = false;
           break;
   
         default: break;
@@ -240,7 +288,7 @@ export class ConsumerComponent implements AfterViewInit {
 
   async consume(transport: MediasoupTypes.Transport) {
     const { rtpCapabilities } = this.device;
-    const data = await this.emitEvent('consume', { rtpCapabilities, producerId: this.selectProducer.nativeElement.value});
+    const data = await this.emitEvent('consume', { rtpCapabilities, producerId: this.currentStream});
     const {
       producerId,
       id,

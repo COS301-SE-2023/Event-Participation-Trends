@@ -12,32 +12,42 @@ export class SocketGateway implements OnGatewayDisconnect{
   }
 
   handleDisconnect(client: any) {
+    const eventID = this.appService.users.get(client.id)?.eventID;
+    const user = this.appService.users.get(client.id);
+    if(user?.transport){
+      user?.transport?.close();
+    }
     this.appService.users.delete(client.id);
-    this.server.emit('producers', this.getProducers());
+    this.server.to(eventID).emit('producers', this.getProducers(eventID));
   }
 
-  @SubscribeMessage('chat')
-  chat(client: Socket, payload:any){
-    Logger.debug(`Client chat: ${client.id}`);
-    client.broadcast.emit('chat', payload);
-    return '';
-  }
-
-  getProducers() {
+  getProducers(eventID: string) {
     const producers = [];
     this.appService.users.forEach((user)=> {
-      if(user.producer){
+      if(user.producer && user.eventID === eventID){
         producers.push(user.producer.id);
       }
     })
-    Logger.debug('announcing new producers');
-    // this.server.emit('producers', producers);
     return producers;
+  }
+
+  @SubscribeMessage('message')
+  message(client: Socket, payload: any){
+    Logger.debug(this.appService.users.get(client.id).eventID);
+    this.server.to(this.appService.users.get(client.id).eventID).emit('message', payload);
   }
 
   @SubscribeMessage('connection')
   connection(client: Socket, payload: any) {
     Logger.debug(`Client connected: ${client.id}`);
+    this.appService.users.set(client.id, {
+      consumer: null,
+      producer: null,
+      socket: client,
+      transport: null,
+      eventID: payload?.eventID || "",
+    });
+    client.join(payload?.eventID || "");
     if (this.appService.users.size > 0) {
       const producers = [];
       this.appService.users.forEach((user)=> {
@@ -45,7 +55,7 @@ export class SocketGateway implements OnGatewayDisconnect{
           producers.push(user.producer);
         }
       });
-      client.emit('producers', this.getProducers());
+      client.emit('producers', this.getProducers(this.appService.users.get(client.id).eventID));
     }
     return '';
   }
@@ -120,8 +130,8 @@ export class SocketGateway implements OnGatewayDisconnect{
     const { kind, rtpParameters } = payload;
     const producer = await (this.appService.users.get(client.id).transport).produce({ kind, rtpParameters });
     this.appService.users.get(client.id).producer = producer;
-    // client.broadcast.emit('newProducer');
-    this.server.emit('producers', this.getProducers());
+    const eventID = this.appService.users.get(client.id).eventID;
+    this.server.to(eventID).emit('producers', this.getProducers(eventID));
     return { id: producer.id };
   };
 

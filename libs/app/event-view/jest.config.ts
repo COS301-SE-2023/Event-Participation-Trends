@@ -4,6 +4,7 @@ export default {
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: '../../../coverage/libs/app/event-view',
+  coverageReporters: ['clover', 'json', 'lcov', 'text'], // Include 'json' for JSON coverage report
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

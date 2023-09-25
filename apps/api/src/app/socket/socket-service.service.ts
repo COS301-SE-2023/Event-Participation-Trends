@@ -4,10 +4,11 @@ import { types as MediasoupTypes, createWorker } from 'mediasoup'
 import * as dns from 'dns';
 
 interface User {
-    socket: Socket,
-    producer: MediasoupTypes.Producer,
-    consumer: MediasoupTypes.Consumer,
-    transport: MediasoupTypes.Transport,
+  socket: Socket,
+  producer: MediasoupTypes.Producer,
+  consumer: MediasoupTypes.Consumer,
+  transport: MediasoupTypes.Transport,
+  eventID: string,
 }
 
 @Injectable()
@@ -73,7 +74,7 @@ export class SocketServiceService {
     Logger.debug(`Client createWebRtcTransport: ${client.id}`);
     const maxIncomingBitrate = 1500000;
     const initialAvailableOutgoingBitrate = 1000000;
-
+    // /*IP_PLACEHOLDER*/
     const transport = await this.router.createWebRtcTransport({
       listenIps: [{
         ip: '0.0.0.0',
@@ -91,17 +92,12 @@ export class SocketServiceService {
         Logger.error(error);
       }
     }
-    if(!this.users.has(client.id)){
-      this.users.set(client.id, {
-        socket: client,
-        producer: null,
-        consumer: null,
-        transport: transport,
-      });
+    const old_transport = this.users.get(client.id).transport;
+    if(old_transport){
+      old_transport.close();
     }
-    else{
-      this.users.get(client.id).transport = transport;
-    }
+    this.users.get(client.id).transport = transport;
+
 
     return {
       transport,
@@ -157,17 +153,7 @@ export class SocketServiceService {
       return;
     }
 
-    if(!this.users.has(client.id)){
-      this.users.set(client.id, {
-        socket: client,
-        producer: null,
-        consumer: consumer,
-        transport: null,
-      });
-    }
-    else{
-      this.users.get(client.id).consumer = consumer;
-    }
+    this.users.get(client.id).consumer = consumer;
   
     return {
       producerId: producer.id,
