@@ -9,6 +9,12 @@
       "options": {
         "jestConfig": "apps/api-e2e/jest.config.ts",
         "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
       }
     },
     "lint": {
