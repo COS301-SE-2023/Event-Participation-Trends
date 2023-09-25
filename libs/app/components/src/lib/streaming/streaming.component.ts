@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { matSend, matChat, matClose, matArrowLeft, matArrowRight } from '@ng-icons/material-icons/baseline';
@@ -7,6 +7,7 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { FormsModule } from '@angular/forms';
 import { ChatMessageComponent } from '../chat-message/chat-message.component';
 import { Router } from '@angular/router';
+import { IUser } from '@event-participation-trends/api/user/util';
 
 interface VideoStream {
   id: number;
@@ -24,6 +25,8 @@ interface VideoStream {
   ]
 })
 export class StreamingComponent implements OnInit {
+  @ViewChild('scrollContainer', {static: false}) scrollContainer!: ElementRef;
+
   newMessage = '';
   eventMessages: any = null; // this will change to an array of eventMessage objects
   videoStreams!:VideoStream[]; // this will change to an array of videoStream objects
@@ -40,6 +43,11 @@ export class StreamingComponent implements OnInit {
   eventID = '';
   event: any = null;
   isExistingStream = false;
+  activeUserID = '';
+  activeUserEmail = '';
+  activeUserFullName = '';
+  activeUserProfilePic = '';
+  isFirstMessageOfTheDay = false;
 
   constructor(private appApiService: AppApiService, private router: Router) { }
 
@@ -62,6 +70,94 @@ export class StreamingComponent implements OnInit {
 
     // for now this is just mock data until we have the API
     this.eventMessages = [
+      {
+        id: 1,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '64c7cd4362769c8a0330ce0e',
+          name: 'John Doe',
+          email: 'u21457451@tuks.co.za',
+          profilePic: 'assets/trash-delete.svg',
+        },
+      },
+      {
+        id: 2,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '64c7cd4362769c8a0330ce0e',
+          name: 'John Doe',
+          email: 'u21457451@tuks.co.za',
+          profilePic: 'assets/trash-delete.svg',
+        },
+      },
+      {
+        id: 3,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '3',
+          name: 'Jane Doe',
+          email: 'arnojooste@gmail.com',
+          profilePic: 'assets/trash-open.svg',
+        },
+      },
+      {
+        id: 4,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '64c7c9b862769c8a0330cca0',
+          name: 'Arno Jooste',
+          email: 'arnojooste3008@gmail.com',
+          profilePic: 'assets/stall-icon.png',
+        },
+      },
+      {
+        id: 1,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '64c7cd4362769c8a0330ce0e',
+          name: 'John Doe',
+          email: 'u21457451@tuks.co.za',
+          profilePic: 'assets/trash-delete.svg',
+        },
+      },
+      {
+        id: 2,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '64c7cd4362769c8a0330ce0e',
+          name: 'John Doe',
+          email: 'u21457451@tuks.co.za',
+          profilePic: 'assets/trash-delete.svg',
+        },
+      },
+      {
+        id: 3,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '3',
+          name: 'Jane Doe',
+          email: 'arnojooste@gmail.com',
+          profilePic: 'assets/trash-open.svg',
+        },
+      },
+      {
+        id: 4,
+        text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
+        timestamp: '2023-07-20T08:42:14.211+00:00',
+        user: {
+          id: '64c7c9b862769c8a0330cca0',
+          name: 'Arno Jooste',
+          email: 'arnojooste3008@gmail.com',
+          profilePic: 'assets/stall-icon.png',
+        },
+      },
       {
         id: 1,
         text: 'Hello world! jjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjj',
@@ -161,6 +257,22 @@ export class StreamingComponent implements OnInit {
       this.isExistingStream = true;
     }
 
+    this.scrollToBottom();
+  }
+
+  // ngAfterViewChecked() {
+  //   this.scrollToBottom();
+  // }
+
+  scrollToBottom(): void {
+    setTimeout(() => {
+      try {
+        const container = this.scrollContainer.nativeElement;
+        container.scrollTop = container.scrollHeight;
+      } catch (err) {
+        console.error('Error scrolling to bottom:', err);
+      }
+    },50);
   }
 
   get filteredStreams(): VideoStream[] {
@@ -181,7 +293,7 @@ export class StreamingComponent implements OnInit {
   isPrevMessageSameUser(message: any, prevMessage: any): boolean {
     if (!prevMessage) return false;
 
-    if (message.user.email === prevMessage.user.email) {
+    if (message.user.id === prevMessage.user.id) {
       return true;
     }
     return false;
@@ -190,14 +302,81 @@ export class StreamingComponent implements OnInit {
   isNextMessageSameUser(message: any, nextMessage: any): boolean {
     if (!nextMessage) return false;
 
-    if (message.user.email === nextMessage.user.email) {
+    if (message.user.id === nextMessage.user.id) {
       return true;
     }
     return false;
   }
 
-  sendMessage() {
-    console.log('Sending message: ', this.newMessage);
+  checkIfFirstMessageOfTheDay(message: any, prevMessage: any): boolean {
+    if (!prevMessage) return true;
+
+    const messageDate = new Date(message.timestamp);
+    const prevMessageDate = new Date(prevMessage.timestamp);
+
+    if (messageDate.getDate() !== prevMessageDate.getDate()) {
+      return true;
+    }
+    return false;
+  }
+
+  checkIfFirstMessageOfEvent(message: any): boolean {
+    if (message === this.eventMessages[0]) {
+      return true;
+    }
+    return false;
+  }
+
+  getDateForMessage(message: any): string {
+    const messageDate = new Date(message.timestamp);
+    const today = new Date();
+
+    if (messageDate.getDate() === today.getDate()) {
+      return 'Today';
+    }
+    else if (messageDate.getDate() === today.getDate() - 1) {
+      return 'Yesterday';
+    }
+    else {
+      return messageDate.toLocaleDateString();
+    }
+  }
+
+  async sendMessage() {
+    this.newMessage = (document.getElementById('messageInput') as HTMLInputElement)?.value || '';
+
+    if (this.newMessage === '') {
+      return;
+    }
+    else {
+      const newMessageID = this.eventMessages.length + 1;
+
+      this.appApiService.getEmail().then((email) => {
+        this.activeUserEmail = email;
+      });
+      const users: IUser[] = await this.appApiService.getAllUsers();
+      this.activeUserEmail = await this.appApiService.getEmail();
+      this.activeUserID = (users.filter((user) => user.Email === this.activeUserEmail)[0] as any)._id;
+      this.activeUserFullName = await this.appApiService.getFullName();
+      this.activeUserProfilePic = await this.appApiService.getProfilePicUrl();
+
+      const newMessage = {
+        id: newMessageID,
+        text: this.newMessage,
+        timestamp: new Date().toISOString(),
+        user: {
+          id: this.activeUserID,
+          name: this.activeUserFullName,
+          email: this.activeUserEmail,
+          profilePic: this.activeUserProfilePic,
+        },
+      };
+
+      this.newMessage = '';
+      (document.getElementById('messageInput') as HTMLInputElement).setAttribute('value', '');
+      this.eventMessages.push(newMessage);
+      this.scrollToBottom();
+    }
   }
 
   hideChat(): void {
@@ -211,9 +390,11 @@ export class StreamingComponent implements OnInit {
 
   openChat() {
     this.chatToggled = true;
+    this.showArrows = false;
     const element = document.getElementById('chatMenu');
     if (element) {
       element.style.width = '400px';
+      this.scrollToBottom();
     }
   }
 

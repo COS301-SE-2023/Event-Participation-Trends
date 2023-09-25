@@ -1,18 +1,38 @@
-<div>
+<div
+  *ngIf="isFirstMessageOfTheDay"
+  class="date-section flex items-center justify-center m-1 z-50"
+  [ngClass]="{'mt-2': isFirstMessageOfEvent, 'mt-4': !isFirstMessageOfEvent}"
+>
+  <label class="p-1 pr-2 pl-2 rounded-full text-xs" [ngClass]="{'bg-ept-blue-grey': isLargeScreen, 'bg-ept-off-white': !isLargeScreen}">{{ messageDate }}</label>
+</div>
+<div
+  [ngClass]="{ 'mt-0': prevMessageSameUser, 'mt-2': !prevMessageSameUser }"
+  class="relative"
+>
   <label
-    *ngIf="message.user.email === activeUserEmail && !prevMessageSameUser"
-    class="absolute font-light mt-2 text-sm"
-    [ngClass]="{'right-8': isUserEventManager, 'left-8': !isUserEventManager, 'text-ept-off-white': !isLargeScreen, 'text-gray-500': isLargeScreen}"
+    *ngIf="message.user.id === activeUserID && !prevMessageSameUser"
+    class="absolute font-light text-sm"
+    [ngClass]="{
+      'right-[12px]': isUserEventManager && !isLargeScreen,
+      'left-[12px]': !isUserEventManager && !isLargeScreen,
+      'right-3': isUserEventManager && isLargeScreen,
+      'left-3': !isUserEventManager && isLargeScreen,
+      'text-ept-off-white': !isLargeScreen,
+      'text-gray-500': isLargeScreen
+    }"
     >You</label
   >
   <label
     *ngIf="
-      message.user.email !== activeUserEmail &&
+      message.user.id !== activeUserID &&
       !prevMessageSameUser &&
       isUserEventManager
     "
-    class="absolute right-8 font-light text-gray-500 mt-2 text-sm"
-    [ngClass]="{'text-ept-off-white': !isLargeScreen, 'text-gray-500': isLargeScreen}"
+    class="absolute font-light text-gray-500 mt-2 text-sm"
+    [ngClass]="{
+      'text-ept-off-white right-4': !isLargeScreen,
+      'text-gray-500 right-3': isLargeScreen
+    }"
     >Manager</label
   >
   <div
@@ -26,7 +46,7 @@
   >
     <div
       class="flex flex-col items-center justify-evenly mr-3"
-      [ngClass]="{ 'justify-center': message.user.email === activeUserEmail }"
+      [ngClass]="{ 'justify-center': message.user.id === activeUserID }"
     >
       <img
         id="userProfilePic"
@@ -37,14 +57,14 @@
       />
     </div>
     <div
-      class="flex flex-col w-fit sm:max-w-[120px] md:max-w-[240px] w-[300px] pl-2 pr-2 rounded-md min-h-[40px]"
+      class="flex justify-between w-fit mr-16 pl-2 pr-2 rounded-md min-h-[40px]"
       [ngClass]="{
-        'bg-[#D9D9D9]': message.user.email !== activeUserEmail,
-        'bg-ept-blue-grey': message.user.email === activeUserEmail
+        'bg-[#D9D9D9]': message.user.id !== activeUserID,
+        'bg-ept-blue-grey': message.user.id === activeUserID
       }"
     >
-      <span class="text-sm p-1">{{ message.text }}</span>
-      <div class="flex justify-end items-centerp-1">
+      <span class="text-sm p-1 self-center">{{ message.text }}</span>
+      <div class="flex flex-col justify-end items-end p-1 ml-2">
         <span class="right-2 bottom-1 text-xs font-light text-gray-500">{{
           convertTimestampToDigitalTime(message.timestamp)
         }}</span>
@@ -61,10 +81,10 @@
     }"
   >
     <div
-      class="mt-3 bg-ept-bumble-yellow flex-col w-fit sm:max-w-[120px] md:max-w-[240px] w-[300px] pl-2 pr-2 rounded-md min-h-[40px]"
+      class="mt-3 ml-16 bg-ept-bumble-yellow flex justify-between w-fit sm:max-w-[120px] md:max-w-[240px] w-[300px] pl-2 pr-2 rounded-md min-h-[40px]"
     >
-      <span class="text-sm p-1">{{ message.text }}</span>
-      <div class="flex justify-end items-centerp-1">
+      <span class="text-sm p-1 self-center">{{ message.text }}</span>
+      <div class="flex flex-col justify-end items-center p-1 ml-2">
         <span class="right-2 bottom-1 text-xs font-light text-gray-500">{{
           convertTimestampToDigitalTime(message.timestamp)
         }}</span>

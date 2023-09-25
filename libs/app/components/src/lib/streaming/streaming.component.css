@@ -1,0 +1,18 @@
+.large-screen-scrollbar {
+    scrollbar-color: #b1b8d437 transparent;
+}
+  
+.large-screen-scrollbar::-webkit-scrollbar-thumb {
+    background: #b1b8d437 !important;
+    border-radius: 10px;
+}
+
+.small-screen-scrollbar {
+    scrollbar-color: #22242A transparent;
+}
+  
+.small-screen-scrollbar::-webkit-scrollbar-thumb {
+    background: #22242A !important;
+    border-radius: 10px;
+    opacity: 75%;
+}
