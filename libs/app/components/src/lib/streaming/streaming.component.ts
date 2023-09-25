@@ -44,7 +44,6 @@ export class StreamingComponent implements OnInit, AfterViewInit {
   isLargeScreen = true;
   chatToggled = false;
   showChat = false;
-  isDropdownOpen = false;
   showArrows = false;
   timer: any;
   prevMessageSameUser = false;
@@ -141,10 +140,6 @@ export class StreamingComponent implements OnInit, AfterViewInit {
         console.error('Error scrolling to bottom:', err);
       }
     },50);
-  }
-
-  toggleDropdown(): void {
-    this.isDropdownOpen = !this.isDropdownOpen;
   }
 
   isMessageFromManager(message: any): boolean {
