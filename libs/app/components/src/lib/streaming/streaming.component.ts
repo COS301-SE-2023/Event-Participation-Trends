@@ -400,6 +400,15 @@ export class StreamingComponent implements OnInit {
 
   showEmojiMenu() {
     this.showEmojiPicker = !this.showEmojiPicker;
+    // set height of scrollContainer to 40% with a smooth transition
+    if (this.scrollContainer && this.showEmojiPicker) {
+      this.scrollContainer.nativeElement.style.height = '40%';
+      this.scrollContainer.nativeElement.style.transition = 'height 0.5s ease-in-out';
+    }
+    else if (this.scrollContainer && !this.showEmojiPicker) {
+      this.scrollContainer.nativeElement.style.height = '85%';
+      this.scrollContainer.nativeElement.style.transition = 'height 0.5s ease-in-out';
+    }
   }
 
   setActiveVideoStream(event: any): void {
