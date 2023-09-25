@@ -58,9 +58,10 @@ export class ChatMessageComponent implements OnInit, AfterViewInit{
     try {
       const date = new Date(timestamp);
       
-      if (isNaN(date.getTime())) {
-        throw new Error('Invalid timestamp');
-      }
+      // Include this if you want to throw an error if the timestamp is invalid
+      // if (isNaN(date.getTime())) {
+      //   throw new Error('Invalid time for date');
+      // }
       
       const hours = date.getHours();
       const minutes = date.getMinutes();
