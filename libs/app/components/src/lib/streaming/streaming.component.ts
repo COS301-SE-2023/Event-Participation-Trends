@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { matSend, matChat, matClose, matArrowLeft, matArrowRight } from '@ng-icons/material-icons/baseline';
@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { ChatMessageComponent } from '../chat-message/chat-message.component';
 import { Router } from '@angular/router';
 import { IUser } from '@event-participation-trends/api/user/util';
+import { ConsumerComponent } from '../consumer/consumer.component';
 
 interface VideoStream {
   id: number;
@@ -17,22 +18,22 @@ interface VideoStream {
 @Component({
   selector: 'event-participation-trends-streaming',
   standalone: true,
-  imports: [CommonModule, NgIconsModule, FormsModule, ChatMessageComponent],
+  imports: [CommonModule, NgIconsModule, FormsModule, ChatMessageComponent, ConsumerComponent],
   templateUrl: './streaming.component.html',
   styleUrls: ['./streaming.component.css'],
   providers: [
     provideIcons({matSend, heroFaceSmileSolid, matChat, matClose, heroVideoCameraSlashSolid, matArrowLeft, matArrowRight})
   ]
 })
-export class StreamingComponent implements OnInit {
+export class StreamingComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollContainer', {static: false}) scrollContainer!: ElementRef;
-
+  @ViewChild('consumer_component') consumer_component!: ConsumerComponent;
   newMessage = '';
   eventMessages: any = null; // this will change to an array of eventMessage objects
   videoStreams!:VideoStream[]; // this will change to an array of videoStream objects
   activeVideoStream:any = null; // this will change to a videoStream object
   showEmojiPicker = false;
-  isLargeScreen = false;
+  isLargeScreen = true;
   chatToggled = false;
   showChat = false;
   isDropdownOpen = false;
@@ -51,17 +52,22 @@ export class StreamingComponent implements OnInit {
 
   constructor(private appApiService: AppApiService, private router: Router) { }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    this.isLargeScreen = event.target.innerWidth > 1152;
-  }
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event: any) {
+  //   this.isLargeScreen = event.target.innerWidth > 1152;
+  // }
 
-  @HostListener('document:click', ['$event'])
-  clickout(event: any) {
-    //if the target id is not the element with id videoStreams
-    if (event.target.id !== 'videoStreams') {
-      this.isDropdownOpen = false;
-    }    
+  // @HostListener('document:click', ['$event'])
+  // clickout(event: any) {
+  //   //if the target id is not the element with id videoStreams
+  //   if (event.target.id !== 'videoStreams') {
+  //     this.isDropdownOpen = false;
+  //   }    
+  // }
+
+  async ngAfterViewInit() {
+    this.consumer_component.eventID = this.eventID;
+    this.consumer_component.connect();
   }
 
   async ngOnInit() {
@@ -400,6 +406,15 @@ export class StreamingComponent implements OnInit {
 
   showEmojiMenu() {
     this.showEmojiPicker = !this.showEmojiPicker;
+    // set height of scrollContainer to 40% with a smooth transition
+    if (this.scrollContainer && this.showEmojiPicker) {
+      this.scrollContainer.nativeElement.style.height = '40%';
+      this.scrollContainer.nativeElement.style.transition = 'height 0.5s ease-in-out';
+    }
+    else if (this.scrollContainer && !this.showEmojiPicker) {
+      this.scrollContainer.nativeElement.style.height = '85%';
+      this.scrollContainer.nativeElement.style.transition = 'height 0.5s ease-in-out';
+    }
   }
 
   setActiveVideoStream(event: any): void {
@@ -437,39 +452,41 @@ export class StreamingComponent implements OnInit {
   }
 
   switchToPreviousStream(idx?: number): void {
-    const index = this.videoStreams.findIndex((stream) => stream.id === this.activeVideoStream.id);
-    if (index > 0) {
-      this.activeVideoStream = this.videoStreams[index - 1];
-      const videoElement = document.getElementById('video') as HTMLVideoElement;
-      if (videoElement) {
-        videoElement.load();
-      }
-    }
-    else {
-      this.activeVideoStream = this.videoStreams[this.videoStreams.length - 1];
-      const videoElement = document.getElementById('video') as HTMLVideoElement;
-      if (videoElement) {
-        videoElement.load();
-      }
-    }
+    // const index = this.videoStreams.findIndex((stream) => stream.id === this.activeVideoStream.id);
+    // if (index > 0) {
+    //   this.activeVideoStream = this.videoStreams[index - 1];
+    //   const videoElement = document.getElementById('video') as HTMLVideoElement;
+    //   if (videoElement) {
+    //     videoElement.load();
+    //   }
+    // }
+    // else {
+    //   this.activeVideoStream = this.videoStreams[this.videoStreams.length - 1];
+    //   const videoElement = document.getElementById('video') as HTMLVideoElement;
+    //   if (videoElement) {
+    //     videoElement.load();
+    //   }
+    // }
+    this.consumer_component.prevStream();
   }
 
   switchToNextStream(): void {
-    const index = this.videoStreams.findIndex((stream) => stream.id === this.activeVideoStream.id);
-    if (index < this.videoStreams.length - 1) {
-      this.activeVideoStream = this.videoStreams[index + 1];
-      const videoElement = document.getElementById('video') as HTMLVideoElement;
-      if (videoElement) {
-        videoElement.load();
-      }
-    }
-    else {
-      this.activeVideoStream = this.videoStreams[0];
-      const videoElement = document.getElementById('video') as HTMLVideoElement;
-      if (videoElement) {
-        videoElement.load();
-      }
-    }
+    // const index = this.videoStreams.findIndex((stream) => stream.id === this.activeVideoStream.id);
+    // if (index < this.videoStreams.length - 1) {
+    //   this.activeVideoStream = this.videoStreams[index + 1];
+    //   const videoElement = document.getElementById('video') as HTMLVideoElement;
+    //   if (videoElement) {
+    //     videoElement.load();
+    //   }
+    // }
+    // else {
+    //   this.activeVideoStream = this.videoStreams[0];
+    //   const videoElement = document.getElementById('video') as HTMLVideoElement;
+    //   if (videoElement) {
+    //     videoElement.load();
+    //   }
+    // }
+    this.consumer_component.nextStream();
   }
 
   switchToStream(): void {
