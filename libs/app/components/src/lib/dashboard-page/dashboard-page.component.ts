@@ -166,14 +166,14 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     if (!this.id) {
       this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
-    
-    if (!(await this.hasAccess())) {
+    this.event = await this.appApiService.getEvent({ eventId: this.id });
+
+    if (!(await this.hasAccess()) && !this.event.event.PublicEvent) {
       this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
 
     this.timeOffset = (new Date()).getTimezoneOffset() * 60 * 1000;
     
-    this.event = await this.appApiService.getEvent({ eventId: this.id });
 
     // get the boundaries from the floorlayout
     const response = await this.appApiService.getFloorplanBoundaries(this.id);
