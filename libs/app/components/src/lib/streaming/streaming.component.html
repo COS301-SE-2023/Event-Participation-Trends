@@ -178,23 +178,6 @@
       </div>
       <hr class="border-ept-dark-grey border-opacity-50 w-[100px]" />
     </div>
-    <div class="absolute left-1 top-1 p-2 z-50" [ngClass]="{'opacity-50 pointer-events-none': chatToggled}">
-      <select
-        name="videoStreams"
-        id="videoStreams"
-        class="bg-ept-off-white rounded-sm text-ept-deep-grey pl-3 pr-3 cursor-pointer self-center w-[200px]"
-        (change)="setActiveVideoStream($event)"
-        (click)="toggleDropdown()"
-      >
-        <option
-          *ngFor="let stream of filteredStreams"
-          [value]="stream.name"
-          class="bg-ept-off-white rounded-sm text-ept-deep-grey pl-3 pr-3 cursor-pointer self-center hover:bg-ept-blue-grey hover:text-ept-off-white"
-        >
-          {{ stream.name }}
-        </option>
-      </select>
-    </div>
     <div
       *ngIf="!showChat"
       class="overflow-y-hidden h-full rounded-md absolute right-3 top-3 z-50 cursor-pointer"
@@ -309,12 +292,29 @@
       </div>
     </div>
     <div
-      class="video-stream w-full h-full border-2 border-solid border-ept-blue-grey rounded-lg"
+      class="video-stream relative w-full h-full border-2 border-solid border-ept-blue-grey rounded-lg"
       [ngClass]="{ 'flex flex-col justify-center items-center': !videoStreams }"
       (mouseover)="onMouseOver()"
       (mouseleave)="onMouseLeave()"
       (click)="onVideoClick()"
     >
+    <div class="absolute left-1 top-1 p-2 z-50" [ngClass]="{'opacity-50 pointer-events-none': chatToggled}">
+        <select
+          name="videoStreams"
+          id="videoStreams"
+          class="bg-ept-navy-blue rounded-lg outline-none text-ept-off-white w-[200px] p-2"
+          (change)="setActiveVideoStream($event)"
+          (click)="toggleDropdown()"
+        >
+          <option
+            *ngFor="let stream of filteredStreams"
+            [value]="stream.name"
+            class="cursor-pointer self-center hover:bg-ept-blue-grey text-ept-off-white"
+          >
+            {{ stream.name }}
+          </option>
+        </select>
+      </div>
       <div
         class="z-50 absolute cursor-pointer flex items-center top-[45%] left-6 rounded-full bg-ept-navy-blue bg-opacity-[75%] p-1"
         [ngClass]="{ 'opacity-100': showArrows, 'opacity-0 pointer-events-none': !showArrows }"
