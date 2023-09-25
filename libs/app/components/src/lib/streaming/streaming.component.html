@@ -3,30 +3,6 @@
     <div
       class="relative p-5 pt-4 flex flex-col justify-center items-center col-span-24 max-h-full overflow-y-scroll rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey"
     >
-      <!-- <div class="flex flex-col justify-center items-center mb-5">
-        <div class="font-semibold text-2xl text-ept-off-white text-center">
-          Streams
-        </div>
-        <hr class="border-ept-dark-grey border-opacity-50 w-[100px]" />
-      </div> -->
-      <!-- <div class="absolute left-3 top-4 p-2 z-50">
-        <select
-          name="videoStreams"
-          id="videoStreams"
-          class="bg-ept-navy-blue rounded-lg outline-none text-ept-off-white w-[200px] p-2"
-          (change)="setActiveVideoStream($event)"
-          (click)="toggleDropdown()"
-          *ngIf="isExistingStream"
-        >
-          <option
-            *ngFor="let stream of videoStreams"
-            [value]="stream.name"
-            class="cursor-pointer self-center hover:bg-ept-blue-grey text-ept-off-white"
-          >
-            {{ stream.name }}
-          </option>
-        </select>
-      </div> -->
       <div
         class="w-full h-full rounded-lg"
         [ngClass]="{
@@ -57,25 +33,6 @@
             class="text-6xl text-ept-off-white"
           ></ng-icon>
         </div>
-        <!-- <video *ngIf="videoStreams" class="w-full h-full" id="video" autoplay>
-          <source
-            [src]="activeVideoStream ? activeVideoStream.url : null"
-            type="application/x-mpegURL"
-            type="video/mp4"
-          />
-        </video>
-        <div
-          *ngIf="!videoStreams"
-          class="flex flex-col justify-evenly items-center"
-        >
-          <ng-icon
-            name="heroVideoCameraSlashSolid"
-            class="text-4xl text-ept-off-white"
-          ></ng-icon>
-          <h1 class="text-ept-off-white text-xl font-semibold">
-            No streams available
-          </h1>
-        </div> -->
         <event-participation-trends-consumer #consumer_component></event-participation-trends-consumer>
       </div>
     </div>
