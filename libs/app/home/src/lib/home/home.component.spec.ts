@@ -1,8 +1,20 @@
-import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+  waitForAsync,
+} from '@angular/core/testing';
 import { HomeComponent } from './home.component';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HomeHelpComponent, ProfileComponent } from '@event-participation-trends/app/components';
+import {
+  HomeHelpComponent,
+  ProfileComponent,
+} from '@event-participation-trends/app/components';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import {
   heroArrowLeft,
@@ -20,10 +32,7 @@ import {
   matCompareArrowsRound,
 } from '@ng-icons/material-icons/round';
 
-import {
-  matMenu,
-  matClose
-} from '@ng-icons/material-icons/baseline';
+import { matMenu, matClose } from '@ng-icons/material-icons/baseline';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -52,7 +61,13 @@ describe('HomeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [HomeComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule, ProfileComponent, HomeHelpComponent, NgIconsModule],
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule,
+        ProfileComponent,
+        HomeHelpComponent,
+        NgIconsModule,
+      ],
       providers: [
         AppApiService,
         provideIcons({
@@ -68,9 +83,9 @@ describe('HomeComponent', () => {
           matCompareArrowsRound,
           heroArrowsRightLeft,
           matMenu,
-          matClose
-        })
-      ]
+          matClose,
+        }),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomeComponent);
@@ -177,7 +192,7 @@ describe('HomeComponent', () => {
 
   it('should set the role to admin', waitForAsync(async () => {
     const mockResponse = {
-      role: 'admin'
+      role: 'admin',
     };
 
     await component.ngOnInit();
@@ -191,7 +206,7 @@ describe('HomeComponent', () => {
 
   it('should set the role to manager', waitForAsync(async () => {
     const mockResponse = {
-      role: 'manager'
+      role: 'manager',
     };
 
     await component.ngOnInit();
@@ -205,7 +220,7 @@ describe('HomeComponent', () => {
 
   it('should set the role to viewer', waitForAsync(async () => {
     const mockResponse = {
-      role: 'viewer'
+      role: 'viewer',
     };
 
     await component.ngOnInit();
@@ -219,7 +234,7 @@ describe('HomeComponent', () => {
 
   it('should set the role to viewer if no role is returned', waitForAsync(async () => {
     const mockResponse = {
-      role: ''
+      role: '',
     };
 
     await component.ngOnInit();
@@ -252,7 +267,7 @@ describe('HomeComponent', () => {
   it('should set tab to compare', waitForAsync(async () => {
     // set the window location
     window.location.href = 'localhost:4200/home/compare';
-    
+
     await component.ngOnInit();
 
     expect(component.tab).toEqual(Tab.Compare);
@@ -281,6 +296,96 @@ describe('HomeComponent', () => {
     await component.ngOnInit();
 
     expect(component.showMenuBar).toEqual(true);
+  }));
+
+  it('should call getProfilePicUrl, getRole and set tab to users while showing the menu bar', waitForAsync(async () => {
+    const spy = jest.spyOn(appApiService, 'getProfilePicUrl');
+    const spy2 = jest.spyOn(appApiService, 'getRole');
+
+    window.innerWidth = 1025;
+    window.location.href = 'localhost:4200/home/users';
+
+    await component.ngOnInit();
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy2).toHaveBeenCalled();  
+    expect(component.tab).toEqual(Tab.Users);
+    expect(component.showMenuBar).toEqual(true);
+  }));
+
+  it('should call getProfilePicUrl, getRole and set tab to events while showing the menu bar', waitForAsync(async () => {
+    const spy = jest.spyOn(appApiService, 'getProfilePicUrl');
+    const spy2 = jest.spyOn(appApiService, 'getRole');
+
+    window.innerWidth = 1025;
+    window.location.href = 'localhost:4200/home/events';
+
+    await component.ngOnInit();
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy2).toHaveBeenCalled();  
+    expect(component.tab).toEqual(Tab.Events);
+    expect(component.showMenuBar).toEqual(true);
+  }));
+
+  it('should call getProfilePicUrl, getRole and set tab to compare while showing the menu bar', waitForAsync(async () => {
+    const spy = jest.spyOn(appApiService, 'getProfilePicUrl');
+    const spy2 = jest.spyOn(appApiService, 'getRole');
+
+    window.innerWidth = 1025;
+    window.location.href = 'localhost:4200/home/compare';
+
+    await component.ngOnInit();
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy2).toHaveBeenCalled();  
+    expect(component.tab).toEqual(Tab.Compare);
+    expect(component.showMenuBar).toEqual(true);
+  }));
+
+  it('should call getProfilePicUrl, getRole and set tab to events while not showing the menu bar', waitForAsync(async () => {
+    const spy = jest.spyOn(appApiService, 'getProfilePicUrl');
+    const spy2 = jest.spyOn(appApiService, 'getRole');
+
+    window.innerWidth = 1023;
+    window.location.href = 'localhost:4200/home/events';
+
+    await component.ngOnInit();
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy2).toHaveBeenCalled();  
+    expect(component.tab).toEqual(Tab.Events);
+    expect(component.showMenuBar).toEqual(false);
+  }));
+
+  it('should call getProfilePicUrl, getRole and set tab to users while not showing the menu bar', waitForAsync(async () => {
+    const spy = jest.spyOn(appApiService, 'getProfilePicUrl');
+    const spy2 = jest.spyOn(appApiService, 'getRole');
+
+    window.innerWidth = 1023;
+    window.location.href = 'localhost:4200/home/users';
+
+    await component.ngOnInit();
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy2).toHaveBeenCalled();  
+    expect(component.tab).toEqual(Tab.Users);
+    expect(component.showMenuBar).toEqual(false);
+  }));
+
+  it('should call getProfilePicUrl, getRole and set tab to compare while not showing the menu bar', waitForAsync(async () => {
+    const spy = jest.spyOn(appApiService, 'getProfilePicUrl');
+    const spy2 = jest.spyOn(appApiService, 'getRole');
+
+    window.innerWidth = 1023;
+    window.location.href = 'localhost:4200/home/compare';
+
+    await component.ngOnInit();
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy2).toHaveBeenCalled();  
+    expect(component.tab).toEqual(Tab.Compare);
+    expect(component.showMenuBar).toEqual(false);
   }));
 
   it('should return true if role is manager', () => {
@@ -340,27 +445,42 @@ describe('HomeComponent', () => {
   });
 
   it('should set tab to events', () => {
+    const spy = jest.spyOn(component, 'pressButton');
+    const spy2 = jest.spyOn(component, 'hideNavBar');
+
+    component.navBarVisible = true;
     component.events();
 
     expect(component.tab).toEqual(Tab.Events);
-    component.navBarVisible = true;
-    expect(component.navBarVisible).toBeTruthy();
+    expect(spy).toHaveBeenCalled();
+    expect(component.navBarVisible).toBeFalsy();
+    expect(spy2).toHaveBeenCalled();
   });
 
   it('should set tab to users', () => {
+    const spy = jest.spyOn(component, 'pressButton');
+    const spy2 = jest.spyOn(component, 'hideNavBar');
+
+    component.navBarVisible = true;
     component.users();
 
     expect(component.tab).toEqual(Tab.Users);
-    component.navBarVisible = true;
-    expect(component.navBarVisible).toBeTruthy();
+    expect(spy).toHaveBeenCalled();
+    expect(component.navBarVisible).toBeFalsy();
+    expect(spy2).toHaveBeenCalled();
   });
 
   it('should set tab to compare', () => {
+    const spy = jest.spyOn(component, 'pressButton');
+    const spy2 = jest.spyOn(component, 'hideNavBar');
+
+    component.navBarVisible = true;
     component.compare();
 
     expect(component.tab).toEqual(Tab.Compare);
-    component.navBarVisible = true;
-    expect(component.navBarVisible).toBeTruthy();
+    expect(spy).toHaveBeenCalled();
+    expect(component.navBarVisible).toBeFalsy();
+    expect(spy2).toHaveBeenCalled();
   });
 
   it('should press profile button', () => {
@@ -470,5 +590,4 @@ describe('HomeComponent', () => {
 
     expect(component.navBarVisible).toBeFalsy();
   });
-
 });
