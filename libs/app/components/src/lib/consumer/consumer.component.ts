@@ -17,7 +17,7 @@ export class ConsumerComponent {
   private transport!: MediasoupTypes.Transport;
   public producers: string[] = [];
   public eventID = '';
-  private currentStream = '';
+  public currentStream = '';
   private connected = false;
   @ViewChild('remote_video') remoteVideo!: ElementRef<HTMLVideoElement>;
 
@@ -48,8 +48,9 @@ export class ConsumerComponent {
   async nextStream(){
     const index = this.producers.indexOf(this.currentStream);
     this.currentStream = this.producers[(index+1)%this.producers.length];
-    this.remoteVideo.nativeElement.srcObject = null;
+    // this.remoteVideo.nativeElement.srcObject = null;
     if(!this.currentStream){
+      this.currentStream = '';
       return;
     }
     if(this.transport){
@@ -63,8 +64,9 @@ export class ConsumerComponent {
   async prevStream(){
     const index = this.producers.indexOf(this.currentStream);
     this.currentStream = this.producers[(index-1+this.producers.length)%this.producers.length];
-    this.remoteVideo.nativeElement.srcObject = null;
+    // this.remoteVideo.nativeElement.srcObject = null;
     if(!this.currentStream){
+      this.currentStream = '';
       return;
     }
     if(this.transport){
@@ -124,10 +126,12 @@ export class ConsumerComponent {
   updateCurrentStream(){
     const data = this.producers;
     if(!this.connected){
+      this.currentStream = '';
       return;
     }
     this.producers = data;
     if(this.producers.length <= 0){
+      this.currentStream = '';
       return;
     }
     if(this.producers.filter((p:string)=>p===this.currentStream).length === 0){
