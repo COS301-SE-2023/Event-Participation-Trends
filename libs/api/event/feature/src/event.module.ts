@@ -15,6 +15,13 @@ import {
     UpdateFloorlayoutHandler,
     AddDevicePositionHandler,
     AddViewerHandler,
+    DeleteEventHandler,
+    RemoveEventFromViewersHandler,
+    UploadImageHandler,
+    AddImageToEventHandler,
+    RemoveEventImageHandler,
+    DeleteEventImageHandler,
+    UpdateEventFloorLayoutImgHandler,
 } from './commands';
 
 import { 
@@ -26,7 +33,10 @@ import {
     GetEventDevicePositionHandler,
     GetAllEventCategoriesHandler,
     GetManagedEventCategoriesHandler,
-    GetFloorplanBoundariesQueryHandler
+    GetFloorplanBoundariesQueryHandler,
+    GetAllActiveEventsHandler,
+    GetEventFloorlayoutImageHandler,
+    GetEventStatisticsHandler,
  } from './queries';
 
 import {
@@ -40,6 +50,13 @@ import {
     UpdateFloorlayoutEventHandler,
     AddDevicePositionEventHandler,
     AddViewerEventHandler,
+    DeleteEventEventHandler,
+    RemoveEventFromViewersEventHandler,
+    UploadImageEventHandler,
+    AddImageToEventEventHandler,
+    RemoveEventImageEventHandler,
+    DeleteEventImageEventHandler,
+    UpdateEventFloorLayoutImgEventHandler,
 } from './events';
 
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
@@ -57,6 +74,13 @@ export const CommandHandlers = [
     UpdateFloorlayoutHandler,
     AddDevicePositionHandler,
     AddViewerHandler,
+    DeleteEventHandler,
+    RemoveEventFromViewersHandler,
+    UploadImageHandler,
+    AddImageToEventHandler,
+    RemoveEventImageHandler,
+    DeleteEventImageHandler,
+    UpdateEventFloorLayoutImgHandler,
 ]
 
 export const EventHandlers = [
@@ -69,7 +93,14 @@ export const EventHandlers = [
     UpdateEventDetialsEventHandler,
     UpdateFloorlayoutEventHandler,
     AddDevicePositionEventHandler,
-    AddViewerEventHandler
+    AddViewerEventHandler,
+    DeleteEventEventHandler,
+    RemoveEventFromViewersEventHandler,
+    UploadImageEventHandler,
+    AddImageToEventEventHandler,
+    RemoveEventImageEventHandler,
+    DeleteEventImageEventHandler,
+    UpdateEventFloorLayoutImgEventHandler,
 ];
 
 export const QueryHandlers = [
@@ -82,7 +113,10 @@ export const QueryHandlers = [
     GetEventDevicePositionHandler,
     GetAllEventCategoriesHandler,
     GetManagedEventCategoriesHandler,
-    GetFloorplanBoundariesQueryHandler
+    GetFloorplanBoundariesQueryHandler,
+    GetAllActiveEventsHandler,
+    GetEventFloorlayoutImageHandler,
+    GetEventStatisticsHandler,
 ];
 
 

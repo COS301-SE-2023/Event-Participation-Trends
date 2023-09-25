@@ -27,6 +27,8 @@ module.exports = {
       },
       gridColumn: {
         'span-34': 'span 34 / span 34',
+        'span-29': 'span 29 / span 29',
+        'span-24': 'span 24 / span 24',
       },
       keyframes: {
         bounce: {
@@ -50,7 +52,13 @@ module.exports = {
         "ept-off-white": "#F5F5F5",
         "ept-blue-grey": "#B1B8D4",
         "ept-navy-blue": "#22242A",
+        "ept-light-blue": "#57D3DD",
+        "ept-light-green": "#4ade80",
+        "ept-light-red": "#ef4444"
       },
+      opacity: {
+        '15': '0.15',
+      }
     },
   },
 };

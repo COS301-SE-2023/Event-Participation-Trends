@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - redesign_dev
+      - dev
 jobs:
   deploy:
     runs-on: ubuntu-latest

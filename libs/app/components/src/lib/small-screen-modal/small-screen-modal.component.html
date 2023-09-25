@@ -1,0 +1,23 @@
+<div
+  class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
+>
+  <div
+    class="fixed w-screen h-screen top-0 left-0 bg-ept-navy-blue bg-opacity-80"
+  ></div>
+  <div
+    class="relative max-w-md bg-gradient-to-br from-ept-blue-grey from-[-30%] to-[#7a849c] z-50 rounded-2xl p-5"
+  >
+    <ng-icon 
+        name="matClose" 
+        class="text-3xl absolute right-2 top-2 text-ept-navy-blue cursor-pointer"
+        (click)="closeModal()"
+        ></ng-icon>
+    <div class="flex justify-center">
+        <h1 class="text-center sm:text-2xl md:text-3xl lg:text-2xl">Oops!</h1>
+    </div> 
+        <p class="text-center sm:text-sm md:text-md lg:text-lg">
+            Your design masterpiece craves a bigger screen. 
+            Let's give it the room it deserves!
+        </p>
+  </div>
+</div>

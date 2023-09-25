@@ -4,8 +4,6 @@ import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import Konva from "konva";
 import { Types } from "mongoose";
 
-type KonvaTypes = Konva.Line | Konva.Image | Konva.Group | Konva.Text | Konva.Path | Konva.Circle | Konva.Label;
-
 @QueryHandler(GetFloorplanBoundariesQuery)
 export class GetFloorplanBoundariesQueryHandler implements IQueryHandler<GetFloorplanBoundariesQuery> {
     constructor(

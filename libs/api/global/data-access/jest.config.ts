@@ -7,4 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../../coverage/libs/api/global/data-access',
+  coverageReporters: ['clover', 'json', 'lcov', 'text'], // Include 'json' for JSON coverage report
 };

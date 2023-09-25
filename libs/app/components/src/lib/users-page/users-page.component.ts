@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { FormsModule } from '@angular/forms';
 import { NgIconComponent } from '@ng-icons/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'event-participation-trends-users-page',
@@ -13,7 +14,7 @@ import { NgIconComponent } from '@ng-icons/core';
 })
 export class UsersPageComponent implements OnInit {
 
-  constructor(private appApiService: AppApiService) {}
+  constructor(private appApiService: AppApiService, private router: Router) {}
 
   public users: any[] = [];
   public search = '';
@@ -22,9 +23,35 @@ export class UsersPageComponent implements OnInit {
   public prev_scroll = 0;
   public show_search = true;
   public disable_search = false;
+  public viewerText = 'V';
+  public managerText = 'M';
+  public largeScreen = false;
+  public role = '';
 
   async ngOnInit() {
+    this.role = await this.appApiService.getRole();
+
+    if (this.role != 'admin') {
+      this.router.navigate(['/home']);
+    }
+
     this.users = await this.appApiService.getAllUsers();
+
+    // test if window size is less than 700px
+    if (window.innerWidth < 700) {
+      this.viewerText = 'V';
+      this.managerText = 'M';
+    }
+    else {
+      this.viewerText = 'Viewer';
+      this.managerText = 'Manager';
+    }  
+
+    if (window.innerWidth >= 1024) {
+      this.largeScreen = true;
+    } else {
+      this.largeScreen = false;
+    }
 
     this.loading = false;
     setTimeout(() => {
@@ -49,6 +76,18 @@ export class UsersPageComponent implements OnInit {
         UpdateRole: user.Role,
       },
     });
+  }
+
+  getName(user: any): string {
+    if (user.FirstName == null) {
+      user.FirstName = '';
+    }
+
+    if (user.LastName == null) {
+      user.LastName = '';
+    }
+    
+    return user.FirstName + ' ' + user.LastName;
   }
 
   setViewer(user: any) {
@@ -79,6 +118,23 @@ export class UsersPageComponent implements OnInit {
 
   emptySearch(): boolean {
     return this.get_users().length == 0;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth > 700) {
+      this.viewerText = 'Viewer';
+      this.managerText = 'Manager';
+    } else {
+      this.viewerText = 'V';
+      this.managerText = 'M';
+    } 
+
+    if (window.innerWidth >= 1024) {
+      this.largeScreen = true;
+    } else {
+      this.largeScreen = false;
+    }
   }
 
 }

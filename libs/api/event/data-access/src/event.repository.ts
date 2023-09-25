@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { IEventDetails, IEventId, IEventLocation, IStall, Position } from '@event-participation-trends/api/event/util';
+import { IEventDetails, IEventId, IStall, Position } from '@event-participation-trends/api/event/util';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Event,
-         EventLocation,
          Sensor,
          Stall,
+         Image,
 } from '../schemas';
 import { Types } from 'mongoose';
 
@@ -13,45 +13,98 @@ import { Types } from 'mongoose';
 export class EventRepository {
     constructor(
         @InjectModel(Event.name) private eventModel: mongoose.Model<Event>,
-        @InjectModel(EventLocation.name) private EventLocationModel: mongoose.Model<EventLocation>,
         @InjectModel(Sensor.name) private sensorModel: mongoose.Model<Sensor>,
         @InjectModel(Stall.name) private stallModel: mongoose.Model<Stall>,
+        @InjectModel(Image.name) private imageModel: mongoose.Model<Image>,
     ){}
 
     async createEvent(event: IEventDetails){
         await this.eventModel.create(event);
     }   
 
+    async uploadImage(image: Image){
+        await this.imageModel.create(image);   
+    }   
+
+    async findImagesIdByEventId(eventID: Types.ObjectId){
+        return await this.imageModel.find(
+            {eventId :{$eq: eventID}},
+            { _id: 1 })
+    }
+
+    async getImageById(imageId: Types.ObjectId){
+        return await this.imageModel.find(
+            {_id: {$eq: imageId}});
+    }
+
+    async findImageByEventId(eventID: Types.ObjectId){
+        return await this.imageModel.find(
+            {eventId :{$eq: eventID}})
+    }
+
+    async removeImage(imageId: Types.ObjectId){
+        return await this.imageModel.deleteOne(
+            {_id: {$eq: imageId}});
+    }
+
+    async removeEventImage(eventId: Types.ObjectId, imageId: Types.ObjectId){
+        return await this.eventModel.updateOne(
+            {_id :{$eq: eventId}},
+            { $pull: { FloorLayoutImgs: imageId } });
+    }
+
+    async addImageToEvent(eventId: Types.ObjectId, imageId: Types.ObjectId){
+        return await this.eventModel.updateOne(
+            { _id: {$eq: eventId}},
+            { $addToSet: {FloorLayoutImgs :imageId}});
+    }
+
     async getAllEvents(){
         return await this.eventModel.find().select("-Devices");
     }
 
+    async getManager(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}},
+            { Manager: 1 })
+    }
+
+    async getAllActiveEvents(){
+        const currDate = new Date();
+        return await this.eventModel.find(
+            {EndDate: {$gt: currDate}}).select("-Devices");
+    }
+
     async getEventByName(eventName: string){
-        return await this.eventModel.find({Name: {$eq: eventName}}).select("-Devices");
+        return await this.eventModel.find(
+            {Name: {$eq: eventName}}).select("-Devices");
     }
 
     async getEventByNameVerbose(eventName: string){
-        return await this.eventModel.find({Name: {$eq: eventName}});
+        return await this.eventModel.find(
+            {Name: {$eq: eventName}});
     }
 
     async getEventById(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id: {$eq: eventID}}).select("-Devices");
+        return await this.eventModel.find(
+            {_id: {$eq: eventID}}).select("-Devices");
     }
 
     async getManagedEvents(managerID: Types.ObjectId){
-        return await this.eventModel.find({Manager: {$eq: managerID}}).select("-Devices");
+        return await this.eventModel.find(
+            {Manager: {$eq: managerID}}).select("-Devices");
     }
 
     async createViewRequest(userID: Types.ObjectId, eventID: Types.ObjectId){
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
-            { $push: { Requesters: userID } });
+            { $addToSet: { Requesters: userID } });
     }
 
     async addViewer(userID: Types.ObjectId, eventID: Types.ObjectId){
         return await this.eventModel.updateOne(
             { _id: {$eq: eventID}},
-            { $push: { Viewers: userID } });
+            { $addToSet: { Viewers: userID } });
     }
 
     async getRequesters(eventID: Types.ObjectId){
@@ -86,27 +139,32 @@ export class EventRepository {
 
     async updateEventStartDate(eventID: Types.ObjectId, startDate: Date){
         return await this.eventModel.updateOne(
-            {_id :{$eq: eventID}},{$set: {StartDate :startDate}})
+            {_id :{$eq: eventID}},
+            {$set: {StartDate :startDate}})
     }
 
     async updateEventEndDate(eventID: Types.ObjectId, endDate: Date){
         return await this.eventModel.updateOne(
-        {_id :{$eq: eventID}},{$set: {EndDate :endDate}})
+        {_id :{$eq: eventID}},
+        {$set: {EndDate :endDate}})
     }
 
     async updateEventName(eventID: Types.ObjectId, name: string){
         return await this.eventModel.updateOne(
-        {_id :{$eq: eventID}},{$set: {Name :name}})
+        {_id :{$eq: eventID}},
+        {$set: {Name :name}})
     }
 
     async updateEventCategory(eventID: Types.ObjectId, category: string){
         return await this.eventModel.updateOne(
-        {_id :{$eq: eventID}},{$set: {Category :category}})
+        {_id :{$eq: eventID}},
+        {$set: {Category :category}})
     }
 
-    async updateEventLocation(eventID: Types.ObjectId, location: IEventLocation){
+    async updateEventLocation(eventID: Types.ObjectId, location: string){
         return await this.eventModel.updateOne(
-        {_id :{$eq: eventID}},{$set: {Location :location}})
+        {_id :{$eq: eventID}},
+        {$set: {Location :location}})
     }
     
     async updateEventFloorlayout(eventID: Types.ObjectId, floorlayout: string){
@@ -114,17 +172,23 @@ export class EventRepository {
         {_id :{$eq: eventID}},{$set: {FloorLayout :floorlayout}})
     }
 
+    async updateEventVisibility(eventID: Types.ObjectId, visibility: boolean){
+        return await this.eventModel.updateOne(
+        {_id :{$eq: eventID}},{$set: {PublicEvent :visibility}})
+    }
+
     async getALLEventNames(){
         return await this.eventModel.find({ Name: 1 });
     }
 
-    async getPopulatedEvent(eventID: Types.ObjectId){
-        return await this.eventModel.find({_id :{$eq: eventID}}).select("-Devices");
+    async getPopulatedEventById(eventID: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}}).select("-Devices");
     }
 
-    // Stall
     async getAllEventStalls(eventID: IEventId){
-        return await this.eventModel.find({_id :{$eq: eventID}}, {Stalls: 1});
+        return await this.eventModel.find(
+            {_id :{$eq: eventID}}, {Stalls: 1});
     }
 
     async createStall(stall: IStall){
@@ -135,7 +199,9 @@ export class EventRepository {
     }
 
     async getStallByName(eventID: Types.ObjectId, stallName: string){
-        return await this.stallModel.find({Event: {$eq: eventID}, Name: {$eq: stallName}});
+        return await this.stallModel.find(
+            {Event: {$eq: eventID}, 
+            Name: {$eq: stallName}});
     }
 
     async getAllStallNames(eventID: IEventId){
@@ -192,7 +258,7 @@ export class EventRepository {
     async getDevicePosotions(eventID: Types.ObjectId){
         return await this.eventModel.find(
             {_id :{$eq: eventID}},
-            { Devices: 1 })
+            { Devices: 1, StartDate: 1 })
     }
 
     async getAllEventCategories(){
@@ -201,10 +267,35 @@ export class EventRepository {
 
     async deleteEventbyId(eventId: Types.ObjectId){
         return await this.eventModel.deleteOne(
-            {_id :{$eq: eventId}})};
+            {_id :{$eq: eventId}})
+    }
 
     async getManagedEventCategories(managerID: Types.ObjectId){
         return await this.eventModel.find(
             {Manager: {$eq: managerID}}).select("Category").distinct("Category");
+    }
+
+    async updateEventFloorlayoutImageimgBase64(imageId: Types.ObjectId, imgBase64: string){
+        return await this.imageModel.updateOne(
+        {_id :{$eq: imageId}},
+        {$set: {imageBase64 :imgBase64}})
+    }
+
+    async updateEventFloorlayoutImageimageObj(imageId: Types.ObjectId, imageObj: string){
+        return await this.imageModel.updateOne(
+        {_id :{$eq: imageId}},
+        {$set: {imageObj :imageObj}})
+    }
+
+    async updateEventFloorlayoutImageimageScale(imageId: Types.ObjectId, imageScale: number){
+        return await this.imageModel.updateOne(
+        {_id :{$eq: imageId}},
+        {$set: {imageScale :imageScale}})
+    }
+
+    async updateEventFloorlayoutImageimageType(imageId: Types.ObjectId, imageType: string){
+        return await this.imageModel.updateOne(
+        {_id :{$eq: imageId}},
+        {$set: {imageType :imageType}})
     }
 }

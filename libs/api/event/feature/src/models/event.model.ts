@@ -4,7 +4,6 @@ import {
     IFloorLayout, 
     } from '@event-participation-trends/api/event/util';
 import {
-    IEventLocation,
     IStall,
     ISensor,
 } from '@event-participation-trends/api/event/util';
@@ -18,14 +17,16 @@ export class Event extends AggregateRoot implements IEvent {
         public EndDate?: Date | undefined | null,
         public Name?: string | undefined | null,
         public Category?: string | undefined | null,
-        public Location?: IEventLocation | undefined | null,
+        public Location?: string | undefined | null,
         public FloorLayout?: IFloorLayout | undefined | null,
+        public FloorLayoutImg?: Types.ObjectId[] | undefined | null,
         public Stalls?: IStall[] | undefined | null,
         public Sensors?: ISensor[] | undefined | null,
         public Devices?: IPosition[] | undefined | null,
         public Manager?: Types.ObjectId | undefined | null,
         public Requesters?: Types.ObjectId[] | undefined | null,
         public Viewers?: Types.ObjectId[] | undefined | null,
+        public PublicEvent?: boolean | undefined | null,
     ){
         super();
     }
@@ -42,12 +43,14 @@ export class Event extends AggregateRoot implements IEvent {
             event.Category,
             event.Location,
             event.FloorLayout,
+            event.FloorLayoutImg,
             event.Stalls,
             event.Sensors,
             event.Devices,
             event.Manager,
             event.Requesters,
             event.Viewers,
+            event.PublicEvent
         );
         return instance;
     }
@@ -60,12 +63,14 @@ export class Event extends AggregateRoot implements IEvent {
             Category: this.Category,
             Location: this.Location,
             FloorLayout: this.FloorLayout,
+            FloorLayoutImg: this.FloorLayoutImg,
             Stalls: this.Stalls,
             Sensors: this.Sensors,
             Devices: this.Devices,
             Manager: this.Manager,
             Requesters: this.Requesters,
             Viewers: this.Viewers,
+            PublicEvent: this.PublicEvent,
         };
     }
 }

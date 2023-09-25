@@ -7,3 +7,7 @@ export * from './update-event-details.model';
 export * from './add-device-position.model';
 export * from './stall.model';
 export * from './update-stall.model';
+export * from './delete-event.model';
+export * from './image.model';
+export * from './add-image.model';
+export * from './update-image-floorlayout.model';
