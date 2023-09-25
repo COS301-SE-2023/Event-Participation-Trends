@@ -89,13 +89,13 @@
         <hr class="border-ept-dark-grey border-opacity-50 w-[150px]" />
       </div>
       <div
-        class="w-full h-full bg-ept-blue-grey bg-opacity-15 rounded-lg"
+        class="large-screen-scrollbar pb-2 w-full h-full bg-ept-blue-grey bg-opacity-15 rounded-lg overflow-y-scroll"
         [ngClass]="{
-          'flex flex-col justify-center items-center': !eventMessages
+          'flex flex-col justify-center items-center': !eventMessages || eventMessages.length === 0
         }"
       >
         <div
-          *ngIf="!eventMessages"
+          *ngIf="!eventMessages || eventMessages.length === 0"
           class="flex flex-col justify-evenly items-center"
         >
           <img
@@ -109,11 +109,23 @@
         </div>
         <!-- add custom message component which would take in the message, time and profile pic -->
         <event-participation-trends-chat-message
-            *ngFor="let message of eventMessages"
-            [message]="message"
-            [prevMessageSameUser]="isPrevMessageSameUser(message, eventMessages[eventMessages.indexOf(message) - 1])"
-            [nextMessageSameUser]="isNextMessageSameUser(message, eventMessages[eventMessages.indexOf(message) + 1])"
-            [isUserEventManager]="isMessageFromManager(message)"
+            class="opacity-100 z-50"
+          *ngFor="let message of eventMessages"
+          [message]="message"
+          [prevMessageSameUser]="
+            isPrevMessageSameUser(
+              message,
+              eventMessages[eventMessages.indexOf(message) - 1]
+            )
+          "
+          [nextMessageSameUser]="
+            isNextMessageSameUser(
+              message,
+              eventMessages[eventMessages.indexOf(message) + 1]
+            )
+          "
+          [isUserEventManager]="isMessageFromManager(message)"
+          [activeUserID]="activeUserID"
         ></event-participation-trends-chat-message>
       </div>
       <div class="flex flex-row justify-between items-center mt-5">
@@ -123,12 +135,14 @@
           (click)="showEmojiPicker = !showEmojiPicker"
         ></ng-icon>
         <input
-          class="w-full h-10 bg-[#D9D9D9] rounded-lg text-ept-off-white text-sm px-3"
+          id="messageInput"
+          class="w-full h-10 bg-[#D9D9D9] rounded-lg text-ept-deep-grey text-sm px-3"
           type="text"
           [ngClass]="{ 'text-black text-opacity-30': newMessage.length === 0 }"
           [placeholder]="
             newMessage.length === 0 ? 'Add your message here...' : newMessage
           "
+          [(ngModel)]="newMessage"
         />
         <div
           class="cursor-pointer flex items-center rounded-full bg-ept-blue-grey bg-opacity-15 p-2 ml-2"
@@ -199,13 +213,13 @@
             <hr class="border-ept-dark-grey border-opacity-50 w-[150px]" />
           </div>
           <div
-            class="w-full h-[85%] bg-ept-navy-blue bg-opacity-30 rounded-lg"
+            class="small-screen-scrollbar w-full h-[85%] bg-ept-navy-blue bg-opacity-30 rounded-lg overflow-y-scroll pb-2"
             [ngClass]="{
-              'flex flex-col justify-center items-center': !eventMessages
+              'flex flex-col justify-center items-center': !eventMessages || eventMessages.length === 0
             }"
           >
             <div
-              *ngIf="!eventMessages"
+              *ngIf="!eventMessages || eventMessages.length === 0"
               class="flex flex-col justify-evenly items-center"
             >
               <img
@@ -219,11 +233,22 @@
             </div>
             <!-- add custom message component which would take in the message, time and profile pic -->
             <event-participation-trends-chat-message
-            *ngFor="let message of eventMessages"
-            [message]="message"
-            [prevMessageSameUser]="isPrevMessageSameUser(message, eventMessages[eventMessages.indexOf(message) - 1])"
-            [nextMessageSameUser]="isNextMessageSameUser(message, eventMessages[eventMessages.indexOf(message) + 1])"
-            [isUserEventManager]="isMessageFromManager(message)"
+              *ngFor="let message of eventMessages"
+              [message]="message"
+              [prevMessageSameUser]="
+                isPrevMessageSameUser(
+                  message,
+                  eventMessages[eventMessages.indexOf(message) - 1]
+                )
+              "
+              [nextMessageSameUser]="
+                isNextMessageSameUser(
+                  message,
+                  eventMessages[eventMessages.indexOf(message) + 1]
+                )
+              "
+              [isUserEventManager]="isMessageFromManager(message)"
+              [activeUserID]="activeUserID"
             ></event-participation-trends-chat-message>
           </div>
           <div class="flex flex-row justify-between items-center mt-5">
@@ -237,12 +262,18 @@
               ></ng-icon>
             </div>
             <input
+              id="messageInput"
               class="w-full h-10 bg-[#D9D9D9] rounded-lg text-ept-deep-grey text-sm px-3"
               type="text"
-              [ngClass]="{ 'text-black text-opacity-30': newMessage.length === 0 }"
+              [ngClass]="{
+                'text-black text-opacity-30': newMessage.length === 0
+              }"
               [placeholder]="
-                newMessage.length === 0 ? 'Add your message here...' : newMessage
+                newMessage.length === 0
+                  ? 'Add your message here...'
+                  : newMessage
               "
+              [(ngModel)]="newMessage"
             />
             <div
               class="cursor-pointer flex items-center rounded-full bg-ept-deep-grey bg-opacity-50 p-2 ml-2"
