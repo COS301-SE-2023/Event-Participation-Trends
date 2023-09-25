@@ -83,7 +83,9 @@ export class ProducerComponent implements AfterViewInit {
     });
     this.socket.connect();
 
-    this.emitEvent('connection', null);
+    this.emitEvent('connection', {
+      eventID: "64c0ee83a5ec624fb1fec138"
+    });
   
     this.socket.on('connect', async () => {
       this.fsPublish.nativeElement.disabled = false;
