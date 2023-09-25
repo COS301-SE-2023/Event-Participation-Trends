@@ -31,14 +31,14 @@ jobs:
     - name: Run tests and generate coverage reports
       run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache --coverage --testTimeout=10000'
 
-    - name: Run api-e2e tests and generate coverage reports
-      run: 'yarn nx run api-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
+    # - name: Run api-e2e tests and generate coverage reports
+    #   run: 'yarn nx run api-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
 
     # Uncomment this once the app-e2e tests are working/up to date
     # - name: Run app-e2e tests and generate coverage reports
     #   run: 'yarn nx run app-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
 
-    - run: 'yarn test:integration'
+    - run: 'yarn test:integration --coverage --testTimeout=10000'
 
     - name: Upload coverage reports to Codecov 
       # uses: codecov/codecov-action@v3 

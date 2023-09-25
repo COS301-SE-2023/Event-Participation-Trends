@@ -17,8 +17,4 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/api-e2e',
   coverageReporters: ['clover', 'json', 'lcov', 'text'], // Include 'json' for JSON coverage report
-  collectCoverageFrom: [
-    '**/src/**/*.{ts,js}',
-    '!**/node_modules/**'
-  ],
 };
