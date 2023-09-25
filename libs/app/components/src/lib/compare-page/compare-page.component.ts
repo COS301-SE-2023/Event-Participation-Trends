@@ -409,7 +409,7 @@ export class ComparePageComponent implements OnInit {
         return;
       }
       const ctx: CanvasRenderingContext2D | null =
-        this.attendanceOverTime.nativeElement?.getContext('2d');
+        this.attendanceOverTime?.nativeElement?.getContext('2d');
 
       let gradientStroke = null;
       if (ctx) {
@@ -568,12 +568,15 @@ export class ComparePageComponent implements OnInit {
           },
         },
       };
-      const attendanceOverTimeCanvas = this.attendanceOverTime.nativeElement;
+      const attendanceOverTimeCanvas = this.attendanceOverTime?.nativeElement;
 
-      const attendanceOverTimeCtx = attendanceOverTimeCanvas.getContext('2d', {
+      const attendanceOverTimeCtx = attendanceOverTimeCanvas?.getContext('2d', {
         willReadFrequently: true,
       });
-      this.attendanceOverTimeChart = new Chart(attendanceOverTimeCtx!, config);
+
+      if (attendanceOverTimeCtx) {
+        this.attendanceOverTimeChart = new Chart(attendanceOverTimeCtx, config);
+      }
     }
   }
 }
