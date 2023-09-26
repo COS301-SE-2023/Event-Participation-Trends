@@ -1,0 +1,64 @@
+<div
+  class="fixed w-screen h-screen top-0 left-0 flex justify-center items-center z-50"
+>
+  <div
+    class="fixed w-screen h-screen top-0 left-0 bg-ept-navy-blue bg-opacity-80"
+    (click)="closeModal()"
+  ></div>
+  <div
+    class="w-[70%] my-5 h-[90%] bg-ept-deep-grey z-50 rounded-xl p-6 text-ept-blue-grey overflow-y-scroll"
+  >
+    <div class="text-7xl font-poppins font-semibold text-center mb-10 mt-3">Help</div>
+    <div class="mt-2 mx-10">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "Dashboard" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            <img src="assets/DashboardPageHelp.png" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "Event Details" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            <img src="assets/DetailsPageHelp.png" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "Floorplan Editor" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            <img src="assets/FloorplanPageHelp.png" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

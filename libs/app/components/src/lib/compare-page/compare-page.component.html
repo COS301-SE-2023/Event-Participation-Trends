@@ -1,0 +1,222 @@
+<div class="mt-16 lg:mt-0 top-0 left-0 w-full h-screen overflow-x-auto overflow-y-scroll">
+    <div *ngIf="sidePanelToggled" class="absolute w-full h-full bg-ept-deep-grey bg-opacity-40 z-30" (click)="hideSidePanel()"></div>
+    <div class="grid grid-cols-12 grid-rows-3 h-full">        
+        <div #parentContainer class="col-span-12 row-span-3 m-5 border-ept-blue-grey border-2 border-solid rounded-2xl relative overflow-y-scroll scroll-my-20" [ngClass]="{'bg-ept-navy-blue': show, 'col-span-9 ml-2': showSidePanel}">
+            <div
+                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+            <div *ngIf="!showSidePanel" class="overflow-y-hidden h-full absolute right-3 top-3 z-50">
+                <ng-icon *ngIf="!sidePanelToggled" name="heroAdjustmentsHorizontal" (click)="openSidePanel()" class="text-4xl"></ng-icon>
+                <div id="sidePanel" class="h-full pb-10 sm:pb-3 bg-ept-navy-blue pl-0 transition-all duration-300 shadow-md drop-shadow-2xl shadow-ept-blue-grey rounded-sm" [ngClass]="{'w-0': !sidePanelToggled, 'w-[315px]': sidePanelToggled}">
+                    <div *ngIf="sidePanelToggled" class="h-full pb-3">
+                        <ng-icon  g-icon name="matClose" (click)="hideSidePanel()" class="absolute text-3xl m-2 float-left cursor-pointer hover:text-ept-bumble-yellow"></ng-icon>
+                        <div
+                            class="flex flex-col h-full bg-opacity-[75%] rounded-lg my-2 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center text-center px-5"
+                            >
+                            <div>
+                                <p ngClass="sidebar-header sidebar-title" class="text-2xl">
+                                    Available Events
+                                </p>
+                                <span ngClass="sidebar-content" class="my-2 flex flex-col w-full justify-evenly">
+                                    <div class="flex justify-between px-2 bg-ept-navy-blue border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
+                                        <ng-icon name="matSearch" class="text-[40px] text-ept-blue-grey"></ng-icon>
+                                        <input
+                                            type="text"
+                                            placeholder="Search here"
+                                            class="w-full outline-none bg-transparent text-ept-off-white"
+                                            [(ngModel)]="search"
+                                            (click)="setDropDown(false)"
+                                        />
+                                    </div>
+                                    <div class="mt-2 px-2 flex justify-between border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
+                                        <ng-icon name="heroAdjustmentsHorizontal" class="text-[40px] text-ept-blue-grey"></ng-icon>
+                                        <select id="dropDown" class="w-full bg-ept-navy-blue rounded-2xl outline-none text-ept-off-white" (change)="selectCategory($event)" (click)="toggleDropDown()">
+                                            <option value="Show All">Show All</option>
+                                            <option *ngFor="let category of getEventCategories()" [value]="category">{{category}}</option>
+                                        </select>
+                                    </div>
+                                </span>
+                            </div> 
+                            <div class="text-xl text-left rounded-sm overflow-y-scroll" [ngClass]="{'opacity-30':showDropDown}">
+                                <div *ngFor="let event of getEvents()" (click)="selectEvent(event)" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-md " [ngClass]="{'hover:bg-ept-blue-grey hover:bg-opacity-20 hover:text-[22px] hover:cursor-pointer transition-all duration-100': isSelectedEvent(event) || eventsSelected !== 2, 'bg-ept-blue-grey bg-opacity-20': isSelectedEvent(event), 'opacity-50': !isSelectedEvent(event) && eventsSelected === 2}">
+                                    <label class="pr-2" [innerHTML]="highlightText(event, search)" [ngClass]="{'hover:cursor-pointer': isSelectedEvent(event) || eventsSelected !== 2}">{{event.Name}}</label>
+                                    <ng-icon *ngIf="isSelectedEvent(event)" class="text-ept-bumble-yellow self-center text-2xl" name="matCheckCircleOutline"></ng-icon>
+                                    <ng-icon *ngIf="!isSelectedEvent(event)" class="text-ept-blue-grey self-center text-2xl" name="matRadioButtonUnchecked"></ng-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span *ngIf="show && eventsSelected > 0" class="mt-1 ml-2 flex justify-between">
+                <label class="text-4xl p-2">Heatmaps<br><p *ngIf="showSidePanel" class="text-sm opacity-50">Hold the Shift-Key down to zoom in/out with mousewheel</p></label>
+            </span>
+            <div *ngIf="show" class="w-full min-h-[400px] gap-2 p-3 z-40">
+                <event-participation-trends-heatmap-container [parentContainer]="parentContainer" *ngFor="let event of selectedEvents" [containerEvent]="event"></event-participation-trends-heatmap-container>
+                <div
+                    class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition-opacity duration-200 z-40"
+                    *ngIf="eventsSelected < 1"
+                >
+                    <ng-icon name="heroInboxSolid" class="text-6xl"></ng-icon>
+                    <div class="font-poppins text-xl mt-3 px-5 text-center">
+                    No events selected for comparison.<br>
+                    {{hintText}}
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="show && selectedEvents.length >= 1" class="w-full p-3 z-40"> 
+                <div class="mx-24 rounded-2xl bg-ept-navy-blue p-3 text-lg font-poppins font-semibold">
+                    <div class="font-poppins font-semibold grid grid-cols-12">
+                        <div class="col-span-3 text-lg text-left">{{getFirstEventStats().name}}</div>
+                        <div class="col-span-6 text-4xl text-center">Event Statistics</div>
+                        <div class="col-span-3 text-lg text-right">{{getSecondEventStats().name}}</div>
+                    </div>
+                    <div class="w-full bg-ept-blue-grey rounded-2xl h-1 opacity-20 my-3"></div>
+                    <div class="flex justify-center mx-12">
+                        <div class="grid grid-cols-12 w-full">
+                            <!-- Total Attendance -->
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().total_attendance > getSecondEventStats().total_attendance,
+                                            'text-ept-light-red': getFirstEventStats().total_attendance < getSecondEventStats().total_attendance}"
+                            >
+                                <div>{{getFirstEventStats().total_attendance}}</div>
+                            </div>
+                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
+                                <div>Total Attendace</div>
+                            </div>
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().total_attendance < getSecondEventStats().total_attendance,
+                                            'text-ept-light-red': getFirstEventStats().total_attendance > getSecondEventStats().total_attendance}"
+                            >
+                                <div>{{getSecondEventStats().total_attendance}}</div>
+                            </div>
+                            <!-- Average Attendance -->
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().average_attendance > getSecondEventStats().average_attendance,
+                                            'text-ept-light-red': getFirstEventStats().average_attendance < getSecondEventStats().average_attendance}"
+                            >
+                                <div>{{getFirstEventStats().average_attendance}}</div>
+                            </div>
+                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
+                                <div>Average Attendace</div>
+                            </div>
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().average_attendance < getSecondEventStats().average_attendance,
+                                            'text-ept-light-red': getFirstEventStats().average_attendance > getSecondEventStats().average_attendance}"
+                            >
+                                <div>{{getSecondEventStats().average_attendance}}</div>
+                            </div>
+                            <!-- Peak Attendance -->
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().peak_attendance > getSecondEventStats().peak_attendance,
+                                            'text-ept-light-red': getFirstEventStats().peak_attendance < getSecondEventStats().peak_attendance}"
+                            >
+                                <div>{{getFirstEventStats().peak_attendance}}</div>
+                            </div>
+                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
+                                <div>Peak Attendace</div>
+                            </div>
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().peak_attendance < getSecondEventStats().peak_attendance,
+                                            'text-ept-light-red': getFirstEventStats().peak_attendance > getSecondEventStats().peak_attendance}"
+                            >
+                                <div>{{getSecondEventStats().peak_attendance}}</div>
+                            </div>
+                            <!-- Average Attendance Time -->
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().average_attendance_time > getSecondEventStats().average_attendance_time,
+                                            'text-ept-light-red': getFirstEventStats().average_attendance_time < getSecondEventStats().average_attendance_time}"
+                            >
+                                <div>{{getFirstEventStats().average_attendance_time}}</div>
+                            </div>
+                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
+                                <div>Average Attendace Time</div>
+                            </div>
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().average_attendance_time < getSecondEventStats().average_attendance_time,
+                                            'text-ept-light-red': getFirstEventStats().average_attendance_time > getSecondEventStats().average_attendance_time}"
+                            >
+                                <div>{{getSecondEventStats().average_attendance_time}}</div>
+                            </div>
+                            <!-- Peak Attendance Time -->
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().max_attendance_time > getSecondEventStats().max_attendance_time,
+                                            'text-ept-light-red': getFirstEventStats().max_attendance_time < getSecondEventStats().max_attendance_time}"
+                            >
+                                <div>{{getFirstEventStats().max_attendance_time}}</div>
+                            </div>
+                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
+                                <div>Peak Attendace Time</div>
+                            </div>
+                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                                [ngClass]="{'text-ept-light-green': getFirstEventStats().max_attendance_time < getSecondEventStats().max_attendance_time,
+                                            'text-ept-light-red': getFirstEventStats().max_attendance_time > getSecondEventStats().max_attendance_time}"
+                            >
+                                <div>{{getSecondEventStats().max_attendance_time}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-12">
+                        <div class="flex justify-center text-2xl">Attendance Over Time</div>
+                        <div class="grid grid-rows-1">
+                            <div class="rounded-md h-full">
+                                <canvas id="attendanceOverTime" #attendanceOverTime class="w-full h-full"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div *ngIf="!largeScreen" class="opacity-0 my-4">_</div>
+        <div *ngIf="showSidePanel" class="pb-3 row-span-3 m-5 ml-0 border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'bg-ept-navy-blue': show, 'col-span-3':showSidePanel}">
+            <div
+                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+            <div
+                *ngIf="show"
+                class="flex flex-col overflow-y-hidden h-full bg-opacity-[75%] rounded-lg my-2 shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] justify-self-center text-center px-5"
+                >
+                <div>
+                    <p ngClass="sidebar-header sidebar-title" class="text-2xl">
+                        Available Events
+                    </p>
+                    <span ngClass="sidebar-content" class="my-2 flex flex-col w-full justify-evenly">
+                        <div class="flex justify-between px-2 bg-ept-navy-blue border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
+                            <ng-icon name="matSearch" class="text-[40px] text-ept-blue-grey"></ng-icon>
+                            <input
+                                type="text"
+                                placeholder="Search here"
+                                class="w-full outline-none bg-transparent text-ept-off-white"
+                                [(ngModel)]="search"
+                                (click)="setDropDown(false)"
+                            />
+                        </div>
+                        <div class="mt-2 px-2 flex justify-between border-2 border-ept-blue-grey border-solid bg-opacity-[97%] backdrop-blur-sm rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300">
+                            <ng-icon name="heroAdjustmentsHorizontal" class="text-[40px] text-ept-blue-grey"></ng-icon>
+                            <select id="dropDown" class="w-full bg-ept-navy-blue rounded-2xl outline-none text-ept-off-white" (change)="selectCategory($event)" (click)="toggleDropDown()">
+                                <option value="Show All">Show All</option>
+                                <option *ngFor="let category of getEventCategories()" [value]="category">{{category}}</option>
+                            </select>
+                        </div>
+                    </span>
+                </div> 
+                <div class="text-xl text-left rounded-sm overflow-y-scroll" [ngClass]="{'opacity-30':showDropDown}">
+                    <div *ngFor="let event of getEvents()" (click)="selectEvent(event)" class="flex flex-row justify-between px-4 py-2 border-solid border-ept-navy-blue border-b-2 rounded-md " [ngClass]="{'hover:bg-ept-blue-grey hover:bg-opacity-20 hover:text-[22px] hover:cursor-pointer transition-all duration-100': isSelectedEvent(event) || eventsSelected !== 2, 'bg-ept-blue-grey bg-opacity-20': isSelectedEvent(event), 'opacity-50': !isSelectedEvent(event) && eventsSelected === 2}">
+                        <label class="pr-2" [innerHTML]="highlightText(event, search)" [ngClass]="{'hover:cursor-pointer': isSelectedEvent(event) || eventsSelected !== 2}">{{event.Name}}</label>
+                        <ng-icon *ngIf="isSelectedEvent(event)" class="text-ept-bumble-yellow self-center text-2xl" name="matCheckCircleOutline"></ng-icon>
+                        <ng-icon *ngIf="!isSelectedEvent(event)" class="text-ept-blue-grey self-center text-2xl" name="matRadioButtonUnchecked"></ng-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

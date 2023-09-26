@@ -1,0 +1,316 @@
+<div
+  #gradient
+  class="fixed top-0 left-0 h-screen w-screen bg-ept-deep-grey -z-50"
+></div>
+<div *ngIf="navBarVisible" class="absolute w-full h-full bg-ept-navy-blue bg-opacity-40 z-50" (click)="hideNavBar()"></div>
+<div
+  class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-34 lg:grid-cols-36 grid-rows-1 overflow-hidden"
+>
+  <div #navBarContainer *ngIf="!showMenuBar" class="text-4xl absolute z-50 h-full">
+    <ng-icon *ngIf="!navBarVisible" name="matMenu" (click)="showNavBar()" class="absolute m-5 cursor-pointer hover:text-ept-bumble-yellow"></ng-icon>
+    <div id="navBar" class="h-full w-[75%] bg-ept-navy-blue pl-0 transition-all duration-300 shadow-md drop-shadow-2xl shadow-ept-blue-grey rounded-sm" [ngClass]="{'w-0': !navBarVisible, 'w-[390px]': navBarVisible}">
+      <div *ngIf="navBarVisible">
+        <ng-icon name="matClose" (click)="hideNavBar()" class="m-2 float-right cursor-pointer hover:text-ept-bumble-yellow"></ng-icon>
+        <div class="w-full flex flex-col relative">
+          <div
+            class="h-14 mt-5 w-full flex relative items-center overflow-hidden cursor-pointer"
+            [ngClass]="{ 'overflow-visible': overflowBack }"
+          >
+            <a
+              id="back-link"
+              class="overflow-hidden w-full h-full px-4 hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="goBack()"
+              [ngClass]="{
+              'overflow-visible': expandBack,
+            }"
+            >
+              <ng-icon name="heroArrowLeft" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center"></ng-icon>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey">Back</label>
+            </a>
+          </div>
+          <div
+            class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+            [ngClass]="{ 'overflow-visible': overflowDashboard, 'bg-[#373a44]': isActiveRoute('dashboard') }"
+          >
+            <a
+              routerLink="dashboard"
+              id="dashboard-link"
+              class="overflow-hidden px-4 w-full h-full hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="goDashboard()"
+              [ngClass]="{
+              'overflow-visible': expandDashboard,
+            }"
+            >
+              <ng-icon name="matBarChartRound" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('dashboard')}"></ng-icon>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('dashboard')}">Dashboard</label>
+            </a>
+          </div>
+          <div
+            class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+            [ngClass]="{ 'overflow-visible': overflowDetails, 'bg-[#373a44]': isActiveRoute('details') }"
+            *ngIf="manager_access"
+          >
+            <a
+              routerLink="details"
+              id="details-link"
+              class="overflow-hidden px-4 w-full h-full hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="goDetails()"
+              [ngClass]="{
+              'overflow-visible': expandDetails,
+            }"
+            >
+              <ng-icon name="matFormatListBulletedRound" class="text-5xl pl-1 text-ept-blue-grey self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('details')}"></ng-icon>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('details')}">Event Details</label>
+            </a>
+          </div>
+
+          <div
+            class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+            [ngClass]="{ 'overflow-visible': overflowFloorplan }"
+            *ngIf="manager_access"
+          >
+            <a
+              id="floorplan-link"
+              class="overflow-hidden cursor-pointer px-4 w-full h-full hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="goFloorplan()"
+              [ngClass]="{
+              'overflow-visible': expandFloorplan,
+            }"
+            >
+              <ng-icon name="matDrawRound" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('floorplan')}"></ng-icon>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('floorplan')}">Floorplan Editor</label>
+            </a>
+          </div>
+
+          <div
+            class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+            [ngClass]="{ 'overflow-visible': overflowStreaming }"
+          >
+            <a
+              id="streaming-link"
+              class="overflow-hidden cursor-pointer px-4 w-full h-full hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="goStreaming()"
+              [ngClass]="{
+              'overflow-visible': expandStreaming,
+            }"
+            >
+              <ng-icon name="matVideoChat" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('streaming')}"></ng-icon>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('streaming')}">Streams</label>
+            </a>
+          </div>
+        </div>
+        <div class="w-full flex flex-col absolute bottom-3">
+          <div
+            class="h-14 mb-5 w-full flex relative items-center overflow-hidden"
+            [ngClass]="{ 'overflow-visible': overflowHelp }"
+          >
+            <a
+              id="help-link"
+              class="overflow-hidden px-4 w-full h-full hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              [ngClass]="{
+              'overflow-visible': expandHelp,
+            }"
+              (click)="help_press()"
+              (mouseover)="showHelp()"
+              (mouseleave)="hideHelp()"
+            >
+              <ng-icon name="matQuestionMarkRound" class="text-5xl text-ept-blue-grey cursor-pointer self-center"></ng-icon>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey">Help</label>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="showMenuBar"
+    class="col-span-2 w-full h-screen flex flex-col justify-between items-center z-50"
+  >
+    <div class="w-14 flex flex-col relative">
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden cursor-pointer"
+        [ngClass]="{ 'overflow-visible': overflowBack }"
+      >
+        <a
+          id="back-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goBack()"
+          [ngClass]="{
+          'overflow-visible': expandBack,
+        }"
+          (mouseover)="showBack()"
+          (mouseleave)="hideBack()"
+        >
+          <ng-icon name="heroArrowLeft" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
+              expandBack
+          }"
+        >
+          <div>Back</div>
+        </div>
+      </div>
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowDashboard }"
+      >
+        <a
+          routerLink="dashboard"
+          id="dashboard-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goDashboard()"
+          [ngClass]="{
+          'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('dashboard'),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !isActiveRoute('dashboard'),
+          'overflow-visible': expandDashboard,
+        }"
+          (mouseover)="showDashboard()"
+          (mouseleave)="hideDashboard()"
+        >
+          <ng-icon name="matBarChartRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
+              expandDashboard
+          }"
+        >
+          <div>Dashboard</div>
+        </div>
+      </div>
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowDetails }"
+        *ngIf="manager_access"
+      >
+        <a
+          routerLink="details"
+          id="details-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goDetails()"
+          [ngClass]="{
+          'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('details'),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !isActiveRoute('details'),
+          'overflow-visible': expandDetails,
+        }"
+          (mouseover)="showDetails()"
+          (mouseleave)="hideDetails()"
+        >
+          <ng-icon name="matFormatListBulletedRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
+              expandDetails
+          }"
+        >
+          <div>Details</div>
+        </div>
+      </div>
+
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowFloorplan }"
+        *ngIf="manager_access"
+      >
+        <a
+          id="floorplan-link"
+          class="overflow-hidden cursor-pointer absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goFloorplan()"
+          [ngClass]="{
+          'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('floorplan'),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !isActiveRoute('floorplan'),
+          'overflow-visible': expandFloorplan,
+        }"
+          (mouseover)="showFloorplan()"
+          (mouseleave)="hideFloorplan()"
+        >
+          <ng-icon name="matDrawRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
+              expandFloorplan
+          }"
+        >
+          <div>Floorplan</div>
+        </div>
+      </div>
+
+      <div
+        class="h-14 mt-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowStreaming }"
+      >
+        <a
+          id="streaming-link"
+          class="overflow-hidden cursor-pointer absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          (click)="goStreaming()"
+          [ngClass]="{
+          'bg-ept-blue-grey text-ept-deep-grey': isActiveRoute('streaming'),
+          'bg-ept-navy-blue hover:bg-[#373a44]': !isActiveRoute('streaming'),
+          'overflow-visible': expandStreaming,
+        }"
+          (mouseover)="showStreaming()"
+          (mouseleave)="hideStreaming()"
+        >
+          <ng-icon name="matVideoChat" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
+              expandStreaming
+          }"
+        >
+          <div>Streams</div>
+        </div>
+      </div>
+    </div>
+    <div class="w-14 flex flex-col items-center">
+      <div
+        class="h-14 mb-5 w-full flex relative items-center overflow-hidden"
+        [ngClass]="{ 'overflow-visible': overflowHelp }"
+      >
+        <a
+          id="help-link"
+          class="overflow-hidden absolute left-0 w-full h-full rounded-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex justify-center items-center z-50"
+          [ngClass]="{
+          'overflow-visible': expandHelp,
+        }"
+          (click)="help_press()"
+          (mouseover)="showHelp()"
+          (mouseleave)="hideHelp()"
+        >
+          <ng-icon name="matQuestionMarkRound" class="text-3xl"></ng-icon>
+        </a>
+        <div
+          class="absolute h-full opacity-0 font-poppins font-semibold text-xl transition-all duration-300 flex items-center"
+          [ngClass]="{
+            'pl-20 pr-5 w-fit bg-ept-navy-blue drop-shadow-[0_0px_10px_rgba(0,0,0,0.4)] rounded-full opacity-100':
+              expandHelp
+          }"
+        >
+          <div>Help</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div #gradient class="col-span-34 w-full">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+<event-participation-trends-event-help
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="help-modal"
+></event-participation-trends-event-help>
+<event-participation-trends-small-screen-modal
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="small-screen-modal"
+  (justCloseModal)="closeSmallScreenModal()"
+></event-participation-trends-small-screen-modal>

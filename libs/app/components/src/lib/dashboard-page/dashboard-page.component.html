@@ -1,0 +1,146 @@
+<div *ngIf="isLoading" class="top-0 left-0 w-full h-screen flex">
+    <div class="m-auto flex justify-between">
+      <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">Fetching floor plan data</h1>
+      <span class="loading loading-dots loading-lg ml-3 text-ept-blue-grey ept-of"></span>
+    </div>
+</div>
+<div [ngClass]="{'hidden':!noFloorPlan}" class="z-50 mt-16 lg:mt-0 top-0 left-0 w-full h-screen flex flex-col justify-center items-center">
+    <img src="assets/blueprint-svgrepo-com-blue-grey.svg" class="pointer-events-none  rounded-full w-32 h-32 sm:w-36 sm:h-36 lg:w-44 lg:h-44 xl:w-52 xl:h-52" alt="Empty state"/>
+    <h1 class="sm:text-xl lg:text-2xl xl:text-3xl mt-10">There seems to be no floor plan to provide any data.</h1>
+</div>
+<div [ngClass]="{'hidden': noFloorPlan}" class="mt-16 lg:mt-0 top-0 left-0 w-full h-screen overflow-y-scroll">
+    <div class="grid grid-rows-3 w-full h-full" [ngClass]="{'grid-cols-3': !showStatsOnSide, 'grid-cols-4': showStatsOnSide || mediumScreen}">
+        <div #heatmapContainer class="border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'col-span-4 md:row-span-2 m-2 lg:m-5 lg:ml-2': !showStatsOnSide, 'col-span-3 row-span-3 m-5 ml-2': showStatsOnSide}"  (mouseleave)="hideToggleButton()" (mouseover)="showToggleButton()">
+            <div
+                class="z-40 absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+            <div class="z-40 absolute right-3 top-3 opacity-40 hover:opacity-100">
+                <label class="text-xl text-ept-blue-grey opacity-100 z-40">Heatmap</label>
+                <label class="switch" (change)="toggleHeatmap()">
+                    <input type="checkbox" />
+                    <span class="slider round"></span>
+                </label>
+            </div> 
+            <div *ngIf="show" id="floormap" class="z-20 absolute w-full h-full top-0 left-0"></div>
+            <div *ngIf="show" id="view" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
+            <div
+                *ngIf="show"
+                id="heatmapContainer"                
+                #flowmapContainer
+                class="w-full h-full z-0 rounded-lg"
+            ></div>
+            <div class="flex flex-col justify-evenly absolute top-2 ml-2 md:top-14 md:right-3 md:ml-0">
+                <div *ngIf="show" (click)="zoomIn()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+                    <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
+                </div>
+                <div *ngIf="show" (click)="zoomOut()" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+                    <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
+                </div>
+                <div *ngIf="show" class="mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg pt-1 text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
+                    <ng-icon name="matFilterCenterFocus" title="Recenter floor" (click)="recenterFloorlayout()"></ng-icon>
+                </div>
+            </div>
+        </div>
+        <div class="border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'col-span-4 md:col-span-2 lg:col-span-1 row-span-1 m-2 lg:m-5 lg:mb-0 lg:ml-0': !showStatsOnSide, 'col-span-1 row-span-1 m-5 mb-0 ml-0': showStatsOnSide}">
+            <div
+                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+            <div *ngIf="show" class="rounded-md col-span-5 row-span-2 h-full">
+                <canvas #totalDevicesBarChart class="w-full h-full"></canvas>
+            </div>
+        </div>
+        <div class="border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'col-span-4 md:col-span-2 lg:col-span-1 row-span-1 m-2 lg:m-5 lg:mb-0 lg:ml-0': !showStatsOnSide, 'col-span-1 row-span-1 m-5 ml-0': showStatsOnSide}">
+            <div
+                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+            <div *ngIf="show" class="rounded-md col-span-5 row-span-2 h-full">
+                <canvas id="lineChart" #userCountDataStreamingChart class="w-full h-full"></canvas>
+            </div>
+        </div>
+        <div *ngIf="largeScreen" class="border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'col-span-4 md:col-span-2 lg:col-span-1 row-span-1 m-2 lg:m-5 lg:mb-0 lg:ml-0': !showStatsOnSide, 'col-span-1 row-span-1 m-5 mt-0 ml-0': showStatsOnSide}">
+            <div
+                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+            <div *ngIf="show" class="stat text-ept-off-white">
+                <div class="stat-figure text-ept-light-blue">
+                    <ng-icon name="heroUserGroupSolid" class="text-7xl"></ng-icon>
+                </div>
+                <div class="stat-title">Total Users</div>
+                <div class="stat-value text-ept-light-blue">{{grandTotalUsersDetected}}</div>
+                <div class="stat-desc">{{percentageIncreaseThanPrevHour}}% increase in the last hour</div>
+            </div>
+            <div *ngIf="show" class="flex justify-between text-ept-off-white pr-2">
+                <div class="stat">
+                    <div class="stat-title">Users Detected</div>
+                    <div class="flex mt-2 justify-between">
+                        <div class="stat-value text-ept-bumble-yellow">{{totalUsersDetected}}</div>
+                    </div>
+                    <div class="stat-desc">Previously <span class="ml-2 text-lg">{{totalUsersDetectedPrev}}</span></div>
+                </div>
+                <div *ngIf="increasedUserCount" class="stat-figure text-green-400 flex">
+                    <ng-icon name="matKeyboardDoubleArrowUp" class="animate-pulse text-6xl"></ng-icon>                    
+                    <ng-icon name="matKeyboardDoubleArrowUp" class="animate-pulse text-6xl"></ng-icon>
+                </div>
+                <div *ngIf="!increasedUserCount" class="stat-figure text-red-400 flex">
+                    <ng-icon name="matKeyboardDoubleArrowDown" class="animate-pulse text-6xl"></ng-icon>
+                    <ng-icon name="matKeyboardDoubleArrowDown" class="animate-pulse text-6xl"></ng-icon>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div *ngIf="!showStatsOnSide && !largeScreen" class="sm:grid sm:grid-cols-2 m-2 lg:m-5 lg:mt-0 lg:ml-0">
+        <div class="col-span-1 border-ept-blue-grey border-2 border-solid rounded-2xl relative">
+            <div
+                class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+                [ngClass]="{ 'opacity-0': !loading }"
+                *ngIf="!show"
+            >
+                <span class="loading loading-spinner loading-lg"></span>
+            </div>
+            <div *ngIf="show" class="stat text-ept-off-white">
+                <div class="stat-figure text-ept-light-blue">
+                    <ng-icon name="heroUserGroupSolid" class="text-7xl"></ng-icon>
+                </div>
+                <div class="stat-title">Total Users</div>
+                <div class="stat-value text-ept-light-blue">{{grandTotalUsersDetected}}</div>
+                <div class="stat-desc">{{percentageIncreaseThanPrevHour}}% increase in the last hour</div>
+            </div>
+            <div *ngIf="show" class="flex justify-between text-ept-off-white pr-2">
+                <div class="stat">
+                    <div class="stat-title">Users Detected</div>
+                    <div class="flex mt-2 justify-between">
+                        <div class="stat-value text-ept-bumble-yellow">{{totalUsersDetected}}</div>
+                    </div>
+                    <div class="stat-desc">Previously <span class="ml-2 text-lg">{{totalUsersDetectedPrev}}</span></div>
+                </div>
+                <div *ngIf="increasedUserCount" class="stat-figure text-green-400 flex">
+                    <ng-icon name="matKeyboardDoubleArrowUp" class="animate-pulse text-6xl"></ng-icon>                    
+                    <ng-icon name="matKeyboardDoubleArrowUp" class="animate-pulse text-6xl"></ng-icon>
+                </div>
+                <div *ngIf="!increasedUserCount" class="stat-figure text-red-400 flex">
+                    <ng-icon name="matKeyboardDoubleArrowDown" class="animate-pulse text-6xl"></ng-icon>
+                    <ng-icon name="matKeyboardDoubleArrowDown" class="animate-pulse text-6xl"></ng-icon>
+                </div>
+            </div>
+        </div>        
+    </div>
+    <div *ngIf="!largeScreen" class="opacity-0 my-6">_</div>
+
+</div>

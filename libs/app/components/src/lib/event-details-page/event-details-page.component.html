@@ -1,0 +1,234 @@
+<div
+  class="p-5 pb-12 lg:pb-5 mt-14 lg:mt-0 top-0 left-0 w-full h-full gap-4 grid grid-cols-1 md:grid-cols-2 md:grid-rows-4 overflow-y-scroll md:overflow-y-hidden"
+>
+  <div
+    class="w-full col-span-1 md:row-span-4 col-start-1 row-start-1 flex flex-col justify-between relative bg-ept-navy-blue rounded-2xl m-5 ml-0 p-6"
+  >
+    <div
+      class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
+      [ngClass]="{ 'opacity-0': !loading }"
+      *ngIf="!show"
+    >
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+    <div
+      class="transition-opacity duration-200 col-span-6 flex flex-col justify-between h-full"
+      [ngClass]="{ 'opacity-0': !show }"
+      *ngIf="event"
+    >
+      <div class="text-ept-off-white font-poppins font-semibold">
+        <span
+          [ngStyle]="{
+            'overflow-wrap': event.Name.length > 20 ? 'break-word' : 'normal',
+            'white-space': event.Name.length > 20 ? 'normal' : 'nowrap'
+          }"
+        >
+          {{ event.Name.length <= 20 ? event.Name : '' }}
+        </span>
+        <div *ngIf="event.Name.length > 20">
+          <span
+            *ngFor="let part of splitTitle(event.Name)"
+            class="inline-block text-2xl"
+          >
+            {{ part }}
+          </span>
+        </div>
+      </div>
+      <div id="location" class="my-4 md:my-0">
+        <div class="text-xl font-semibold font-poppins">Location</div>
+        <div>
+          <input
+            type="text"
+            placeholder="Location"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-2 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="location"
+          />
+        </div>
+      </div>
+
+      <div id="category" class="my-4 md:my-0">
+        <div class="text-xl font-semibold font-poppins">Category</div>
+        <div>
+          <input
+            type="text"
+            placeholder="Category"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="category"
+          />
+        </div>
+      </div>
+
+      <div id="start" class="my-4 md:my-0">
+        <div class="text-xl font-semibold font-poppins">Start Time</div>
+        <div>
+          <input
+            type="datetime-local"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="start_time"
+          />
+        </div>
+      </div>
+
+      <div id="end" class="my-4 md:my-0">
+        <div class="text-xl font-semibold font-poppins">End Time</div>
+        <div>
+          <input
+            type="datetime-local"
+            class="col-start-5 col-span-4 w-full outline-none py-3 px-1 bg-transparent border-b-2 border-b-ept-blue-grey"
+            [(ngModel)]="end_time"
+          />
+        </div>
+      </div>
+
+      <div
+        class="my-2 md:my-0 col-span-3 flex justify-center align-middle drop-shadow-[0_10px_10px_rgba(0,0,0,0.2)]"
+      >
+        <div
+          class="bg-ept-navy-blue font-poppins font-semibold text-lg rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1"
+        >
+          <div
+            class="h-full mx-3 z-30 text-center cursor-pointer"
+            [ngClass]="{ 'text-ept-navy-blue': isPublic }"
+            (click)="isPublic = true"
+          >
+            Public
+          </div>
+          <div
+            class="h-full mx-3 z-30 text-center cursor-pointer"
+            [ngClass]="{ 'text-ept-navy-blue': !isPublic }"
+            (click)="isPublic = false"
+          >
+            Private
+          </div>
+          <div
+            class="absolute w-[50%] h-full z-20 rounded-full transition-all duration-300 ease-in-out"
+            [ngClass]="{
+              'animate-slideLeft bg-ept-bumble-yellow': isPublic,
+              'animate-slideRight bg-ept-blue-grey': !isPublic
+            }"
+          ></div>
+        </div>
+      </div>
+
+      <div
+        class="my-2 md:my-0 grid grid-cols-5 font-poppins font-semibold text-xl"
+      >
+        <div
+          id="save_event"
+          class="mr-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center items-center"
+          (click)="saveEvent()"
+          (disabled)="!hasChanges()"
+          [ngClass]="{
+            'opacity-30 cursor-not-allowed': !hasChanges(),
+            'hover:scale-[103%] cursor-pointer': hasChanges()
+          }"
+        >
+          <div>Save</div>
+        </div>
+        <div
+          id="cancel_changes"
+          class="mx-2 col-span-2 p-3 bg-ept-blue-grey rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center items-center"
+          (click)="discardChanges()"
+          (disabled)="!hasChanges()"
+          [ngClass]="{
+            'opacity-30 cursor-not-allowed': !hasChanges(),
+            'hover:scale-[103%] cursor-pointer': hasChanges()
+          }"
+        >
+          <div>Discard</div>
+        </div>
+        <div
+          id="delete_event"
+          class="cursor-pointer text-4xl ml-2 p-3 bg-ept-bumble-yellow rounded-xl text-ept-deep-grey transition-all duration-300 flex justify-center align-middle hover:scale-105"
+          (click)="deleteEvent()"
+        >
+          <ng-icon name="matDeleteRound"></ng-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="w-full col-span-1 md:row-span-2 flex flex-col relative bg-ept-navy-blue rounded-2xl m-5 md:mb-0 ml-0 p-6"
+  >
+    <div class="text-2xl font-poppins font-semibold mb-3">Requests</div>
+    <div
+      class="relative h-full"
+      [ngClass]="{ 'overflow-y-scroll': requests.length > 0 }"
+    >
+      <div
+        class="my-4 md:my-0 md:absolute md:top-0 md:left-0 w-full h-full flex flex-col md:justify-center items-center transition-opacity duration-200 z-50"
+        *ngIf="emptyRequests()"
+      >
+        <ng-icon
+          name="heroInboxSolid"
+          class="lg:text-6xl md:text-4xl sm:text-6xl"
+        ></ng-icon>
+        <div class="font-poppins lg:text-xl md:text-md mt-3">
+          There are no requests for this event yet...
+        </div>
+      </div>
+      <div
+        class="p-3 pl-0 grid grid-cols-7 md:grid-cols-5 border-b-2 border-b-ept-blue-grey border-opacity-10 justify-start md:items-center"
+        *ngFor="let request of requests"
+      >
+        <div class="col-span-5 md:col-span-3 break-words self-center">
+          {{ request.Email }}
+        </div>
+        <div
+          *ngIf="showRequestBtnText"
+          class="cursor-pointer p-2 bg-ept-bumble-yellow text-ept-deep-grey rounded-2xl text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          (click)="acceptRequest(request)"
+        >
+          Accept
+        </div>
+        <div
+          *ngIf="!showRequestBtnText"
+          class="cursor-pointer justify-end w-fit bg-ept-bumble-yellow p-1 text-ept-deep-grey rounded-lg text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          (click)="acceptRequest(request)"
+        >
+          <ng-icon name="matCheckBox" class="text-3xl self-center"></ng-icon>
+        </div>
+        <div
+          *ngIf="showRequestBtnText"
+          class="cursor-pointer self-end p-2 bg-ept-blue-grey text-ept-deep-grey rounded-2xl text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          (click)="declineRequest(request)"
+        >
+          Decline
+        </div>
+        <div
+          *ngIf="!showRequestBtnText"
+          class="cursor-pointer justify-end w-fit bg-ept-blue-grey p-1 text-ept-deep-grey rounded-lg text-center mx-1 hover:scale-105 hover:drop-shadow-[0_0px_10px_rgba(0,0,0,0.3)] transition-all duration-300"
+          (click)="declineRequest(request)"
+        >
+          <ng-icon
+            name="matCancelPresentation"
+            class="text-3xl self-center"
+          ></ng-icon>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 md:mt-0 flex justify-between align-middle">
+      <input
+        class="w-full mr-4 bg-ept-blue-grey bg-opacity-10 rounded-xl p-2 text-ept-off-white outline-none"
+        placeholder="email@domain.com"
+        [(ngModel)]="invite"
+      />
+      <div
+        id="invite_user"
+        class="cursor-pointer rounded-xl p-2 text-center flex justify-center align-middle bg-ept-blue-grey text-ept-deep-grey hover:scale-105 duration-300 transition-all"
+        (click)="inviteUser()"
+      >
+        Send Invite
+      </div>
+    </div>
+  </div>
+  <div class="streaming-section w-full col-span-1 md:row-span-2 flex flex-col relative bg-ept-navy-blue rounded-2xl md:mt-0 ml-0 p-2 m-5 overflow-hidden">
+    <event-participation-trends-producer #producer_component></event-participation-trends-producer>
+  </div>
+</div>
+<event-participation-trends-delete-confirm-modal
+  id="delete-modal"
+  class="hidden opacity-0 z-50 transition-all duration-300"
+  event_id="{{ getEventID() }}"
+>
+</event-participation-trends-delete-confirm-modal>

@@ -1,0 +1,113 @@
+<div
+  *ngIf="isFirstMessageOfTheDay"
+  class="date-section flex items-center justify-center m-1 z-50"
+  [ngClass]="{'mt-2': isFirstMessageOfEvent, 'mt-4': !isFirstMessageOfEvent}"
+>
+  <label class="p-1 pr-2 pl-2 rounded-full text-xs" [ngClass]="{'bg-ept-blue-grey': isLargeScreen, 'bg-ept-off-white': !isLargeScreen}">{{ messageDate }}</label>
+</div>
+<div
+  [ngClass]="{ 'mt-0': prevMessageSameUser, 'mt-2': !prevMessageSameUser }"
+  class="relative"
+>
+  <label
+    *ngIf="message.user.id === activeUserID && !prevMessageSameUser"
+    class="absolute font-light text-sm text-ept-off-white text-opacity-75"
+    [ngClass]="{
+      'right-[16px]': (isUserEventManager || isUserAdmin) && !isLargeScreen,
+      'left-[12px]': !(isUserEventManager || isUserAdmin) && !isLargeScreen,
+      'right-3': (isUserEventManager || isUserAdmin) && isLargeScreen,
+      'left-3': !(isUserEventManager || isUserAdmin) && isLargeScreen,
+    }"
+    >You</label
+  >
+  <label
+    *ngIf="
+      message.user.id !== activeUserID &&
+      !prevMessageSameUser &&
+      isUserEventManager
+    "
+    class="absolute font-light mt-2 text-sm text-ept-off-white text-opacity-75"
+    >Manager</label
+  >
+  <label
+    *ngIf="
+      message.user.id !== activeUserID &&
+      !prevMessageSameUser &&
+      isUserAdmin
+    "
+    class="absolute right-3 font-light text-sm text-ept-off-white text-opacity-75"
+    >Admin</label
+  >
+  <div
+    *ngIf="!isUserEventManager && !isUserAdmin"
+    class="flex justify-left items-center p-5 pl-3 pt-0"
+    [ngClass]="{
+      'pt-0': prevMessageSameUser,
+      'pb-1': nextMessageSameUser,
+      'pb-0': !nextMessageSameUser
+    }"
+  >
+    <div
+      class="flex flex-col items-center justify-evenly mr-3"
+      [ngClass]="{ 'justify-center': message.user.id === activeUserID }"
+    >
+      <img
+        id="userProfilePic"
+        class="w-8 h-8 rounded-full"
+        [ngClass]="{ 'opacity-0': prevMessageSameUser }"
+        [src]="message.user.profilePic"
+        [alt]="message.user.name"
+        referrerpolicy="no-referrer"
+      />
+    </div>
+    <div
+      class="flex justify-between w-fit mr-16 pl-2 pr-2 rounded-md min-h-[40px]"
+      [ngClass]="{
+        'bg-[#D9D9D9]': message.user.id !== activeUserID,
+        'bg-[#3aa0e7]': message.user.id === activeUserID
+      }"
+    >
+      <span class="text-sm p-1 self-center">{{ message.text }}</span>
+      <div class="flex flex-col justify-end items-end p-1 ml-2">
+        <span class="right-2 bottom-1 text-xs font-light text-ept-deep-grey text-opacity-80">{{
+          convertTimestampToDigitalTime(message.timestamp)
+        }}</span>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="isUserEventManager || isUserAdmin"
+    class="flex justify-end items-center p-5 pr-3 pt-0"
+    [ngClass]="{
+      'pt-0': prevMessageSameUser,
+      'pb-1': nextMessageSameUser,
+      'pb-0': !nextMessageSameUser
+    }"
+  >
+    <div
+      class="ml-16 flex justify-between w-fit sm:max-w-[120px] md:max-w-[240px] w-[300px] pl-2 pr-2 rounded-md min-h-[40px]"
+      [ngClass]="{
+        'bg-ept-bumble-yellow': isUserEventManager,
+        'bg-[#17df8c]': isUserAdmin,
+      }"
+      >
+      <!-- 'bg-[#3aa0e7]': isUserAdmin && activeUserID !== message.user.id, -->
+      <span class="text-sm p-1 self-center">{{ message.text }}</span>
+      <div class="flex flex-col justify-end items-center p-1 ml-2">
+        <span class="right-2 bottom-1 text-xs font-light text-ept-deep-grey text-opacity-80">{{
+          convertTimestampToDigitalTime(message.timestamp)
+        }}</span>
+      </div>
+    </div>
+    <div class="flex flex-col items-center justify-evenly ml-3">
+      <img
+        id="userProfilePic"
+        class="w-8 h-8 rounded-full"
+        [ngClass]="{ 'opacity-0': prevMessageSameUser }"
+        [src]="message.user.profilePic"
+        [alt]="message.user.name"
+        referrerpolicy="no-referrer"
+      />
+    </div>
+  </div>
+</div>

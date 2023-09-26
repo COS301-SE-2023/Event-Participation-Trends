@@ -5,6 +5,7 @@ import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { Status } from'@event-participation-trends/api/user/util';
 import { ViewRequest } from '../models';
 import { Types } from 'mongoose';
+import { HttpException } from '@nestjs/common';
 
 @CommandHandler(AcceptViewRequestCommand)
 export class AcceptViewRequestHandler implements ICommandHandler<AcceptViewRequestCommand, IAcceptViewRequestResponse> {
@@ -21,6 +22,15 @@ export class AcceptViewRequestHandler implements ICommandHandler<AcceptViewReque
 
         const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
     
+        //check if requester is manager of event
+        const managerId = await this.eventRepository.getManager(eventIdObj);
+        let managerDoc;
+        if(managerId[0].Manager != undefined && managerId[0].Manager != null)
+            managerDoc = await this.userRepository.getUserById(managerId[0].Manager);
+        if(managerDoc && (request.managerEmail != managerDoc[0].Email)){
+            throw new HttpException('Bad Request: managerEmail is not the event manager', 400);
+        }
+
         //check if request exists
         const userDoc = await this.userRepository.getUser(request.userEmail|| "");
         let requested =false;

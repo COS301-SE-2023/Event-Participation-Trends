@@ -55,6 +55,26 @@ import {
     IGetFloorplanBoundariesRequest,
     GetFloorplanBoundariesQuery,
     IGetFloorplanBoundariesResponse,
+    DeleteEventCommand,
+    IDeleteEventRequest,
+    IDeleteEventResponse,
+    GetAllActiveEventsQuery,
+    IGetAllActiveEventsResponse,
+    IImageUploadRequest,
+    UploadImageCommand,
+    IImageUploadResponse,
+    IGetEventFloorlayoutImageRequest,
+    GetEventFloorlayoutImageQuery,
+    IDeleteEventImageRequest,
+    DeleteEventImageCommand,
+    IDeleteEventImageResponse,
+    IGetEventStatisticsRequest,
+    GetEventStatisticsQuery,
+    IUpdateEventFloorLayoutImgRequest,
+    UpdateEventFloorLayoutImgCommand,
+    IUpdateEventFloorLayoutImgResponse,
+    IGetEventStatisticsResponse,
+    IGetEventFloorlayoutImageResponse,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -150,11 +170,39 @@ export class EventService {
         return await this.queryBus.execute<GetEventDevicePositionQuery, IGetEventDevicePositionResponse>(new GetEventDevicePositionQuery(request));
     }
 
+    async getAllActiveEvents() {
+        return await this.queryBus.execute<GetAllActiveEventsQuery, IGetAllActiveEventsResponse>(new GetAllActiveEventsQuery());
+    }
+
     async getAllEventCategories() {
         return await this.queryBus.execute<GetAllEventCategoriesQuery, IGetAllEventCategoriesResponse>(new GetAllEventCategoriesQuery());
     }
 
     async getManagedEventCategories(request: IGetManagedEventCategoriesRequest) {
         return await this.queryBus.execute<GetManagedEventCategoriesQuery, IGetManagedEventCategoriesResponse>(new GetManagedEventCategoriesQuery(request));
+    }
+
+    async deleteEvent(request: IDeleteEventRequest) {
+        return await this.commandBus.execute<DeleteEventCommand, IDeleteEventResponse>(new DeleteEventCommand(request));
+    }
+
+    async uploadImage(request: IImageUploadRequest) {
+        return await this.commandBus.execute<UploadImageCommand, IImageUploadResponse>(new UploadImageCommand(request));
+    }
+
+    async getEventFloorLayoutImage(request: IGetEventFloorlayoutImageRequest) {
+        return await this.queryBus.execute<GetEventFloorlayoutImageQuery, IGetEventFloorlayoutImageResponse>(new GetEventFloorlayoutImageQuery(request));
+    }
+
+    async deleteImage(request: IDeleteEventImageRequest) {
+        return await this.commandBus.execute<DeleteEventImageCommand, IDeleteEventImageResponse>(new DeleteEventImageCommand(request));
+    }
+
+    async getEventStatistics(request: IGetEventStatisticsRequest) {
+        return await this.queryBus.execute<GetEventStatisticsQuery, IGetEventStatisticsResponse>(new GetEventStatisticsQuery(request));
+    }
+
+    async updateEventFloorLayoutImage(request: IUpdateEventFloorLayoutImgRequest) {
+        return await this.commandBus.execute<UpdateEventFloorLayoutImgCommand, IUpdateEventFloorLayoutImgResponse>(new UpdateEventFloorLayoutImgCommand(request));
     }
 }

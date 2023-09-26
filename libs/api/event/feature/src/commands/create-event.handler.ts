@@ -38,6 +38,7 @@ export class CreateEventHandler implements ICommandHandler<CreateEventCommand, I
                     Category: request.Event.Category,
                     Location: request.Event.Location,
                     Manager: managerDoc[0]._id,
+                    PublicEvent: request.Event.PublicEvent,
                 }
                 
                 const event = this.publisher.mergeObjectContext(EventDetails.fromData(data));

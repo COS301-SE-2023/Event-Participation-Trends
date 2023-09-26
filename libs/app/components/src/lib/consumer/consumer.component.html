@@ -1,0 +1,12 @@
+<div class="bg-transparent overflow-hidden flex flex-col  m-auto">
+  <video
+    [ngClass]="{'hidden': currentStream === ''}"
+    #remote_video
+    controls
+    muted
+    autoplay
+    playsinline
+    hidden
+    class="content overflow-hidden"
+  ></video>
+</div>
