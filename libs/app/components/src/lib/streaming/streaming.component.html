@@ -6,7 +6,7 @@
       <div
         class="w-full h-full rounded-lg"
         [ngClass]="{
-          'flex flex-col justify-center items-center': !videoStreams, 'pointer-events-none': consumer_component.currentStream === ''
+          'flex flex-col justify-center items-center': !videoStreams
         }"
         (mouseover)="onMouseOver()"
         (mouseleave)="onMouseLeave()"
@@ -46,7 +46,8 @@
               class="z-50 absolute cursor-pointer flex items-center top-[45%] left-6 rounded-full bg-ept-navy-blue bg-opacity-[75%] p-1"
               [ngClass]="{
                 'opacity-100': showArrows,
-                'opacity-0 pointer-events-none': !showArrows || consumer_component.currentStream === ''
+                'opacity-0 pointer-events-none': !showArrows || consumer_component.currentStream === '',
+                'hidden': consumer_component.currentStream === ''
               }"
               [style.transition]="'opacity 0.3s ease-in-out'"
               (click)="switchToPreviousStream()"
@@ -60,7 +61,8 @@
               class="z-50 absolute cursor-pointer flex items-center top-[45%] right-6 rounded-full bg-ept-navy-blue bg-opacity-[75%] p-1"
               [ngClass]="{
                 'opacity-100': showArrows,
-                'opacity-0 pointer-events-none': !showArrows || consumer_component.currentStream === ''
+                'opacity-0 pointer-events-none': !showArrows || consumer_component.currentStream === '',
+                'hidden': consumer_component.currentStream === ''
               }"
               [style.transition]="'opacity 0.3s ease-in-out'"
               (click)="switchToNextStream()"
@@ -154,7 +156,7 @@
               >
                 <input
                   id="messageInput"
-                  class="w-full h-10 bg-[#D9D9D9] rounded-lg text-black text-sm px-3 text-opacity-30"
+                  class="w-full h-10 bg-[#D9D9D9] rounded-lg text-black text-sm px-3 text-opacity-70"
                   type="text"
                   placeholder="Add your message here..."
                   [(ngModel)]="messageText"
