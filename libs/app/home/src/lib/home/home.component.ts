@@ -178,6 +178,7 @@ export class HomeComponent implements OnInit {
     if (this.navBarVisible) {
       this.hideNavBar();
     }
+    this.expandEvents = false;
   }
 
   users() {
@@ -188,6 +189,7 @@ export class HomeComponent implements OnInit {
     if (this.navBarVisible) {
       this.hideNavBar();
     }
+    this.expandUsers = false;
   }
 
   compare() {
@@ -198,6 +200,7 @@ export class HomeComponent implements OnInit {
     if (this.navBarVisible) {
       this.hideNavBar();
     }
+    this.expandCompare = false;
   }
 
   profile_press() {
@@ -217,6 +220,7 @@ export class HomeComponent implements OnInit {
   }
 
   help_press() {
+    this.expandHelp = false;
     this.pressButton('#help-link');
     
     setTimeout(() => {
