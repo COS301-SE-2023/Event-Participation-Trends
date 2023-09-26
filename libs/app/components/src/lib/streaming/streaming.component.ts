@@ -7,7 +7,6 @@ import { AppApiService } from '@event-participation-trends/app/api';
 import { FormsModule } from '@angular/forms';
 import { ChatMessageComponent } from '../chat-message/chat-message.component';
 import { Router } from '@angular/router';
-import { IUser } from '@event-participation-trends/api/user/util';
 import { ConsumerComponent } from '../consumer/consumer.component';
 import { Socket } from 'ngx-socket-io'
 
@@ -23,6 +22,7 @@ interface IMessageUser {
   fullName: string;
   id: string;
   profilePic: string;
+  role: string;
 }
 
 @Component({
@@ -94,6 +94,7 @@ export class StreamingComponent implements OnInit, AfterViewInit {
       id: await this.appApiService.getEmail(),
       fullName: await this.appApiService.getFullName(),
       profilePic: await this.appApiService.getProfilePicUrl(),
+      role: await this.appApiService.getRole(),
     }
     this.activeUserID = this.myUser.id;
     this.socket.fromEvent('message').subscribe((message: any) => {  
