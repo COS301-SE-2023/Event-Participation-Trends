@@ -143,8 +143,15 @@ export class StreamingComponent implements OnInit, AfterViewInit {
     },50);
   }
 
-  isMessageFromManager(message: any): boolean {
-    if (message.user.id === this.event?.Manager) {
+  isMessageFromManager(role: string): boolean {
+    if (role === 'manager') {
+      return true;
+    }
+    return false;
+  }
+
+  isMessageFromAdmin(role: string): boolean {
+    if (role === 'admin') {
       return true;
     }
     return false;

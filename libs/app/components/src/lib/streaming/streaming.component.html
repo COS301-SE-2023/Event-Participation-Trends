@@ -139,7 +139,8 @@
                       eventMessages[eventMessages.indexOf(message) + 1]
                     )
                   "
-                  [isUserEventManager]="isMessageFromManager(message)"
+                  [isUserEventManager]="isMessageFromManager(message.user.role)"
+                  [isUserAdmin]="isMessageFromAdmin(message.user.role)"
                   [activeUserID]="activeUserID"
                   [messageDate]="getDateForMessage(message)"
                   [isFirstMessageOfTheDay]="
