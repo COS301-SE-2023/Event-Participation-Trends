@@ -1,6 +1,13 @@
-import { AddDevicePosition, EventService } from '@event-participation-trends/api/event/feature';
+import {
+  AddDevicePosition,
+  EventService,
+} from '@event-participation-trends/api/event/feature';
 import { IGetAllEventsRequest } from '@event-participation-trends/api/event/util';
-import { PositioningService, SensorReading, KalmanFilter } from '@event-participation-trends/api/positioning';
+import {
+  PositioningService,
+  SensorReading,
+  KalmanFilter,
+} from '@event-participation-trends/api/positioning';
 import { Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { SensorlinkingService } from '@event-participation-trends/api/sensorlinking';
@@ -15,7 +22,11 @@ export class MqttService {
   private idNum: number;
   private filters: Map<number, KalmanFilter>;
 
-  constructor(private readonly sensorLinkingService: SensorlinkingService, private readonly positioningService: PositioningService, private readonly eventService: EventService) {
+  constructor(
+    private readonly sensorLinkingService: SensorlinkingService,
+    private readonly positioningService: PositioningService,
+    private readonly eventService: EventService
+  ) {
     this.sensors = new Array<string>();
     this.macToId = new Map<string, number>();
     this.buffer = new Array<any>();
@@ -49,39 +60,43 @@ export class MqttService {
   async processBuffer() {
     const events = this.sensorLinkingService.events;
     this.sensorLinkingService.shouldUpdate = true;
-    events
-      ?.filter(
-        (event) => event.StartDate < new Date() && event.EndDate > new Date()
-      )
-      .forEach(async (event) => {
-        const sensors = new Set<any>();
-        if (!event.FloorLayout) return;
-        const thisFloorLayout = JSON.parse(
-          event.FloorLayout as unknown as string
-        );
-        if (thisFloorLayout?.children === undefined) return;
-        thisFloorLayout?.children?.forEach((child: any) => {
-          if (child.className === 'Circle') {
-            sensors.add({
-              x: child?.attrs?.x,
-              y: child?.attrs?.y,
-              id: child?.attrs?.uniqueId || child?.attrs?.customId,
-            });
-          }
-        });
-        const positions = await this.anotherOne(sensors);
 
-        this.buffer = new Array<any>();
-        if(process.env['MQTT_ENVIRONMENT'] === 'production' && positions.length > 0)
-          this.eventService.addDevicePosition({
-            eventId: (event as any)._id,
-            position: positions
-          })
+    for (const event of events!.filter(
+      (event) => event.StartDate < new Date() && event.EndDate > new Date()
+    )) {
+      const sensors = new Set<any>();
+      if (!event.FloorLayout) continue;
+      const thisFloorLayout = JSON.parse(
+        event.FloorLayout as unknown as string
+      );
+      if (thisFloorLayout?.children === undefined) continue;
+      thisFloorLayout?.children?.forEach((child: any) => {
+        if (child.className === 'Circle') {
+          sensors.add({
+            x: child?.attrs?.x,
+            y: child?.attrs?.y,
+            id: child?.attrs?.customId,
+          });
+        }
       });
+
+      const positions = await this.anotherOne(sensors);
+
+      if (
+        process.env['MQTT_ENVIRONMENT'] === 'production' &&
+        positions.length > 0
+      )
+        this.eventService.addDevicePosition({
+          eventId: (event as any)._id,
+          position: positions,
+        });
+    }
+
+    this.buffer = new Array<any>();
   }
 
   async anotherOne(sensors: any): Promise<Position[]> {
-    const tempBuffer = new Array<any>;
+    const tempBuffer = new Array<any>();
     for await (const sensor of sensors) {
       const id = sensor.id;
       const sensorMac = await this.sensorLinkingService.getMacAddress(id);
@@ -126,7 +141,7 @@ export class MqttService {
         position.timestamp.getTime() / 1000
       );
 
-      const filtered_position : Position = {
+      const filtered_position: Position = {
         id: position.id,
         x: estimated_position[0][0],
         y: estimated_position[1][0],
@@ -139,5 +154,5 @@ export class MqttService {
     });
 
     return filteredPositions;
-  };
+  }
 }
