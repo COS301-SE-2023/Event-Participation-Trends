@@ -8,7 +8,7 @@
 >
   <div #navBarContainer *ngIf="!showMenuBar" class="text-4xl absolute z-50 h-full">
     <ng-icon *ngIf="!navBarVisible" name="matMenu" (click)="showNavBar()" class="absolute m-5 cursor-pointer hover:text-ept-bumble-yellow"></ng-icon>
-    <div id="navBar" class="h-full bg-ept-navy-blue pl-0 transition-all duration-300 shadow-md drop-shadow-2xl shadow-ept-blue-grey rounded-sm" [ngClass]="{'w-0': !navBarVisible, 'w-[390px]': navBarVisible}">
+    <div id="navBar" class="h-full w-[75%] bg-ept-navy-blue pl-0 transition-all duration-300 shadow-md drop-shadow-2xl shadow-ept-blue-grey rounded-sm" [ngClass]="{'w-0': !navBarVisible, 'w-[390px]': navBarVisible}">
       <div *ngIf="navBarVisible">
         <ng-icon name="matClose" (click)="hideNavBar()" class="m-2 float-right cursor-pointer hover:text-ept-bumble-yellow"></ng-icon>
         <div class="w-full flex flex-col relative">
@@ -25,7 +25,7 @@
             }"
             >
               <ng-icon name="heroArrowLeft" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center"></ng-icon>
-              <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey">Back</label>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey">Back</label>
             </a>
           </div>
           <div
@@ -42,7 +42,7 @@
             }"
             >
               <ng-icon name="matBarChartRound" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('dashboard')}"></ng-icon>
-              <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('dashboard')}">Dashboard</label>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('dashboard')}">Dashboard</label>
             </a>
           </div>
           <div
@@ -60,7 +60,7 @@
             }"
             >
               <ng-icon name="matFormatListBulletedRound" class="text-5xl pl-1 text-ept-blue-grey self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('details')}"></ng-icon>
-              <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('details')}">Event Details</label>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('details')}">Event Details</label>
             </a>
           </div>
 
@@ -78,7 +78,7 @@
             }"
             >
               <ng-icon name="matDrawRound" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('floorplan')}"></ng-icon>
-              <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('floorplan')}">Floorplan Editor</label>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('floorplan')}">Floorplan Editor</label>
             </a>
           </div>
 
@@ -95,7 +95,7 @@
             }"
             >
               <ng-icon name="matVideoChat" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer self-center" [ngClass]="{'text-ept-bumble-yellow': isActiveRoute('streaming')}"></ng-icon>
-              <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('streaming')}">Streams</label>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': isActiveRoute('streaming')}">Streams</label>
             </a>
           </div>
         </div>
@@ -115,7 +115,7 @@
               (mouseleave)="hideHelp()"
             >
               <ng-icon name="matQuestionMarkRound" class="text-5xl text-ept-blue-grey cursor-pointer self-center"></ng-icon>
-              <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey">Help</label>
+              <label class="text-2xl pr-6 self-center ml-4 cursor-pointer text-ept-blue-grey">Help</label>
             </a>
           </div>
         </div>
