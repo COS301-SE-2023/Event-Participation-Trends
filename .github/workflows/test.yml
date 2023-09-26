@@ -6,6 +6,8 @@ name: Build, Lint and Test
   push:
     branches:
       - '*_test'
+      - dev
+      - main
 jobs:
   all_test:
     runs-on: ubuntu-latest
