@@ -12,7 +12,9 @@ export class AddViewingEventEventHandler implements IEventHandler<AddViewingEven
 
     const userDoc = await this.repository.getUser(event.request.userEmail || "");
 
-    const userIDObj = userDoc[0]._id;
+    let userIDObj= new Types.ObjectId();
+    if(userDoc && userDoc.length >=0)
+        userIDObj = userDoc[0]?._id;
     const eventIDObj = <Types.ObjectId> <unknown> event.request.eventId;
 
     await this.repository.addViewingEvent(userIDObj,eventIDObj);
