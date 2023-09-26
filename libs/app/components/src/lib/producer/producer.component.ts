@@ -23,7 +23,7 @@ export class ProducerComponent implements AfterViewInit {
   @ViewChild('local_video') localVideo!: ElementRef<HTMLVideoElement>;
 
   ngAfterViewInit(): void {
-   if (typeof navigator.mediaDevices.getDisplayMedia === 'undefined') {
+   if (typeof navigator?.mediaDevices?.getDisplayMedia === 'undefined') {
       this.txtScreen.nativeElement.innerHTML = 'Not supported';
       this.btnScreen.nativeElement.disabled = true;
     }
