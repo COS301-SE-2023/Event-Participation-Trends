@@ -177,6 +177,7 @@ export class EventViewComponent implements OnInit {
   goBack() {
     this.pressButton('#back');
     this.ngZone.run(() => { this.router.navigate(['/home']); });
+    this.expandBack = false;
   }
 
   goDetails() {
@@ -188,6 +189,7 @@ export class EventViewComponent implements OnInit {
     if (this.navBarVisible) {
       this.hideNavBar();
     }
+    this.expandDetails = false;
   }
 
   goDashboard() {
@@ -199,6 +201,7 @@ export class EventViewComponent implements OnInit {
     if (this.navBarVisible) {
       this.hideNavBar();
     }
+    this.expandDashboard = false;
   }
 
   goFloorplan() {
@@ -216,6 +219,7 @@ export class EventViewComponent implements OnInit {
     if (this.navBarVisible) {
       this.hideNavBar();
     }
+    this.expandFloorplan = false;
   }
 
   goStreaming() {
@@ -229,6 +233,7 @@ export class EventViewComponent implements OnInit {
     if (this.navBarVisible) {
       this.hideNavBar();
     }
+    this.expandStreaming = false;
   }
 
   showSmallScreenModal() {

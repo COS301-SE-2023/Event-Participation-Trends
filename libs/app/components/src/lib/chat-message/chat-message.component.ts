@@ -26,6 +26,7 @@ export class ChatMessageComponent implements OnInit, AfterViewInit{
   @Input() prevMessageSameUser = false;
   @Input() nextMessageSameUser = false;
   @Input() isUserEventManager = false;
+  @Input() isUserAdmin = false;
   @Input() activeUserID = '';
   @Input() isFirstMessageOfTheDay = false;
   @Input() messageDate = '';
