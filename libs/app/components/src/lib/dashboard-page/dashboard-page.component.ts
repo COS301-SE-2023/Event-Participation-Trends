@@ -11,7 +11,7 @@ import 'chartjs-plugin-datalabels';
 import ChartStreaming from 'chartjs-plugin-streaming';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IGetEventDevicePositionResponse, IGetEventFloorlayoutResponse, IGetEventResponse, IImage, IPosition } from '@event-participation-trends/api/event/util';
+import { IEvent, IGetEventDevicePositionResponse, IGetEventFloorlayoutResponse, IGetEventResponse, IImage, IPosition } from '@event-participation-trends/api/event/util';
 import { set } from 'mongoose';
 
 import { matKeyboardDoubleArrowUp, matKeyboardDoubleArrowDown } from "@ng-icons/material-icons/baseline";
@@ -155,7 +155,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
   constructor(private appApiService: AppApiService, private router : Router, private route: ActivatedRoute, private ngZone: NgZone) {}
 
   public id = '';
-  public event : any | null = null;
+  public event : IEvent | null = null;
   public show = false;
   public loading = true;
   
@@ -168,7 +168,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     }
     this.event = await this.appApiService.getEvent({ eventId: this.id });
 
-    if (!(await this.hasAccess()) && !this.event.event.PublicEvent) {
+    if (!(await this.hasAccess()) && !this.event.PublicEvent) {
       this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
 
@@ -189,8 +189,8 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     const images = await this.appApiService.getFloorLayoutImages(this.id);
     this.floorlayoutImages = images;
 
-    const eventStartDate = this.event.event.StartDate;
-    const eventEndDate = this.event.event.EndDate;
+    const eventStartDate = this.event.StartDate;
+    const eventEndDate = this.event.EndDate;
     
     if (eventStartDate) {
       this.eventStartTime = new Date(eventStartDate);
