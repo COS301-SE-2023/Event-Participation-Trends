@@ -293,7 +293,7 @@ export class EventController {
   }
 
     @Get('getEvent')
-    @SetMetadata('role',Role.MANAGER)
+    @SetMetadata('role',Role.VIEWER)
     @UseGuards(JwtGuard, RbacGuard, CsrfGuard)
     async getEvent(
         @Query() query: any

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Route } from '@angular/router';
 import { appHomeRoutes } from './lib.routes';
 import { HomeComponent } from './home/home.component';
-import { ProfileComponent, HomeHelpComponent } from '@event-participation-trends/app/components';
+import { ProfileComponent, HomeHelpComponent, SmallScreenModalComponent } from '@event-participation-trends/app/components';
 import {
   AllEventsPageComponent,
   ComparePageComponent,
@@ -26,6 +26,11 @@ import {
   matCompareArrowsRound,
 } from '@ng-icons/material-icons/round';
 
+import {
+  matMenu,
+  matClose
+} from '@ng-icons/material-icons/baseline';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -47,7 +52,9 @@ import {
       matGroupRound,
       matEventRound,
       matCompareArrowsRound,
-      heroArrowsRightLeft
+      heroArrowsRightLeft,
+      matMenu,
+      matClose
     }),
   ],
   declarations: [HomeComponent],

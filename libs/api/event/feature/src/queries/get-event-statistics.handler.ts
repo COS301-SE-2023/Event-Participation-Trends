@@ -27,6 +27,7 @@ export class GetEventStatisticsHandler
     let turnover_rate = 0;
     let average_attendance_time = 0;
     let max_attendance_time = 0;
+    const attendance_over_time_data: {time: number, devices: number}[] = [];
 
     if (events.length == 0) {
       return <IGetEventStatisticsResponse>{
@@ -36,6 +37,7 @@ export class GetEventStatisticsHandler
         turnover_rate: turnover_rate,
         average_attendance_time: average_attendance_time,
         max_attendance_time: max_attendance_time,
+        attendance_over_time_data: attendance_over_time_data,
       };
     }
 
@@ -47,7 +49,7 @@ export class GetEventStatisticsHandler
 
     const uniqueDevices = new Set();
 
-    const devicesOverTime = new Map<Date, Set<number>>();
+    const devicesOverTime = new Map<number, Set<number>>();
     const deviceTimeRange = new Map<number, { start: Date; end: Date }>();
 
     // iterate over all devices
@@ -71,11 +73,11 @@ export class GetEventStatisticsHandler
         }
       }
 
-      const deviceSet = devicesOverTime.get(device.timestamp);
+      const deviceSet = devicesOverTime.get(device.timestamp.getTime());
       if (deviceSet) {
         deviceSet.add(device.id);
       } else {
-        devicesOverTime.set(device.timestamp, new Set([device.id]));
+        devicesOverTime.set(device.timestamp.getTime(), new Set([device.id]));
       }
     }
 
@@ -101,18 +103,58 @@ export class GetEventStatisticsHandler
     }
 
     total_attendance = uniqueDevices.size;
-    average_attendance = total_unique_devices / devicesOverTime.size;
-    average_attendance_time = total_attendance_time / deviceTimeRange.size;
+    average_attendance = total_unique_devices / devicesOverTime.size ? total_unique_devices / devicesOverTime.size : 0;
+    average_attendance_time = total_attendance_time / deviceTimeRange.size ? total_attendance_time / deviceTimeRange.size : 0;
+
+    // Initialize the devicesOverInterval map
+    const devicesOverInterval: Map<number, Set<number>> = new Map();
+
+    console.log("events", events);
+    console.log("events[0]", events[0]);
+    console.log("events[0].StartDate", events[0].StartDate);
+
+    // Get the start time of the event
+    const startTime: Date = new Date(events[0].StartDate? events[0].StartDate : 0);
+
+    // Define the interval duration in minutes
+    const intervalDuration = 20;
+
+    // Iterate through the originalMap
+    for (const [time, numbers] of devicesOverTime.entries()) {
+      // Calculate the time since the start of the event
+      const timeSinceStart: number = (time - startTime.getTime()) / (1000 * 60);
+      // console.log(new Date(time), " => ", new Date(startTime.getTime()), " = ", timeSinceStart);
+
+      // Determine the interval key
+      const intervalKey: number = Math.floor(timeSinceStart / intervalDuration) * intervalDuration;
+
+      // Initialize or get the set for this interval in devicesOverInterval
+      const intervalSet: Set<number> = devicesOverInterval.get(intervalKey) || new Set();
+
+      // Add the numbers from the original set to the interval set
+      for (const number of numbers) {
+        intervalSet.add(number);
+      }
+
+      // Update devicesOverInterval with the combined set
+      devicesOverInterval.set(intervalKey, intervalSet);
+    }
+
+    for (const [key, value] of devicesOverInterval.entries()) {
+      console.log(key, " => " ,value.size);
+      attendance_over_time_data.push({time: key, devices: value.size});
+    }
 
     //compute statistics end
 
     return <IGetEventStatisticsResponse>{
       total_attendance: total_attendance,
-      average_attendance: average_attendance,
-      peak_attendance: peak_attendance,
-      turnover_rate: turnover_rate,
-      average_attendance_time: average_attendance_time,
-      max_attendance_time: max_attendance_time,
+      average_attendance: average_attendance.toFixed(2) ? average_attendance.toFixed(2) : 0,
+      peak_attendance: peak_attendance.toFixed(2) ? peak_attendance.toFixed(2) : 0,
+      turnover_rate: turnover_rate.toFixed(2) ? turnover_rate.toFixed(2) : 0,
+      average_attendance_time: average_attendance_time.toFixed(2) ? average_attendance_time.toFixed(2) : 0,
+      max_attendance_time: max_attendance_time.toFixed(2) ? max_attendance_time.toFixed(2) : 0,
+      attendance_over_time_data: attendance_over_time_data,
     };
   }
 }

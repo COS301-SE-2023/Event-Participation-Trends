@@ -10,7 +10,6 @@ import {
   IUpdateRoleRequest,
   IUser,
   IupdateRoleResponse,
-  Role,
 } from '@event-participation-trends/api/user/util';
 import {
   IAcceptViewRequestRequest,
@@ -18,22 +17,30 @@ import {
   ICreateEventResponse,
   IDeclineViewRequestRequest,
   IDeclineViewRequestResponse,
+  IDeleteEventImageResponse,
+  IDeleteEventResponse,
   IEvent,
   IEventDetails,
   IEventId,
   IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
   IGetEventDevicePositionResponse,
+  IGetEventFloorlayoutImageResponse,
   IGetEventFloorlayoutResponse,
   IGetEventResponse,
+  IGetEventStatisticsRequest,
+  IGetEventStatisticsResponse,
   IGetFloorplanBoundariesResponse,
   IGetManagedEventCategoriesResponse,
   IGetManagedEventsResponse,
   IGetUserViewingEventsResponse,
+  IImage,
+  IImageUploadResponse,
   IPosition,
   ISendViewRequestResponse,
   IUpdateEventDetailsRequest,
   IUpdateEventDetailsResponse,
+  IUpdateEventFloorLayoutImgResponse,
   IUpdateFloorlayoutResponse,
 } from '@event-participation-trends/api/event/util';
 import { firstValueFrom } from 'rxjs';
@@ -145,6 +152,20 @@ export class AppApiService {
     return response.status || Status.FAILURE;
   }
 
+  async getEventByName(eventName: string): Promise<IEvent> {
+    const response = await firstValueFrom(
+      this.http.get<IGetEventResponse>(
+        `/api/event/getEvent?eventName=${eventName}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.event;
+  }
+
   async getEvent(eventId: IEventId): Promise<IEvent> {
     return firstValueFrom(
       this.http.get<IEvent>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
@@ -222,6 +243,21 @@ export class AppApiService {
     return response.floorlayout || '';
   }
 
+  async deleteEvent(eventId: IEventId): Promise<Status> {
+    const response = await firstValueFrom(
+      this.http.post<IDeleteEventResponse>(
+        '/api/event/deleteEvent',
+        eventId,
+        { 
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.status || Status.FAILURE;
+  }
+
   async sendViewRequest(eventId: IEventId): Promise<Status> {
     const response = await firstValueFrom(
       this.http.post<ISendViewRequestResponse>(
@@ -235,6 +271,20 @@ export class AppApiService {
       )
     );
     return response.status || Status.FAILURE;
+  }
+
+  async getEventStatistics(eventId: IEventId): Promise<IGetEventStatisticsResponse> {
+    const response = await firstValueFrom(
+      this.http.get<IGetEventStatisticsResponse>(
+        `/api/event/getEventStatistics?eventId=${eventId.eventId}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        },
+      )
+    );
+    return response;
   }
 
   // REQUESTS //
@@ -316,6 +366,103 @@ export class AppApiService {
       )
     );
     return response.status || Status.FAILURE;
+  }
+
+  async addNewFloorplanImages(
+    eventId: string,
+    base64: string,
+    object: string,
+    scale: number,
+    type: string
+  ): Promise<Status> {
+    const response = await firstValueFrom(
+      this.http.post<IImageUploadResponse>(
+        '/api/event/uploadFloorlayoutImage',
+        {
+          eventId: eventId,
+          imgBase64: base64,
+          imageObj: object,
+          imageScale: scale,
+          imageType: type
+        },
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.status || Status.FAILURE;
+  }
+
+  async removeFloorplanImage(
+    userEmail: string, 
+    eventId: string, 
+    imageId: string
+  ): Promise<Status> {
+    const response = await firstValueFrom(
+      this.http.post<IDeleteEventImageResponse>(
+        '/api/event/removeFloorlayoutImage',
+        {
+          userEmail: userEmail,
+          eventId: eventId,
+          imageId: imageId
+        },
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.status || Status.FAILURE;
+  }
+
+  async updateFloorplanImages(
+    eventId: string,
+    imageId: string,
+    managerEmail: string,
+    imgBase64: string,
+    imageObj: string,
+    imageScale: number,
+    imageType: string
+  ): Promise<Status> {
+    const response = await firstValueFrom(
+      this.http.post<IUpdateEventFloorLayoutImgResponse>(
+        '/api/event/updateEventFloorlayoutImage',
+        {
+          eventId: eventId,
+          imageId: imageId,
+          managerEmail: managerEmail,
+          imgBase64: imgBase64,
+          imageObj: imageObj,
+          imageScale: imageScale,
+          imageType: imageType
+        },
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.status || Status.FAILURE;
+  }
+
+  async getFloorLayoutImages(
+    eventId: string
+  ): Promise<IImage[]> {
+    const response = await firstValueFrom(
+      this.http.get<IGetEventFloorlayoutImageResponse>(
+        `/api/event/getFloorLayoutImage?eventId=${eventId}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    );
+    return response.images || [];
   }
 
   async getNewEventSensorId(): Promise<string> {

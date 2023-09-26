@@ -6,8 +6,163 @@
     (click)="closeModal()"
   ></div>
   <div
-    class="bg-gradient-to-br from-ept-blue-grey from-[-30%] to-[#7a849c] z-50 rounded-2xl p-5"
+    class="w-[70%] my-5 h-[90%] bg-ept-deep-grey z-50 rounded-xl p-6 text-ept-blue-grey overflow-y-scroll"
   >
-    <div class="text-3xl">Ask Lukas for help</div>
+    <div class="text-7xl font-poppins font-semibold text-center mb-10 mt-3">Help</div>
+    <div class="mt-2 mx-10">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "Events" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            <img src="assets/EventsPageHelp.png" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "Compare" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            <img src="assets/ComparePageHelp.png" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >Tour the "User Management" page</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            <img src="assets/UserManagementPageHelp.png" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >How do I create a new event?</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            <div class="h-fit md:ml-20 lg:ml-36 pb-10">
+                <div class="flex items-start justify-start mt-10">
+                  <div class=" text-ept-bumble-yellow text-2xl md:text-3xl font-bold w-8">
+                    <div class="w-8">1.</div>
+                  </div>
+                  <div class="text-lg md:text-2xl font-montserrat">Click on the "Create Event" card</div>
+                </div>
+                <div class="flex items-start justify-start mt-10">
+                  <div class=" text-ept-bumble-yellow text-2xl md:text-3xl font-bold w-8">
+                    <div class="w-8">2.</div>
+                  </div>
+                  <div class="text-lg md:text-2xl font-montserrat">Type in the name of the event</div>
+                </div>
+                <div class="flex items-start justify-start mt-10">
+                  <div class=" text-ept-bumble-yellow text-2xl md:text-3xl font-bold w-8">
+                    <div class="w-8">3.</div>
+                  </div>
+                  <div class="text-lg md:text-2xl font-montserrat">Submit</div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10" *ngIf="role==='manager' || role==='admin'">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >How do I compare events?</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            <div class="h-fit md:ml-20 lg:ml-36 pb-10">
+              <div class="flex items-start justify-start mt-10">
+                <div class=" text-ept-bumble-yellow text-2xl md:text-3xl font-bold w-8">
+                  <div class="w-8">1.</div>
+                </div>
+                <div class="text-lg md:text-2xl font-montserrat">Go to the "Compare Events" tab</div>
+              </div>
+              <div class="flex items-start justify-start mt-10">
+                <div class=" text-ept-bumble-yellow text-2xl md:text-3xl font-bold w-8">
+                  <div class="w-8">2.</div>
+                </div>
+                <div class="text-lg md:text-2xl font-montserrat">Pick two events to compare by clicking on both</div>
+              </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2 mx-10">
+      <div
+        class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+      >
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <span class="text-ept-off-white font-poppins"
+            >The event I want to view is greyed out</span
+          >
+        </div>
+        <div class="collapse-content">
+          <div class="text-ept-off-white font-montserrat">
+            This means that the event is not available for viewing yet.
+            <br /> <br />
+            To gain access to the event, you will need to click on the event card and request access to the event. The event manager will then decide whether to grant you access to the event.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+
+<!-- <div class="mt-2 mx-10">
+  <div
+    class="collapse collapse-arrow bg-ept-navy-blue text-ept-blue-grey"
+  >
+    <input type="checkbox" />
+    <div class="collapse-title text-xl font-medium">
+      <span class="text-ept-off-white font-poppins"
+        >Question/Prompt</span
+      >
+    </div>
+    <div class="collapse-content">
+      <div class="text-ept-off-white font-montserrat">
+        Ask Lukas
+      </div>
+    </div>
+  </div>
+</div> -->

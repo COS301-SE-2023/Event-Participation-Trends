@@ -1,0 +1,26 @@
+@keyframes slideRight {
+    from {
+      left: 0;
+    }
+    to {
+      left: 50%;
+    }
+  }
+  
+  .animate-slideRight {
+    animation: slideRight 0.3s forwards; /* 1s is the duration of the animation */
+  }
+  
+  @keyframes slideLeft {
+  from {
+      left: 50%;
+  }
+  to {
+      left: 0;
+  }
+  }
+  
+  .animate-slideLeft {
+  animation: slideLeft 0.3s forwards; /* 1s is the duration of the animation */
+  }
+  

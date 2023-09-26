@@ -97,6 +97,24 @@ yarn nx generate @nrwl/angular:module addevent --project=app-addevent-data-acces
 yarn nx generate @nrwl/angular:component profile --project=app-profile-feature --export --flat --type=component --standalone
 yarn nx generate @nrwl/angular:module profile --project=app-profile-feature
 
+#Small Screen size modal
+yarn nx g @nrwl/angular:component small-screen-modal --project=app-components --standalone
+
+#Sensor linking modal
+yarn nx g @nrwl/angular:component link-sensor-modal --project=app-components --standalone
+
+#Toast modal
+yarn nx g @nrwl/angular:component toast-modal --project=app-components --standalone
+
+#Image upload of floor plan modal
+yarn nx g @nrwl/angular:component floorplan-upload-modal --project=app-components --standalone
+
+#Video streaming and chat page
+yarn nx g @nrwl/angular:component streaming --project=app-components --standalone
+
+#Chat message component
+yarn nx g @nrwl/angular:component chat-message --project=app-components --standalone
+
 # ============================================================================================================================
 
 #------------------------- To Generate libraries

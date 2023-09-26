@@ -2,10 +2,104 @@
   #gradient
   class="fixed top-0 left-0 h-screen w-screen bg-ept-deep-grey -z-50"
 ></div>
+<div *ngIf="navBarVisible" class="absolute w-full h-full bg-ept-navy-blue bg-opacity-40 z-50" (click)="hideNavBar()"></div>
 <div
-  class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-36 grid-rows-1 overflow-hidden"
+  class="top-0 left-0 h-screen w-screen text-ept-off-white grid grid-cols-34 lg:grid-cols-36 grid-rows-1 overflow-hidden"
 >
+  <div #navBarContainer *ngIf="!showMenuBar" class="text-4xl absolute z-50 h-full">
+    <ng-icon *ngIf="!navBarVisible" name="matMenu" (click)="showNavBar()" class="absolute m-5 cursor-pointer hover:text-ept-bumble-yellow"></ng-icon>
+    <div id="navBar" class="h-full bg-ept-navy-blue pl-0 transition-all duration-300 shadow-md drop-shadow-2xl shadow-ept-blue-grey rounded-sm" [ngClass]="{'w-0': !navBarVisible, 'w-[390px]': navBarVisible}">
+      <div *ngIf="navBarVisible">
+        <ng-icon name="matClose" (click)="hideNavBar()" class="m-2 float-right cursor-pointer hover:text-ept-bumble-yellow"></ng-icon>
+        <div class="w-full flex flex-col relative">
+          <div id="home-link" class="w-full flex h-14 px-4 mt-5 mb-2 hover:bg-[#373a44] transition-all duration-300 cursor-pointer" (click)="home_press()">
+            <img src="assets/ept_logo.png" class="w-14 cursor-pointer"/>
+            <label class="text-2xl self-center ml-4 cursor-pointer text-ept-blue-grey">Home</label>
+          </div>
+          <div
+            class="h-14  w-full flex relative items-center overflow-hidden cursor-pointer"
+            [ngClass]="{ 'overflow-visible': overflowEvents, 'bg-[#373a44]':onEvents()}"
+          >
+            <a
+              routerLink="events"
+              id="events-link"
+              class="overflow-hidden px-4 w-full h-full hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="events()"
+              [ngClass]="{'overflow-visible': expandEvents}"
+              *ngIf="isManager() || isAdmin()"
+            >
+              <ng-icon name="matEventRound" class="text-5xl pl-1 text-ept-blue-grey cursor-pointer" [ngClass]="{'text-ept-bumble-yellow': onEvents()}"></ng-icon>
+              <label class="text-2xl self-center ml-5 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': onEvents()}">Events</label>
+            </a>
+          </div>
+          <div
+            class="h-14  w-full flex relative items-center overflow-hidden cursor-pointer"
+            [ngClass]="{ 'overflow-visible': overflowCompare, 'bg-[#373a44]':onCompare()}"
+          >
+            <a
+              routerLink="compare"
+              id="compare-link"
+              class="overflow-hidden px-4 w-full h-full hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="compare()"
+              [ngClass]="{'overflow-visible': expandCompare}"
+              *ngIf="isManager() || isAdmin()"
+            >
+              <ng-icon name="heroArrowsRightLeft" class="text-5xl text-ept-blue-grey cursor-pointer" [ngClass]="{'text-ept-bumble-yellow': onCompare()}"></ng-icon>
+              <label class="text-2xl self-center ml-5 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': onCompare()}">Compare</label>
+            </a>
+          </div>
+          <div
+            class="h-14  w-full flex relative items-center overflow-hidden cursor-pointer"
+            [ngClass]="{ 'overflow-visible': overflowUsers, 'bg-[#373a44]':onUsers()}"
+          >
+            <a
+              routerLink="users"
+              id="users-link"
+              class="overflow-hidden px-4 w-full h-full  hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="users()"
+              [ngClass]="{'overflow-visible': expandUsers}"
+              *ngIf="isAdmin()"
+            >
+              <ng-icon name="matGroupRound" class="text-5xl text-ept-blue-grey cursor-pointer" [ngClass]="{'text-ept-bumble-yellow': onUsers()}"></ng-icon>
+              <label class="text-2xl self-center ml-5 cursor-pointer text-ept-blue-grey" [ngClass]="{'text-ept-off-white': onUsers()}">Users</label>
+            </a>
+          </div>
+        </div>
+        <div class="w-full flex flex-col absolute bottom-1">
+          <div
+            class="h-14 mb-2 w-full flex relative items-center overflow-hidden cursor-pointer"
+            [ngClass]="{ 'overflow-visible': overflowHelp }"
+          >
+            <a
+              id="help-link"
+              class="overflow-hidden px-4 w-full h-full bg-ept-navy-blue hover:bg-[#373a44] transition-all duration-300 flex z-50"
+              (click)="help_press()"
+              [ngClass]="{'overflow-visible': expandHelp}"
+            >
+              <ng-icon name="matQuestionMarkRound" class="text-5xl text-ept-blue-grey cursor-pointer"></ng-icon>
+              <label class="text-xl self-center ml-5 cursor-pointer">Help</label>
+            </a>
+          </div>
+          <div class="overflow-hidden px-4 flex z-50 hover:bg-[#373a44] transition-all duration-300 cursor-pointer" (click)="profile_press()">
+            <div
+              id="profile-picture"
+              class="avatar mb-2 w-12 transition-all duration-300"
+              
+            >
+              <div
+                class="mask mask-hexagon hover:scale-105 transition-all duration-300 cursor-pointer"
+              >
+                <img src="{{ img_url }}" />
+              </div>
+            </div>
+            <label class="text-xl self-center ml-4 cursor-pointer">Profile</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div
+    *ngIf="showMenuBar"
     class="col-span-2 w-full h-screen flex flex-col justify-between items-center z-50"
   >
     <div class="w-14 flex flex-col relative">

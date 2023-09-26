@@ -1,8 +1,481 @@
+<div *ngIf="isLoading" class="top-0 left-0 w-full h-screen flex">
+  <div class="m-auto flex justify-between">
+    <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">Getting things ready</h1>
+    <span class="loading loading-dots loading-lg ml-3 text-ept-blue-grey ept-of"></span>
+  </div>
+</div>
 <div class="top-0 left-0 w-full h-screen">
-    <div class="grid grid-cols-4 grid-rows-3 w-full h-full">
-        <div class="col-span-1 row-span-3 m-5 ml-0 p-4 bg-ept-navy-blue rounded-2xl flex flex-col relative">
+  <div class="grid grid-cols-36 gap-3 p-3 h-full">
+    <div
+      class="tool-menu col-span-7 max-h-full overflow-y-scroll rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey relative flex flex-col justify-between"
+      ngClass="card-container"
+      [ngClass]="{'bg-white': lightMode, 'bg-ept-navy-blue': !lightMode}"
+    >
+      <h1 class="text-2xl font-semibold text-center mt-5" [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}">Tools</h1>                
+      <h2
+        class="components-heading flex justify-between items-center mt-4 ml-2 text-lg"
+        [ngClass]="{'opacity-50 pointer-events-none': !preventCreatingWalls, 'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+      >
+        Components
+      </h2>
+      <div 
+        class="components-list mb-1 overflow-hidden" 
+        [ngClass]="{'cursor-not-allowed': !preventCreatingWalls}" 
+        [title]="getComponentsTitle()"
+      >
+        <div
+          class="overflow-y-auto max-h-fit flex ml-4"
+          [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
+        >
+          <img
+            id="sensorImage"
+            class="border-2 rounded-lg w-10 h-10 mt-2 cursor-grab"
+            [ngClass]="{'p-1' : lightMode, 'p-0' : !lightMode}"
+            draggable="true"
+            (dragstart)="onDragStart($event)"
+            [src]="lightMode ? 'assets/sensor.png' : 'assets/sensor-white-2.png'" alt="Sensor Image"
+            alt="sensor"
+          />
+          <label class="text-ept-deep-grey opacity-40 mt-4 ml-4" [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+            >Sensor</label
+          >
         </div>
-        <div class="col-span-3 row-span-3 m-5 ml-0 bg-ept-navy-blue rounded-2xl flex justify-center align-middle items-center">
+        <div
+          class="overflow-y-auto max-h-52 flex ml-4"
+          [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
+        >
+          <img
+            class="border-2 rounded-lg w-10 h-10 mt-2 cursor-grab"
+            [ngClass]="{'p-1' : lightMode, 'p-0' : !lightMode}"
+            #stall
+            draggable="true"
+            (dragstart)="onDragStart($event)"
+            [src]="lightMode ? 'assets/stall-icon.png' : 'assets/stall-icon-dark.png'"
+            alt="stall"
+          />
+          <label class="text-ept-deep-grey opacity-40 mt-4 ml-4" [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+            >Stall</label
+          >
+        </div>
+        <div
+          class="overflow-y-auto max-h-52 flex ml-4"
+          [ngClass]="{'disabled opacity-50 pointer-events-none': !preventCreatingWalls}"
+        >
+          <img
+            id="textBox"
+            class="border-2 rounded-lg w-10 h-10 mt-2 cursor-grab"
+            [ngClass]="{'p-1' : lightMode, 'p-0 bg-white' : !lightMode}"
+            draggable="true"
+            (dragstart)="onDragStart($event)"
+            src="assets/black-text-selection-svgrepo-com.svg"
+            alt="sensor"
+          />
+          <label class="text-ept-deep-grey opacity-40 mt-4 ml-4" [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+            >Text</label
+          >
+        </div>
+        <hr class="m-3" />
+        <div
+          *ngIf="!shouldStackVertically"
+          class="relative overflow-y-auto max-h-52 flex ml-4 mb-4 cursor-default"
+          [title]="getWallTitle()"
+        >
+          <!-- <div class="absolute w-full h-full cursor-pointer" (click)="toggleEditing()"></div> -->
+          <img
+            id="wall"
+            class=" p-1 w-10 h-10 mt-2 cursor-default"
+            draggable="false"
+            [src]="lightMode ? 'assets/wall-creation-icon.svg' : 'assets/white-wall-creation-icon.svg'"
+            alt="wall"
+          />
+          <button 
+            class="text-ept-deep-grey mt-4 ml-4 cursor-pointer bg-ept-blue-grey border-ept-off-white rounded-md p-1 text-sm  hover:text-ept-deep-grey hover:border-1"
+            (click)="toggleEditing()"
+            [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+          >
+            Create walls
+          </button>
+          <p *ngIf="!preventCreatingWalls" class="italic text-ept-bumble-yellow text-sm mt-5 ml-8 cursor-default">(active)</p>
+          </div>
+          <div
+          *ngIf="shouldStackVertically"
+          class="relative overflow-y-auto max-h-52 flex ml-4 cursor-default"
+          [title]="getWallTitle()"
+        >
+          <!-- <div class="absolute w-full h-full cursor-pointer" (click)="toggleEditing()"></div> -->
+          <img
+            id="wall"
+            class=" p-1 w-10 h-10 mt-2 cursor-default"
+            draggable="false"
+            [src]="lightMode ? 'assets/wall-creation-icon.svg' : 'assets/white-wall-creation-icon.svg'"
+            alt="wall"
+          />
+          <div class="flex flex-col">
+            <button 
+              class="text-ept-deep-grey mt-4 ml-4 cursor-pointer bg-ept-blue-grey border-ept-off-white rounded-md p-1 text-sm  hover:text-ept-deep-grey hover:border-1"
+              (click)="toggleEditing()"
+              [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+            >
+              Create walls
+            </button>
+            <p *ngIf="!preventCreatingWalls" class="italic text-ept-bumble-yellow text-sm sm:text-xs mt-1 ml-[50px] cursor-default">(active)</p>
+          </div>
+          </div>
+        </div>
+        <label 
+          *ngIf="!preventCreatingWalls"
+          class="opacity-40 mt-1 ml-4 cursor-pointer text-xs pointer-events-none"
+          [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+          title="Click and drag on canvas to create walls"
+        >
+          Click and drag on canvas to create walls
+        </label>
+      <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3 mt-2" />
+      <h2 
+        *ngIf="showLengthInput() || showAngleInput() || showTextInput()" 
+        class="attributes-heading ml-3 text-lg"
+        [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+      >
+        Attributes
+      </h2>
+      <div
+        *ngIf="!shouldStackVertically"
+        id="attributes-container"
+        class="flex flex-col cursor-default"
+      >
+        <div *ngIf="showTextInput()" class="mt-2 p-2 flex flex-row items-center justify-evenly" lines="none">
+          <label class="" [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}">Text:</label><br>
+          <input
+            #textInput
+            id="textInput"
+            aria-label=""
+            class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mr-3  w-[120px] justify-center"
+            [ngClass]="{'bg-white border-ept-blue-grey': !lightMode}"
+            type="text"
+            pattern="[a-zA-Z0-9 ]*"
+            [value]="activeItem ? getActiveItemText() : ''"
+            [disabled]="!preventCreatingWalls || activeItem === null || !selectedTextBox"
+            (input)="updateText($event)"
+            [attr.maxlength]="getMaxTextLength()"
+            label="Text:"
+            labelPlacement="floating"
+          />
+        </div>
+        <p 
+          *ngIf="showTextInput()"
+          class="text-ept-deep-grey mr-10 opacity-40 flex flex-row justify-end text-xs"
+          [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+        >
+          {{getTextLength()}}/{{getMaxTextLength()}}
+        </p>
+        <div *ngIf="showLengthInput()" class="attributes-list flex flex-row items-center justify-evenly mt-2 p-2" lines="none">
+          <label 
+            class="flex mr-3 ml-6 min-w-fit" 
+            [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall, 'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+          >
+            Length:
+          </label>
+          <div class="flex">
+            <input
+              aria-label=""
+              class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[80px]"
+              type="number"
+              step="0.5"
+              [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
+              (input)="updateWidth($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null || !selectedWall"
+              [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall, 'bg-white border-ept-blue-grey': !lightMode}"
+            />
+            <p 
+              class="text-ept-deep-grey opacity-40 mr-2 mt-4 ml-2 flex flex-row justify-end text-xs italic"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              meter(s)
+            </p>
+          </div>
+        </div>
+        <div *ngIf="showAngleInput()" class="attributes-list flex flex-row items-center justify-evenly mt-2 p-2" lines="none">
+          <label 
+            class="flex mr-[18px] ml-5 min-w-fit" 
+            [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+          >
+            Angle:
+          </label>
+          <div class="flex">
+            <input
+              aria-label=""
+              class="flex input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 w-[80px]"
+              type="number"
+              step="1"
+              [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
+              (input)="updateRotation($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null || selectedSensor"
+              [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'bg-white border-ept-blue-grey': !lightMode}"
+            />
+            <p 
+              class="text-ept-deep-grey opacity-40 mt-4 ml-2 flex flex-row justify-end text-xs italic"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              degree(s)
+            </p>
+          </div>
+        </div>
+        <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3 mt-2" />
+      </div>
+      <div
+        *ngIf="shouldStackVertically"
+        id="attributes-container"
+        class="flex flex-col justify-evenly"
+      >
+        <div *ngIf="showTextInput()" class="mt-3 self-center">
+          <div class="p-1">
+            <label [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}">Text:</label><br>
+            <input
+              #textInput
+              id="textInput"
+              aria-label=""
+              class="input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-1 w-[150px]"
+              [ngClass]="{'bg-white border-ept-blue-grey': !lightMode}"
+              type="text"
+              pattern="[a-zA-Z0-9 ]*"
+              [value]="activeItem ? getActiveItemText() : ''"
+              (input)="updateText($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null|| !selectedTextBox"
+              maxlength="15"
+              label="Text:"
+              labelPlacement="floating"
+            />
+            <p 
+              class="text-ept-deep-grey opacity-40 mt-0.5 flex flex-row justify-end text-xs"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              {{getTextLength()}}/{{getMaxTextLength()}}
+            </p>
+          </div>
+        </div>
+        <div *ngIf="showLengthInput()" class="mt-3">
+          <label 
+            class="ml-7"
+            [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || !selectedWall, 'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+          >
+            Length:
+          </label><br/>
+          <div class="flex">
+            <input
+              aria-label=""
+              class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-1 ml-7 w-[100px]"
+              type="number"
+              step="0.5"
+              [value]="(activeItem && selectedWall) ? getActiveItemWidth() : 0"
+              (input)="updateWidth($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null || !selectedWall"
+              [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor || !selectedWall, 'bg-white border-ept-blue-grey': !lightMode}"
+            >
+            <p 
+              class="text-ept-deep-grey opacity-40 mr-2 mt-4 ml-2 flex flex-row justify-end text-xs italic"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              meter(s)
+            </p>
+          </div>
+        </div>
+        <div *ngIf="showAngleInput()" [ngClass]="{'mt-0': showTextInput(), 'mt-3' : !showTextInput()}">
+          <label 
+            class="ml-7"
+            [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'text-white': !lightMode}"
+          >
+            Angle:
+          </label><br/>
+          <div class="flex">
+            <input
+              aria-label=""
+              class="input-field input focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 rounded h-7 mt-1 ml-7 w-[100px]"
+              type="number"
+              step="1"
+              [value]="(activeItem && !selectedSensor) ? getActiveItemRotation() : 0"
+              (input)="updateRotation($event)"
+              [disabled]="!preventCreatingWalls || activeItem === null || selectedSensor"
+              [ngClass]="{'opacity-50' : !preventCreatingWalls || activeItem === null || selectedSensor, 'bg-white border-ept-blue-grey': !lightMode}"
+            >
+            <p 
+              class="text-ept-deep-grey opacity-40 mr-2 mt-4 ml-2 flex flex-row justify-end text-xs italic"
+              [ngClass]="{'opacity-50' : !selectedTextBox, 'text-white' : !lightMode}"
+            >
+              degree(s)
+            </p>
+          </div>
+        </div>
+        <hr *ngIf="showLengthInput() || showAngleInput() || showTextInput()" class="m-3 mt-4" />
+      </div>
+      <hr [ngClass]="{'hidden' : !showSensorLinking()}" class="m-3" />
+      <div [ngClass]="{'hidden' : !showSensorLinking()}" class="flex flex-col items-center">
+        <h1 
+          class="text-lg font-semibold text-center mb-3"
+          [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+        >
+          Link Sensor
+        </h1>
+        <button 
+            class="text-ept-deep-grey cursor-pointer bg-ept-blue-grey border-ept-off-white rounded-md p-1 text-sm  hover:text-ept-deep-grey hover:border-1"
+            (click)="openLinkingMenu()"
+            [ngClass]="{'text-white': !lightMode, 'text-ept-deep-grey': lightMode}"
+          >
+            Open linking menu
+          </button>
+      </div>
+      <div class="mt-auto mb-5 flex flex-col justify-between items-center">
+        <div 
+          [title]="getUploadImageTitle()" 
+          class="flex flex-col items-center mt-1"
+          [ngClass]="{
+            'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 
+            'opacity-50 hover:opacity-100':preventCreatingWalls,
+            'mb-10' : !shouldStackVertically,
+            'mb-5' : shouldStackVertically
+          }"
+        >
+          <p 
+            class="text-sm text-ept-blue-grey text-center ml-2 mr-2" 
+            (click)="openFloorplanUploadModal()"
+            [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'cursor-pointer':preventCreatingWalls}"
+          >
+            Upload image of a floor plan
+          </p>
+          <input type="file" id="fileInput" accept="image/*" capture="camera" hidden/>
+          <img
+            id="uploadImage"
+            class=" p-1 w-[60px] h-[60px] mt-2"
+            draggable="false"
+            [src]="lightMode ? 'assets/black-alt-upload-frame-svgrepo-com.svg' : 'assets/blue-alt-upload-frame-svgrepo-com.svg'"
+            alt="uploadImage"
+            (click)="openFloorplanUploadModal()"
+            [ngClass]="{'cursor-not-allowed opacity-30 hover:opacity-30': !preventCreatingWalls, 'cursor-pointer':preventCreatingWalls}"
+          />
+        </div>
+        <button
+          (click)="saveFloorLayout()"
+          class="create-event h-40px w-[100px] text-ept-off-white text-sm/16 rounded-lg bg-green-500 drop-shadow-lg hover:scale-102 hover:bg-opacity-100 hover:shadow-[0px_2px_7px_2px_rgba(0,0,0,0.2)]"
+          >Save
+        </button>
+      </div>
+    </div>
+    <div
+        id="canvasParent"
+        #canvasParent
+        class="relative col-span-29 bg-white rounded-lg md:rounded-xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] text-ept-deep-grey p-2 overflow-hidden"
+        (drop)="onDrop($event)"
+        (dragover)="onDragOver($event)"
+        >
+        <p
+            class="bg-white z-50 rounded-md text-center text-2xl text-ept-deep-grey text-opacity-30 font-semibold mt-10 absolute top-1/2 left-1/3"
+            *ngIf="canvasItems.length === 0 && preventCreatingWalls"
+        >
+            Drag a component to the canvas
+        </p>
+        <p
+            class="bg-white z-50 rounded-md text-center text-2xl text-ept-deep-grey text-opacity-30 font-semibold mt-10 absolute top-1/2 left-1/3"
+            *ngIf="canvasItems.length === 0 && !preventCreatingWalls"
+        >
+            Click and drag to create walls
+        </p>
+        <div class="overflow-hidden mr-2 w-full h-full border-2 rounded-lg md:rounded-xl">
+          <div
+              id="canvasElement"
+              #canvasElement
+              class="border-ept-off-white border-2 rounded-lg md:rounded-xl w-full h-full"
+          ></div>
+        </div>
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            <img
+            #dustbin
+            *ngIf="canvasItems.length > 0"
+            class="dustbin"
+            (dragover)="onDustbinDragOver($event)"
+            (dragleave)="onDustbinDragLeave($event)"
+            (mouseup)="onDustbinMouseUp($event)"
+            [ngClass]="{'drag-over': openDustbin}"
+            [src]="chooseDustbinImage()"
+            alt="trash"
+            class="bg-white h-10 transition-all duration-300"
+            />
+        </div>
+        <div class="absolute bottom-2.5 right-2.5 bg-ept-off-white border-2 border-ept-deep-grey rounded">
+            <label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Block = {{gridSizeLabel}}m</label>
+            <br/>
+            <label id="scaleLabel" class="text-ept-deep-grey p-0.5 rounded">1 Snap = {{snapLabel}}m</label>
+        </div>
+        <div class="absolute bottom-2.5 left-2.5 flex flex-row bg-ept-off-white">
+            <div 
+              (click)="zoomIn()" 
+              class="h-8 mr-1 text-3xl border-ept-blue-grey border-2 border-solid rounded hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50"
+              [ngClass]="{'opacity-20 pointer-events-none border-opacity-50': zoomInDisabled}">
+              <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
+            </div>
+            <div 
+              (click)="zoomOut()" 
+              class="h-8 mr-1 text-3xl border-ept-blue-grey border-2 border-solid rounded hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50"
+              [ngClass]="{'opacity-20 pointer-events-none border-opacity-50': zoomOutDisabled}"
+            >
+              <ng-icon name="matZoomOut" title="Zoom out"></ng-icon>
+            </div>
+            <div 
+              class="h-8 text-3xl border-ept-blue-grey border-2 border-solid rounded hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-50"
+              [ngClass]="{'opacity-20 pointer-events-none border-opacity-50': centerDisabled}"
+            >
+              <ng-icon name="matFilterCenterFocus" title="Recenter floorplan" (click)="centerFloorPlan()"></ng-icon>
+            </div>
         </div>
     </div>
+  </div>
 </div>
+<event-participation-trends-small-screen-modal
+  class="transition-opacity duration-50 hidden opacity-0"
+  id="small-screen-modal"
+></event-participation-trends-small-screen-modal>
+<event-participation-trends-link-sensor-modal
+  *ngIf="linkingMenuVisible"
+  class="transition-opacity duration-300 hidden opacity-0"
+  id="link-sensor-modal"
+  [activeItem]="activeItem"
+  [customId]="activeItem?.attrs?.customId"
+  (closeModalEvent)="closeLinkingMenu()"
+></event-participation-trends-link-sensor-modal>
+<event-participation-trends-floorplan-upload-modal
+*ngIf="uploadModalVisible"
+class="transition-opacity duration-300 hidden opacity-0"
+id="upload-floorpan-modal"
+(imageType)="setUploadedImageType($event)"
+(imageScale)="setUploadedImageScale($event)"
+(imageBase64)="setUploadedImageBase64($event)"
+(closeModalEvent)="closeUploadModal()"
+(uploadedFloorplan)="onFloorplanUploaded($event)"
+>
+</event-participation-trends-floorplan-upload-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastUploading"
+    class="z-50"
+    [toastMessage]="'Saving...'" 
+    [toastType]="''"
+    [success]="false"
+    [failure]="false"
+    [linking]="true"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastSuccess"
+    class="z-50"
+    [toastMessage]="'Floor layout saved successfully.'" 
+    [toastType]="'success'"
+    [success]="true"
+    [failure]="false"
+    [linking]="false"
+></event-participation-trends-toast-modal>
+<event-participation-trends-toast-modal 
+    *ngIf="showToastError"
+    class="z-50"
+    [toastMessage]="'Error saving floor layout.'" 
+    [toastType]="'success'"
+    [success]="false"
+    [failure]="true"
+    [linking]="false"
+></event-participation-trends-toast-modal>
+

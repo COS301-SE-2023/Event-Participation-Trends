@@ -2,7 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AppApiService } from '@event-participation-trends/app/api';
-import { AppLandingModule } from '@event-participation-trends/app/landing'
+import { AppLandingModule } from '@event-participation-trends/app/landing';
 
 @Component({
   standalone: true,

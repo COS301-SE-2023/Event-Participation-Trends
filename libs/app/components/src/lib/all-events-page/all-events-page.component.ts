@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
@@ -7,8 +7,9 @@ import { FormsModule } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroLockClosedSolid, heroInboxSolid } from '@ng-icons/heroicons/solid';
 import { matPlusRound } from '@ng-icons/material-icons/round';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { CreateEventModalComponent } from '../create-event-modal/create-event-modal.component';
+import { RequestAccessModalComponent } from '../request-access-modal/request-access-modal.component';
 
 @Component({
   selector: 'event-participation-trends-all-events-page',
@@ -18,6 +19,7 @@ import { CreateEventModalComponent } from '../create-event-modal/create-event-mo
     FormsModule,
     NgIconComponent,
     CreateEventModalComponent,
+    RequestAccessModalComponent,
   ],
   templateUrl: './all-events-page.component.html',
   styleUrls: ['./all-events-page.component.css'],
@@ -26,7 +28,7 @@ import { CreateEventModalComponent } from '../create-event-modal/create-event-mo
   ],
 })
 export class AllEventsPageComponent implements OnInit {
-  constructor(private appApiService: AppApiService, private router: Router) {}
+  constructor(private appApiService: AppApiService, private router: Router, private ngZone: NgZone) {}
 
   public all_events: any[] = [];
   public subscribed_events: any[] = [];
@@ -40,12 +42,36 @@ export class AllEventsPageComponent implements OnInit {
   public show_search = true;
   public disable_search = false;
   public show_all_events = true;
+  public largeScreen = false;
+  public showTabsAndSearchBarInLine = false;
 
   public create = false;
 
   async ngOnInit() {
     this.role = await this.appApiService.getRole();
 
+    this.loadEvents();
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.loadEvents();
+      }
+    });
+
+    if (window.innerWidth > 1024) {
+      this.largeScreen = true;
+    } else {
+      this.largeScreen = false;
+
+      if (window.innerWidth > 1000) {
+        this.showTabsAndSearchBarInLine = true;
+      } else {
+        this.showTabsAndSearchBarInLine = false;
+      }
+    }
+  }
+
+  async loadEvents() {
     this.all_events = await this.appApiService.getAllEvents();
     if (this.role === 'manager') {
       this.my_events = await this.appApiService.getManagedEvents();
@@ -53,9 +79,17 @@ export class AllEventsPageComponent implements OnInit {
 
     if (this.role !== 'admin') {
       this.subscribed_events = await this.appApiService.getSubscribedEvents();
+
+      // if event is public and not in subscribed events, add it to subscribed_events
+      this.all_events.forEach((event) => {
+        if (event.PublicEvent && !this.in(this.subscribed_events, event)) {
+          this.subscribed_events.push(event);
+        }
+      });
+
       this.non_subscribed_events = this.all_events.filter((event: any) => {
         return (
-          !this.hasAccess(event) &&
+          !this.hasAccess(event) && !event.PublicEvent &&
           this.my_events.filter((my_event) => {
             return my_event._id == event._id;
           }).length == 0
@@ -77,13 +111,25 @@ export class AllEventsPageComponent implements OnInit {
     this.show_all_events = false;
   }
 
+  in(events: any[], event: any): boolean {
+    for (let i = 0; i < events.length; i++) {
+      if (events[i]._id == event._id) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   getURL(event: any) {
-    if (this.role == 'admin') {
-      this.router.navigate(['/event/' + event._id + '/details']);
-    } else if (this.role == 'manager' && this.hasAccess(event)) {
-      this.router.navigate(['/event/' + event._id + '/details']);
+    if (this.role == 'admin' || (this.role == 'manager' && this.managesEvent(event))) {
+      this.ngZone.run(() => {
+        this.router.navigate([`/event/${event._id}/details`]);
+      });
     } else {
-      this.router.navigate(['/event/' + event._id + '/dashboard']);
+      this.ngZone.run(() => {
+        this.router.navigate([`/event/${event._id}/dashboard`]);
+      });
     }
   }
 
@@ -91,7 +137,7 @@ export class AllEventsPageComponent implements OnInit {
     return event.FloorLayout ? true : false;
   }
 
-  onScroll(event: any) {
+  onScroll(event: any) {  
     if (
       event.target.scrollTop < this.prev_scroll ||
       event.target.scrollTop == 0
@@ -109,14 +155,28 @@ export class AllEventsPageComponent implements OnInit {
   }
 
   emptySearch(): boolean {
+    if (!this.show_all_events) {
+      return this.myEvents().length == 0;
+    }
+
     if (this.role == 'admin') {
-      return this.get_all_events().length == 0;
+      return this.allEvents().length == 0;
     } else {
       return (
-        this.get_subscribed_events().length == 0 &&
-        this.get_non_subscribed_events().length == 0
+        this.subscribedActiveEvents().length == 0 &&
+        this.nonSubscribedActiveEvents().length == 0
       );
     }
+  }
+
+  managesEvent(event: any): boolean {
+    for (let i = 0; i < this.my_events.length; i++) {
+      if (this.my_events[i]._id == event._id) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   hasAccess(event: any): boolean {
@@ -136,11 +196,9 @@ export class AllEventsPageComponent implements OnInit {
       return [];
     }
 
-    console.log(this.subscribed_events);
-
-    console.log(this.sortByEndDate(this.filterActive(this.filterSearch(this.subscribed_events))));
-
-    return this.sortByEndDate(this.filterActive(this.filterSearch(this.subscribed_events)));
+    return this.sortByEndDate(
+      this.filterNotEnded(this.filterSearch(this.subscribed_events))
+    );
   }
 
   nonSubscribedActiveEvents(): any[] {
@@ -148,7 +206,9 @@ export class AllEventsPageComponent implements OnInit {
       return [];
     }
 
-    return this.sortByEndDate(this.filterActive(this.filterSearch(this.non_subscribed_events)));
+    return this.sortByEndDate(
+      this.filterNotEnded(this.filterSearch(this.non_subscribed_events))
+    );
   }
 
   myEvents(): any[] {
@@ -167,38 +227,6 @@ export class AllEventsPageComponent implements OnInit {
     return this.sortByEndDate(this.filterSearch(this.all_events));
   }
 
-  get_all_events(): any[] {
-    return this.sortByEndDate(this.all_events.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    }));
-  }
-
-  get_subscribed_events(): any[] {
-    return this.subscribed_events.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    });
-  }
-
-  get_non_subscribed_events() {
-    return this.non_subscribed_events.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    });
-  }
-
-  get_my_events(): any[] {
-    return this.my_events.filter((event) => {
-      return event.Name
-        ? event.Name.toLowerCase().includes(this.search.toLowerCase())
-        : false;
-    });
-  }
-
   sortByEndDate(events: any[]): any[] {
     return events.sort((a, b) => {
       return new Date(b.EndDate).getTime() - new Date(a.EndDate).getTime();
@@ -208,6 +236,12 @@ export class AllEventsPageComponent implements OnInit {
   filterActive(events: any[]): any[] {
     return events.filter((event) => {
       return this.isActive(event);
+    });
+  }
+
+  filterNotEnded(events: any[]): any[] {
+    return events.filter((event) => {
+      return this.notEnded(event);
     });
   }
 
@@ -265,6 +299,11 @@ export class AllEventsPageComponent implements OnInit {
   getTime(inputDate: Date): string {
     const date = new Date(inputDate);
 
+    const yourTimeZoneOffset = new Date().getTimezoneOffset(); // Offset in minutes
+    const dbDateInYourTimeZone = new Date(
+      date.getTime() - yourTimeZoneOffset * 60 * 1000
+    );
+
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
 
@@ -287,14 +326,12 @@ export class AllEventsPageComponent implements OnInit {
     const elapsedDuration = currentDate.getTime() - startDate.getTime();
     const percentage = (elapsedDuration / totalDuration) * 100;
 
-    console.log(startDate, endDate, Math.round(percentage));
-
     // round to 0 decimal places
 
     return Math.round(percentage);
   }
 
-  isActive(event: any) : boolean {
+  isActive(event: any): boolean {
     const startDate = new Date(event.StartDate);
     const endDate = new Date(event.EndDate);
 
@@ -303,11 +340,45 @@ export class AllEventsPageComponent implements OnInit {
     return currentDate >= startDate && currentDate < endDate;
   }
 
-  isDone(endDate: Date) : boolean {
+  notEnded(event: any): boolean {
+    const endDate = new Date(event.EndDate);
+
+    const currentDate = new Date();
+
+    return currentDate < endDate;
+  }
+
+  isDone(endDate: Date): boolean {
     endDate = new Date(endDate);
 
     const currentDate = new Date();
 
     return currentDate >= endDate;
+  }
+
+  getRequestModalId(event: any) {
+    return `request-modal-${event._id}`;
+  }
+
+  requestAccess(event: any) {
+    const modal = document.querySelector('#' + this.getRequestModalId(event));
+
+    if (!modal) {
+      return;
+    }
+
+    modal?.classList.remove('hidden');
+    setTimeout(() => {
+      modal?.classList.remove('opacity-0');
+    }, 100);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth > 1024) {
+      this.largeScreen = true;
+    } else {
+      this.largeScreen = false;
+    }
   }
 }
