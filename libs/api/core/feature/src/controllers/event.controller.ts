@@ -45,6 +45,8 @@ import {
     IUpdateEventFloorLayoutImgResponse,
     IGetEventFloorlayoutImageResponse,
     IGetEventStatisticsResponse,
+    IGetEventChatMessagesRequest,
+    IGetEventChatMessagesResponse,
 } from '@event-participation-trends/api/event/util';
 import {
   Body,
@@ -593,9 +595,31 @@ export class EventController {
     imageType: requestBody.imageType,
   };
   return this.eventService.updateEventFloorLayoutImage(extractRequest);
+
+  }
+  
+  @Get('getEventChats')
+  @SetMetadata('role', Role.VIEWER)
+  @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
+  async getEventChats(
+    @Req() req: Request,
+    @Query() query: any 
+  ): Promise<IGetEventChatMessagesResponse> {
+    const request: any = req;
+
+    if(!query.eventId)
+        throw new HttpException("Bad Request: eventId not provided", 400);
+
+    if (request.user['email'] == undefined || request.user['email'] == null)
+      throw new HttpException('Bad Request: Manager email not provided', 400);
+
+    const extractRequest: IGetEventChatMessagesRequest = {
+        eventId: query.eventId,
+    };
+    return this.eventService.getEventChats(extractRequest);
+  }
 }
 
-}
 
 function computePreviousDayDate(): Date{
     const currentDate = moment(); 

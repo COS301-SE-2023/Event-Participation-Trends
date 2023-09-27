@@ -27,3 +27,4 @@ export * from './get-event-floorlayout-image.response';
 export * from './delete-event-image.respons';
 export * from './get-event-statistics.response';
 export * from './update-event-floorlayout-image.response';
+export * from './get-event-chat-messages.response'

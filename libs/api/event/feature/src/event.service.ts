@@ -75,6 +75,11 @@ import {
     IUpdateEventFloorLayoutImgResponse,
     IGetEventStatisticsResponse,
     IGetEventFloorlayoutImageResponse,
+    IAddChatMessageRequest,
+    AddChatMessageCommand,
+    IGetEventChatMessagesRequest,
+    IGetEventChatMessagesResponse,
+    GetEventChatMessagesQuery,
 } from '@event-participation-trends/api/event/util';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -83,7 +88,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 export class EventService {
     constructor(
         private readonly commandBus: CommandBus, 
-        private readonly queryBus: QueryBus
+        private readonly queryBus: QueryBus,
     ) {}
 
     async createEvent(request: ICreateEventRequest) {
@@ -205,4 +210,12 @@ export class EventService {
     async updateEventFloorLayoutImage(request: IUpdateEventFloorLayoutImgRequest) {
         return await this.commandBus.execute<UpdateEventFloorLayoutImgCommand, IUpdateEventFloorLayoutImgResponse>(new UpdateEventFloorLayoutImgCommand(request));
     }
+
+    async addEventChatMessage(request: IAddChatMessageRequest){
+        return await this.commandBus.execute<AddChatMessageCommand, void>(new AddChatMessageCommand(request)); 
+    }
+
+    async getEventChats(request: IGetEventChatMessagesRequest) {
+        return await this.queryBus.execute<GetEventChatMessagesQuery, IGetEventChatMessagesResponse>(new GetEventChatMessagesQuery(request));
+    } 
 }
