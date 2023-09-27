@@ -168,7 +168,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     }
     this.event = await this.appApiService.getEvent({ eventId: this.id });
 
-    if (!(await this.hasAccess()) && !this.event.PublicEvent) {
+    if (!(await this.hasAccess()) && !((this.event as any).event.PublicEvent)) {
       this.ngZone.run(() => { this.router.navigate(['/home']); });
     }
 
