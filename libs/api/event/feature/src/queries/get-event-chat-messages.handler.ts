@@ -15,13 +15,12 @@ export class GetEventChatMessagesHandler implements IQueryHandler<GetEventChatMe
         const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
     
         const chats = new Array<ChatMessage>();
-        const chatDocs = await this.eventRepository.getEventChatMessages(eventIdObj, request.stallName ||"");
-        chatDocs.forEach(doc=>{
+        const chatDocs = await this.eventRepository.getEventChatMessages(eventIdObj);
+        chatDocs[0]?.eventChats?.forEach(doc=>{
             chats.push({
+                text: doc.text,
                 timestamp: doc.timestamp,
-                message: doc.message,
-                userEmail: doc.userEmail,
-                userProfileImageUrl: doc.userProfileImageUrl,
+                user: doc.user,
             })
         })
 
