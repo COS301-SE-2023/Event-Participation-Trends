@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { OnInit, AfterViewInit } from '@angular/core';
 import { ProfileComponent } from '@event-participation-trends/app/components';
@@ -26,6 +26,7 @@ enum Role {
 })
 export class HomeComponent implements OnInit {
   @ViewChild('gradient') gradient!: ElementRef<HTMLDivElement>;
+  @ViewChild('navBarContainer') navBarContainer!: ElementRef<HTMLDivElement>;
   
   public tab = Tab.None;
   public role = Role.Admin;
@@ -33,6 +34,8 @@ export class HomeComponent implements OnInit {
   public img_url = '';
 
   // Navbar
+  public showMenuBar = false;
+  public navBarVisible = false;
   // Events
   public expandEvents = false;
   public overflowEvents = false;
@@ -123,6 +126,13 @@ export class HomeComponent implements OnInit {
       this.tab = Tab.Events;
     }
 
+    // test if window size is less than 1024px
+    if (window.innerWidth < 1024) {
+      this.showMenuBar = false;
+    }
+    else {
+      this.showMenuBar = true;
+    }  
   }
 
   isManager(): boolean {
@@ -163,16 +173,34 @@ export class HomeComponent implements OnInit {
   events() {
     this.tab = Tab.Events;
     this.pressButton('#events-link');
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
+    this.expandEvents = false;
   }
 
   users() {
     this.tab = Tab.Users;
     this.pressButton('#users-link');
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
+    this.expandUsers = false;
   }
 
   compare() {
     this.tab = Tab.Compare;
     this.pressButton('#compare-link');
+
+    // close navbar
+    if (this.navBarVisible) {
+      this.hideNavBar();
+    }
+    this.expandCompare = false;
   }
 
   profile_press() {
@@ -192,6 +220,7 @@ export class HomeComponent implements OnInit {
   }
 
   help_press() {
+    this.expandHelp = false;
     this.pressButton('#help-link');
     
     setTimeout(() => {
@@ -209,5 +238,34 @@ export class HomeComponent implements OnInit {
 
   onCompare(): boolean {
     return this.tab === Tab.Compare;
+  }
+
+  // // test when the window size is less than 1024px
+  // // test when the window size is greater than 1024px
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth > 1024) {
+      this.showMenuBar = true;
+      this.navBarVisible = false;
+    } else {
+      this.showMenuBar = false;
+    } 
+  }
+
+  showNavBar() {
+    
+    const element = document.getElementById('navbar');
+    if (element) {
+      element.style.width = '390px';
+    }
+    this.navBarVisible = true;
+  }
+
+  hideNavBar() {
+    this.navBarVisible = false;
+    const element = document.getElementById('navbar');
+    if (element) {
+      element.style.width = '0px';
+    }
   }
 }

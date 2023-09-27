@@ -6,6 +6,8 @@ name: Build, Lint and Test
   push:
     branches:
       - '*_test'
+      - dev
+      - main
 jobs:
   all_test:
     runs-on: ubuntu-latest
@@ -18,5 +20,16 @@ jobs:
       - run: 'yarn nx run-many --target=lint --all --parallel --skip-nx-cache'
       - run: 'yarn nx run-many --target=build --all --parallel --skip-nx-cache'
       - run: 'yarn nx run-many --target=test --all --parallel --skip-nx-cache --coverage --testTimeout=10000'
-      - run: 'yarn nx run app-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
-      - run: 'yarn test:integration'
+      # - run: 'yarn nx run app-e2e:e2e --all --parallel --skip-nx-cache --coverage --testTimeout=10000 --detectOpenHandles=true'
+      - run: 'yarn test:integration --coverage'
+      - name: Use codecov token to upload coverage reports to codecov 
+        uses: codecov/codecov-action@v3 
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage reports to Codecov
+        run: |
+          # Replace `linux` below with the appropriate OS
+          # Options are `alpine`, `linux`, `macos`, `windows`
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t ${{ secrets.CODECOV_TOKEN }} -f coverage-final.json

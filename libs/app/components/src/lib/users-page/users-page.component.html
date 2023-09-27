@@ -1,12 +1,25 @@
-<div class="h-full w-full relative flex flex-col">
+<div
+    *ngIf="!largeScreen"
+    class="flex justify-center items-center"
+    [ngClass]="{ '-z-50': largeScreen, 'z-20': !largeScreen }"
+  >
+    <input
+      type="text"
+      placeholder="Type here"
+      class="w-1/2 max-w-xs lg:w-full outline-none absolute mt-24 py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
+      [(ngModel)]="search"
+    />
+  </div>
+<div class="mt-20 lg:mt-0 h-full w-full relative flex flex-col">
   <div
+    *ngIf="largeScreen"
     class="flex justify-center items-center"
     [ngClass]="{ '-z-50': disable_search, 'z-20': !disable_search }"
   >
     <input
       type="text"
       placeholder="Type here"
-      class="w-full max-w-xs outline-none absolute mt-24 py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
+      class="w-1/2 max-w-xs lg:w-full outline-none absolute mt-24 py-3 px-5 bg-[#323641] bg-opacity-[97%] backdrop-blur-sm text-ept-off-white rounded-2xl shadow-[0px_5px_15px_2px_rgba(0,0,0,0.2)] transition-all duration-300"
       [(ngModel)]="search"
       [ngClass]="{ 'opacity-0': !show_search }"
     />
@@ -28,18 +41,18 @@
     <span class="loading loading-spinner loading-lg"></span>
   </div>
   <div
-    class="relative grid grid-cols-1 px-3 mb-1 overflow-x-auto overflow-y-scroll pt-24 transition-opacity duration-500"
+    class="relative grid grid-cols-1 px-3 mb-1 overflow-x-auto overflow-y-scroll pt-0 lg:pt-24 transition-opacity duration-500"
     [ngClass]="{ 'opacity-0': !show }"
     (scroll)="onScroll($event)"
   >
     <div
-      class="mx-20 my-[3px] px-5 py-3 bg-ept-navy-blue rounded-xl flex-col justify-between hover:bg-[#2b2e38] bg-opacity-30 transition-all duration-300 cursor-pointer grid grid-cols-12 items-center"
+      class="w-full my-[3px] px-5 py-3 bg-ept-navy-blue rounded-xl flex-col justify-between hover:bg-[#2b2e38] bg-opacity-30 transition-all duration-300 cursor-pointer grid grid-rows-3 grid-cols-1 sm:grid-rows-1 sm:grid-cols-3 lg:grid-cols-12 items-center"
       *ngFor="let user of get_users()"
     >
-      <div class="col-span-4">{{ getName(user) }}</div>
-      <div class="col-span-4">{{ user.Email }}</div>
-      <div class="col-start-11 col-span-3 flex justify-center align-middle">
-        <div class="bg-ept-navy-blue rounded-full grid grid-cols-2 w-fit relative overflow-hidden py-1">
+      <div class="col-span-1 col-start-1 lg:col-span-4 lg:col-start-1 px-1">{{ getName(user) }}</div>
+      <div class="col-span-1 col-start-1 sm:col-start-2 lg:col-span-4 lg:col-start-5 px-1 break-words">{{ user.Email }}</div>
+      <div class="col-span-1 lg:col-span-3 lg:col-start-10 flex justify-center sm:justify-end lg:justify-start align-middle mt-2 sm:mt-0">
+        <div class="bg-ept-navy-blue rounded-full grid grid-cols-2 max-w-[380px] w-full sm:w-fit relative overflow-hidden py-1">
             <div class="h-full mx-3 z-30 text-center"
             [ngClass]="{'text-ept-navy-blue': isViewer(user)}"
             (click)="setViewer(user)">
@@ -58,4 +71,5 @@
       </div>
     </div>
   </div>
+  <div *ngIf="!largeScreen" class="opacity-0 mb-14">_</div>
 </div>

@@ -100,6 +100,18 @@
       "@event-participation-trends/app/components": [
         "libs/app/components/src/index.ts"
       ],
+      "@event-participation-trends/app/components/src/lib/error/data-access": [
+        "libs/app/components/src/lib/error/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/components/src/lib/error/util": [
+        "libs/app/components/src/lib/error/util/src/index.ts"
+      ],
+      "@event-participation-trends/app/components/src/lib/floorplan-editor-page/data-access": [
+        "libs/app/components/src/lib/floorplan-editor-page/data-access/src/index.ts"
+      ],
+      "@event-participation-trends/app/components/src/lib/floorplan-editor-page/util": [
+        "libs/app/components/src/lib/floorplan-editor-page/util/src/index.ts"
+      ],
       "@event-participation-trends/app/event-view": [
         "libs/app/event-view/src/index.ts"
       ],

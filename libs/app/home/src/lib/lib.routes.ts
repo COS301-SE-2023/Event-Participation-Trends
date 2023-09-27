@@ -7,10 +7,10 @@ export const appHomeRoutes: Route[] = [
         path: '',
         component: HomeComponent,
         children: [
-            {
-                path: '',
-                component: AllEventsPageComponent
-            },
+            // {
+            //     path: '',
+            //     component: AllEventsPageComponent
+            // },
             {
                 path: 'events',
                 component: AllEventsPageComponent
@@ -22,7 +22,17 @@ export const appHomeRoutes: Route[] = [
             {
                 path: 'users',
                 component: UsersPageComponent
+            },
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: '/home/events'
             }
-        ]
+        ],
+    },
+    {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: '/home/events'
     }
 ];

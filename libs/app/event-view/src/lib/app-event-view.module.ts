@@ -3,11 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Route } from '@angular/router';
 import { appEventViewRoutes } from './lib.routes';
 import { EventViewComponent } from './event-view/event-view.component';
-import { EventHelpComponent } from '@event-participation-trends/app/components';
-import {
-  DashboardPageComponent,
-  EventDetailsPageComponent,
-} from '@event-participation-trends/app/components';
+import { DashboardPageComponent, EventDetailsPageComponent, EventHelpComponent, SmallScreenModalComponent } from '@event-participation-trends/app/components';
 import { NgIconsModule } from '@ng-icons/core';
 import {
   heroArrowLeft,
@@ -20,6 +16,7 @@ import {
   matDrawRound,
   matQuestionMarkRound,
 } from '@ng-icons/material-icons/round';
+import { matMenu, matClose, matVideoChat } from '@ng-icons/material-icons/baseline';
 
 @NgModule({
   bootstrap: [EventViewComponent],
@@ -30,6 +27,7 @@ import {
     DashboardPageComponent,
     EventHelpComponent,
     EventDetailsPageComponent,
+    SmallScreenModalComponent,
     NgIconsModule.withIcons({
       heroArrowLeft,
       heroChartBar,
@@ -38,6 +36,9 @@ import {
       matBarChartRound,
       matDrawRound,
       matQuestionMarkRound,
+      matMenu,
+      matClose,
+      matVideoChat
     }),
   ],
   declarations: [EventViewComponent],

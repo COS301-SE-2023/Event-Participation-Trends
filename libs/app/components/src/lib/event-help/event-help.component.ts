@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AppApiService } from '@event-participation-trends/app/api';
 
 @Component({
   selector: 'event-participation-trends-event-help',
@@ -8,7 +9,15 @@ import { CommonModule } from '@angular/common';
   templateUrl: './event-help.component.html',
   styleUrls: ['./event-help.component.css'],
 })
-export class EventHelpComponent {
+export class EventHelpComponent implements OnInit {
+
+  public role = 'viewer';
+
+  constructor(public appApiService: AppApiService) {}
+
+  async ngOnInit() {
+    this.role = await this.appApiService.getRole();
+  }
 
   pressButton(id: string) {
     const target = document.querySelector(id);
