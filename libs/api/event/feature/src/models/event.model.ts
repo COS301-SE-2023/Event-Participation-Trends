@@ -2,7 +2,7 @@ import {
     IEvent, 
     CreateEventEvent,
     IFloorLayout,
-    IChatMessage, 
+    ChatMessage, 
     } from '@event-participation-trends/api/event/util';
 import {
     IStall,
@@ -28,7 +28,7 @@ export class Event extends AggregateRoot implements IEvent {
         public Requesters?: Types.ObjectId[] | undefined | null,
         public Viewers?: Types.ObjectId[] | undefined | null,
         public PublicEvent?: boolean | undefined | null,
-        public eventChats?: IChatMessage[] | undefined | null,
+        public eventChats?: ChatMessage[] | undefined | null,
     ){
         super();
     }
