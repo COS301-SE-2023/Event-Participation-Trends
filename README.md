@@ -33,6 +33,7 @@ Please refer to our [technical installation manual](https://github.com/COS301-SE
 | System Requirements Specification v1 | [Link](https://docs.google.com/document/d/1Doeb5QJNxG2spNTYSLdacT7NHsnLVPAS4rcuX1nRqrY/edit?usp=sharing) |
 | System Requirements Specification v2 | [Link](https://docs.google.com/document/d/1iHdudGcnUYoy227o1OgBhCBoATmbfdSvOFCusW7_F54/edit?usp=sharing) |
 | System Requirements Specification v3 | [Link](https://docs.google.com/document/d/1L8ZUmRvCnAo5dGfTijhnKHm9DuSSltOG0WrvUgLysvg/edit?usp=sharing) |
+| System Requirements Specification v4 | [Link](https://docs.google.com/document/d/15h4X2jm_uBKAbkQX41ua-sZuAcgC_iCVEYdanp-sj9s/edit?usp=sharing) |
 | Architecture Requirements Document | [Link](https://docs.google.com/document/d/1DCmlr6tthxqHlV5Asj0hk7cu2i9cDNINY6NU2OYsUmg/edit?usp=sharing)
 | Notion | [Link](https://tricky-cylinder-c7d.notion.site/Indlovu-Event-Participant-Trends-c0a953a23efe4de1969fc2a8a46cb7e5?pvs=4) |
 | Coding Standards Document | [Link](https://www.notion.so/Coding-Standards-7b82311f246d445c835abcd739321909?pvs=4) |
