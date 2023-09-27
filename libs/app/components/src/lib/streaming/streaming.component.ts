@@ -87,6 +87,9 @@ export class StreamingComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit() {
+    this.appApiService.getEventChats(this.eventID).then((data) => {
+      this.eventMessages = data.messages;
+    });
     this.consumer_component.eventID = this.eventID;
     await this.consumer_component.connect();
     this.socket = this.consumer_component.socket;
