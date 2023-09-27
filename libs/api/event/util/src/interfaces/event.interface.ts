@@ -3,6 +3,7 @@ import { IStall } from "./stall.interface";
 import { ISensor } from "./sensor.interface";
 import { Types } from 'mongoose';
 import { IPosition } from "./position.interface";
+import { ChatMessage } from "./chat-message.interface";
 
 export interface IEvent {
     StartDate?: Date | undefined | null;
@@ -19,4 +20,5 @@ export interface IEvent {
     Requesters?: Types.ObjectId[] | undefined | null;
     Viewers?: Types.ObjectId[] | undefined | null;
     PublicEvent?: boolean | undefined | null;
+    eventChats?: ChatMessage[] | undefined | null;
 }

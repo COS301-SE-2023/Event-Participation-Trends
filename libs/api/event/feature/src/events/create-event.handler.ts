@@ -1,7 +1,7 @@
 import { CreateEventEvent, Position } from '@event-participation-trends/api/event/util';
 import { IEventHandler, EventsHandler } from '@nestjs/cqrs';
 import { IEvent } from "@event-participation-trends/api/event/util";
-import { EventRepository } from '@event-participation-trends/api/event/data-access';
+import { ChatMessage, EventRepository } from '@event-participation-trends/api/event/data-access';
 import { Types } from 'mongoose';
 import { EmailService } from '@event-participation-trends/api/email/feature'
 import { EmailContent, EmailSubject} from '@event-participation-trends/api/email/util';
@@ -37,6 +37,7 @@ export class CreateEventEventHandler implements IEventHandler<CreateEventEvent> 
             Requesters: new Array<Types.ObjectId>(), 
             Viewers: ViewersArr,
             PublicEvent: event.event.PublicEvent,
+            eventChats: Array<ChatMessage>(),
         }
 
         await this.eventRepository.createEvent(eventToCreate);

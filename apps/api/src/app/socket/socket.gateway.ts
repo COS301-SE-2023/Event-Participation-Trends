@@ -3,12 +3,16 @@ import { Socket, Server } from 'socket.io';
 import { SocketServiceService as SocketService } from './socket-service.service';
 import { Logger } from '@nestjs/common';
 import { types as MediasoupTypes } from 'mediasoup';
+import { EventService } from '@event-participation-trends/api/event/feature';
 
 @WebSocketGateway({path: '/api/ws'})
 export class SocketGateway implements OnGatewayDisconnect{
   @WebSocketServer()
   server: Server;
-  constructor(private readonly appService: SocketService) { 
+  constructor(
+    private readonly appService: SocketService,
+    private readonly eventService: EventService,
+    ) { 
   }
 
   handleDisconnect(client: any) {
@@ -33,7 +37,12 @@ export class SocketGateway implements OnGatewayDisconnect{
 
   @SubscribeMessage('message')
   message(client: Socket, payload: any){
-    Logger.debug(this.appService.users.get(client.id).eventID);
+    const eventId = this.appService.users.get(client.id).eventID;
+    Logger.debug(eventId);
+    this.eventService.addEventChatMessage({
+        eventId: eventId,
+        messagePacket: payload,
+    });
     this.server.to(this.appService.users.get(client.id).eventID).emit('message', payload);
   }
 

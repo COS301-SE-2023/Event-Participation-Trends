@@ -12,3 +12,4 @@ export * from './get-floorplan-boundaries.query';
 export * from './get-all-active-events.query';
 export * from './get-event-floorlayout-image.query';
 export * from './get-event-statistics.query';
+export * from './get-event-chat-messages.query';

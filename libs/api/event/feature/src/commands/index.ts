@@ -17,3 +17,4 @@ export * from './add-image-to-event.handler';
 export * from './delete-event-image.handler';
 export * from './remove-image-from-event.handler';
 export * from './update-event-floorlayout.handler';
+export * from './add-event-chat-message.handler';
