@@ -598,23 +598,25 @@ export class EventController {
 
   }
   
-  @Get('getEventStallChats')
+  @Get('getEventChats')
   @SetMetadata('role', Role.VIEWER)
   @UseGuards(JwtGuard,RbacGuard, CsrfGuard)
-  async getEventStallChats(
+  async getEventChats(
     @Req() req: Request,
     @Query() query: any 
   ): Promise<IGetEventChatMessagesResponse> {
     const request: any = req;
+
+    if(!query.eventId)
+        throw new HttpException("Bad Request: eventId not provided", 400);
 
     if (request.user['email'] == undefined || request.user['email'] == null)
       throw new HttpException('Bad Request: Manager email not provided', 400);
 
     const extractRequest: IGetEventChatMessagesRequest = {
         eventId: query.eventId,
-        stallName: query.stallName,
     };
-    return this.eventService.getEventStallChats(extractRequest);
+    return this.eventService.getEventChats(extractRequest);
   }
 }
 
