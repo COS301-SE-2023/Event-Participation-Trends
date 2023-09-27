@@ -29,10 +29,9 @@ export class EventRepository {
             { $addToSet: {eventChats :message}});
     }
 
-    async getEventChatMessages(eventId: Types.ObjectId, stallName: string){
-        return await this.imageModel.find(
-            {eventId: {$eq: eventId}, 
-            'eventChats': {'stallName': stallName}})
+    async getEventChatMessages(eventId: Types.ObjectId){
+        return await this.eventModel.find(
+            {_id :{$eq: eventId}}).select("eventChats");
     }
 
     async uploadImage(image: Image){
