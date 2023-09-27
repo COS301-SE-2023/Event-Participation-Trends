@@ -215,7 +215,7 @@ export class EventService {
         return await this.commandBus.execute<AddChatMessageCommand, void>(new AddChatMessageCommand(request)); 
     }
 
-    async getEventStallChats(request: IGetEventChatMessagesRequest) {
+    async getEventChats(request: IGetEventChatMessagesRequest) {
         return await this.queryBus.execute<GetEventChatMessagesQuery, IGetEventChatMessagesResponse>(new GetEventChatMessagesQuery(request));
     } 
 }
