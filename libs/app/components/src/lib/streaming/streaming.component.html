@@ -161,6 +161,7 @@
                   type="text"
                   placeholder="Add your message here..."
                   [(ngModel)]="messageText"
+                  (keyup.enter)="sendMessage()"
                 />
                 <div
                   class="cursor-pointer flex items-center rounded-full bg-ept-blue-grey bg-opacity-15 p-2 ml-2"
