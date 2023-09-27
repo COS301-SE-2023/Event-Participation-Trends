@@ -114,8 +114,8 @@ export class StreamingComponent implements OnInit, AfterViewInit {
 
     if (role === 'admin') {
       this.event = (
-        (await this.appApiService.getEvent({ eventId: this.eventID })) as any
-      ).event;
+        (await this.appApiService.getEvent({ eventId: this.eventID }))
+      );
     } else {
       this.event = (
         (await this.appApiService.getSubscribedEvents()) as any

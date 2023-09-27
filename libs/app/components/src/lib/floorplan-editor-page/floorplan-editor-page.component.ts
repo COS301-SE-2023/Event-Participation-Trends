@@ -2437,8 +2437,8 @@ export class FloorplanEditorPageComponent implements OnInit, AfterViewInit{
         }
 
         this.event = (
-          (await this.appApiService.getEvent({ eventId: this.id })) as any
-        ).event;
+          (await this.appApiService.getEvent({ eventId: this.id }))
+        );
 
         if (this.event === null) {
           this.ngZone.run(() => { this.router.navigate(['/home']); });

@@ -167,13 +167,14 @@ export class AppApiService {
   }
 
   async getEvent(eventId: IEventId): Promise<IEvent> {
-    return firstValueFrom(
-      this.http.get<IEvent>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
+    const data = await firstValueFrom(
+      this.http.get<IGetEventResponse>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
         headers: {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
       })
     );
+    return data.event;
   }
 
   async getAllEvents(): Promise<IEvent[]> {
