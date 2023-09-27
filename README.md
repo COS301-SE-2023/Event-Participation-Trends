@@ -1,6 +1,6 @@
 # EventParticipationTrends
 
-[![codecov](https://codecov.io/gh/JsteReubsSoftware/Event-Participation-Trends-forked/graph/badge.svg?token=AA00EF5IVF)](https://codecov.io/gh/JsteReubsSoftware/Event-Participation-Trends-forked)
+[![codecov](https://codecov.io/gh/COS301-SE-2023/Event-Participation-Trends/graph/badge.svg?token=NCQZ8GPXTG)](https://codecov.io/gh/COS301-SE-2023/Event-Participation-Trends)
 
 ## Indlovu - Gendac - Event Participation Trends
 
