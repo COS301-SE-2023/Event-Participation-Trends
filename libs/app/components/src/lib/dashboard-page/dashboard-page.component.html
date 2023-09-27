@@ -1,6 +1,6 @@
 <div *ngIf="isLoading" class="top-0 left-0 w-full h-screen flex">
     <div class="m-auto flex justify-between">
-      <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">Fetching floor plan data</h1>
+      <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">{{ loadingText }}</h1>
       <span class="loading loading-dots loading-lg ml-3 text-ept-blue-grey ept-of"></span>
     </div>
 </div>
@@ -93,13 +93,17 @@
                     </div>
                     <div class="stat-desc">Previously <span class="ml-2 text-lg">{{totalUsersDetectedPrev}}</span></div>
                 </div>
-                <div *ngIf="increasedUserCount" class="stat-figure text-green-400 flex">
+                <div *ngIf="increasedUserCount && !noIncreaseOrDecrease" class="stat-figure text-green-400 flex">
                     <ng-icon name="matKeyboardDoubleArrowUp" class="animate-pulse text-6xl"></ng-icon>                    
                     <ng-icon name="matKeyboardDoubleArrowUp" class="animate-pulse text-6xl"></ng-icon>
                 </div>
-                <div *ngIf="!increasedUserCount" class="stat-figure text-red-400 flex">
+                <div *ngIf="!increasedUserCount && !noIncreaseOrDecrease" class="stat-figure text-red-400 flex">
                     <ng-icon name="matKeyboardDoubleArrowDown" class="animate-pulse text-6xl"></ng-icon>
                     <ng-icon name="matKeyboardDoubleArrowDown" class="animate-pulse text-6xl"></ng-icon>
+                </div>
+                <div *ngIf="noIncreaseOrDecrease" class="stat-figure text-ept-blue-grey flex">
+                    <ng-icon name="matDragHandle" class="animate-pulse text-6xl"></ng-icon>
+                    <ng-icon name="matDragHandle" class="animate-pulse text-6xl"></ng-icon>
                 </div>
             </div>
             
