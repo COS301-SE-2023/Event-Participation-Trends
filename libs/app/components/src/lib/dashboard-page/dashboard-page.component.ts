@@ -332,7 +332,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         Chart.register(ChartStreaming);
         this.heatmap = new HeatMap({
-          container: document.getElementById('view')!,
+          container: document.getElementById('view-' + this.id)!,
           width: 1000,
           height: 1000,
           maxOpacity: .6,
@@ -490,6 +490,8 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
               this.percentageIncreaseThanPrevHour = percentageIncrease;
             }
           }
+
+          console.log(this.userDetectedPerHour);
         }
 
       }
@@ -599,7 +601,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     if (response || imageResponse) {
       // use the response to create an image
       this.floorlayoutStage = new Konva.Stage({
-        container: 'floormap',
+        container: 'floormap-' + this.id,
         width: this.heatmapContainer.nativeElement.offsetWidth * 0.98,
         height: this.heatmapContainer.nativeElement.offsetHeight * 0.98,
         draggable: true,
@@ -611,39 +613,39 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
       // if the left side position is greater than 0, set the x position to 0
       // if the bottom side position is less than the height of the container, set the y position to the height of the container
       // if the top side position is greater than 0, set the y position to 0
-      this.floorlayoutStage.on('dragmove', () => {
-        if (this.floorlayoutStage) {
-          const stageX = this.floorlayoutStage.x();
-          const stageY = this.floorlayoutStage.y();
-          const stageWidth = this.floorlayoutStage.width() * this.floorlayoutStage.scaleX();
-          const stageHeight = this.floorlayoutStage.height() * this.floorlayoutStage.scaleY();
-          const containerWidth = this.heatmapContainer.nativeElement.offsetWidth *0.98;
-          const containerHeight = this.heatmapContainer.nativeElement.offsetHeight *0.98;
+      // this.floorlayoutStage.on('dragmove', () => {
+      //   if (this.floorlayoutStage) {
+      //     const stageX = this.floorlayoutStage.x();
+      //     const stageY = this.floorlayoutStage.y();
+      //     const stageWidth = this.floorlayoutStage.width() * this.floorlayoutStage.scaleX();
+      //     const stageHeight = this.floorlayoutStage.height() * this.floorlayoutStage.scaleY();
+      //     const containerWidth = this.heatmapContainer.nativeElement.offsetWidth *0.98;
+      //     const containerHeight = this.heatmapContainer.nativeElement.offsetHeight *0.98;
           
-          // the stage must move beyond the container width and height but the following must be taken into account
-          // if the stage's left position is inline with the container's left position, set the stage's x position to equal the container's left position
-          // meaning if we move to the right it does not matter but once we move left and the stage's left position is inline with the container's left position, set the stage's x position to equal the container's left position
-          // if the stage's right position is inline with the container's right position, set the stage's x position to equal the container's right position - the stage's width
-          // meaning if we move to the left it does not matter but once we move right and the stage's right position is inline with the container's right position, set the stage's x position to equal the container's right position - the stage's width
-          // if the stage's top position is inline with the container's top position, set the stage's y position to equal the container's top position
-          // meaning if we move down it does not matter but once we move up and the stage's top position is inline with the container's top position, set the stage's y position to equal the container's top position
-          // if the stage's bottom position is inline with the container's bottom position, set the stage's y position to equal the container's bottom position - the stage's height
-          // meaning if we move up it does not matter but once we move down and the stage's bottom position is inline with the container's bottom position, set the stage's y position to equal the container's bottom position - the stage's height
+      //     // the stage must move beyond the container width and height but the following must be taken into account
+      //     // if the stage's left position is inline with the container's left position, set the stage's x position to equal the container's left position
+      //     // meaning if we move to the right it does not matter but once we move left and the stage's left position is inline with the container's left position, set the stage's x position to equal the container's left position
+      //     // if the stage's right position is inline with the container's right position, set the stage's x position to equal the container's right position - the stage's width
+      //     // meaning if we move to the left it does not matter but once we move right and the stage's right position is inline with the container's right position, set the stage's x position to equal the container's right position - the stage's width
+      //     // if the stage's top position is inline with the container's top position, set the stage's y position to equal the container's top position
+      //     // meaning if we move down it does not matter but once we move up and the stage's top position is inline with the container's top position, set the stage's y position to equal the container's top position
+      //     // if the stage's bottom position is inline with the container's bottom position, set the stage's y position to equal the container's bottom position - the stage's height
+      //     // meaning if we move up it does not matter but once we move down and the stage's bottom position is inline with the container's bottom position, set the stage's y position to equal the container's bottom position - the stage's height
 
-          if (this.floorlayoutStage.x() > 0) {
-            this.floorlayoutStage.x(0);
-          }
-          if (this.floorlayoutStage.x() < containerWidth - stageWidth) {
-            this.floorlayoutStage.x(containerWidth - stageWidth);
-          }
-          if (this.floorlayoutStage.y() > 0) {
-            this.floorlayoutStage.y(0);
-          }
-          if (this.floorlayoutStage.y() < containerHeight - stageHeight) {
-            this.floorlayoutStage.y(containerHeight - stageHeight);
-          }
-        }
-      });
+      //     if (this.floorlayoutStage.x() > 0) {
+      //       this.floorlayoutStage.x(0);
+      //     }
+      //     if (this.floorlayoutStage.x() < containerWidth - stageWidth) {
+      //       this.floorlayoutStage.x(containerWidth - stageWidth);
+      //     }
+      //     if (this.floorlayoutStage.y() > 0) {
+      //       this.floorlayoutStage.y(0);
+      //     }
+      //     if (this.floorlayoutStage.y() < containerHeight - stageHeight) {
+      //       this.floorlayoutStage.y(containerHeight - stageHeight);
+      //     }
+      //   }
+      // });
 
       // add rect to fill the stage
       // const rect = new Konva.Rect({
