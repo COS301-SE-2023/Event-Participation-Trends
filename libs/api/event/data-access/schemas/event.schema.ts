@@ -2,8 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { Stall } from './stall.schema';
 import { Sensor } from './sensor.schema';
-import { Image } from './image.schema';
-import { Position } from '../src/interfaces';
+import { Position ,ChatMessage } from '../src/interfaces';
 
 export type EventDocument = HydratedDocument<Event>;
 
@@ -51,6 +50,9 @@ export class Event{
     
     @Prop({ type: Boolean })
     PublicEvent: boolean | undefined | null;
+
+    @Prop( [ChatMessage] )
+    eventChats: ChatMessage[] | undefined | null;
 
 }
 

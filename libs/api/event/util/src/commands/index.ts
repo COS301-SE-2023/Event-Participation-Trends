@@ -17,3 +17,4 @@ export * from './add-image-to-event.command';
 export * from './delete-event-image.command';
 export * from './remove-image-from-event.command';
 export * from './update-event-floorlayout-image.command';
+export * from './add-event-chat-message.command';

@@ -1,6 +1,6 @@
 <div *ngIf="isLoading" class="top-0 left-0 w-full h-screen flex">
     <div class="m-auto flex justify-between">
-      <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">Fetching floor plan data</h1>
+      <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">{{ loadingText }}</h1>
       <span class="loading loading-dots loading-lg ml-3 text-ept-blue-grey ept-of"></span>
     </div>
 </div>
@@ -25,11 +25,11 @@
                     <span class="slider round"></span>
                 </label>
             </div> 
-            <div *ngIf="show" id="floormap" class="z-20 absolute w-full h-full top-0 left-0"></div>
-            <div *ngIf="show" id="view" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
+            <div *ngIf="show" id="floormap-{{id}}" class="z-20 absolute w-full h-full top-0 left-0"></div>
+            <div *ngIf="show" id="view-{{id}}" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
             <div
                 *ngIf="show"
-                id="heatmapContainer"                
+                id="heatmapContainer-{{id}}"                
                 #flowmapContainer
                 class="w-full h-full z-0 rounded-lg"
             ></div>
@@ -66,7 +66,7 @@
                 <span class="loading loading-spinner loading-lg"></span>
             </div>
             <div *ngIf="show" class="rounded-md col-span-5 row-span-2 h-full">
-                <canvas id="lineChart" #userCountDataStreamingChart class="w-full h-full"></canvas>
+                <canvas id="lineChart-{{id}}" #userCountDataStreamingChart class="w-full h-full"></canvas>
             </div>
         </div>
         <div *ngIf="largeScreen" class="border-ept-blue-grey border-2 border-solid rounded-2xl relative" [ngClass]="{'col-span-4 md:col-span-2 lg:col-span-1 row-span-1 m-2 lg:m-5 lg:mb-0 lg:ml-0': !showStatsOnSide, 'col-span-1 row-span-1 m-5 mt-0 ml-0': showStatsOnSide}">
@@ -93,13 +93,17 @@
                     </div>
                     <div class="stat-desc">Previously <span class="ml-2 text-lg">{{totalUsersDetectedPrev}}</span></div>
                 </div>
-                <div *ngIf="increasedUserCount" class="stat-figure text-green-400 flex">
+                <div *ngIf="increasedUserCount && !noIncreaseOrDecrease" class="stat-figure text-green-400 flex">
                     <ng-icon name="matKeyboardDoubleArrowUp" class="animate-pulse text-6xl"></ng-icon>                    
                     <ng-icon name="matKeyboardDoubleArrowUp" class="animate-pulse text-6xl"></ng-icon>
                 </div>
-                <div *ngIf="!increasedUserCount" class="stat-figure text-red-400 flex">
+                <div *ngIf="!increasedUserCount && !noIncreaseOrDecrease" class="stat-figure text-red-400 flex">
                     <ng-icon name="matKeyboardDoubleArrowDown" class="animate-pulse text-6xl"></ng-icon>
                     <ng-icon name="matKeyboardDoubleArrowDown" class="animate-pulse text-6xl"></ng-icon>
+                </div>
+                <div *ngIf="noIncreaseOrDecrease" class="stat-figure text-ept-blue-grey flex">
+                    <ng-icon name="matDragHandle" class="animate-pulse text-6xl"></ng-icon>
+                    <ng-icon name="matDragHandle" class="animate-pulse text-6xl"></ng-icon>
                 </div>
             </div>
             

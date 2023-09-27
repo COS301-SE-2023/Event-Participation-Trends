@@ -24,6 +24,7 @@ import {
   IEventId,
   IGetAllEventCategoriesResponse,
   IGetAllEventsResponse,
+  IGetEventChatMessagesResponse,
   IGetEventDevicePositionResponse,
   IGetEventFloorlayoutImageResponse,
   IGetEventFloorlayoutResponse,
@@ -167,13 +168,14 @@ export class AppApiService {
   }
 
   async getEvent(eventId: IEventId): Promise<IEvent> {
-    return firstValueFrom(
-      this.http.get<IEvent>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
+    const data = await firstValueFrom(
+      this.http.get<IGetEventResponse>(`/api/event/getEvent?eventId=${eventId.eventId}`, {
         headers: {
           'x-csrf-token': this.cookieService.get('csrf'),
         },
       })
     );
+    return data.event;
   }
 
   async getAllEvents(): Promise<IEvent[]> {
@@ -565,6 +567,21 @@ export class AppApiService {
     return firstValueFrom(
       this.http.get<IGetFloorplanBoundariesResponse>(
         `/api/event/getFloorplanBoundaries?eventId=${eventId}`,
+        {
+          headers: {
+            'x-csrf-token': this.cookieService.get('csrf'),
+          },
+        }
+      )
+    ).then((response) => {
+      return response;
+    });
+  }
+
+  async getEventChats(eventId: string) : Promise<IGetEventChatMessagesResponse> {
+    return firstValueFrom(
+      this.http.get<IGetEventChatMessagesResponse>(
+        `/api/event/getEventChats?eventId=${eventId}`,
         {
           headers: {
             'x-csrf-token': this.cookieService.get('csrf'),

@@ -22,6 +22,7 @@ import {
     RemoveEventImageHandler,
     DeleteEventImageHandler,
     UpdateEventFloorLayoutImgHandler,
+    AddChatMessageHandler,
 } from './commands';
 
 import { 
@@ -37,6 +38,7 @@ import {
     GetAllActiveEventsHandler,
     GetEventFloorlayoutImageHandler,
     GetEventStatisticsHandler,
+    GetEventChatMessagesHandler,
  } from './queries';
 
 import {
@@ -81,6 +83,7 @@ export const CommandHandlers = [
     RemoveEventImageHandler,
     DeleteEventImageHandler,
     UpdateEventFloorLayoutImgHandler,
+    AddChatMessageHandler,
 ]
 
 export const EventHandlers = [
@@ -117,6 +120,7 @@ export const QueryHandlers = [
     GetAllActiveEventsHandler,
     GetEventFloorlayoutImageHandler,
     GetEventStatisticsHandler,
+    GetEventChatMessagesHandler,
 ];
 
 

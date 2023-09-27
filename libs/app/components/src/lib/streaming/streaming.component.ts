@@ -87,6 +87,9 @@ export class StreamingComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit() {
+    this.appApiService.getEventChats(this.eventID).then((data) => {
+      this.eventMessages = data.messages;
+    });
     this.consumer_component.eventID = this.eventID;
     await this.consumer_component.connect();
     this.socket = this.consumer_component.socket;
@@ -114,8 +117,8 @@ export class StreamingComponent implements OnInit, AfterViewInit {
 
     if (role === 'admin') {
       this.event = (
-        (await this.appApiService.getEvent({ eventId: this.eventID })) as any
-      ).event;
+        (await this.appApiService.getEvent({ eventId: this.eventID }))
+      );
     } else {
       this.event = (
         (await this.appApiService.getSubscribedEvents()) as any
