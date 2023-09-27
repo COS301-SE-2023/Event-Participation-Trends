@@ -1,5 +1,5 @@
-import { IChatMessage } from "../interfaces";
+import { ChatMessage } from "../interfaces";
 
 export interface IGetEventChatMessagesResponse {
-    messages: IChatMessage[] | undefined | null,
+    messages: ChatMessage[] | undefined | null,
 };
