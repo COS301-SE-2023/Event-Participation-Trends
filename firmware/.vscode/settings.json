@@ -2,7 +2,7 @@
   "C_Cpp.intelliSenseEngine": "Tag Parser",
   "idf.adapterTargetName": "esp32c3",
   "idf.openOcdConfigs": [
-    "board/esp32s2-bridge.cfg"
+    "board/esp32c3-bridge.cfg"
   ],
   "idf.portWin": "COM4",
   "idf.flashType": "UART",
@@ -22,6 +22,11 @@
     "utility": "c",
     "netfwd": "c",
     "unordered_map": "cpp",
-    "system_error": "cpp"
-  }
+    "system_error": "cpp",
+    "deque": "cpp",
+    "vector": "cpp",
+    "mutex": "cpp",
+    "*.tcc": "cpp"
+  },
+  "idf.port": "/dev/ttyACM0"
 }
