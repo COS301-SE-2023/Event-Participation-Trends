@@ -136,4 +136,5 @@ Please refer to our [technical installation manual](https://github.com/COS301-SE
 | Coding Standards Document | [Link](https://www.notion.so/Coding-Standards-7b82311f246d445c835abcd739321909?pvs=4) |
 | Documentation Contributions | [Link](https://www.notion.so/List-of-Contributions-1c60a373935440e383232a35eac06898?pvs=4) |
 | User Manual | [Link](https://docs.google.com/document/d/1_cKCrhkL_yB80d10c_E82UGZVLFnSZI2S8DJMGUVsJ0/edit?usp=sharing)
-| Technical Installation Manual | [Link](https://github.com/COS301-SE-2023/Event-Participation-Trends/wiki/Technical-Installation-Manual)
+| Technical Installation Manual | [Link](https://github.com/COS301-SE-2023/Event-Participation-Trends/wiki/Technical-Installation-Manual) |
+| Installation Instructions (Mobile Users) | [Link](https://github.com/COS301-SE-2023/Event-Participation-Trends/wiki/Installation-instructions-(Mobile-users)) |
