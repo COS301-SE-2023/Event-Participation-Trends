@@ -10,6 +10,10 @@ The wireless sensors connect in a mesh-like topology to feed RSSI data to a wire
 
 The system uses Google Authentication to ensure security and privacy of the data and enforces role-based access control to ensure that only authorised users can access the data.
 
+## Required Documents and Links
+
+[Go to required documnts and links](https://github.com/COS301-SE-2023/Event-Participation-Trends/wiki/Required-Documents)
+
 ## Installation and Setup
 
 Please refer to our [technical installation manual](https://github.com/COS301-SE-2023/Event-Participation-Trends/wiki/Technical-Installation-Manual).
