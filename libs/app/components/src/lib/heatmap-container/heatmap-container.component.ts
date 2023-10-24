@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IEvent, IImage, IPosition } from '@event-participation-trends/api/event/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { Router, NavigationStart } from '@angular/router';
 
 import { matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matRedo } from "@ng-icons/material-icons/baseline";
 import { matWarningAmberRound, matErrorOutlineRound } from "@ng-icons/material-icons/round";
@@ -75,8 +76,17 @@ export class HeatmapContainerComponent implements OnInit{
   
   floorlayoutImages: IImage[] = [];
   STALL_IMAGE_URL = 'assets/stall-icon.png';
+  flowInterval: any;
 
-  constructor(private readonly appApiService: AppApiService) {}
+  constructor(private readonly appApiService: AppApiService, private readonly router: Router) {
+    router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        // This event is triggered when a new route navigation begins.
+        // You can unsubscribe from your interval here.
+        clearInterval(this.flowInterval);
+      }
+    });
+  }
 
   async ngOnInit() {
     // check if the event has device positions
@@ -705,9 +715,9 @@ export class HeatmapContainerComponent implements OnInit{
     this.changingTimeRange = false;
 
     // increase or decrease the value of the range element by 5 seconds on an interval until the end time is reached
-    const interval = setInterval(() => {
+    this.flowInterval = setInterval(() => {
       if (this.changingTimeRange) {
-        clearInterval(interval);
+        clearInterval(this.flowInterval);
         return;
       }
 
@@ -715,7 +725,7 @@ export class HeatmapContainerComponent implements OnInit{
         this.addFiveSeconds(true);
       } else {
         this.overTimeRange = true;
-        clearInterval(interval);
+        clearInterval(this.flowInterval);
       }
     }, 500);
   }
