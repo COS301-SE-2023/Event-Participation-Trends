@@ -139,9 +139,12 @@ export class HeatmapContainerComponent implements OnInit{
     }, 200);
   }
 
+
+
   async ngAfterViewInit() {     
     //check if DOM rendered and if not retry
     let counter = 0;
+    this.failedToLoadFloorplan = false;
     const checkDOM = setInterval(() => {
       counter++;
 
@@ -203,22 +206,18 @@ export class HeatmapContainerComponent implements OnInit{
       else if (counter > 10) {
         clearInterval(checkDOM);
 
+        this.isLoading = false;
         this.failedToLoadFloorplan = true;
       }
     }, 1000);
   }
 
   reloadFloorplan() {
+    this.failedToLoadFloorplan = false;
+    this.isLoading = true;
     setTimeout(() => {
-      this.getImageFromJSONData(this.containerEvent._id);
+      this.ngAfterViewInit();
     }, 1000);
-
-    if (this.floorlayoutStage === null) {
-      this.failedToLoadFloorplan = true;
-    }
-    else {
-      this.failedToLoadFloorplan = false;
-    }
   }
 
   async setHighlightPoints() {

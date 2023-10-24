@@ -211,29 +211,7 @@ export class ComparePageComponent implements OnInit {
 
   async removeAnyNonSelectedEventStats() {
     for (const item of this.eventList) {
-      if (item.selected) {
-        //check if it is in the stats array
-        const index = this.eventStats.findIndex((stat) => {
-          return stat.id === (item.event as any)._id;
-        });
-
-        if (index === -1) {
-          this.eventStats.push({
-            id: (item.event as any)._id,
-            name: item.event.Name!,
-            start_time: new Date(item.event.StartDate!),
-            end_time: new Date(item.event.EndDate!),
-            total_attendance: 0,
-            average_attendance: 0,
-            peak_attendance: 0,
-            turnover_rate: 0,
-            average_attendance_time: 0,
-            max_attendance_time: 0,
-            attendance_over_time_data: [],
-          });
-        }
-      }
-      else {
+      if (!item.selected) {
         const index = this.eventStats.findIndex((stat) => {
           return stat.id === (item.event as any)._id;
         });
