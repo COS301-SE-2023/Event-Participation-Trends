@@ -248,7 +248,14 @@ export class ComparePageComponent implements OnInit {
         attendance_over_time_data: response.attendance_over_time_data!,
       };
 
-      this.eventStats.push(stats);
+      // check if event is not already in the stats array
+      const eventIndex = this.eventStats.findIndex((item) => {
+        return item.id === stats.id;
+      });
+
+      if (eventIndex === -1) {
+        this.eventStats.push(stats);
+      }
       this.renderCharts();
     } else {
       this.eventsSelected--;
