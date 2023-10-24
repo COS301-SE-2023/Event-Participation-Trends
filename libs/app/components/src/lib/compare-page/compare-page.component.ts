@@ -98,6 +98,7 @@ export class ComparePageComponent implements OnInit {
   showDropDown = false;
   selectedEvents: IEvent[] = [];
   eventStats: Stats[] = [];
+  showStatsSideBySide = false;
 
   parentContainer: HTMLDivElement | null = null;
 
@@ -160,6 +161,12 @@ export class ComparePageComponent implements OnInit {
       this.largeScreen = true;
     } else {
       this.largeScreen = false;
+    }
+
+    if (window.innerWidth >= 768) {
+      this.showStatsSideBySide = true;
+    } else {
+      this.showStatsSideBySide = false;
     }
 
     this.loading = false;
@@ -363,6 +370,15 @@ export class ComparePageComponent implements OnInit {
     } else {
       this.largeScreen = false;
     }
+
+    if (event.target.innerWidth >= 768) {
+      this.showStatsSideBySide = true;
+    } else {
+      this.showStatsSideBySide = false;
+    }
+
+    //redraw any selected events
+    this.renderCharts();
   }
 
   openSidePanel() {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IEvent, IImage, IPosition } from '@event-participation-trends/api/event/util';
 import { AppApiService } from '@event-participation-trends/app/api';
@@ -780,5 +780,10 @@ export class HeatmapContainerComponent implements OnInit{
   pauseFlowOfHeatmap() {
     this.paused = true;
     this.changingTimeRange = true;
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.getImageFromJSONData(this.containerEvent._id);
   }
 }
