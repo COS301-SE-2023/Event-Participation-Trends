@@ -16,13 +16,15 @@ export class GetAllViewRequestsHandler implements IQueryHandler<GetAllViewReques
     async execute(query: GetAllViewRequestsQuery) {
         console.log(`${GetAllViewRequestsHandler.name}`);
         const request = query.request;
-        
+
         const eventIdObj = <Types.ObjectId> <unknown> request.eventId;
         const userDoc = await this.userRepository.getUser(request.managerEmail ||"");
-        
+
+        //To Do:need to check if manager is manager of event or it manager is admin
+
         let eventViewRequestersDocs;
         if(userDoc.length != 0){
-            eventViewRequestersDocs = await this.eventRepository.getPopulatedRequesters(eventIdObj,userDoc[0]._id);  
+            eventViewRequestersDocs = await this.eventRepository.getPopulatedRequesters(eventIdObj);
         }
         return {users: <IUser[]>eventViewRequestersDocs};
     }
