@@ -2,16 +2,22 @@
     <div class="font-poppins font-semibold ml-2 mt-1 text-xl">
         {{containerEvent.Name}}
     </div>
-    <div
+    <!-- <div
         class="absolute top-0 left-0 w-full h-full flex justify-center align-middle transition-opacity duration-200"
         [ngClass]="{ 'opacity-0': !loadingContent }"
         *ngIf="!show"
     >
         <span class="loading loading-spinner loading-lg"></span>
+    </div> -->
+    <div *ngIf="isLoading" class="top-0 left-0 w-full h-full justify-center flex">
+        <div class="m-auto flex justify-between">
+          <h1 class="sm:text-sm md:text-md lg:text-lg xl:text-xl text-ept-blue-grey">{{ loadingText }}</h1>
+          <span class="loading loading-dots loading-lg ml-3 text-ept-blue-grey ept-of"></span>
+        </div>
     </div>
-    <div *ngIf="show" id="floormap-{{containerEvent._id}}" class="z-20 absolute w-full h-full top-0 left-0"></div>
-    <div *ngIf="show" id="view-{{containerEvent._id}}" class="z-30 absolute w-full h-full top-0 left-0" hidden></div>
-    <div *ngIf="show && (hasFloorlayout || hasData)" class="flex flex-col justify-evenly absolute top-0 right-3">
+    <div *ngIf="show" id="floormap-{{containerEvent._id}}" class="z-20 absolute w-full h-full top-0 left-0" [ngClass]="{'opacity-0': isLoading, 'opacity-100': !isLoading}"></div>
+    <div *ngIf="show" id="view-{{containerEvent._id}}" class="z-30 absolute w-full h-full top-0 left-0" hidden [ngClass]="{'opacity-0': isLoading, 'opacity-100': !isLoading}"></div>
+    <div *ngIf="show && (hasFloorlayout || hasData)" class="flex flex-col justify-evenly absolute top-0 right-3" [ngClass]="{'opacity-0': isLoading, 'opacity-100': !isLoading}">
         <div (click)="zoomIn()" class="flex justify-center mt-2 opacity-50 text-3xl border-ept-blue-grey border-2 border-solid rounded-lg  text-ept-blue-grey hover:cursor-pointer hover:opacity-100 hover:text-ept-deep-grey hover:bg-ept-blue-grey z-40">
             <ng-icon name="matZoomIn" title="Zoom in"></ng-icon>
         </div>
@@ -34,18 +40,18 @@
             <ng-icon (click)="pauseFlowOfHeatmap()" title="Pause flow of heatmap" *ngIf="!paused" name="matPauseCircleOutline"></ng-icon>
         </div>
     </div>
-    <div *ngIf="show && !hasFloorlayout" class="z-50 w-3/4 md:w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10" [ngClass]="{'w-fit': !hasData}">
+    <div *ngIf="show && !hasFloorlayout" class="z-50 w-3/4 md:w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10" [ngClass]="{'w-fit': !hasData, 'opacity-0': isLoading, 'opacity-100': !isLoading}">
         <ng-icon name="matWarningAmberRound" class="text-3xl text-ept-bumble-yellow self-center"></ng-icon>
         <label class="m-2 text-xl text-ept-bumble-yellow opacity-100 z-100">No Floor layout for this event</label>
     </div>
-    <div *ngIf="show && !hasData" class="z-50 w-3/4 md:w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10" [ngClass]="{'w-fit': !hasFloorlayout}">
+    <div *ngIf="show && !hasData" class="z-50 w-3/4 md:w-fit ml-2 flex justify-left bg-ept-blue-grey rounded-lg bg-opacity-10" [ngClass]="{'w-fit': !hasFloorlayout, 'opacity-0': isLoading, 'opacity-100': !isLoading}">
         <ng-icon name="matErrorOutlineRound" class="text-3xl text-ept-light-red self-center"></ng-icon>
         <label class="m-2 text-xl text-ept-light-red opacity-100 z-100">No data collected for this event</label>
     </div>
-    <div *ngIf="show && hasData" class="w-fit pr-5 self-center flex flex-col justify-evenly mx-3 absolute bottom-11 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
+    <div *ngIf="show && hasData" class="w-fit pr-5 self-center flex flex-col justify-evenly mx-3 absolute bottom-11 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-0': isLoading, 'opacity-100': !isLoading && overTimeRange, 'opacity-50': !overTimeRange && !isLoading}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
         <label>Event Time: {{currentTime}}</label>
     </div>
-    <div *ngIf="show && hasData" class="w-full pr-5 self-center flex flex-row justify-evenly mx-3 absolute bottom-1 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-100': overTimeRange, 'opacity-50': !overTimeRange}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
+    <div *ngIf="show && hasData" class="w-full pr-5 self-center flex flex-row justify-evenly mx-3 absolute bottom-1 z-50 text-ept-blue-grey"  [ngClass]="{'opacity-0': isLoading, 'opacity-100': !isLoading && overTimeRange, 'opacity-50': !overTimeRange && !isLoading}" (mouseover)="overTimeRange = true" (mouseleave)="overTimeRange = false">
         <div class="flex flex-col justify-center  w-full mx-3">
             <div class="flex justify-between">
                 <label class="">Start</label>

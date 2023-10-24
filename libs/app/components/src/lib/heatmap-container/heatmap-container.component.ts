@@ -77,6 +77,9 @@ export class HeatmapContainerComponent implements OnInit{
   floorlayoutImages: IImage[] = [];
   STALL_IMAGE_URL = 'assets/stall-icon.png';
   flowInterval: any;
+  failedToLoadFloorplan = false;
+  loadingText = 'Loading Event Floorplan';
+  isLoading = true;
 
   constructor(private readonly appApiService: AppApiService, private readonly router: Router) {
     router.events.subscribe(event => {
@@ -115,6 +118,12 @@ export class HeatmapContainerComponent implements OnInit{
       this.hasFloorlayout = false;
     }
 
+    this.positions = await this.appApiService.getEventDevicePosition(this.containerEvent._id, this.startDate, this.endDate);
+
+    if (this.positions.length === 0) {
+      this.hasData = false;
+    }
+
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       //now check if no input field has focus and the Delete key is pressed
       if (event.shiftKey) {
@@ -123,54 +132,93 @@ export class HeatmapContainerComponent implements OnInit{
     });
     window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
 
-    this.loadingContent = false;
-
+    
     setTimeout(() => {
       this.show = true;
+      this.loadingContent = false;
     }, 200);
   }
 
   async ngAfterViewInit() {     
-    setTimeout(() => {
-      this.heatmapContainer = new ElementRef<HTMLDivElement>(document.getElementById('heatmapContainer-'+this.containerEvent._id) as HTMLDivElement);
-  
-      this.heatmap = new HeatMap({
-        container: document.getElementById('view-'+this.containerEvent._id+'')!,
-        maxOpacity: .6,
-        width: 1000,
-        height: 1000,
-        radius: 50,
-        blur: 0.90,
-        gradient: {
-          0.0: this.chartColors['ept-off-white'],
-          0.25: this.chartColors['ept-light-blue'],
-          0.5: this.chartColors['ept-light-green'],
-          0.75: this.chartColors['ept-bumble-yellow'],
-          1.0: this.chartColors['ept-light-red']
+    //check if DOM rendered and if not retry
+    let counter = 0;
+    const checkDOM = setInterval(() => {
+      counter++;
+
+      if (counter > 2) {
+        this.loadingText = 'Almost there';
+      }
+
+      if (
+          document.getElementById('view-' + this.containerEvent._id) 
+          && document.getElementById('floormap-' + this.containerEvent._id)
+          && document.getElementById('container-'+this.containerEvent._id)
+          && document.createElement('myRange-' + this.containerEvent._id)
+          && document.getElementById('highlightPointsContainer-'+this.containerEvent._id)
+      ) {
+        clearInterval(checkDOM);
+
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 1600);
+
+        setTimeout(() => {
+          this.heatmapContainer = new ElementRef<HTMLDivElement>(document.getElementById('heatmapContainer-'+this.containerEvent._id) as HTMLDivElement);
+      
+          this.heatmap = new HeatMap({
+            container: document.getElementById('view-'+this.containerEvent._id+'')!,
+            maxOpacity: .6,
+            width: 1000,
+            height: 1000,
+            radius: 50,
+            blur: 0.90,
+            gradient: {
+              0.0: this.chartColors['ept-off-white'],
+              0.25: this.chartColors['ept-light-blue'],
+              0.5: this.chartColors['ept-light-green'],
+              0.75: this.chartColors['ept-bumble-yellow'],
+              1.0: this.chartColors['ept-light-red']
+            }
+          });
+          this.getImageFromJSONData(this.containerEvent._id);   
+        }, 1000);
+
+        if (this.positions.length !== 0) {
+          setTimeout(() => {
+            // run through the positions
+            this.setHighlightPoints();
+
+            // set the heatmap data to the positions that were detected in the first 5 seconds
+            // only run through the positions until a timestamp is found that is 5 seconds greater than the start date
+            this.setHeatmapIntervalData(this.startDate!);
+          }, 1500);
         }
-      });
-      this.getImageFromJSONData(this.containerEvent._id);   
+        
+        //sort the positions by timestamp
+        this.positions.sort((a: IPosition, b: IPosition) => {
+          if (!a.timestamp || !b.timestamp) return 0;
+          return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+        });
+      }
+      else if (counter > 10) {
+        clearInterval(checkDOM);
+
+        this.failedToLoadFloorplan = true;
+      }
+    }, 1000);
+  }
+
+  reloadFloorplan() {
+    setTimeout(() => {
+      this.getImageFromJSONData(this.containerEvent._id);
     }, 1000);
 
-    this.positions = await this.appApiService.getEventDevicePosition(this.containerEvent._id, this.startDate, this.endDate);
-    
-    if (this.positions.length === 0) {
-      this.hasData = false;
+    if (this.floorlayoutStage === null) {
+      this.failedToLoadFloorplan = true;
     }
     else {
-      // run through the positions
-      this.setHighlightPoints();
-
-      // set the heatmap data to the positions that were detected in the first 5 seconds
-      // only run through the positions until a timestamp is found that is 5 seconds greater than the start date
-      this.setHeatmapIntervalData(this.startDate!);
+      this.failedToLoadFloorplan = false;
     }
-    
-    //sort the positions by timestamp
-    this.positions.sort((a: IPosition, b: IPosition) => {
-      if (!a.timestamp || !b.timestamp) return 0;
-      return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
-    });
   }
 
   async setHighlightPoints() {
