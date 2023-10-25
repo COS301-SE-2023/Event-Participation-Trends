@@ -28,7 +28,7 @@ typedef struct {
     uint8_t mac[6];
 } newPacket;
 
-#define QUEUE_SIZE 5000
+#define QUEUE_SIZE 1000
 QueueHandle_t packetQueue;
 
 std::mutex macs_mutex;
@@ -74,8 +74,10 @@ static void SendBufferAsSingleJsonArray(void*){
     data += "]}";
     macs.clear();
     macs_mutex.unlock();
+    esp_wifi_set_promiscuous(false);
     mqtt_publish_sensor(data.c_str());
     flashLed();
+    esp_wifi_set_promiscuous(true);
     vTaskDelete(NULL);
 }
 
