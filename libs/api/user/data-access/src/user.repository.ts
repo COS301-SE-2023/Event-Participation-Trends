@@ -14,7 +14,7 @@ export class UserRepository {
 
     async createUser(user: IUser){
         await this.userModel.create(user);
-    }    
+    }
 
     //regactor
     async getUser(userEmail: string){
@@ -36,7 +36,7 @@ export class UserRepository {
 
     async updateUserRole(userEmail: string, userRole: string){
         await this.userModel.updateOne({Email: {$eq: userEmail}},{$set: {Role: userRole}});
-    } 
+    }
 
     async addViewingEvent(userID: Types.ObjectId, eventID: Types.ObjectId){
         return await this.userModel.updateOne(
@@ -65,6 +65,11 @@ export class UserRepository {
     async deleteUserById(eventID: Types.ObjectId){
         return await this.userModel.deleteOne(
             {_id :{$eq: eventID}});
+    }
+
+    async getAllAdmins(){
+        return await this.userModel.find(
+            { Role: {$eq: "admin"}});
     }
 
 }
