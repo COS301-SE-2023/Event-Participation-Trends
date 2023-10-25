@@ -1,5 +1,5 @@
-import { EventModule as EventDataAccessModule } from '@event-participation-trends/api/event/data-access';
-import { UserModule as UserDataAccessModule} from '@event-participation-trends/api/user/data-access';
+import { EventModule as EventDataAccessModule, EventSchema, ImageSchema, SensorSchema, StallSchema } from '@event-participation-trends/api/event/data-access';
+import { UserModule as UserDataAccessModule, UserModule} from '@event-participation-trends/api/user/data-access';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { EventService } from './event.service';
@@ -64,6 +64,8 @@ import {
 import { GetAllViewRequestsHandler } from './queries/get-all-view-requests.handler';
 
 import { EventsSagas } from './event.sagas';
+import { DatabaseService } from '@event-participation-trends/api/database/feature';
+import { MongooseModule } from '@nestjs/mongoose';
 
 export const CommandHandlers = [
     CreateEventHandler,
@@ -125,8 +127,13 @@ export const QueryHandlers = [
 
 
 @Module({
-    imports: [CqrsModule, EventDataAccessModule, UserDataAccessModule],
-    providers: [EventService, ...CommandHandlers, ...EventHandlers, ...QueryHandlers, EventsSagas],
+    imports: [MongooseModule.forFeature([
+        {name: 'Sensor', schema: SensorSchema },
+        {name: 'Stall', schema: StallSchema },
+        {name: 'Event', schema: EventSchema },
+        {name: 'Image', schema: ImageSchema },
+        ]), EventModule, UserModule, CqrsModule, EventDataAccessModule, UserDataAccessModule],
+    providers: [EventService, ...CommandHandlers, ...EventHandlers, ...QueryHandlers, EventsSagas, DatabaseService],
     exports: [EventService],
 })
 export class EventModule {}
