@@ -1,6 +1,6 @@
-import { 
-    IViewRequest, 
-    DeclineViewRequestEvent, 
+import {
+    IViewRequest,
+    DeclineViewRequestEvent,
     AcceptViewRequestEvent,
     } from '@event-participation-trends/api/event/util';
 import { AggregateRoot } from '@nestjs/cqrs';

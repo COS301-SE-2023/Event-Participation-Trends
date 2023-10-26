@@ -19,9 +19,16 @@ import {
     EmailModule,
     EmailService,
   } from '@event-participation-trends/api/email/feature';
+import {
+    DatabaseModule,
+    DatabaseService,
+  } from '@event-participation-trends/api/database/feature';
 import { ApiGuardsModule } from '@event-participation-trends/api/guards';
 import { SensorlinkingModule } from '@event-participation-trends/api/sensorlinking';
 import { JwtService } from '@nestjs/jwt';
+import { EventRepository, EventSchema, ImageSchema, SensorSchema, StallSchema } from '@event-participation-trends/api/event/data-access';
+import { UserRepository, UserSchema } from '@event-participation-trends/api/user/data-access';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -32,9 +39,17 @@ import { JwtService } from '@nestjs/jwt';
     EmailModule,
     ApiGuardsModule,
     SensorlinkingModule,
+    DatabaseModule,
+    MongooseModule.forFeature([
+        {name: 'Sensor', schema: SensorSchema },
+        {name: 'Stall', schema: StallSchema },
+        {name: 'Event', schema: EventSchema },
+        {name: 'Image', schema: ImageSchema },
+        {name: 'User', schema: UserSchema },
+        ])
   ],
   controllers: [UserController, EventController, GlobalController],
-  providers: [UserService, EventService, GlobalService, JwtService, EmailService],
-  exports: [UserService, EventService, GlobalService, EmailService],
+  providers: [UserService, EventService, GlobalService, JwtService, EmailService, DatabaseService, UserRepository, EventRepository],
+  exports: [UserService, EventService, GlobalService, EmailService, DatabaseService, UserRepository, EventRepository],
 })
 export class CoreModule {}

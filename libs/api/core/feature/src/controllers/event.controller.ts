@@ -544,7 +544,10 @@ export class EventController {
     const request: any = req;
 
     if (request.user['email'] == undefined || request.user['email'] == null)
-      throw new HttpException('Bad Request: Manager email not provided', 400);
+      throw new HttpException('Bad Request: Viewer email not provided', 400);
+
+    if (!query.eventId)
+      throw new HttpException('Bad Request: eventId not provided', 400);
 
     const extractRequest: IGetEventFloorlayoutImageRequest = {
         eventId: query.eventId,
