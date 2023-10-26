@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IEvent, IImage, IPosition } from '@event-participation-trends/api/event/util';
 import { AppApiService } from '@event-participation-trends/app/api';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { Router, NavigationStart } from '@angular/router';
 
 import { matSearch, matFilterCenterFocus, matZoomIn, matZoomOut, matRedo } from "@ng-icons/material-icons/baseline";
 import { matWarningAmberRound, matErrorOutlineRound } from "@ng-icons/material-icons/round";
@@ -75,8 +76,20 @@ export class HeatmapContainerComponent implements OnInit{
   
   floorlayoutImages: IImage[] = [];
   STALL_IMAGE_URL = 'assets/stall-icon.png';
+  flowInterval: any;
+  failedToLoadFloorplan = false;
+  loadingText = 'Loading Event Floorplan';
+  isLoading = true;
 
-  constructor(private readonly appApiService: AppApiService) {}
+  constructor(private readonly appApiService: AppApiService, private readonly router: Router) {
+    router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        // This event is triggered when a new route navigation begins.
+        // You can unsubscribe from your interval here.
+        clearInterval(this.flowInterval);
+      }
+    });
+  }
 
   async ngOnInit() {
     // check if the event has device positions
@@ -105,6 +118,12 @@ export class HeatmapContainerComponent implements OnInit{
       this.hasFloorlayout = false;
     }
 
+    this.positions = await this.appApiService.getEventDevicePosition(this.containerEvent._id, this.startDate, this.endDate);
+
+    if (this.positions.length === 0) {
+      this.hasData = false;
+    }
+
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       //now check if no input field has focus and the Delete key is pressed
       if (event.shiftKey) {
@@ -113,54 +132,92 @@ export class HeatmapContainerComponent implements OnInit{
     });
     window.addEventListener('keyup', (event: KeyboardEvent) => this.handleKeyUp(event));
 
-    this.loadingContent = false;
-
+    
     setTimeout(() => {
       this.show = true;
+      this.loadingContent = false;
     }, 200);
   }
 
+
+
   async ngAfterViewInit() {     
-    setTimeout(() => {
-      this.heatmapContainer = new ElementRef<HTMLDivElement>(document.getElementById('heatmapContainer-'+this.containerEvent._id) as HTMLDivElement);
-  
-      this.heatmap = new HeatMap({
-        container: document.getElementById('view-'+this.containerEvent._id+'')!,
-        maxOpacity: .6,
-        width: 1000,
-        height: 1000,
-        radius: 50,
-        blur: 0.90,
-        gradient: {
-          0.0: this.chartColors['ept-off-white'],
-          0.25: this.chartColors['ept-light-blue'],
-          0.5: this.chartColors['ept-light-green'],
-          0.75: this.chartColors['ept-bumble-yellow'],
-          1.0: this.chartColors['ept-light-red']
+    //check if DOM rendered and if not retry
+    let counter = 0;
+    this.failedToLoadFloorplan = false;
+    const checkDOM = setInterval(() => {
+      counter++;
+
+      if (counter > 2) {
+        this.loadingText = 'Almost there';
+      }
+
+      if (
+          document.getElementById('view-' + this.containerEvent._id) 
+          && document.getElementById('floormap-' + this.containerEvent._id)
+          && document.getElementById('container-'+this.containerEvent._id)
+          && document.createElement('myRange-' + this.containerEvent._id)
+          && document.getElementById('highlightPointsContainer-'+this.containerEvent._id)
+      ) {
+        clearInterval(checkDOM);
+
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 1600);
+
+        setTimeout(() => {
+          this.heatmapContainer = new ElementRef<HTMLDivElement>(document.getElementById('heatmapContainer-'+this.containerEvent._id) as HTMLDivElement);
+      
+          this.heatmap = new HeatMap({
+            container: document.getElementById('view-'+this.containerEvent._id+'')!,
+            maxOpacity: .6,
+            width: 1000,
+            height: 1000,
+            radius: 50,
+            blur: 0.90,
+            gradient: {
+              0.0: this.chartColors['ept-off-white'],
+              0.25: this.chartColors['ept-light-blue'],
+              0.5: this.chartColors['ept-light-green'],
+              0.75: this.chartColors['ept-bumble-yellow'],
+              1.0: this.chartColors['ept-light-red']
+            }
+          });
+          this.getImageFromJSONData(this.containerEvent._id);   
+        }, 1000);
+
+        if (this.positions.length !== 0) {
+          setTimeout(() => {
+            // run through the positions
+            this.setHighlightPoints();
+
+            // set the heatmap data to the positions that were detected in the first 5 seconds
+            // only run through the positions until a timestamp is found that is 5 seconds greater than the start date
+            this.setHeatmapIntervalData(this.startDate!);
+          }, 1500);
         }
-      });
-      this.getImageFromJSONData(this.containerEvent._id);   
+        
+        //sort the positions by timestamp
+        this.positions.sort((a: IPosition, b: IPosition) => {
+          if (!a.timestamp || !b.timestamp) return 0;
+          return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+        });
+      }
+      else if (counter > 10) {
+        clearInterval(checkDOM);
+
+        this.isLoading = false;
+        this.failedToLoadFloorplan = true;
+      }
     }, 1000);
+  }
 
-    this.positions = await this.appApiService.getEventDevicePosition(this.containerEvent._id, this.startDate, this.endDate);
-    
-    if (this.positions.length === 0) {
-      this.hasData = false;
-    }
-    else {
-      // run through the positions
-      this.setHighlightPoints();
-
-      // set the heatmap data to the positions that were detected in the first 5 seconds
-      // only run through the positions until a timestamp is found that is 5 seconds greater than the start date
-      this.setHeatmapIntervalData(this.startDate!);
-    }
-    
-    //sort the positions by timestamp
-    this.positions.sort((a: IPosition, b: IPosition) => {
-      if (!a.timestamp || !b.timestamp) return 0;
-      return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
-    });
+  reloadFloorplan() {
+    this.failedToLoadFloorplan = false;
+    this.isLoading = true;
+    setTimeout(() => {
+      this.ngAfterViewInit();
+    }, 1000);
   }
 
   async setHighlightPoints() {
@@ -705,9 +762,9 @@ export class HeatmapContainerComponent implements OnInit{
     this.changingTimeRange = false;
 
     // increase or decrease the value of the range element by 5 seconds on an interval until the end time is reached
-    const interval = setInterval(() => {
+    this.flowInterval = setInterval(() => {
       if (this.changingTimeRange) {
-        clearInterval(interval);
+        clearInterval(this.flowInterval);
         return;
       }
 
@@ -715,7 +772,7 @@ export class HeatmapContainerComponent implements OnInit{
         this.addFiveSeconds(true);
       } else {
         this.overTimeRange = true;
-        clearInterval(interval);
+        clearInterval(this.flowInterval);
       }
     }, 500);
   }
@@ -723,5 +780,10 @@ export class HeatmapContainerComponent implements OnInit{
   pauseFlowOfHeatmap() {
     this.paused = true;
     this.changingTimeRange = true;
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.getImageFromJSONData(this.containerEvent._id);
   }
 }

@@ -98,6 +98,7 @@ export class ComparePageComponent implements OnInit {
   showDropDown = false;
   selectedEvents: IEvent[] = [];
   eventStats: Stats[] = [];
+  showStatsSideBySide = false;
 
   parentContainer: HTMLDivElement | null = null;
 
@@ -162,6 +163,12 @@ export class ComparePageComponent implements OnInit {
       this.largeScreen = false;
     }
 
+    if (window.innerWidth >= 768) {
+      this.showStatsSideBySide = true;
+    } else {
+      this.showStatsSideBySide = false;
+    }
+
     this.loading = false;
 
     setTimeout(() => {
@@ -209,6 +216,20 @@ export class ComparePageComponent implements OnInit {
     }
   }
 
+  async removeAnyNonSelectedEventStats() {
+    for (const item of this.eventList) {
+      if (!item.selected) {
+        const index = this.eventStats.findIndex((stat) => {
+          return stat.id === (item.event as any)._id;
+        });
+
+        if (index !== -1) {
+          this.eventStats.splice(index, 1);
+        }
+      }
+    }
+  }
+
   async selectEvent(event: IEvent): Promise<void> {
     const index = this.eventList.findIndex((item) => {
       const sameName = item.event.Name === event.Name;
@@ -248,7 +269,14 @@ export class ComparePageComponent implements OnInit {
         attendance_over_time_data: response.attendance_over_time_data!,
       };
 
-      this.eventStats.push(stats);
+      // check if event is not already in the stats array
+      const eventIndex = this.eventStats.findIndex((item) => {
+        return item.id === stats.id;
+      });
+
+      if (eventIndex === -1) {
+        this.eventStats.push(stats);
+      }
       this.renderCharts();
     } else {
       this.eventsSelected--;
@@ -270,6 +298,9 @@ export class ComparePageComponent implements OnInit {
     }
 
     this.showDropDown = false;
+    
+    // ensure all other selected event have their stats showing
+    await this.removeAnyNonSelectedEventStats();
   }
 
   highlightText(event: IEvent, search: string): string {
@@ -339,6 +370,15 @@ export class ComparePageComponent implements OnInit {
     } else {
       this.largeScreen = false;
     }
+
+    if (event.target.innerWidth >= 768) {
+      this.showStatsSideBySide = true;
+    } else {
+      this.showStatsSideBySide = false;
+    }
+
+    //redraw any selected events
+    this.renderCharts();
   }
 
   openSidePanel() {

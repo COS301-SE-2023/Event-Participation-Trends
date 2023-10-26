@@ -1,5 +1,6 @@
 #include "mqtt.h"
 #include "utils.h"
+#include "esp_sleep.h"
 
 const char *MQTT_TAG = "MQTT_H";
 static esp_mqtt_client_handle_t mqtt_client = NULL;
@@ -45,8 +46,16 @@ static void mqtt_event_handler(void *args, esp_event_base_t base, int32_t event_
         ESP_LOGW(MQTT_TAG, "MQTT Client has disconnected... Trying to reconnect");
         esp_mqtt_client_reconnect(mqtt_client);
         mqtt_client_connected = false;
+        while (!mqtt_client_connected)
+        {
+            ESP_LOGI(MQTT_TAG, "Waiting for MQTT connection...");
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
+        }
+        esp_mqtt_client_subscribe(mqtt_client, "/reset", 0);
+        esp_mqtt_client_subscribe(mqtt_client, "/sleep", 0);
         break;
     case MQTT_EVENT_ERROR:
+        esp_restart();
         ESP_LOGE(MQTT_TAG, "MQTT Client has encountered an Error...");
         break;
     case MQTT_EVENT_DATA:
@@ -60,6 +69,10 @@ static void mqtt_event_handler(void *args, esp_event_base_t base, int32_t event_
         if(strcmp(topic_buffer, "/reset") == 0){
             ESP_LOGI(MQTT_TAG, "Resetting device...");
             esp_restart();
+        }
+        if(strcmp(topic_buffer, "/sleep") == 0){
+            ESP_LOGI(MQTT_TAG, "Going to sleep...");
+            esp_deep_sleep_start();
         }
         free(topic_buffer);
         free(data_buffer);
@@ -105,5 +118,6 @@ esp_mqtt_client_handle_t INITIALIZE_MQTT(bool wait_for_connection)
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     esp_mqtt_client_subscribe(mqtt_client, "/reset", 0);
+    esp_mqtt_client_subscribe(mqtt_client, "/sleep", 0);
     return mqtt_client;
 }

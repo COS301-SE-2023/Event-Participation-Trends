@@ -68,91 +68,94 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="show && selectedEvents.length >= 1" class="w-full p-3 z-40"> 
-                <div class="mx-24 rounded-2xl bg-ept-navy-blue p-3 text-lg font-poppins font-semibold">
+            <!-- <div *ngIf="show && selectedEvents.length >= 1 && !showStatsSideBySide" class="w-full p-3 z-40">
+                <div class=""
+            </div> -->
+            <div *ngIf="show && selectedEvents.length >= 1 " class="w-full p-3 z-40"> 
+                <div class="mx-2 sm:mx-8 md:mx-12 xl:mx-24 rounded-2xl bg-ept-navy-blue p-1 sm:p-3 text-sm md:text-md xl:text-lg font-poppins font-semibold">
                     <div class="font-poppins font-semibold grid grid-cols-12">
-                        <div class="col-span-3 text-lg text-left">{{getFirstEventStats().name}}</div>
-                        <div class="col-span-6 text-4xl text-center">Event Statistics</div>
-                        <div class="col-span-3 text-lg text-right">{{getSecondEventStats().name}}</div>
+                        <div class="col-span-3 text-md sm:text-lg text-right m-auto">{{getFirstEventStats().name}}</div>
+                        <div class="col-span-6 text-2xl xl:text-4xl text-center">Event Statistics</div>
+                        <div class="col-span-3 text-md sm:text-lg text-right m-auto">{{getSecondEventStats().name}}</div>
                     </div>
                     <div class="w-full bg-ept-blue-grey rounded-2xl h-1 opacity-20 my-3"></div>
-                    <div class="flex justify-center mx-12">
+                    <div class="flex justify-center mx-2">
                         <div class="grid grid-cols-12 w-full">
                             <!-- Total Attendance -->
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-start md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().total_attendance > getSecondEventStats().total_attendance,
                                             'text-ept-light-red': getFirstEventStats().total_attendance < getSecondEventStats().total_attendance}"
                             >
                                 <div>{{getFirstEventStats().total_attendance}}</div>
                             </div>
-                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
-                                <div>Total Attendace</div>
+                            <div class="col-span-8 text-sm md:text-md xl:text-lg font-poppins font-semibold flex justify-center">
+                                <div class="text-center">Total Attendace</div>
                             </div>
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-end md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().total_attendance < getSecondEventStats().total_attendance,
                                             'text-ept-light-red': getFirstEventStats().total_attendance > getSecondEventStats().total_attendance}"
                             >
                                 <div>{{getSecondEventStats().total_attendance}}</div>
                             </div>
                             <!-- Average Attendance -->
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-start md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().average_attendance > getSecondEventStats().average_attendance,
                                             'text-ept-light-red': getFirstEventStats().average_attendance < getSecondEventStats().average_attendance}"
                             >
-                                <div>{{getFirstEventStats().average_attendance}}</div>
+                                <div class="text-center">{{getFirstEventStats().average_attendance}}</div>
                             </div>
-                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
-                                <div>Average Attendace</div>
+                            <div class="col-span-8 text-sm md:text-md xl:text-lg font-poppins font-semibold flex justify-center">
+                                <div class="text-center">Average Attendace</div>
                             </div>
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-end md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().average_attendance < getSecondEventStats().average_attendance,
                                             'text-ept-light-red': getFirstEventStats().average_attendance > getSecondEventStats().average_attendance}"
                             >
                                 <div>{{getSecondEventStats().average_attendance}}</div>
                             </div>
                             <!-- Peak Attendance -->
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-start md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().peak_attendance > getSecondEventStats().peak_attendance,
                                             'text-ept-light-red': getFirstEventStats().peak_attendance < getSecondEventStats().peak_attendance}"
                             >
                                 <div>{{getFirstEventStats().peak_attendance}}</div>
                             </div>
-                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
-                                <div>Peak Attendace</div>
+                            <div class="col-span-8 text-sm md:text-md xl:text-lg font-poppins font-semibold flex justify-center">
+                                <div class="text-center">Peak Attendace</div>
                             </div>
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-end md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().peak_attendance < getSecondEventStats().peak_attendance,
                                             'text-ept-light-red': getFirstEventStats().peak_attendance > getSecondEventStats().peak_attendance}"
                             >
                                 <div>{{getSecondEventStats().peak_attendance}}</div>
                             </div>
                             <!-- Average Attendance Time -->
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-start md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().average_attendance_time > getSecondEventStats().average_attendance_time,
                                             'text-ept-light-red': getFirstEventStats().average_attendance_time < getSecondEventStats().average_attendance_time}"
                             >
                                 <div>{{getFirstEventStats().average_attendance_time}}</div>
                             </div>
-                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
-                                <div>Average Attendace Time</div>
+                            <div class="col-span-8 text-sm md:text-md xl:text-lg font-poppins font-semibold flex justify-center">
+                                <div class="text-center">Average Attendace Time</div>
                             </div>
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-end md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().average_attendance_time < getSecondEventStats().average_attendance_time,
                                             'text-ept-light-red': getFirstEventStats().average_attendance_time > getSecondEventStats().average_attendance_time}"
                             >
                                 <div>{{getSecondEventStats().average_attendance_time}}</div>
                             </div>
                             <!-- Peak Attendance Time -->
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-start md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().max_attendance_time > getSecondEventStats().max_attendance_time,
                                             'text-ept-light-red': getFirstEventStats().max_attendance_time < getSecondEventStats().max_attendance_time}"
                             >
                                 <div>{{getFirstEventStats().max_attendance_time}}</div>
                             </div>
-                            <div class="col-span-8 text-lg font-poppins font-semibold flex justify-center">
-                                <div>Peak Attendace Time</div>
+                            <div class="col-span-8 text-sm md:text-md xl:text-lg font-poppins font-semibold flex justify-center">
+                                <div class="text-center">Peak Attendace Time</div>
                             </div>
-                            <div class="col-span-2 text-ept-blue-grey flex justify-center"
+                            <div class="col-span-2 text-ept-blue-grey flex justify-end md:justify-center"
                                 [ngClass]="{'text-ept-light-green': getFirstEventStats().max_attendance_time < getSecondEventStats().max_attendance_time,
                                             'text-ept-light-red': getFirstEventStats().max_attendance_time > getSecondEventStats().max_attendance_time}"
                             >
@@ -162,7 +165,7 @@
                     </div>
                     <div class="my-12">
                         <div class="flex justify-center text-2xl">Attendance Over Time</div>
-                        <div class="grid grid-rows-1">
+                        <div class="grid grid-rows-1 h-[250px]">
                             <div class="rounded-md h-full">
                                 <canvas id="attendanceOverTime" #attendanceOverTime class="w-full h-full"></canvas>
                             </div>
