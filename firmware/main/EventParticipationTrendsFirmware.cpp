@@ -52,6 +52,11 @@ static void flashLed(){
 }
 
 static void SendBufferAsSingleJsonArray(void*){
+    static bool running = false;
+    if(running){
+        esp_restart();
+    }
+    running = true;
     // This will process the files in the buffer and send them as a json object containing an array of devices, along with the mac-address of this esp32
     data = "";
     data += "{\"sensorMac\": \"";
@@ -78,6 +83,7 @@ static void SendBufferAsSingleJsonArray(void*){
     mqtt_publish_sensor(data.c_str());
     flashLed();
     esp_wifi_set_promiscuous(true);
+    running = false;
     vTaskDelete(NULL);
 }
 
